@@ -396,7 +396,7 @@ const Messages = (): JSX.Element => {
                     <Input
                       value={composerMessage}
                       onChange={(event) => setComposerMessage(event.target.value)}
-                      placeholder="Hi, is this still available?"
+                      placeholder={activeDefaultComposerMessage}
                       className="h-12 rounded-full border-border bg-background/80 text-sm"
                     />
                     <div className="flex gap-2 md:justify-end">
