@@ -1,62 +1,205 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
+import { EmptyState } from "@/components/listings/EmptyState";
+import { FilterBar } from "@/components/listings/FilterBar";
+import { ListingCard } from "@/components/listings/ListingCard";
+import { SponsorTile } from "@/components/listings/SponsorTile";
+import { useBaseList } from "@/context/BaseListContext";
+import {
+  PROHIBITED_CONTENT,
+  SELLERS,
+  SPONSOR_PLACEMENTS,
+  LISTING_CATEGORIES,
+} from "@/data/mock";
+import type { ListingFilter, Seller } from "@/types";
+
+const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
+
+const buildSellerMap = (): Record<string, Seller> => {
+  return SELLERS.reduce<Record<string, Seller>>((accumulator, seller) => {
+    accumulator[seller.id] = seller;
+    return accumulator;
+  }, {});
+};
+
+const sellerMap = buildSellerMap();
+
+const Index = (): JSX.Element => {
+  const { listings, currentBaseId, currentBase, searchQuery } = useBaseList();
+  const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
+  const [visibleCount, setVisibleCount] = useState(6);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
-    fetchDemo();
-  }, []);
+    setActiveFilter("All");
+  }, [currentBaseId]);
 
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [activeFilter, currentBaseId, searchQuery]);
+
+  const sponsorPlacement = useMemo(
+    () => SPONSOR_PLACEMENTS.find((placement) => placement.baseId === currentBaseId),
+    [currentBaseId],
+  );
+
+  const filteredListings = useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+
+    return listings.filter((listing) => {
+      if (listing.baseId !== currentBaseId) {
+        return false;
+      }
+
+      if (activeFilter !== "All") {
+        if (activeFilter === "Free") {
+          const isFreeMatch = listing.isFree || listing.category === "Free";
+          if (!isFreeMatch) {
+            return false;
+          }
+        } else if (listing.category !== activeFilter) {
+          return false;
+        }
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const seller = sellerMap[listing.sellerId];
+      const haystack = [
+        listing.title,
+        listing.description,
+        listing.category,
+        seller?.name,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(normalizedSearch);
+    });
+  }, [activeFilter, currentBaseId, listings, searchQuery]);
+
+  const visibleListings = useMemo(
+    () => filteredListings.slice(0, visibleCount),
+    [filteredListings, visibleCount],
+  );
+
+  useEffect(() => {
+    const node = sentinelRef.current;
+
+    if (!node) {
+      return;
     }
-  };
+
+    if (visibleListings.length >= filteredListings.length) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((previous) =>
+            Math.min(previous + 4, filteredListings.length),
+          );
+        }
+      },
+      { rootMargin: "200px" },
+    );
+
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [filteredListings.length, visibleListings.length]);
+
+  const resultSummary = useMemo(() => {
+    const formatter = new Intl.NumberFormat("en-US");
+    return formatter.format(filteredListings.length);
+  }, [filteredListings.length]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
-          >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-            />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
-        </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
-        </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
+    <section className="space-y-8">
+      <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                {currentBase.name} classifieds, DoD-only.
+              </h1>
+              <p className="max-w-2xl text-base text-muted-foreground">
+                Browse verified listings from teammates stationed at {currentBase.name}. Search fast, message securely, and keep every handoff on base.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <span className="rounded-full bg-muted px-3 py-1 font-semibold text-foreground">
+                Prohibited content
+              </span>
+              {PROHIBITED_CONTENT.map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-dashed border-border px-3 py-1 capitalize"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="max-w-xs rounded-3xl border border-dashed border-nav-border bg-background/80 p-5 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">
+              Only verified users can post listings and send messages.
+            </p>
+            <p className="mt-3">
+              Quiet rate limits keep the marketplace fair. Stay professional—moderators are on-call for quick help.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <FilterBar
+            filters={filters}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+          <div className="text-sm text-muted-foreground">
+            {resultSummary} listings at {currentBase.name}
+            {searchQuery ? (
+              <>
+                <span className="px-1">•</span>
+                <span>
+                  Matching “
+                  <span className="font-medium text-foreground">{searchQuery}</span>
+                  ”
+                </span>
+              </>
+            ) : null}
+          </div>
+        </div>
+
+        <SponsorTile placement={sponsorPlacement} />
       </div>
-    </div>
+
+      {visibleListings.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {visibleListings.map((listing) => (
+            <ListingCard
+              key={listing.id}
+              listing={listing}
+              seller={sellerMap[listing.sellerId]}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState />
+      )}
+
+      <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
+    </section>
   );
-}
+};
+
+export default Index;
