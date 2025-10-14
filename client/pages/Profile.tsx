@@ -32,6 +32,12 @@ const Profile = (): JSX.Element => {
   const activeListings = myListings.filter((listing) => listing.status === "active");
   const soldListings = myListings.filter((listing) => listing.status === "sold");
 
+  const purchases = transactions.filter((entry) => entry.buyerId === user.id);
+  const sales = transactions.filter((entry) => entry.sellerId === user.id);
+  const userRatingSummary = getUserRatingSummary(user.id);
+  const userRatingFallbackAverage = user.rating ?? null;
+  const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between md:gap-8">
