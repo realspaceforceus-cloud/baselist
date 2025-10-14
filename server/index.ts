@@ -1,14 +1,31 @@
 import "dotenv/config";
-import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+
 import { handleDemo } from "./routes/demo";
 
 export function createServer() {
   const app = express();
 
+  app.set("trust proxy", 1);
+
   // Middleware
-  app.use(cors());
-  app.use(express.json());
+  app.use(
+    helmet({
+      crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: { policy: "cross-origin" },
+    }),
+  );
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
+      credentials: true,
+    }),
+  );
+  app.use(cookieParser());
+  app.use(express.json({ limit: "1mb" }));
   app.use(express.urlencoded({ extended: true }));
 
   // Example API routes
