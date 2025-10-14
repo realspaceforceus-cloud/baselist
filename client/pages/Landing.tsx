@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useAuthDialog } from "@/context/AuthDialogContext";
 import {
+  EMAIL_PATTERN,
   PASSWORD_MIN_LENGTH,
   USERNAME_PATTERN,
   isDodEmail,
