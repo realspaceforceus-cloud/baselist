@@ -528,7 +528,7 @@ export const BaseListProvider = ({
         description: "You can now post listings and send messages.",
       });
     },
-    [accounts, activeAccountId],
+    [accounts, activeAccountId, setAccounts, setUser],
   );
 
   const signOut = useCallback(() => {
