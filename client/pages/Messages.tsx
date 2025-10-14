@@ -236,6 +236,10 @@ const Messages = (): JSX.Element => {
   }, [activeDefaultComposerMessage, activeMessageCount, activeThreadId]);
 
   useEffect(() => {
+    setHoveredRating(null);
+  }, [activeThreadId]);
+
+  useEffect(() => {
     if (!activeThreadId) {
       return;
     }
