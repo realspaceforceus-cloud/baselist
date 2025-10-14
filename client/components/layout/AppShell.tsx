@@ -20,7 +20,7 @@ export const AppShell = (): JSX.Element => {
               : "pb-16 pt-12 md:pb-24 md:pt-20",
           )}
         >
-          <Outlet />
+          <RouterOutlet />
         </div>
       </main>
       {isAuthenticated ? <BottomNav /> : null}
