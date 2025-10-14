@@ -1325,6 +1325,7 @@ export const BaseListProvider = ({
       unreadMessageCount,
       transactions,
       getUserRatingSummary,
+      getMemberName: resolveDisplayName,
       pendingPasswordReset,
     }),
     [
