@@ -18,6 +18,9 @@ import {
   SELLERS,
 } from "@/data/mock";
 import type {
+  AccountNotice,
+  AccountNoticeCategory,
+  AccountNoticeSeverity,
   Base,
   Listing,
   Message,
