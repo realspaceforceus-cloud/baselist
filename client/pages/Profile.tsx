@@ -40,6 +40,23 @@ const Profile = (): JSX.Element => {
   const userRatingFallbackAverage = user.rating ?? null;
   const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
 
+  const userNotices = useMemo(
+    () =>
+      notices
+        .filter((notice) => notice.userId === user.id || notice.userId === "all")
+        .sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
+    [notices, user.id],
+  );
+
+  const noticeSeverityClass: Record<string, string> = {
+    info: "text-muted-foreground",
+    success: "text-success",
+    warning: "text-warning",
+    danger: "text-destructive",
+  };
+
   const ratingGlyphs = [1, 2, 3, 4, 5];
 
   const formatTransactionDate = (iso: string) =>
