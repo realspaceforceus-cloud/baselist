@@ -26,6 +26,7 @@ export const Header = (): JSX.Element => {
   const userRatingSummary = getUserRatingSummary(user.id);
   const userRatingFallbackAverage = user.rating ?? null;
   const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
+  const canManage = user.role !== "member";
 
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
@@ -72,6 +73,17 @@ export const Header = (): JSX.Element => {
             </div>
             <BaseSelector />
             <SearchInput />
+            {canManage ? (
+              <Link
+                to="/admin"
+                className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+              >
+                <span className="flex h-4 w-4 items-center justify-center">
+                  <Gauge className="h-4 w-4" aria-hidden />
+                </span>
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">Admin</span>
+              </Link>
+            ) : null}
             <Link
               to="/messages"
               className="relative flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm font-medium text-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
