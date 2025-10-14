@@ -99,11 +99,14 @@ export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element 
                   <BadgeCheck className="h-4 w-4 text-verified" aria-hidden />
                 ) : null}
               </span>
-              {seller?.rating && seller.completedSales ? (
-                <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-                  <span aria-hidden>⭐</span>
-                  {seller.rating.toFixed(1)} ({seller.completedSales} sales)
-                </span>
+              {seller ? (
+                <RatingBadge
+                  userId={seller.id}
+                  size="sm"
+                  initialAverage={seller.rating ?? null}
+                  initialCount={seller.ratingCount ?? seller.completedSales ?? 0}
+                  label={`${seller.name} rating`}
+                />
               ) : null}
             </span>
             <span className="text-xs text-muted-foreground">
