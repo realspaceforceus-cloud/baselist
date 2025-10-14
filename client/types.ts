@@ -36,6 +36,8 @@ export interface UserProfile extends Seller {
   currentBaseId: string;
   verificationStatus: VerificationStatus;
   role: "member" | "moderator" | "admin";
+  status?: "active" | "suspended";
+  strikes?: number;
 }
 
 export interface Listing {
@@ -121,4 +123,24 @@ export interface RatingSummary {
   sellerCount: number;
   buyerAverage: number | null;
   buyerCount: number;
+}
+
+export type AccountNoticeCategory =
+  | "report"
+  | "payout"
+  | "strike"
+  | "verification"
+  | "system";
+
+export type AccountNoticeSeverity = "info" | "success" | "warning" | "danger";
+
+export interface AccountNotice {
+  id: string;
+  userId: string | "all";
+  category: AccountNoticeCategory;
+  severity: AccountNoticeSeverity;
+  title: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
 }
