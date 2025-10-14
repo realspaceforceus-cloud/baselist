@@ -276,10 +276,30 @@ const Messages = (): JSX.Element => {
             </ul>
           </aside>
 
-          <section className="flex min-h-[420px] flex-col rounded-3xl border border-border bg-card shadow-card">
+          <section
+            ref={conversationRef}
+            className="flex min-h-[420px] flex-col rounded-3xl border border-border bg-card shadow-card"
+          >
             {activeSummary ? (
               <>
-                <div className="flex items-start justify-between gap-3 border-b border-border px-6 py-5">
+                {isMobile ? (
+                  <div className="border-b border-border px-6 py-3">
+                    <button
+                      type="button"
+                      onClick={() => navigate("/messages")}
+                      className="flex items-center gap-2 text-sm font-semibold text-foreground"
+                    >
+                      <ArrowLeft className="h-4 w-4" aria-hidden />
+                      Threads
+                    </button>
+                  </div>
+                ) : null}
+                <div
+                  className={cn(
+                    "flex items-start justify-between gap-3 px-6 py-5",
+                    !isMobile && "border-b border-border",
+                  )}
+                >
                   <div className="flex items-center gap-3">
                     <div className="h-12 w-12 overflow-hidden rounded-2xl border border-border bg-muted">
                       {activeSummary.listing?.imageUrls?.[0] ? (
