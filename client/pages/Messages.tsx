@@ -102,12 +102,12 @@ const Messages = (): JSX.Element => {
         </span>
         <div className="space-y-1">
           <h2 className="text-xl font-semibold text-foreground">
-            {messageThreads.length > 0
+            {threadSummaries.length > 0
               ? "Keep conversations moving."
               : "No messages yet. Find something you like."}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {messageThreads.length > 0
+            {threadSummaries.length > 0
               ? "Tap a thread to coordinate pickup details or send a quick offer."
               : "Start a conversation from any listing to see the full inbox and thread experience."}
           </p>
