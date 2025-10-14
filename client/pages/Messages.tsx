@@ -351,6 +351,7 @@ const Messages = (): JSX.Element => {
     }
     try {
       submitTransactionRating(activeSummary.thread.id, value);
+      setHoveredRating(null);
     } catch (error) {
       toast.error("Unable to record rating", {
         description: error instanceof Error ? error.message : "Try again in a moment.",
