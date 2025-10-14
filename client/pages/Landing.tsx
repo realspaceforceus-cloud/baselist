@@ -9,17 +9,14 @@ import { useBaseList } from "@/context/BaseListContext";
 const ICON_STEPS = [
   {
     label: "Verify",
-    description: "Use your .mil email or invite.",
     icon: ShieldCheck,
   },
   {
     label: "Choose Base",
-    description: "Access your local feed.",
     icon: MapPin,
   },
   {
     label: "Post & Message",
-    description: "Buy, sell, or trade securely.",
     icon: MessageCircle,
   },
 ] as const;
@@ -53,7 +50,7 @@ const Landing = (): JSX.Element => {
             Built by an Active-Duty Airman for verified DoD members and families. Safe, local, encrypted, and on-base only.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
-            {ICON_STEPS.map(({ label, description, icon: Icon }) => (
+            {ICON_STEPS.map(({ label, icon: Icon }) => (
               <div key={label} className="flex flex-col items-center gap-2">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
                   <Icon className="h-5 w-5" aria-hidden />
@@ -61,7 +58,6 @@ const Landing = (): JSX.Element => {
                 <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
                   {label}
                 </span>
-                <span className="text-xs text-muted-foreground">{description}</span>
               </div>
             ))}
           </div>
