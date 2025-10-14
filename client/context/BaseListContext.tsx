@@ -859,6 +859,7 @@ export const BaseListProvider = ({
       isDodVerified,
       listings,
       markListingSold,
+      completeDodVerification,
       beginVerification,
       markThreadAsRead,
       messageThreads,
