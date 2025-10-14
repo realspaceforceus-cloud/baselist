@@ -304,6 +304,59 @@ const Messages = (): JSX.Element => {
     setComposerMessage(`Offer ${formatted}`);
   };
 
+  const handleMarkComplete = () => {
+    if (!activeSummary) {
+      return;
+    }
+    initiateTransaction(activeSummary.thread.id, user.id);
+  };
+
+  const handleConfirmCompletion = () => {
+    if (!activeSummary) {
+      return;
+    }
+    try {
+      confirmTransactionCompletion(activeSummary.thread.id, user.id);
+    } catch (error) {
+      toast.error("Unable to confirm", {
+        description: error instanceof Error ? error.message : "Try again in a moment.",
+      });
+    }
+  };
+
+  const handleRatingClick = (value: number) => {
+    if (!activeSummary) {
+      return;
+    }
+    try {
+      submitTransactionRating(activeSummary.thread.id, value);
+    } catch (error) {
+      toast.error("Unable to record rating", {
+        description: error instanceof Error ? error.message : "Try again in a moment.",
+      });
+    }
+  };
+
+  const handleArchiveAction = (summary: ThreadSummary) => {
+    if (summary.isArchived) {
+      unarchiveThread(summary.thread.id);
+      return;
+    }
+    archiveThread(summary.thread.id);
+  };
+
+  const handleDeleteAction = (summary: ThreadSummary) => {
+    deleteThread(summary.thread.id);
+  };
+
+  const handleFilterSelect = (nextFilter: ThreadFilter) => {
+    setThreadFilter(nextFilter);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
