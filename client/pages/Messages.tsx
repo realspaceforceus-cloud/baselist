@@ -526,15 +526,23 @@ const Messages = (): JSX.Element => {
                                   <Dot className="h-3 w-3 text-muted-foreground" aria-hidden />
                                   <span className="flex items-center gap-1">
                                     {summary.partnerName}
-                                    {summary.seller ? (
-                                      <RatingBadge
-                                        userId={summary.seller.id}
-                                        initialAverage={summary.seller.rating ?? null}
-                                        initialCount={summary.seller.ratingCount ?? summary.seller.completedSales ?? 0}
-                                        size="sm"
-                                      />
-                                    ) : null}
-                                  </span>
+                              {summary.partnerId ? (
+                                <RatingBadge
+                                  userId={summary.partnerId}
+                                  initialAverage={
+                                    summary.partnerId === summary.seller?.id
+                                      ? summary.seller?.rating ?? null
+                                      : null
+                                  }
+                                  initialCount={
+                                    summary.partnerId === summary.seller?.id
+                                      ? summary.seller?.ratingCount ?? summary.seller?.completedSales ?? 0
+                                      : 0
+                                  }
+                                  size="sm"
+                                />
+                              ) : null}
+                              </span>
                                 </>
                               ) : null}
                             </div>
