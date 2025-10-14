@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
+import AdminPanel from "./pages/AdminPanel";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 
@@ -33,6 +34,7 @@ const App = (): JSX.Element => (
                 <Route path="messages/:threadId" element={<Messages />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="moderation" element={<Moderation />} />
+                <Route path="admin" element={<AdminPanel />} />
                 <Route path="listing/:listingId" element={<ListingDetail />} />
               </Route>
               <Route path="*" element={<NotFound />} />
