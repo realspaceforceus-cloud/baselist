@@ -428,6 +428,53 @@ export const BaseListProvider = ({
     [pendingPasswordReset],
   );
 
+  const beginVerification = useCallback(
+    (method: "email" | "invite" | "manual") => {
+      if (!currentAccount) {
+        toast.info("Sign in to manage your verification status.");
+        return;
+      }
+
+      if (method === "email") {
+        if (!isDodEmail(currentAccount.email)) {
+          toast.info(
+            "Add a DoD-issued email to verify automatically.",
+          );
+          return;
+        }
+
+        if (currentAccount.isDodVerified) {
+          toast.success("Already verified", {
+            description: "Your account is already cleared to post and message.",
+          });
+          return;
+        }
+
+        setAccounts((prev) =>
+          prev.map((account) =>
+            account.id === currentAccount.id
+              ? { ...account, isDodVerified: true }
+              : account,
+          ),
+        );
+        toast.success("DoD email verified", {
+          description: "You can now post listings and send messages.",
+        });
+        return;
+      }
+
+      if (method === "invite") {
+        toast.info("Enter your invite code from the Profile → Verify screen.");
+        return;
+      }
+
+      toast.info(
+        "Upload a redacted DoD ID from Profile → Verify. We delete uploads within 24h.",
+      );
+    },
+    [currentAccount],
+  );
+
   const signOut = useCallback(() => {
     setActiveAccountId(null);
     setUser((prev) => ({
