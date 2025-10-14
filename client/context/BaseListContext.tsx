@@ -853,6 +853,8 @@ export const BaseListProvider = ({
               ...existingThread.lastReadAt,
               [user.id]: timestamp,
             },
+            archivedBy: existingThread.archivedBy?.filter((id) => id !== user.id) ?? [],
+            deletedBy: existingThread.deletedBy?.filter((id) => id !== user.id) ?? [],
           };
 
           targetThread = updatedThread;
@@ -869,6 +871,9 @@ export const BaseListProvider = ({
           lastReadAt: {
             [user.id]: timestamp,
           },
+          status: "active",
+          archivedBy: [],
+          deletedBy: [],
         };
 
         targetThread = freshThread;
