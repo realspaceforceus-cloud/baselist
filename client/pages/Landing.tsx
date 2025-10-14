@@ -739,20 +739,44 @@ const Landing = (): JSX.Element => {
               <div className="space-y-5 text-center">
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold text-foreground">
-                    Account ready
+                    {pendingAccountVerified ? "DoD email confirmed" : "Check your inbox"}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {accountIsDod
-                      ? "Your DoD email is verified. You can post and message right away."
-                      : "Browse listings immediately. Verify DoD access from your profile before posting or messaging."}
+                    {pendingAccountVerified
+                      ? "Thanks for confirming. You can enter BaseList now."
+                      : pendingAccountEmail
+                      ? `We sent a confirmation link to ${pendingAccountEmail}. Click it to finish verification.`
+                      : "We sent a confirmation link. Click it to finish verification."}
                   </p>
+                  {!pendingAccountVerified && pendingVerificationRequestedAt ? (
+                    <p className="text-xs text-muted-foreground">
+                      Verification requested {new Date(pendingVerificationRequestedAt).toLocaleString()}.
+                    </p>
+                  ) : null}
                 </div>
+                {!pendingAccountVerified ? (
+                  <div className="space-y-3">
+                    <Button
+                      type="button"
+                      className="w-full rounded-full"
+                      size="lg"
+                      variant="outline"
+                      onClick={handleConfirmVerification}
+                    >
+                      I clicked the confirmation link
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      Once the link is confirmed you’ll unlock posting and messaging.
+                    </p>
+                  </div>
+                ) : null}
                 <Button
                   className="w-full rounded-full"
                   size="lg"
                   onClick={handleFinishSignup}
+                  disabled={!pendingAccountVerified}
                 >
-                  Go to listings
+                  Enter BaseList
                 </Button>
               </div>
             ) : null}
