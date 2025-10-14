@@ -91,10 +91,18 @@ export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element 
             </span>
           )}
           <div className="flex flex-col">
-            <span className="flex items-center gap-1 text-sm font-medium text-foreground">
-              {seller?.name ?? "Verified member"}
-              {seller?.verified ? (
-                <BadgeCheck className="h-4 w-4 text-verified" aria-hidden />
+            <span className="flex flex-wrap items-center gap-2 text-sm font-medium text-foreground">
+              <span className="flex items-center gap-1">
+                {seller?.name ?? "Verified member"}
+                {seller?.verified ? (
+                  <BadgeCheck className="h-4 w-4 text-verified" aria-hidden />
+                ) : null}
+              </span>
+              {seller?.rating && seller.completedSales ? (
+                <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                  <span aria-hidden>⭐</span>
+                  {seller.rating.toFixed(1)} ({seller.completedSales} sales)
+                </span>
               ) : null}
             </span>
             <span className="text-xs text-muted-foreground">
