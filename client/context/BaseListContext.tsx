@@ -820,15 +820,15 @@ export const BaseListProvider = ({
       }
 
       const trimmedMessage = messageBody.trim();
-    if (!trimmedMessage) {
-      throw new Error("Message body cannot be empty");
-    }
+      if (!trimmedMessage) {
+        throw new Error("Message body cannot be empty");
+      }
 
-    const normalizedMessage = trimmedMessage.toLowerCase();
-    const shouldInitiateTransaction =
-      normalizedMessage === "offer accepted" || normalizedMessage === "mark sold";
+      const normalizedMessage = trimmedMessage.toLowerCase();
+      const shouldInitiateTransaction =
+        normalizedMessage === "offer accepted" || normalizedMessage === "mark sold";
 
-    const timestamp = new Date().toISOString();
+      const timestamp = new Date().toISOString();
       const newMessage: Message = {
         id: `msg-${crypto.randomUUID()}`,
         authorId: user.id,
@@ -903,6 +903,191 @@ export const BaseListProvider = ({
       scheduleSimulatedReply,
       user.id,
     ],
+  );
+
+  const submitTransactionRating = useCallback(
+    (threadId: string, rating: number) => {
+      if (!isAuthenticated) {
+        throw new Error("Sign in to rate transactions.");
+      }
+
+      if (rating < 1 || rating > 5) {
+        throw new Error("Ratings must be between 1 and 5 stars.");
+      }
+
+      let updated = false;
+
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (
+            thread.id !== threadId ||
+            !thread.transaction ||
+            thread.transaction.status !== "completed"
+          ) {
+            return thread;
+          }
+
+          const existingRating = thread.transaction.ratingByUser[user.id];
+          if (existingRating === rating) {
+            return thread;
+          }
+
+          updated = true;
+          return {
+            ...thread,
+            transaction: {
+              ...thread.transaction,
+              ratingByUser: {
+                ...thread.transaction.ratingByUser,
+                [user.id]: rating,
+              },
+            },
+          };
+        }),
+      );
+
+      if (!updated) {
+        return;
+      }
+
+      setTransactions((prev) => {
+        const existing = prev.find((entry) => entry.threadId === threadId);
+        if (!existing) {
+          const thread = messageThreads.find((item) => item.id === threadId);
+          if (!thread || !thread.transaction || thread.transaction.status !== "completed") {
+            return prev;
+          }
+          const listing = listings.find((item) => item.id === thread.listingId);
+          if (!listing) {
+            return prev;
+          }
+          const sellerId = listing.sellerId;
+          const buyerId =
+            thread.participants.find((participantId) => participantId !== sellerId) ?? user.id;
+
+          return [
+            {
+              id: thread.id,
+              threadId: thread.id,
+              listingId: listing.id,
+              buyerId,
+              sellerId,
+              price: listing.isFree ? 0 : listing.price,
+              completedAt: thread.transaction.completedAt ?? new Date().toISOString(),
+              ...(buyerId === user.id
+                ? { buyerRatingAboutSeller: rating }
+                : { sellerRatingAboutBuyer: rating }),
+            },
+            ...prev,
+          ];
+        }
+
+        return prev.map((entry) => {
+          if (entry.threadId !== threadId) {
+            return entry;
+          }
+
+          if (entry.buyerId === user.id) {
+            return { ...entry, buyerRatingAboutSeller: rating };
+          }
+          if (entry.sellerId === user.id) {
+            return { ...entry, sellerRatingAboutBuyer: rating };
+          }
+          return entry;
+        });
+      });
+
+      toast.success("Rating submitted", {
+        description: "Thanks for keeping BaseList trustworthy.",
+      });
+    },
+    [isAuthenticated, listings, messageThreads, user.id],
+  );
+
+  const archiveThread = useCallback(
+    (threadId: string) => {
+      if (!isAuthenticated) {
+        return;
+      }
+
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (thread.id !== threadId) {
+            return thread;
+          }
+          const archived = new Set(thread.archivedBy ?? []);
+          if (archived.has(user.id)) {
+            return thread;
+          }
+          archived.add(user.id);
+          return {
+            ...thread,
+            archivedBy: Array.from(archived),
+          };
+        }),
+      );
+
+      toast.success("Thread archived", {
+        description: "Find it anytime under Archived.",
+      });
+    },
+    [isAuthenticated, user.id],
+  );
+
+  const unarchiveThread = useCallback(
+    (threadId: string) => {
+      if (!isAuthenticated) {
+        return;
+      }
+
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (thread.id !== threadId) {
+            return thread;
+          }
+          return {
+            ...thread,
+            archivedBy: thread.archivedBy?.filter((id) => id !== user.id) ?? [],
+          };
+        }),
+      );
+
+      toast.success("Thread restored", {
+        description: "It’s back in your inbox.",
+      });
+    },
+    [isAuthenticated, user.id],
+  );
+
+  const deleteThread = useCallback(
+    (threadId: string) => {
+      if (!isAuthenticated) {
+        return;
+      }
+
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (thread.id !== threadId) {
+            return thread;
+          }
+          const deleted = new Set(thread.deletedBy ?? []);
+          if (deleted.has(user.id)) {
+            return thread;
+          }
+          deleted.add(user.id);
+          return {
+            ...thread,
+            deletedBy: Array.from(deleted),
+            archivedBy: thread.archivedBy?.filter((id) => id !== user.id) ?? [],
+          };
+        }),
+      );
+
+      toast.success("Thread removed", {
+        description: "It won’t appear in your inbox anymore.",
+      });
+    },
+    [isAuthenticated, user.id],
   );
 
   const markThreadAsRead = useCallback(
