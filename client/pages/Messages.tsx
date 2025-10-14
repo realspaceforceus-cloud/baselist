@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Dot, MessageSquare, MessageSquarePlus } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -96,7 +96,7 @@ const Messages = (): JSX.Element => {
     navigate(`/messages/${id}`);
   };
 
-  const handleComposerSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleComposerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!activeSummary || !activeSummary.partnerId) {
       return;
