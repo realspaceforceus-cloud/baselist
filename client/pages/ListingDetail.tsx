@@ -2,7 +2,7 @@ import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-re
 import { useCallback, useMemo, useState } from "react";
 import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
