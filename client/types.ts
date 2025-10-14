@@ -25,13 +25,16 @@ export interface Seller {
   memberSince: string;
   avatarUrl: string;
   rating?: number;
+  ratingCount?: number;
   completedSales?: number;
   lastActiveAt?: string;
 }
 
+export type VerificationStatus = "Verified" | "Pending verification";
+
 export interface UserProfile extends Seller {
   currentBaseId: string;
-  verificationStatus: "Verified" | "Pending";
+  verificationStatus: VerificationStatus;
   role: "member" | "moderator" | "admin";
 }
 
