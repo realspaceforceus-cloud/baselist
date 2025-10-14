@@ -78,4 +78,3 @@ export const MetricsSection = (): JSX.Element => {
     </section>
   );
 };
-}
