@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 import type { ListingFilter } from "@/types";
 
 interface FilterBarProps {
