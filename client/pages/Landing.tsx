@@ -476,9 +476,25 @@ const Landing = (): JSX.Element => {
                     className="h-11 rounded-full"
                     required
                   />
-                  <p className="text-xs text-muted-foreground">
-                    3–20 characters. Letters, numbers, and underscores only.
-                  </p>
+                  {accountForm.username ? (
+                    usernamePositive ? (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                        <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        Username available.
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                        <AlertCircle className="h-4 w-4" aria-hidden />
+                        {usernameValid
+                          ? "That username is already taken."
+                          : "Username must be 3-20 characters using letters, numbers, or underscores."}
+                      </p>
+                    )
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      3–20 characters. Letters, numbers, and underscores only.
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="signup-email" className="text-sm font-semibold text-foreground">
