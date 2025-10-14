@@ -68,7 +68,7 @@ export const MessagingSection = ({ threads, onWarn, onBan, onMarkReviewed }: Mes
                 <button
                   type="button"
                   className="inline-flex items-center gap-1 rounded-full border border-destructive px-4 py-2 text-destructive"
-                  onClick={() => onBan(thread.id)}
+                  onClick={() => onBan(thread.id, thread.offendingUserId)}
                 >
                   <UserMinus className="h-3.5 w-3.5" aria-hidden />
                   Ban offender
