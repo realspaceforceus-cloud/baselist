@@ -153,15 +153,22 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    const updatedThread = sendMessageToSeller(
-      activeSummary.thread.listingId,
-      activeSummary.partnerId,
-      trimmed,
-    );
+    try {
+      const updatedThread = sendMessageToSeller(
+        activeSummary.thread.listingId,
+        activeSummary.partnerId,
+        trimmed,
+      );
 
-    setComposerMessage("");
-    markThreadAsRead(updatedThread.id);
-    navigate(`/messages/${updatedThread.id}`, { replace: true });
+      setComposerMessage("");
+      markThreadAsRead(updatedThread.id);
+      navigate(`/messages/${updatedThread.id}`, { replace: true });
+    } catch (error) {
+      toast.error("Unable to send message", {
+        description:
+          error instanceof Error ? error.message : "Verify your account to continue.",
+      });
+    }
   };
 
   const handleQuickOffer = () => {
