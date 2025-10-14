@@ -486,6 +486,51 @@ export const BaseListProvider = ({
     [currentAccount],
   );
 
+  const completeDodVerification = useCallback(
+    (accountId: string) => {
+      const account = accounts.find((item) => item.id === accountId);
+      if (!account) {
+        throw new Error("Account not found for verification.");
+      }
+
+      if (!isDodEmail(account.email)) {
+        throw new Error("DoD email verification is only available for DoD addresses.");
+      }
+
+      if (account.isDodVerified) {
+        return;
+      }
+
+      const completedAt = new Date().toISOString();
+
+      setAccounts((prev) =>
+        prev.map((item) =>
+          item.id === accountId
+            ? {
+                ...item,
+                isDodVerified: true,
+                verificationToken: null,
+                verificationRequestedAt: completedAt,
+              }
+            : item,
+        ),
+      );
+
+      if (activeAccountId === accountId) {
+        setUser((prev) => ({
+          ...prev,
+          verificationStatus: "Verified",
+          verified: true,
+        }));
+      }
+
+      toast.success("DoD email verified", {
+        description: "You can now post listings and send messages.",
+      });
+    },
+    [accounts, activeAccountId],
+  );
+
   const signOut = useCallback(() => {
     setActiveAccountId(null);
     setUser((prev) => ({
