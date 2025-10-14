@@ -1,9 +1,17 @@
-import { MessageSquare, PlusCircle, User, House } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { House, MessageSquare, PlusCircle, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+type NavItem = {
+  label: string;
+  to: string;
+  icon: LucideIcon;
+  end?: boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
   {
     label: "Home",
     to: "/",
