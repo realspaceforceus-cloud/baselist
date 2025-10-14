@@ -832,6 +832,7 @@ export const BaseListProvider = ({
       completePasswordReset,
       cancelPasswordReset,
       beginVerification,
+      completeDodVerification,
       signOut,
       listings,
       addListing,
