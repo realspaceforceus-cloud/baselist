@@ -451,9 +451,9 @@ const Landing = (): JSX.Element => {
                   ? "Username only. No real names required."
                   : joinStage === "base"
                   ? "Pick your installation. You can switch later from your profile."
-                  : accountIsDod
-                  ? "Your DoD access is already verified."
-                  : "Browse privately. Verify before posting or messaging."}
+                  : pendingAccountVerified
+                  ? "Your DoD email is confirmed. Welcome aboard."
+                  : "Confirm your DoD email from the link we sent to finish setup."}
               </p>
             </header>
 
