@@ -39,6 +39,7 @@ const buildAvatarUrl = (seed: string) =>
 
 const buildUserProfileFromAccount = (
   account: BaseListAccount,
+  discipline?: MemberDisciplineRecord,
 ): UserProfile => ({
   id: account.id,
   name: account.username,
@@ -50,7 +51,9 @@ const buildUserProfileFromAccount = (
   lastActiveAt: account.lastLoginAt ?? account.createdAt,
   currentBaseId: account.baseId,
   verificationStatus: account.isDodVerified ? "Verified" : "Pending verification",
-  role: "member",
+  role: account.role,
+  status: discipline?.suspendedAt ? "suspended" : "active",
+  strikes: discipline?.strikes ?? 0,
 });
 
 const EMAIL_PATTERN = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
