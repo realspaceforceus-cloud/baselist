@@ -88,17 +88,46 @@ const Messages = (): JSX.Element => {
     [threadSummaries, threadId],
   );
 
+  const activeThreadId = activeSummary?.thread.id ?? null;
+  const activeMessageCount = activeSummary?.thread.messages.length ?? 0;
+  const activeDefaultComposerMessage =
+    activeSummary?.defaultComposerMessage ?? "Hi, is this still available?";
+
   useEffect(() => {
-    if (!activeSummary) {
+    if (!activeThreadId) {
       return;
     }
 
-    markThreadAsRead(activeSummary.thread.id);
-  }, [activeSummary?.thread.id, activeSummary?.thread.messages.length, markThreadAsRead]);
+    markThreadAsRead(activeThreadId);
+  }, [activeThreadId, activeMessageCount, markThreadAsRead]);
 
   useEffect(() => {
-    setComposerMessage("");
-  }, [activeSummary?.thread.id]);
+    if (!activeThreadId) {
+      setComposerMessage("");
+      lastThreadIdRef.current = null;
+      return;
+    }
+
+    if (lastThreadIdRef.current !== activeThreadId) {
+      if (activeMessageCount === 0) {
+        setComposerMessage(activeDefaultComposerMessage);
+      } else {
+        setComposerMessage("");
+      }
+    }
+
+    lastThreadIdRef.current = activeThreadId;
+  }, [activeDefaultComposerMessage, activeMessageCount, activeThreadId]);
+
+  useEffect(() => {
+    if (!activeThreadId) {
+      return;
+    }
+
+    if (isMobile && conversationRef.current) {
+      conversationRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeThreadId, activeMessageCount, isMobile]);
 
   const handleSelectThread = (id: string) => {
     navigate(`/messages/${id}`);
