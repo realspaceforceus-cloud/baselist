@@ -125,17 +125,15 @@ const Index = (): JSX.Element => {
 
   return (
     <section className="space-y-8">
-      <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                {currentBase.name} classifieds, DoD-only.
-              </h1>
-              <p className="max-w-2xl text-base text-muted-foreground">
-                Browse verified listings from teammates stationed at {currentBase.name}. Search fast, message securely, and keep every handoff on base.
-              </p>
-            </div>
+      <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:p-7">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+              {currentBase.name} classifieds, DoD-only.
+            </h1>
+            <p className="max-w-xl text-sm text-muted-foreground md:text-base">
+              Browse verified listings from teammates at {currentBase.name}.
+            </p>
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span className="rounded-full bg-muted px-3 py-1 font-semibold text-foreground">
                 Prohibited content
@@ -150,14 +148,20 @@ const Index = (): JSX.Element => {
               ))}
             </div>
           </div>
-          <div className="max-w-xs rounded-3xl border border-dashed border-nav-border bg-background/80 p-5 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">
-              Only verified users can post listings and send messages.
-            </p>
-            <p className="mt-3">
-              Quiet rate limits keep the marketplace fair. Stay professional—moderators are on-call for quick help.
-            </p>
-          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-primary transition hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                <ShieldCheck className="h-5 w-5" aria-hidden />
+                <span className="sr-only">Verified user policy</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="max-w-xs text-sm">
+              Verified users only. Moderators monitor activity.
+            </TooltipContent>
+          </Tooltip>
         </div>
       </header>
 
