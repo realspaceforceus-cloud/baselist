@@ -385,6 +385,8 @@ const Messages = (): JSX.Element => {
     { value: "archived", label: "Archived", count: threadCounts.archived },
   ];
 
+  const ratingOptions = [1, 2, 3, 4, 5];
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
