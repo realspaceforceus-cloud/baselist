@@ -171,6 +171,10 @@ export const BaseListProvider = ({
 
   const sendMessageToSeller = useCallback(
     (listingId: string, sellerId: string, messageBody: string) => {
+      if (!isAuthenticated) {
+        throw new Error("You must be signed in to send messages");
+      }
+
       const trimmedMessage = messageBody.trim();
       if (!trimmedMessage) {
         throw new Error("Message body cannot be empty");
@@ -235,7 +239,7 @@ export const BaseListProvider = ({
 
       return targetThread!;
     },
-    [scheduleSimulatedReply, user.id],
+    [isAuthenticated, scheduleSimulatedReply, user.id],
   );
 
   const markThreadAsRead = useCallback(
