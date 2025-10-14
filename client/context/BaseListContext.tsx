@@ -596,6 +596,8 @@ export const BaseListProvider = ({
         avatarUrl: buildAvatarUrl(trimmedUsername),
         verificationToken: isDod ? `verify-${crypto.randomUUID()}` : null,
         verificationRequestedAt: isDod ? new Date().toISOString() : null,
+        rememberDeviceUntil: undefined,
+        role: "member",
       };
 
       setAccounts((prev) => [newAccount, ...prev]);
