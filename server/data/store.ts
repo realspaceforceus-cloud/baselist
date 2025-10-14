@@ -818,9 +818,15 @@ export class BaseListStore {
     return updated;
   }
 
-  createRefreshToken(userId: string, deviceId: string, tokenHash: string, userAgent?: string) {
+  createRefreshToken(
+    userId: string,
+    deviceId: string,
+    tokenHash: string,
+    jti: string,
+    userAgent?: string,
+  ) {
     const record: RefreshTokenRecord = {
-      id: randomUUID(),
+      id: jti,
       userId,
       deviceId,
       tokenHash,
@@ -833,13 +839,18 @@ export class BaseListStore {
     return record;
   }
 
-  getRefreshTokenByHash(tokenHash: string) {
-    for (const token of this.refreshTokens.values()) {
-      if (token.tokenHash === tokenHash) {
-        return token;
-      }
+  getRefreshTokenById(id: string) {
+    return this.refreshTokens.get(id) ?? null;
+  }
+
+  touchRefreshToken(id: string) {
+    const token = this.refreshTokens.get(id);
+    if (!token) {
+      return null;
     }
-    return null;
+    const updated: RefreshTokenRecord = { ...token, lastUsedAt: nowIso() };
+    this.refreshTokens.set(id, updated);
+    return updated;
   }
 
   revokeRefreshToken(tokenId: string) {
