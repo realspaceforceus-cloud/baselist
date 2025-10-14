@@ -354,34 +354,37 @@ const Messages = (): JSX.Element => {
                       No messages yet. Send the first note.
                     </div>
                   ) : (
-                    activeSummary.thread.messages.map((message) => {
-                      const isOwn = message.authorId === user.id;
-                      const timestamp = formatDistanceToNow(
-                        new Date(message.sentAt),
-                        { addSuffix: true },
-                      );
+                    <>
+                      {activeSummary.thread.messages.map((message) => {
+                        const isOwn = message.authorId === user.id;
+                        const timestamp = formatDistanceToNow(
+                          new Date(message.sentAt),
+                          { addSuffix: true },
+                        );
 
-                      return (
-                        <div
-                          key={message.id}
-                          className={cn("flex", isOwn ? "justify-end" : "justify-start")}
-                        >
+                        return (
                           <div
-                            className={cn(
-                              "max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm",
-                              isOwn
-                                ? "bg-foreground/10 text-foreground"
-                                : "bg-muted text-foreground",
-                            )}
+                            key={message.id}
+                            className={cn("flex", isOwn ? "justify-end" : "justify-start")}
                           >
-                            <p>{message.body}</p>
-                            <span className="mt-2 block text-[0.65rem] text-muted-foreground/80">
-                              {timestamp}
-                            </span>
+                            <div
+                              className={cn(
+                                "max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm",
+                                isOwn
+                                  ? "bg-foreground/10 text-foreground"
+                                  : "bg-muted text-foreground",
+                              )}
+                            >
+                              <p>{message.body}</p>
+                              <span className="mt-2 block text-[0.65rem] text-muted-foreground/80">
+                                {timestamp}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })
+                        );
+                      })}
+                      <div ref={messagesEndRef} />
+                    </>
                   )}
                 </div>
 
