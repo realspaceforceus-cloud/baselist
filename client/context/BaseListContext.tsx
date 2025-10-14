@@ -361,6 +361,10 @@ export const BaseListProvider = ({
         throw new Error("Incorrect password. Try again.");
       }
 
+      if (!account.isDodVerified) {
+        throw new Error("Confirm your DoD email from the link we sent before signing in.");
+      }
+
       activateAccount(account.id, options);
       toast.success("Welcome back", {
         description: options?.rememberDevice
