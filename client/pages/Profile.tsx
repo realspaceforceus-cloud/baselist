@@ -66,6 +66,14 @@ const Profile = (): JSX.Element => {
       year: "numeric",
     }).format(new Date(iso));
 
+  const formatNoticeDate = (iso: string) =>
+    new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(iso));
+
   const renderStars = (score?: number) => {
     if (!score) {
       return <span className="text-muted-foreground/70">No rating</span>;
