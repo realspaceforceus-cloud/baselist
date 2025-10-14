@@ -148,9 +148,22 @@ const ListingDetail = (): JSX.Element => {
 
         <aside className="space-y-4">
           <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
-            <h1 className="text-2xl font-semibold text-foreground">{listing.title}</h1>
-            <p className="mt-2 text-lg font-semibold text-primary">{formattedPrice}</p>
-            <p className="mt-4 text-sm text-muted-foreground">{listing.description}</p>
+            <div className="space-y-3">
+              <h1 className="text-2xl font-semibold text-foreground md:text-3xl">
+                {listing.title}
+              </h1>
+              <div>
+                <p className="text-xl font-semibold text-primary md:text-2xl">
+                  {formattedPrice}
+                </p>
+                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Listed {listedRelative} · {listingBase?.name ?? "On-base"}
+                </p>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {listing.description}
+              </p>
+            </div>
           </article>
 
           <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
