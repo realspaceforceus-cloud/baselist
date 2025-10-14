@@ -18,7 +18,15 @@ import { cn } from "@/lib/utils";
 import type { TransactionHistoryEntry } from "@/types";
 
 const Profile = (): JSX.Element => {
-  const { user, currentBase, listings, isModerator } = useBaseList();
+  const {
+    user,
+    currentBase,
+    listings,
+    isModerator,
+    transactions,
+    getUserRatingSummary,
+    getMemberName,
+  } = useBaseList();
 
   const myListings = listings.filter((listing) => listing.sellerId === user.id);
   const activeListings = myListings.filter((listing) => listing.status === "active");
