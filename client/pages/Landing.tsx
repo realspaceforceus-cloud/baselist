@@ -125,12 +125,17 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    if (!trimmedEmail) {
+    if (!trimmedEmail || !EMAIL_PATTERN.test(trimmedEmail.toLowerCase())) {
       setAccountError("Enter a valid email address.");
       return;
     }
 
-    setAccountIsDod(isDodEmail(trimmedEmail));
+    if (!isDodEmail(trimmedEmail)) {
+      setAccountError("Use an approved DoD email (.mil or DoD.gov) to continue.");
+      return;
+    }
+
+    setAccountIsDod(true);
     setJoinStage("base");
   };
 
