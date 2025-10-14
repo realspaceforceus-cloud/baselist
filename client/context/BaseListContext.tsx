@@ -67,6 +67,7 @@ export const BaseListProvider = ({
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [user, setUser] = useState<UserProfile>(CURRENT_USER);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [listings, setListings] = useState<Listing[]>(() => {
     return [...LISTING_SEED].sort(
       (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
@@ -90,6 +91,14 @@ export const BaseListProvider = ({
   const setCurrentBaseId = useCallback((baseId: string) => {
     setCurrentBaseIdState(baseId);
     setUser((prev) => ({ ...prev, currentBaseId: baseId }));
+  }, []);
+
+  const signIn = useCallback(() => {
+    setIsAuthenticated(true);
+  }, []);
+
+  const signOut = useCallback(() => {
+    setIsAuthenticated(false);
   }, []);
 
   const clearSearch = useCallback(() => setSearchQuery(""), []);
