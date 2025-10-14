@@ -1,12 +1,23 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useBaseList } from "@/context/BaseListContext";
+import { useAuthDialog } from "@/context/AuthDialogContext";
+import {
+  PASSWORD_MIN_LENGTH,
+  USERNAME_PATTERN,
+  isDodEmail,
+  useBaseList,
+} from "@/context/BaseListContext";
 
 const ICON_STEPS = [
   {
@@ -22,37 +33,6 @@ const ICON_STEPS = [
     icon: MessageCircle,
   },
 ] as const;
-
-const ALLOWED_DOD_DOMAINS = [
-  ".mil",
-  ".defense.gov",
-  ".disa.mil",
-  ".dia.mil",
-  ".dla.mil",
-  ".dcma.mil",
-  ".js.mil",
-  ".osd.mil",
-  ".ng.mil",
-  ".spaceforce.mil",
-  ".usmc.mil",
-  ".army.mil",
-  ".af.mil",
-  ".navy.mil",
-  ".uscg.mil",
-  ".va.gov",
-  ".us.af.mil",
-] as const;
-
-const EMAIL_PATTERN = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
-
-const isDodEmail = (email: string): boolean => {
-  const trimmed = email.trim().toLowerCase();
-  if (!EMAIL_PATTERN.test(trimmed)) {
-    return false;
-  }
-  return ALLOWED_DOD_DOMAINS.some((domain) => trimmed.endsWith(domain));
-};
 
 const toRadians = (value: number): number => (value * Math.PI) / 180;
 
@@ -75,66 +55,87 @@ const getDistanceInMiles = (
   return earthRadiusMiles * c;
 };
 
-const Landing = (): JSX.Element => {
-  const { signIn, bases, setCurrentBaseId } = useBaseList();
+type JoinStage = "hidden" | "account" | "base" | "success";
 
-  const [joinStage, setJoinStage] = useState<"hidden" | "verify" | "base" | "handle">("hidden");
-  const [verificationMethod, setVerificationMethod] = useState<"email" | "invite" | "manual">("email");
-  const [email, setEmail] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [manualNote, setManualNote] = useState("");
-  const [manualFile, setManualFile] = useState<File | null>(null);
-  const [selectedBaseId, setSelectedBaseId] = useState<string>(bases[0]?.id ?? "");
-  const [username, setUsername] = useState("");
-  const [acceptRules, setAcceptRules] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [locationStatus, setLocationStatus] = useState<"idle" | "requesting" | "granted" | "denied" | "unavailable">("idle");
+const defaultAccountForm = {
+  username: "",
+  email: "",
+  password: "",
+  agreeRules: false,
+};
+
+const Landing = (): JSX.Element => {
+  const {
+    bases,
+    createAccount,
+    activateAccount,
+    currentAccount,
+    isAuthenticated,
+  } = useBaseList();
+  const { openSignIn } = useAuthDialog();
+
+  const [joinStage, setJoinStage] = useState<JoinStage>("hidden");
+  const [accountForm, setAccountForm] = useState(defaultAccountForm);
+  const [accountError, setAccountError] = useState<string | null>(null);
+  const [accountIsDod, setAccountIsDod] = useState(false);
+  const [pendingAccountId, setPendingAccountId] = useState<string | null>(null);
+
+  const [selectedBaseId, setSelectedBaseId] = useState<string>(
+    bases[0]?.id ?? "",
+  );
+  const [userCoords, setUserCoords] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<
+    "idle" | "requesting" | "granted" | "denied" | "unavailable"
+  >("idle");
   const [searchTerm, setSearchTerm] = useState("");
   const [showExpansionForm, setShowExpansionForm] = useState(false);
   const [expansionEmail, setExpansionEmail] = useState("");
 
   const handleStartJoin = () => {
-    setJoinStage("verify");
-    setVerificationMethod("email");
+    setJoinStage("account");
+    setAccountForm(defaultAccountForm);
+    setAccountError(null);
+    setAccountIsDod(false);
+    setPendingAccountId(null);
     setSearchTerm("");
+    setSelectedBaseId(bases[0]?.id ?? "");
+    setLocationStatus("idle");
   };
 
-  const handleManualFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setManualFile(file ?? null);
-  };
-
-  const handleVerificationSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleAccountSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setAccountError(null);
 
-    if (verificationMethod === "email") {
-      if (!isDodEmail(email)) {
-        toast.error("Enter an approved DoD or .gov email to continue.");
-        return;
-      }
-      toast.success("Verification link sent", {
-        description: "Check your inbox. One-time link expires in 15 minutes.",
-      });
-    } else if (verificationMethod === "invite") {
-      if (!inviteCode.trim()) {
-        toast.error("Enter the invite code you received.");
-        return;
-      }
-      toast.success("Invite accepted", {
-        description: "We confirmed your invite. Finish setting up your account.",
-      });
-    } else {
-      if (!manualFile) {
-        toast.error("Upload a redacted DoD ID or supporting document.");
-        return;
-      }
-      toast.success("Manual review requested", {
-        description: "We will confirm within 24 hours and auto-delete your upload.",
-      });
+    const trimmedUsername = accountForm.username.trim();
+    const trimmedEmail = accountForm.email.trim();
+    const trimmedPassword = accountForm.password.trim();
+
+    if (!USERNAME_PATTERN.test(trimmedUsername)) {
+      setAccountError(
+        "Username must be 3-20 characters using letters, numbers, or underscores.",
+      );
+      return;
     }
 
+    if (trimmedPassword.length < PASSWORD_MIN_LENGTH) {
+      setAccountError("Password must be at least 12 characters long.");
+      return;
+    }
+
+    if (!accountForm.agreeRules) {
+      setAccountError("Confirm the marketplace rules to continue.");
+      return;
+    }
+
+    if (!trimmedEmail) {
+      setAccountError("Enter a valid email address.");
+      return;
+    }
+
+    setAccountIsDod(isDodEmail(trimmedEmail));
     setJoinStage("base");
   };
 
@@ -168,50 +169,6 @@ const Landing = (): JSX.Element => {
       { enableHighAccuracy: false, maximumAge: 5 * 60 * 1000, timeout: 10 * 1000 },
     );
   }, [joinStage, locationStatus]);
-
-  const handleExpansionSubmit = () => {
-    if (!EMAIL_PATTERN.test(expansionEmail.trim())) {
-      toast.error("Enter a valid email to stay informed.");
-      return;
-    }
-    toast.success("Thanks! We’ll notify you as new bases launch.");
-    setExpansionEmail("");
-    setShowExpansionForm(false);
-  };
-
-  const handleBaseSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!selectedBaseId) {
-      toast.error("Choose your current base to continue.");
-      return;
-    }
-    setJoinStage("handle");
-  };
-
-  const handleHandleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!USERNAME_PATTERN.test(username.trim())) {
-      toast.error("Choose a username using 3-20 letters, numbers, or underscores.");
-      return;
-    }
-
-    if (!acceptRules) {
-      toast.error("Confirm you agree to the marketplace rules.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      setCurrentBaseId(selectedBaseId);
-      signIn();
-      toast.success("Welcome to BaseList", {
-        description: "You're verified. Start browsing and posting right away.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const baseDistances = useMemo(
     () =>
@@ -251,7 +208,10 @@ const Landing = (): JSX.Element => {
       );
     });
 
-    const comparator = (a: { base: typeof bases[number]; distance: number }, b: { base: typeof bases[number]; distance: number }) => {
+    const comparator = (
+      a: { base: typeof bases[number]; distance: number },
+      b: { base: typeof bases[number]; distance: number },
+    ) => {
       const aFinite = Number.isFinite(a.distance);
       const bFinite = Number.isFinite(b.distance);
 
@@ -307,18 +267,60 @@ const Landing = (): JSX.Element => {
     return sortedBases.filter(({ base }) => !recommendedIds.includes(base.id));
   }, [recommendedIds, sortedBases, searchTerm]);
 
-  const currentStep = useMemo(() => {
-    switch (joinStage) {
-      case "verify":
-        return 1;
-      case "base":
-        return 2;
-      case "handle":
-        return 3;
-      default:
-        return 0;
+  const handleBaseSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!selectedBaseId) {
+      toast.error("Choose your current base to continue.");
+      return;
     }
-  }, [joinStage]);
+
+    try {
+      const account = createAccount({
+        username: accountForm.username,
+        email: accountForm.email,
+        password: accountForm.password,
+        baseId: selectedBaseId,
+      });
+      setPendingAccountId(account.id);
+      setJoinStage("success");
+      setAccountIsDod(account.isDodVerified);
+      toast.success("Account created", {
+        description: account.isDodVerified
+          ? "Your DoD email is verified automatically."
+          : "Browse freely. Verify DoD access before you post or DM.",
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Unable to create account.",
+      );
+    }
+  };
+
+  const handleExpansionSubmit = () => {
+    if (!EMAIL_PATTERN.test(expansionEmail.trim())) {
+      toast.error("Enter a valid email to stay informed.");
+      return;
+    }
+    toast.success("Thanks! We’ll notify you as new bases launch.");
+    setExpansionEmail("");
+    setShowExpansionForm(false);
+  };
+
+  const handleFinishSignup = () => {
+    if (!pendingAccountId) {
+      return;
+    }
+    activateAccount(pendingAccountId, { rememberDevice: true });
+    setJoinStage("hidden");
+  };
+
+  const pendingAccount = useMemo(
+    () => (pendingAccountId ? currentAccount ?? null : null),
+    [pendingAccountId, currentAccount],
+  );
+
+  const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
 
   return (
     <div className="space-y-10 py-10">
@@ -351,7 +353,7 @@ const Landing = (): JSX.Element => {
               size="lg"
               className="rounded-full px-8"
               type="button"
-              onClick={signIn}
+              onClick={openSignIn}
             >
               Sign In
             </Button>
@@ -367,149 +369,126 @@ const Landing = (): JSX.Element => {
         </div>
       </section>
 
-      {joinStage !== "hidden" ? (
+      {isJoinActive ? (
         <section className="px-4">
           <div className="mx-auto w-full max-w-3xl space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
             <header className="flex flex-col gap-2 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                Step {currentStep} of 3
+                {joinStage === "account"
+                  ? "Step 1 of 3"
+                  : joinStage === "base"
+                  ? "Step 2 of 3"
+                  : "Step 3 of 3"}
               </p>
               <h2 className="text-2xl font-semibold text-foreground">
-                {joinStage === "verify" && "Verify DoD access"}
+                {joinStage === "account" && "Create your BaseList account"}
                 {joinStage === "base" && "Select your base"}
-                {joinStage === "handle" && "Create your handle"}
+                {joinStage === "success" && "You’re in"}
               </h2>
-              {joinStage === "verify" ? (
-                <p className="text-sm text-muted-foreground">
-                  We use one-time links so you never need a password. Your email stays private.
-                </p>
-              ) : joinStage === "base" ? (
-                <p className="text-sm text-muted-foreground">
-                  Pick the installation you belong to. You can switch later from your profile.
-                </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Keep your identity private. Choose a handle your teammates will recognize.
-                </p>
-              )}
+              <p className="text-sm text-muted-foreground">
+                {joinStage === "account"
+                  ? "Username only. No real names required."
+                  : joinStage === "base"
+                  ? "Pick your installation. You can switch later from your profile."
+                  : accountIsDod
+                  ? "Your DoD access is already verified."
+                  : "Browse privately. Verify before posting or messaging."}
+              </p>
             </header>
 
-            {joinStage === "verify" ? (
-              <form onSubmit={handleVerificationSubmit} className="space-y-5">
-                {verificationMethod === "email" ? (
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-semibold text-foreground">
-                      .mil or approved email
-                    </label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      placeholder="name@yourunit.mil"
-                      className="h-12 rounded-full"
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Allowed domains include {ALLOWED_DOD_DOMAINS.slice(0, 5).join(", ")}, and more DoD-issued email endings.
-                    </p>
-                  </div>
-                ) : verificationMethod === "invite" ? (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="invite-code" className="text-sm font-semibold text-foreground">
-                        Invite code
-                      </label>
-                      <Input
-                        id="invite-code"
-                        value={inviteCode}
-                        onChange={(event) => setInviteCode(event.target.value)}
-                        placeholder="Enter your invite code"
-                        className="h-12 rounded-full"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="invite-email" className="text-sm font-semibold text-foreground">
-                        Email to send the link
-                      </label>
-                      <Input
-                        id="invite-email"
-                        type="email"
-                        value={inviteEmail}
-                        onChange={(event) => setInviteEmail(event.target.value)}
-                        placeholder="Any email you actively use"
-                        className="h-12 rounded-full"
-                        required
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="manual-note" className="text-sm font-semibold text-foreground">
-                        Share a quick note
-                      </label>
-                      <Textarea
-                        id="manual-note"
-                        value={manualNote}
-                        onChange={(event) => setManualNote(event.target.value)}
-                        rows={3}
-                        placeholder="Tell us how you access the installation (sponsor, contractor, etc.)."
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="manual-upload" className="text-sm font-semibold text-foreground">
-                        Upload redacted proof (auto-deleted within 24 hours)
-                      </label>
-                      <Input
-                        id="manual-upload"
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onChange={handleManualFileChange}
-                        className="rounded-full"
-                        required
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
-                  {verificationMethod !== "email" && (
-                    <button
-                      type="button"
-                      className="font-semibold text-primary hover:underline"
-                      onClick={() => setVerificationMethod("email")}
-                    >
-                      Use .mil email instead
-                    </button>
-                  )}
-                  {verificationMethod !== "invite" && (
-                    <button
-                      type="button"
-                      className="font-semibold text-primary hover:underline"
-                      onClick={() => setVerificationMethod("invite")}
-                    >
-                      Use invite code instead
-                    </button>
-                  )}
-                  {verificationMethod !== "manual" && (
-                    <button
-                      type="button"
-                      className="font-semibold text-primary hover:underline"
-                      onClick={() => setVerificationMethod("manual")}
-                    >
-                      Request manual check
-                    </button>
-                  )}
+            {joinStage === "account" ? (
+              <form onSubmit={handleAccountSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label htmlFor="signup-username" className="text-sm font-semibold text-foreground">
+                    Username
+                  </label>
+                  <Input
+                    id="signup-username"
+                    value={accountForm.username}
+                    onChange={(event) =>
+                      setAccountForm((prev) => ({
+                        ...prev,
+                        username: event.target.value,
+                      }))
+                    }
+                    placeholder="Example: airman_421"
+                    className="h-11 rounded-full"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    3–20 characters. Letters, numbers, and underscores only.
+                  </p>
                 </div>
-
+                <div className="space-y-2">
+                  <label htmlFor="signup-email" className="text-sm font-semibold text-foreground">
+                    Email
+                  </label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    value={accountForm.email}
+                    onChange={(event) =>
+                      setAccountForm((prev) => ({
+                        ...prev,
+                        email: event.target.value,
+                      }))
+                    }
+                    placeholder="Enter your .mil or personal email"
+                    className="h-11 rounded-full"
+                    required
+                  />
+                  {accountForm.email && isDodEmail(accountForm.email) ? (
+                    <p className="text-xs font-semibold text-foreground">
+                      DoD email detected. We’ll verify you automatically.
+                    </p>
+                  ) : null}
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="signup-password" className="text-sm font-semibold text-foreground">
+                    Password
+                  </label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    value={accountForm.password}
+                    onChange={(event) =>
+                      setAccountForm((prev) => ({
+                        ...prev,
+                        password: event.target.value,
+                      }))
+                    }
+                    placeholder="Create a password"
+                    className="h-11 rounded-full"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3 rounded-2xl border border-border bg-background/80 p-4 text-sm text-muted-foreground">
+                  <Checkbox
+                    id="rules"
+                    checked={accountForm.agreeRules}
+                    onCheckedChange={(checked) =>
+                      setAccountForm((prev) => ({
+                        ...prev,
+                        agreeRules: Boolean(checked),
+                      }))
+                    }
+                  />
+                  <label htmlFor="rules" className="space-y-1">
+                    <span className="font-semibold text-foreground">I agree to the marketplace rules.</span>
+                    <span className="block text-xs text-muted-foreground">
+                      No weapons, counterfeit, adult content, scams, or external payment demands.
+                    </span>
+                  </label>
+                </div>
+                {accountError ? (
+                  <p className="text-sm font-semibold text-destructive">{accountError}</p>
+                ) : null}
                 <Button type="submit" className="w-full rounded-full" size="lg">
-                  Continue
+                  Create account
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                  We use one-time links. No passwords. Your contact info stays private.
-                </p>
               </form>
             ) : null}
 
@@ -643,46 +622,26 @@ const Landing = (): JSX.Element => {
               </form>
             ) : null}
 
-            {joinStage === "handle" ? (
-              <form onSubmit={handleHandleSubmit} className="space-y-5">
+            {joinStage === "success" ? (
+              <div className="space-y-5 text-center">
                 <div className="space-y-2">
-                  <label htmlFor="username" className="text-sm font-semibold text-foreground">
-                    Username
-                  </label>
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                    placeholder="Example: airman_421"
-                    className="h-12 rounded-full"
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    3-20 characters. Letters, numbers, and underscores only. No PII.
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Account ready
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {accountIsDod
+                      ? "Your DoD email is verified. You can post and message right away."
+                      : "Browse listings immediately. Verify DoD access from your profile before posting or messaging."}
                   </p>
                 </div>
-                <div className="flex items-start gap-3 rounded-2xl border border-border bg-background/80 p-4 text-sm text-muted-foreground">
-                  <Checkbox
-                    id="rules"
-                    checked={acceptRules}
-                    onCheckedChange={(checked) => setAcceptRules(Boolean(checked))}
-                  />
-                  <label htmlFor="rules" className="space-y-1">
-                    <span className="font-semibold text-foreground">I agree to the marketplace rules.</span>
-                    <span className="block text-xs text-muted-foreground">
-                      No weapons, counterfeit, adult content, scams, or external payment demands.
-                    </span>
-                  </label>
-                </div>
                 <Button
-                  type="submit"
                   className="w-full rounded-full"
                   size="lg"
-                  disabled={isSubmitting}
+                  onClick={handleFinishSignup}
                 >
-                  {isSubmitting ? "Finishing…" : "Finish and enter BaseList"}
+                  Go to listings
                 </Button>
-              </form>
+              </div>
             ) : null}
           </div>
         </section>
