@@ -44,8 +44,11 @@ const Messages = (): JSX.Element => {
           : "Just now";
         const lastReadTimestamp = thread.lastReadAt?.[user.id];
         const unread = lastMessage
-          ? lastReadTimestamp !== lastMessage.sentAt
+          ? !lastReadTimestamp || new Date(lastReadTimestamp).getTime() < new Date(lastMessage.sentAt).getTime()
           : false;
+        const defaultComposerMessage = seller
+          ? `Hi ${seller.name.split(" ")[0]}, is this still available?`
+          : "Hi, is this still available?";
 
         return {
           thread,
@@ -55,6 +58,7 @@ const Messages = (): JSX.Element => {
           lastMessage,
           lastUpdated,
           unread,
+          defaultComposerMessage,
         };
       }),
     [listings, messageThreads, user.id],
