@@ -18,7 +18,9 @@ const Messages = (): JSX.Element => {
     () => SELLERS.find((seller) => seller.id === primaryThread?.participants[0]),
     [primaryThread?.participants],
   );
-  const lastMessage = primaryThread?.messages.at(-1);
+  const lastMessage = primaryThread
+    ? primaryThread.messages[primaryThread.messages.length - 1]
+    : undefined;
 
   return (
     <section className="space-y-6">
