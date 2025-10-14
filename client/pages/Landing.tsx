@@ -593,7 +593,12 @@ const Landing = (): JSX.Element => {
                 {accountError ? (
                   <p className="text-sm font-semibold text-destructive">{accountError}</p>
                 ) : null}
-                <Button type="submit" className="w-full rounded-full" size="lg">
+                <Button
+                  type="submit"
+                  className="w-full rounded-full"
+                  size="lg"
+                  disabled={!canSubmitAccount}
+                >
                   Create account
                 </Button>
               </form>
