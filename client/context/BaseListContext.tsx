@@ -318,20 +318,28 @@ export const BaseListProvider = ({
 
   useEffect(() => {
     if (currentAccount) {
-      setUser(buildUserProfileFromAccount(currentAccount));
+      setUser(
+        buildUserProfileFromAccount(
+          currentAccount,
+          memberDiscipline[currentAccount.id],
+        ),
+      );
       if (currentAccount.baseId !== currentBaseId) {
         setCurrentBaseIdState(currentAccount.baseId);
       }
     } else if (!isAuthenticated) {
-      setUser((prev) => ({
+      const disciplineRecord = memberDiscipline[CURRENT_USER.id];
+      setUser({
         ...CURRENT_USER,
         currentBaseId: CURRENT_USER.currentBaseId,
-      }));
+        status: disciplineRecord?.suspendedAt ? "suspended" : "active",
+        strikes: disciplineRecord?.strikes ?? 0,
+      });
       if (currentBaseId !== CURRENT_USER.currentBaseId) {
         setCurrentBaseIdState(CURRENT_USER.currentBaseId);
       }
     }
-  }, [currentAccount, currentBaseId, isAuthenticated]);
+  }, [currentAccount, currentBaseId, isAuthenticated, memberDiscipline]);
 
   const setCurrentBaseId = useCallback(
     (baseId: string) => {
