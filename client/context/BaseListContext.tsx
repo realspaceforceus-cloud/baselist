@@ -304,38 +304,37 @@ export const BaseListProvider = ({
 
   const activateAccount = useCallback(
     (accountId: string, options?: SignInOptions) => {
+      const existing = accounts.find((item) => item.id === accountId);
+      if (!existing) {
+        throw new Error("Account no longer exists.");
+      }
+
+      const rememberUntil = options?.rememberDevice
+        ? new Date(Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000).toISOString()
+        : undefined;
+      const lastLoginAt = new Date().toISOString();
+
       setAccounts((prev) =>
         prev.map((account) =>
           account.id === accountId
             ? {
                 ...account,
-                lastLoginAt: new Date().toISOString(),
-                rememberDeviceUntil: options?.rememberDevice
-                  ? new Date(
-                      Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000,
-                    ).toISOString()
-                  : undefined,
+                lastLoginAt,
+                rememberDeviceUntil: rememberUntil,
               }
             : account,
         ),
       );
 
-      const account = accounts.find((item) => item.id === accountId);
-      if (!account) {
-        throw new Error("Account no longer exists.");
-      }
-
       setActiveAccountId(accountId);
-      setCurrentBaseIdState(account.baseId);
-      setUser(buildUserProfileFromAccount({
-        ...account,
-        lastLoginAt: new Date().toISOString(),
-        rememberDeviceUntil: options?.rememberDevice
-          ? new Date(
-              Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000,
-            ).toISOString()
-          : undefined,
-      }));
+      setCurrentBaseIdState(existing.baseId);
+      setUser(
+        buildUserProfileFromAccount({
+          ...existing,
+          lastLoginAt,
+          rememberDeviceUntil: rememberUntil,
+        }),
+      );
     },
     [accounts],
   );
