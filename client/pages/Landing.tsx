@@ -112,6 +112,7 @@ const Landing = (): JSX.Element => {
   }, [accounts, pendingAccountId]);
   const pendingAccountVerified = pendingAccount?.isDodVerified ?? false;
   const pendingVerificationRequestedAt = pendingAccount?.verificationRequestedAt ?? null;
+  const pendingAccountEmail = pendingAccount?.email ?? null;
 
   const [selectedBaseId, setSelectedBaseId] = useState<string>(
     bases[0]?.id ?? "",
