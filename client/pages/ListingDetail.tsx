@@ -179,22 +179,34 @@ const ListingDetail = (): JSX.Element => {
                   {seller?.name?.[0] ?? "B"}
                 </span>
               )}
-              <div className="space-y-1">
-                <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  {seller?.name ?? "Verified member"}
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={handleViewSellerListings}
+                  className="flex items-center gap-2 text-sm font-semibold text-foreground transition hover:text-primary hover:underline"
+                >
+                  <span>{seller?.name ?? "Verified member"}</span>
+                  {seller?.rating ? (
+                    <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                      <span aria-hidden>⭐</span>
+                      {seller.rating.toFixed(1)}
+                    </span>
+                  ) : null}
                   <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
-                </p>
+                </button>
+                <p className="text-xs text-muted-foreground">Verified DoD Member</p>
                 <p className="text-xs text-muted-foreground">
                   Member since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
                 </p>
+                {sellerLastActive ? (
+                  <p className="text-xs text-muted-foreground">{sellerLastActive}</p>
+                ) : null}
               </div>
             </div>
             <div className="mt-4 space-y-2">
-              <Button asChild className="w-full rounded-full">
-                <Link to="/messages">
-                  <MessageCircle className="h-4 w-4" aria-hidden />
-                  Message seller
-                </Link>
+              <Button className="w-full rounded-full" onClick={handleOpenComposer}>
+                <MessageCircle className="h-4 w-4" aria-hidden />
+                Message seller
               </Button>
               <Button
                 variant="outline"
