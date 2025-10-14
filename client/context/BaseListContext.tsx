@@ -99,10 +99,24 @@ type BaseListAccount = {
   role: UserProfile["role"];
 };
 
+export type MemberDisciplineRecord = {
+  strikes: number;
+  suspendedAt?: string | null;
+  reason?: string | null;
+};
+
 type PasswordResetRequest = {
   token: string;
   accountId: string;
   expiresAt: string;
+};
+
+type AddNoticePayload = {
+  userId: string | "all";
+  category: AccountNoticeCategory;
+  severity?: AccountNoticeSeverity;
+  title: string;
+  message: string;
 };
 
 type CreateAccountPayload = {
