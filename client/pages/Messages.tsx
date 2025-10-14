@@ -48,41 +48,53 @@ const Messages = (): JSX.Element => {
         </Button>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <article className="flex flex-col gap-3 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <Inbox className="h-4 w-4 text-primary" aria-hidden />
-            Inbox preview
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Your inbox will surface the latest activity across listings with unread badges and quick filters for offers, pickups, and archived threads.
-          </p>
-        </article>
-        <article className="flex flex-col gap-3 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <MessageSquare className="h-4 w-4 text-primary" aria-hidden />
-            Thread snapshot
-          </div>
-          {primaryThread && threadListing && threadPartner ? (
-            <div className="rounded-2xl border border-dashed border-nav-border bg-card p-4 text-sm">
-              <div className="font-semibold text-foreground">{threadListing.title}</div>
-              <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
-                Last message {lastUpdated ? `· ${lastUpdated}` : ""}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {lastMessage?.body ?? "Thread preview"}
-              </p>
-              <p className="mt-3 text-xs text-muted-foreground">
-                With {threadPartner.name}
-              </p>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              Message threads will appear here once enabled.
-            </p>
-          )}
-        </article>
-      </div>
+      {threadSummaries.length > 0 ? (
+        <ul className="space-y-3">
+          {threadSummaries.map(({ thread, listing, seller, lastMessage, lastUpdated, unread }) => (
+            <li
+              key={thread.id}
+              className="flex items-center gap-4 rounded-3xl border border-border bg-card p-4 shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+            >
+              <div className="h-12 w-12 overflow-hidden rounded-2xl border border-border bg-muted">
+                {listing?.imageUrls?.[0] ? (
+                  <img
+                    src={listing.imageUrls[0]}
+                    alt={listing.title}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <MessageSquare className="h-full w-full p-2 text-muted-foreground" aria-hidden />
+                )}
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-foreground">
+                    {listing?.title ?? "Listing removed"}
+                  </p>
+                  {unread ? (
+                    <span className="inline-flex h-2.5 w-2.5 rounded-full bg-primary" aria-hidden />
+                  ) : null}
+                </div>
+                <p className="line-clamp-1 text-xs text-muted-foreground">
+                  {lastMessage?.body ?? "No messages yet"}
+                </p>
+                <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                  {lastUpdated}
+                  {seller ? (
+                    <>
+                      <Dot className="h-3 w-3 text-muted-foreground" aria-hidden />
+                      {seller.name}
+                    </>
+                  ) : null}
+                </p>
+              </div>
+              <Button variant="ghost" className="rounded-full px-4 text-xs" asChild>
+                <Link to={`/messages/${thread.id}`}>Open</Link>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-nav-border bg-background/70 p-10 text-center">
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
