@@ -1,5 +1,3 @@
-import { ShieldCheck } from "lucide-react";
-
 import { MessageSquare, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
