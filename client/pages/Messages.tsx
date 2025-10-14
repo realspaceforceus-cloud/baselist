@@ -130,6 +130,14 @@ const Messages = (): JSX.Element => {
     }
   }, [activeThreadId, activeMessageCount, isMobile]);
 
+  useEffect(() => {
+    if (!messagesEndRef.current) {
+      return;
+    }
+
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [activeThreadId, activeMessageCount]);
+
   const handleSelectThread = (id: string) => {
     navigate(`/messages/${id}`);
   };
