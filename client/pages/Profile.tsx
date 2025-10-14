@@ -38,6 +38,120 @@ const Profile = (): JSX.Element => {
   const userRatingFallbackAverage = user.rating ?? null;
   const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
 
+  const ratingGlyphs = [1, 2, 3, 4, 5];
+
+  const formatTransactionDate = (iso: string) =>
+    new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(iso));
+
+  const renderStars = (score?: number) => {
+    if (!score) {
+      return <span className="text-muted-foreground/70">No rating</span>;
+    }
+
+    return (
+      <span className="inline-flex items-center gap-0.5" aria-label={`${score} star rating`}>
+        {ratingGlyphs.map((value) => (
+          <StarIcon
+            key={value}
+            className={cn(
+              "h-3.5 w-3.5",
+              value <= Math.round(score)
+                ? "fill-amber-400 text-amber-400"
+                : "text-muted-foreground/30",
+            )}
+          />
+        ))}
+      </span>
+    );
+  };
+
+  const renderTransactionList = (
+    entries: TransactionHistoryEntry[],
+    role: "buyer" | "seller",
+  ) => {
+    if (entries.length === 0) {
+      return (
+        <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-xs text-muted-foreground">
+          {role === "buyer" ? "No purchases yet." : "No sales yet."}
+        </div>
+      );
+    }
+
+    return (
+      <ul className="space-y-3">
+        {entries.map((entry) => {
+          const listing = listings.find((item) => item.id === entry.listingId);
+          const partnerId = role === "buyer" ? entry.sellerId : entry.buyerId;
+          const partnerName = getMemberName(partnerId);
+          const priceLabel =
+            entry.price === null || entry.price === 0
+              ? "Free"
+              : `$${entry.price.toLocaleString("en-US")}`;
+          const completedLabel = formatTransactionDate(entry.completedAt);
+          const givenRating =
+            role === "buyer" ? entry.buyerRatingAboutSeller : entry.sellerRatingAboutBuyer;
+          const receivedRating =
+            role === "buyer" ? entry.sellerRatingAboutBuyer : entry.buyerRatingAboutSeller;
+
+          return (
+            <li key={`${entry.threadId}-${role}`}>
+              <div className="flex gap-3 rounded-3xl border border-border bg-background/80 p-4 shadow-soft">
+                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-muted">
+                  {listing?.imageUrls?.[0] ? (
+                    <img
+                      src={listing.imageUrls[0]}
+                      alt={listing.title}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                      <ShoppingBag className="h-5 w-5" aria-hidden />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {listing?.title ?? "Listing removed"}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {priceLabel} • {completedLabel}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-semibold text-foreground">
+                        {role === "buyer" ? "Seller" : "Buyer"}:
+                      </span>
+                      <span className="flex items-center gap-2 text-foreground">
+                        {partnerName}
+                        <RatingBadge userId={partnerId} size="sm" />
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <p className="flex items-center gap-2">
+                      <span className="font-semibold text-foreground">You rated</span>
+                      {renderStars(givenRating)}
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <span className="font-semibold text-foreground">They rated you</span>
+                      {renderStars(receivedRating)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
+
+  const defaultTransactionTab = purchases.length > 0 ? "purchases" : "sales";
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between md:gap-8">
