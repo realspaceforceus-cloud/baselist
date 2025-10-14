@@ -81,6 +81,46 @@ const ListingDetail = (): JSX.Element => {
         })} 🕓`
     : undefined;
 
+  const handleOpenComposer = useCallback(() => {
+    setMessageBody(defaultMessage);
+    setComposerOpen(true);
+  }, [defaultMessage]);
+
+  const handleSendMessage = useCallback(() => {
+    const trimmed = messageBody.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    sendMessageToSeller(listing.id, listing.sellerId, trimmed);
+
+    toast.success("Message sent", {
+      description: `We created a thread with ${seller?.name ?? "the seller"}.`,
+      action: {
+        label: "Open messages",
+        onClick: () => navigate("/messages"),
+      },
+    });
+
+    setComposerOpen(false);
+  }, [
+    listing.id,
+    listing.sellerId,
+    messageBody,
+    navigate,
+    sendMessageToSeller,
+    seller?.name,
+  ]);
+
+  const handleViewSellerListings = useCallback(() => {
+    if (!seller) {
+      return;
+    }
+    setCurrentBaseId(listing.baseId);
+    setSearchQuery(seller.name);
+    navigate("/");
+  }, [navigate, seller, setCurrentBaseId, setSearchQuery, listing.baseId]);
+
   return (
     <section className="space-y-6">
       <Button
