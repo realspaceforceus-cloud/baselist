@@ -79,10 +79,25 @@ export interface Message {
   amount?: number;
 }
 
+export type ThreadLifecycleStatus = "active" | "completed";
+
+export interface ThreadTransaction {
+  id: string;
+  status: "pending_confirmation" | "completed";
+  initiatedBy: string;
+  confirmedBy: string[];
+  completedAt?: string;
+  ratingByUser: Record<string, number | undefined>;
+}
+
 export interface MessageThread {
   id: string;
   listingId: string;
   participants: string[];
   messages: Message[];
   lastReadAt?: Record<string, string>;
+  status: ThreadLifecycleStatus;
+  archivedBy?: string[];
+  deletedBy?: string[];
+  transaction?: ThreadTransaction;
 }
