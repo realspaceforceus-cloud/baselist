@@ -1,6 +1,5 @@
 import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
