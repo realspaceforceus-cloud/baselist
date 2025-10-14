@@ -74,6 +74,7 @@ export const SELLERS: Seller[] = [
     avatarUrl:
       "https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=128&q=80",
     rating: 4.9,
+    ratingCount: 27,
     completedSales: 27,
     lastActiveAt: "2024-10-29T15:15:00Z",
   },
