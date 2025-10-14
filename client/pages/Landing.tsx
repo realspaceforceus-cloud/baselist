@@ -131,7 +131,7 @@ const Landing = (): JSX.Element => {
     }
 
     if (!isDodEmail(trimmedEmail)) {
-      setAccountError("Use an approved DoD email (.mil or DoD.gov) to continue.");
+      setAccountError("Use an approved DoD email (.mil or .defense.gov) to continue.");
       return;
     }
 
