@@ -267,9 +267,22 @@ export const BaseListProvider = ({
     CURRENT_USER.currentBaseId,
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [user, setUser] = useState<UserProfile>(CURRENT_USER);
-  const [accounts, setAccounts] = useState<BaseListAccount[]>([]);
-  const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
+  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => ACCOUNT_SEED);
+  const [activeAccountId, setActiveAccountId] = useState<string | null>(CURRENT_USER.id);
+  const [memberDiscipline, setMemberDiscipline] = useState<
+    Record<string, MemberDisciplineRecord>
+  >(() => ({ ...INITIAL_DISCIPLINE }));
+  const [notices, setNotices] = useState<AccountNotice[]>(() => [...INITIAL_NOTICES]);
+  const [user, setUser] = useState<UserProfile>(() => {
+    const initialAccount = ACCOUNT_SEED.find((account) => account.id === CURRENT_USER.id);
+    if (initialAccount) {
+      return buildUserProfileFromAccount(
+        initialAccount,
+        INITIAL_DISCIPLINE[initialAccount.id],
+      );
+    }
+    return CURRENT_USER;
+  });
   const [pendingPasswordReset, setPendingPasswordReset] =
     useState<PasswordResetRequest | null>(null);
   const [listings, setListings] = useState<Listing[]>(() => {
