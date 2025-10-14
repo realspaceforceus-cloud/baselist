@@ -820,11 +820,15 @@ export const BaseListProvider = ({
       }
 
       const trimmedMessage = messageBody.trim();
-      if (!trimmedMessage) {
-        throw new Error("Message body cannot be empty");
-      }
+    if (!trimmedMessage) {
+      throw new Error("Message body cannot be empty");
+    }
 
-      const timestamp = new Date().toISOString();
+    const normalizedMessage = trimmedMessage.toLowerCase();
+    const shouldInitiateTransaction =
+      normalizedMessage === "offer accepted" || normalizedMessage === "mark sold";
+
+    const timestamp = new Date().toISOString();
       const newMessage: Message = {
         id: `msg-${crypto.randomUUID()}`,
         authorId: user.id,
@@ -882,13 +886,23 @@ export const BaseListProvider = ({
         return [freshThread, ...prev];
       });
 
+      if (shouldInitiateTransaction && targetThread) {
+        initiateTransaction(targetThread.id, user.id);
+      }
+
       if (shouldScheduleReply && targetThread) {
         scheduleSimulatedReply(targetThread, sellerId);
       }
 
       return targetThread!;
     },
-    [isAuthenticated, isDodVerified, scheduleSimulatedReply, user.id],
+    [
+      initiateTransaction,
+      isAuthenticated,
+      isDodVerified,
+      scheduleSimulatedReply,
+      user.id,
+    ],
   );
 
   const markThreadAsRead = useCallback(
