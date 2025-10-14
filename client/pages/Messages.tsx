@@ -1,25 +1,29 @@
 import { Inbox, MessageSquare, MessageSquarePlus } from "lucide-react";
-import { useMemo } from "react";
+import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
-import { MESSAGE_THREADS, SELLERS } from "@/data/mock";
+import { SELLERS } from "@/data/mock";
 
 const Messages = (): JSX.Element => {
-  const { listings } = useBaseList();
+  const { listings, messageThreads, user } = useBaseList();
 
-  const primaryThread = useMemo(() => MESSAGE_THREADS[0], []);
-  const threadListing = useMemo(
-    () => listings.find((item) => item.id === primaryThread?.listingId),
-    [listings, primaryThread?.listingId],
-  );
-  const threadPartner = useMemo(
-    () => SELLERS.find((seller) => seller.id === primaryThread?.participants[0]),
-    [primaryThread?.participants],
-  );
+  const primaryThread = messageThreads[0];
+  const threadListing = primaryThread
+    ? listings.find((item) => item.id === primaryThread.listingId)
+    : undefined;
+  const partnerId = primaryThread
+    ? primaryThread.participants.find((participant) => participant !== user.id)
+    : undefined;
+  const threadPartner = partnerId
+    ? SELLERS.find((seller) => seller.id === partnerId)
+    : undefined;
   const lastMessage = primaryThread
     ? primaryThread.messages[primaryThread.messages.length - 1]
+    : undefined;
+  const lastUpdated = lastMessage
+    ? formatDistanceToNow(new Date(lastMessage.sentAt), { addSuffix: true })
     : undefined;
 
   return (
@@ -54,17 +58,17 @@ const Messages = (): JSX.Element => {
             <MessageSquare className="h-4 w-4 text-primary" aria-hidden />
             Thread snapshot
           </div>
-          {primaryThread && threadListing ? (
+          {primaryThread && threadListing && threadPartner ? (
             <div className="rounded-2xl border border-dashed border-nav-border bg-card p-4 text-sm">
               <div className="font-semibold text-foreground">{threadListing.title}</div>
               <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
-                Last message
+                Last message {lastUpdated ? `· ${lastUpdated}` : ""}
               </p>
               <p className="text-sm text-muted-foreground">
                 {lastMessage?.body ?? "Thread preview"}
               </p>
               <p className="mt-3 text-xs text-muted-foreground">
-                With {threadPartner?.name ?? "verified member"}
+                With {threadPartner.name}
               </p>
             </div>
           ) : (
@@ -80,9 +84,15 @@ const Messages = (): JSX.Element => {
           <MessageSquare className="h-6 w-6" aria-hidden />
         </span>
         <div className="space-y-1">
-          <h2 className="text-xl font-semibold text-foreground">No messages yet. Find something you like.</h2>
+          <h2 className="text-xl font-semibold text-foreground">
+            {messageThreads.length > 0
+              ? "Keep conversations moving."
+              : "No messages yet. Find something you like."}
+          </h2>
           <p className="text-sm text-muted-foreground">
-            Start a conversation from any listing to see the full inbox and thread experience.
+            {messageThreads.length > 0
+              ? "Tap a thread to coordinate pickup details or send a quick offer."
+              : "Start a conversation from any listing to see the full inbox and thread experience."}
           </p>
         </div>
         <Button asChild className="rounded-full px-6">
