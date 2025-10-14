@@ -188,6 +188,7 @@ export const BaseListProvider = ({
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(
     () => [...MESSAGE_THREAD_SEED],
   );
+  const [transactions, setTransactions] = useState<TransactionHistoryEntry[]>([]);
   const navigate = useNavigate();
   const knownMessageIdsRef = useRef<Set<string>>(
     new Set(
