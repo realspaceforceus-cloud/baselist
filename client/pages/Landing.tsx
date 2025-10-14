@@ -595,19 +595,7 @@ const Landing = (): JSX.Element => {
                     Don’t see your base? We’re constantly expanding.
                   </p>
                   {showExpansionForm ? (
-                    <form
-                      className="flex flex-col gap-3 md:flex-row"
-                      onSubmit={(event) => {
-                        event.preventDefault();
-                        if (!EMAIL_PATTERN.test(expansionEmail.trim())) {
-                          toast.error("Enter a valid email to stay informed.");
-                          return;
-                        }
-                        toast.success("Thanks! We’ll notify you as new bases launch.");
-                        setExpansionEmail("");
-                        setShowExpansionForm(false);
-                      }}
-                    >
+                    <div className="flex flex-col gap-3 md:flex-row">
                       <Input
                         type="email"
                         value={expansionEmail}
@@ -616,10 +604,15 @@ const Landing = (): JSX.Element => {
                         className="h-10 rounded-full"
                         required
                       />
-                      <Button type="submit" className="rounded-full px-5" size="sm">
+                      <Button
+                        type="button"
+                        className="rounded-full px-5"
+                        size="sm"
+                        onClick={handleExpansionSubmit}
+                      >
                         Notify me
                       </Button>
-                    </form>
+                    </div>
                   ) : (
                     <button
                       type="button"
