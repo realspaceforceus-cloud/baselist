@@ -29,12 +29,7 @@ export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element 
   });
 
   const priceLabel = formatPrice(listing.price, listing.isFree);
-  const promotedLabel =
-    listing.promoted === "feature"
-      ? "Featured"
-      : listing.promoted === "bump"
-        ? "Bumped"
-        : null;
+  const promotedLabel = listing.promoted === "feature" ? "Featured" : null;
 
   const firstImage = listing.imageUrls[0];
 
