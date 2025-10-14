@@ -710,7 +710,65 @@ const Messages = (): JSX.Element => {
                   </div>
                 ) : null}
 
-                <div className="flex-1 space-y-3 overflow-y-auto px-6 py-5">
+                <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
+                  {activeTransaction?.status === "completed" ? (
+                    userRatingValue ? (
+                      <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 shadow-inner">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="font-semibold">
+                            You rated {activeSummary.partnerName} {userRatingValue} out of 5.
+                          </p>
+                          <span className="inline-flex items-center gap-0.5" aria-hidden>
+                            {ratingOptions.map((value) => (
+                              <Star
+                                key={value}
+                                className={cn(
+                                  "h-4 w-4",
+                                  value <= userRatingValue
+                                    ? "fill-emerald-500 text-emerald-500"
+                                    : "text-emerald-200",
+                                )}
+                              />
+                            ))}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 shadow-inner">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="font-semibold">
+                            How was your experience with {activeSummary.partnerName}?
+                          </p>
+                          <div className="flex items-center gap-1">
+                            {ratingOptions.map((value) => {
+                              const highlighted =
+                                hoveredRating !== null ? value <= hoveredRating : false;
+                              return (
+                                <button
+                                  key={value}
+                                  type="button"
+                                  onMouseEnter={() => setHoveredRating(value)}
+                                  onMouseLeave={() => setHoveredRating(null)}
+                                  onClick={() => handleRatingClick(value)}
+                                  className="rounded-full p-1 outline-none transition hover:bg-emerald-100 focus-visible:ring-2 focus-visible:ring-emerald-300"
+                                  aria-label={`Rate ${value} star${value === 1 ? "" : "s"}`}
+                                >
+                                  <Star
+                                    className={cn(
+                                      "h-4 w-4",
+                                      highlighted ? "fill-emerald-500 text-emerald-500" : "text-emerald-300",
+                                    )}
+                                    aria-hidden
+                                  />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  ) : null}
+
                   {activeSummary.thread.messages.length === 0 ? (
                     <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                       No messages yet. Send the first note.
