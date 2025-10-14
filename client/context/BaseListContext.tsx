@@ -1145,6 +1145,82 @@ export const BaseListProvider = ({
     }, 0);
   }, [isAuthenticated, messageThreads, user.id]);
 
+  const ratingSummaries = useMemo(() => {
+    type Totals = {
+      sellerTotal: number;
+      sellerCount: number;
+      buyerTotal: number;
+      buyerCount: number;
+    };
+
+    const totalsMap = new Map<string, Totals>();
+
+    const ensureTotals = (id: string): Totals => {
+      if (!totalsMap.has(id)) {
+        totalsMap.set(id, { sellerTotal: 0, sellerCount: 0, buyerTotal: 0, buyerCount: 0 });
+      }
+      return totalsMap.get(id)!;
+    };
+
+    SELLERS.forEach((seller) => {
+      if (seller.rating && seller.ratingCount) {
+        const entry = ensureTotals(seller.id);
+        entry.sellerTotal += seller.rating * seller.ratingCount;
+        entry.sellerCount += seller.ratingCount;
+      }
+    });
+
+    transactions.forEach((transaction) => {
+      if (typeof transaction.buyerRatingAboutSeller === "number") {
+        const sellerTotals = ensureTotals(transaction.sellerId);
+        sellerTotals.sellerTotal += transaction.buyerRatingAboutSeller;
+        sellerTotals.sellerCount += 1;
+      }
+
+      if (typeof transaction.sellerRatingAboutBuyer === "number") {
+        const buyerTotals = ensureTotals(transaction.buyerId);
+        buyerTotals.buyerTotal += transaction.sellerRatingAboutBuyer;
+        buyerTotals.buyerCount += 1;
+      }
+    });
+
+    const summaryMap = new Map<string, RatingSummary>();
+
+    totalsMap.forEach((value, key) => {
+      const overallTotal = value.sellerTotal + value.buyerTotal;
+      const overallCount = value.sellerCount + value.buyerCount;
+
+      summaryMap.set(key, {
+        overallAverage: overallCount ? overallTotal / overallCount : null,
+        overallCount,
+        sellerAverage: value.sellerCount ? value.sellerTotal / value.sellerCount : null,
+        sellerCount: value.sellerCount,
+        buyerAverage: value.buyerCount ? value.buyerTotal / value.buyerCount : null,
+        buyerCount: value.buyerCount,
+      });
+    });
+
+    return summaryMap;
+  }, [transactions]);
+
+  const getUserRatingSummary = useCallback(
+    (userId: string): RatingSummary => {
+      const summary = ratingSummaries.get(userId);
+      if (summary) {
+        return summary;
+      }
+      return {
+        overallAverage: null,
+        overallCount: 0,
+        sellerAverage: null,
+        sellerCount: 0,
+        buyerAverage: null,
+        buyerCount: 0,
+      };
+    },
+    [ratingSummaries],
+  );
+
   useEffect(() => {
     const currentIds = new Set<string>();
     const newIncoming: Array<{ thread: MessageThread; message: Message }> = [];
