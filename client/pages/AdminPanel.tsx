@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import {
+  BadgeCheck,
   BarChart3,
   Building2,
   Gauge,
   LockKeyhole,
   MessageSquareWarning,
+  PackageSearch,
   ShieldAlert,
-  UserCheck,
-  UserCog,
+  ShieldCheck,
   Users2,
 } from "lucide-react";
 
@@ -29,13 +30,13 @@ import { useBaseList } from "@/context/BaseListContext";
 const sections: AdminNavItem[] = [
   { id: "dashboard", label: "Dashboard", icon: Gauge },
   { id: "users", label: "Users", icon: Users2 },
-  { id: "listings", label: "Listings", icon: UserCheck },
+  { id: "listings", label: "Listings", icon: PackageSearch },
   { id: "reports", label: "Reports", icon: ShieldAlert },
-  { id: "verification", label: "Verification", icon: UserCog },
+  { id: "verification", label: "Verification", icon: BadgeCheck },
   { id: "bases", label: "Bases", icon: Building2 },
   { id: "messaging", label: "Messaging", icon: MessageSquareWarning },
   { id: "metrics", label: "Metrics", icon: BarChart3 },
-  { id: "roles", label: "Roles", icon: UserCog },
+  { id: "roles", label: "Roles", icon: ShieldCheck },
   { id: "security", label: "Security", icon: LockKeyhole },
 ];
 
