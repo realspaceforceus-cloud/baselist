@@ -43,7 +43,7 @@ const buildUserProfileFromAccount = (
   completedSales: undefined,
   lastActiveAt: account.lastLoginAt ?? account.createdAt,
   currentBaseId: account.baseId,
-  verificationStatus: account.isDodVerified ? "Verified" : "Pending",
+  verificationStatus: account.isDodVerified ? "Verified" : "Pending verification",
   role: "member",
 });
 
