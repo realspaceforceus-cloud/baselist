@@ -23,6 +23,9 @@ export const Header = (): JSX.Element => {
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
   const displayName = user.name.includes(" ") ? user.name.split(" ")[0] : user.name;
+  const userRatingSummary = getUserRatingSummary(user.id);
+  const userRatingFallbackAverage = user.rating ?? null;
+  const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
 
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
