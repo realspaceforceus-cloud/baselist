@@ -19,7 +19,7 @@ const loginSchema = z.object({
   identifier: z.string().trim().min(3),
   password: z.string().min(8),
   rememberDevice: z.boolean().optional(),
-  deviceId: z.string().trim().min(6).default(() => crypto.randomUUID()),
+  deviceId: z.string().trim().min(6).default(() => randomUUID()),
 });
 
 const refreshSchema = z.object({
