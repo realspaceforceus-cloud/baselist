@@ -188,7 +188,8 @@ const Post = (): JSX.Element => {
       });
     } catch (error) {
       toast.error("Unable to publish listing", {
-        description: "Check your files and try again.",
+        description:
+          error instanceof Error ? error.message : "Check your files and try again.",
       });
     } finally {
       setIsSubmitting(false);
