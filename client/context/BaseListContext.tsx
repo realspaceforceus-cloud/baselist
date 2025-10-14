@@ -402,6 +402,7 @@ export const BaseListProvider = ({
       signOut,
       unreadMessageCount,
       user,
+      isAuthenticated,
     ],
   );
 
