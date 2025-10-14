@@ -80,6 +80,39 @@ const Landing = (): JSX.Element => {
   const [accountError, setAccountError] = useState<string | null>(null);
   const [pendingAccountId, setPendingAccountId] = useState<string | null>(null);
 
+  const trimmedUsername = accountForm.username.trim();
+  const normalizedUsername = trimmedUsername.toLowerCase();
+  const normalizedEmail = accountForm.email.trim().toLowerCase();
+  const trimmedPassword = accountForm.password.trim();
+
+  const usernameValid = trimmedUsername.length > 0 && USERNAME_PATTERN.test(trimmedUsername);
+  const usernameTaken = usernameValid
+    ? accounts.some((account) => account.username.toLowerCase() === normalizedUsername)
+    : false;
+  const usernamePositive = usernameValid && !usernameTaken;
+
+  const emailFormatValid = normalizedEmail.length > 0 && EMAIL_PATTERN.test(normalizedEmail);
+  const emailDod = emailFormatValid && isDodEmail(normalizedEmail);
+  const emailTaken = emailFormatValid
+    ? accounts.some((account) => account.email.toLowerCase() === normalizedEmail)
+    : false;
+  const emailPositive = emailDod && !emailTaken;
+
+  const passwordStrong = trimmedPassword.length >= PASSWORD_MIN_LENGTH;
+  const passwordPositive = trimmedPassword.length > 0 && passwordStrong;
+
+  const canSubmitAccount =
+    usernamePositive && emailPositive && passwordStrong && accountForm.agreeRules;
+
+  const pendingAccount = useMemo(() => {
+    if (!pendingAccountId) {
+      return null;
+    }
+    return accounts.find((account) => account.id === pendingAccountId) ?? null;
+  }, [accounts, pendingAccountId]);
+  const pendingAccountVerified = pendingAccount?.isDodVerified ?? false;
+  const pendingVerificationRequestedAt = pendingAccount?.verificationRequestedAt ?? null;
+
   const [selectedBaseId, setSelectedBaseId] = useState<string>(
     bases[0]?.id ?? "",
   );
