@@ -98,6 +98,10 @@ export const BaseListProvider = ({
   const sendMessageToSeller = useCallback(
     (listingId: string, sellerId: string, messageBody: string) => {
       const trimmedMessage = messageBody.trim();
+      if (!trimmedMessage) {
+        throw new Error("Message body cannot be empty");
+      }
+
       const timestamp = new Date().toISOString();
       const newMessage: Message = {
         id: `msg-${crypto.randomUUID()}`,
@@ -110,12 +114,13 @@ export const BaseListProvider = ({
       let targetThread: MessageThread | undefined;
 
       setMessageThreads((prev) => {
-        const existingThread = prev.find(
+        const existingIndex = prev.findIndex(
           (thread) => thread.listingId === listingId,
         );
 
-        if (existingThread) {
-          targetThread = {
+        if (existingIndex !== -1) {
+          const existingThread = prev[existingIndex];
+          const updatedThread: MessageThread = {
             ...existingThread,
             messages: [...existingThread.messages, newMessage],
             lastReadAt: {
@@ -124,9 +129,10 @@ export const BaseListProvider = ({
             },
           };
 
-          return prev.map((thread) =>
-            thread.id === existingThread.id ? (targetThread as MessageThread) : thread,
-          );
+          targetThread = updatedThread;
+
+          const remaining = prev.filter((_, index) => index !== existingIndex);
+          return [updatedThread, ...remaining];
         }
 
         const freshThread: MessageThread = {
