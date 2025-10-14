@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { House, MessageSquare, PlusCircle, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
+import { useBaseList } from "@/context/BaseListContext";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
