@@ -134,6 +134,7 @@ type BaseListContextValue = {
   completePasswordReset: (token: string, newPassword: string) => void;
   cancelPasswordReset: () => void;
   beginVerification: (method: "email" | "invite" | "manual") => void;
+  completeDodVerification: (accountId: string) => void;
   signOut: () => void;
   listings: Listing[];
   addListing: (listing: Listing) => void;
