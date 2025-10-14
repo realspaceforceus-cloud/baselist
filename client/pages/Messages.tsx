@@ -653,7 +653,56 @@ const Messages = (): JSX.Element => {
                   ) : null}
                 </div>
 
-                {activeSummary.listing?.status === "sold" ? (
+                {activeTransaction ? (
+                  <div
+                    className={cn(
+                      "border-b px-6 py-3 text-xs",
+                      activeTransaction.status === "completed"
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : "border-blue-200 bg-blue-50 text-blue-700",
+                    )}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        {activeTransaction.status === "completed" ? (
+                          <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        ) : (
+                          <Clock3 className="h-4 w-4" aria-hidden />
+                        )}
+                        <span className="text-[0.65rem] font-semibold uppercase tracking-wide">
+                          {activeTransaction.status === "completed"
+                            ? "Transaction completed"
+                            : "Awaiting confirmation"}
+                        </span>
+                      </div>
+                      {activeTransaction.status === "pending_confirmation" ? (
+                        awaitingUserConfirmation ? (
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="rounded-full px-3 py-1 text-xs"
+                            onClick={handleConfirmCompletion}
+                          >
+                            Confirm
+                          </Button>
+                        ) : partnerNeedsConfirmation ? (
+                          <span className="text-[0.65rem] font-medium uppercase tracking-wide">
+                            Waiting for {activeSummary.partnerName}
+                          </span>
+                        ) : null
+                      ) : completedAtLabel ? (
+                        <span className="text-[0.65rem] font-medium uppercase tracking-wide">
+                          Completed {completedAtLabel}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="mt-2 text-[0.7rem]">
+                      {activeTransaction.status === "pending_confirmation"
+                        ? `This transaction has been marked complete by ${getMemberName(activeTransaction.initiatedBy)}. Confirm to lock it in.`
+                        : "Listing marked sold and history updated."}
+                    </p>
+                  </div>
+                ) : activeSummary.listing?.status === "sold" ? (
                   <div className="border-b border-border bg-muted/40 px-6 py-3 text-xs text-muted-foreground">
                     This item is marked sold. You can still view the conversation.
                   </div>
