@@ -51,7 +51,24 @@ export const Header = (): JSX.Element => {
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {isDodVerified ? "Verified" : user.verificationStatus}
               </span>
-              <span className="text-sm font-semibold text-foreground">{displayName}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-foreground">{displayName}</span>
+                <RatingBadge
+                  userId={user.id}
+                  size="sm"
+                  initialAverage={
+                    userRatingSummary.overallCount > 0
+                      ? userRatingSummary.overallAverage
+                      : userRatingFallbackAverage
+                  }
+                  initialCount={
+                    userRatingSummary.overallCount > 0
+                      ? userRatingSummary.overallCount
+                      : userRatingFallbackCount
+                  }
+                  label={`${user.name} rating`}
+                />
+              </div>
             </div>
             <BaseSelector />
             <SearchInput />
