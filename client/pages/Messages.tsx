@@ -81,18 +81,23 @@ const Messages = (): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
-  const threadSummaries = useMemo(
-    () =>
-      messageThreads.map((thread) => {
+  const threadSummaries = useMemo<ThreadSummary[]>(() => {
+    return messageThreads
+      .map((thread) => {
+        if (thread.deletedBy?.includes(user.id)) {
+          return null;
+        }
+
         const listing = listings.find((item) => item.id === thread.listingId);
-        const partnerId = thread.participants.find(
-          (participant) => participant !== user.id,
-        );
-        const seller = partnerId
+        const partnerId = thread.participants.find((participant) => participant !== user.id);
+        const seller = listing
+          ? SELLERS.find((candidate) => candidate.id === listing.sellerId)
+          : partnerId
           ? SELLERS.find((candidate) => candidate.id === partnerId)
           : undefined;
-        const lastMessage =
-          thread.messages[thread.messages.length - 1] ?? undefined;
+        const partnerName = partnerId ? getMemberName(partnerId) : "Member";
+
+        const lastMessage = thread.messages[thread.messages.length - 1] ?? undefined;
         const lastUpdated = lastMessage
           ? formatDistanceToNow(new Date(lastMessage.sentAt), {
               addSuffix: true,
@@ -100,25 +105,51 @@ const Messages = (): JSX.Element => {
           : "Just now";
         const lastReadTimestamp = thread.lastReadAt?.[user.id];
         const unread = lastMessage
-          ? !lastReadTimestamp || new Date(lastReadTimestamp).getTime() < new Date(lastMessage.sentAt).getTime()
+          ? !lastReadTimestamp ||
+            new Date(lastReadTimestamp).getTime() < new Date(lastMessage.sentAt).getTime()
           : false;
         const defaultComposerMessage = seller
           ? `Hi ${seller.name.split(" ")[0]}, is this still available?`
           : "Hi, is this still available?";
+
+        const isArchived = thread.archivedBy?.includes(user.id) ?? false;
+        const isCompleted = thread.status === "completed";
+        const userStatus: ThreadSummaryStatus = isArchived
+          ? "archived"
+          : isCompleted
+          ? "completed"
+          : "active";
+
+        const transaction = thread.transaction;
+        const awaitingUserConfirmation = Boolean(
+          transaction?.status === "pending_confirmation" &&
+            !(transaction.confirmedBy ?? []).includes(user.id),
+        );
+        const ratingSubmitted = Boolean(
+          transaction?.status === "completed" &&
+            transaction.ratingByUser?.[user.id] !== undefined,
+        );
 
         return {
           thread,
           listing,
           seller,
           partnerId,
+          partnerName,
           lastMessage,
           lastUpdated,
           unread,
           defaultComposerMessage,
+          userStatus,
+          isArchived,
+          isCompleted,
+          transaction,
+          awaitingUserConfirmation,
+          ratingSubmitted,
         };
-      }),
-    [listings, messageThreads, user.id],
-  );
+      })
+      .filter((summary): summary is ThreadSummary => summary !== null);
+  }, [getMemberName, listings, messageThreads, user.id]);
 
   useEffect(() => {
     if (!threadSummaries.length) {
