@@ -13,7 +13,7 @@ const LOGO_SRC =
   "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2F9f8d10811f0e4d94a520d1b0b4d411e2?format=webp&width=320";
 
 export const Header = (): JSX.Element => {
-  const { user, isDodVerified, unreadMessageCount, isAuthenticated, signOut } =
+  const { user, isDodVerified, unreadMessageCount, isAuthenticated } =
     useBaseList();
   const { openSignIn } = useAuthDialog();
   const displayName = user.name.includes(" ") ? user.name.split(" ")[0] : user.name;
