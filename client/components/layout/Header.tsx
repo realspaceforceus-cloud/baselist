@@ -1,4 +1,4 @@
-import { MessageSquare, ShieldCheck } from "lucide-react";
+import { Gauge, MessageSquare, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { BaseSelector } from "@/components/layout/BaseSelector";
