@@ -96,6 +96,7 @@ type BaseListAccount = {
   avatarUrl: string;
   verificationToken: string | null;
   verificationRequestedAt: string | null;
+  role: UserProfile["role"];
 };
 
 type PasswordResetRequest = {
