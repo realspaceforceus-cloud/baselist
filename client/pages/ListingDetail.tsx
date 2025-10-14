@@ -32,6 +32,11 @@ const ListingDetail = (): JSX.Element => {
     [listing?.sellerId],
   );
 
+  const listingBase = useMemo(
+    () => bases.find((base) => base.id === listing?.baseId),
+    [bases, listing?.baseId],
+  );
+
   if (!listing) {
     return (
       <section className="space-y-4">
