@@ -25,6 +25,88 @@ import type {
   UserProfile,
 } from "@/types";
 
+const PASSWORD_MIN_LENGTH = 12;
+const REMEMBER_DEVICE_DAYS = 30;
+
+const buildAvatarUrl = (seed: string) =>
+  `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear&fontWeight=700`;
+
+const buildUserProfileFromAccount = (
+  account: BaseListAccount,
+): UserProfile => ({
+  id: account.id,
+  name: account.username,
+  verified: account.isDodVerified,
+  memberSince: account.createdAt,
+  avatarUrl: account.avatarUrl,
+  rating: undefined,
+  completedSales: undefined,
+  lastActiveAt: account.lastLoginAt ?? account.createdAt,
+  currentBaseId: account.baseId,
+  verificationStatus: account.isDodVerified ? "Verified" : "Pending",
+  role: "member",
+});
+
+const EMAIL_PATTERN = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+export const ALLOWED_DOD_DOMAINS = [
+  ".mil",
+  ".defense.gov",
+  ".disa.mil",
+  ".dia.mil",
+  ".dla.mil",
+  ".dcma.mil",
+  ".js.mil",
+  ".osd.mil",
+  ".ng.mil",
+  ".spaceforce.mil",
+  ".usmc.mil",
+  ".army.mil",
+  ".af.mil",
+  ".navy.mil",
+  ".uscg.mil",
+  ".va.gov",
+  ".us.af.mil",
+] as const;
+
+const isDodEmail = (email: string): boolean => {
+  const trimmed = email.trim().toLowerCase();
+  if (!EMAIL_PATTERN.test(trimmed)) {
+    return false;
+  }
+  return ALLOWED_DOD_DOMAINS.some((domain) => trimmed.endsWith(domain));
+};
+
+type BaseListAccount = {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  isDodVerified: boolean;
+  baseId: string;
+  createdAt: string;
+  lastLoginAt?: string;
+  rememberDeviceUntil?: string;
+  avatarUrl: string;
+};
+
+type PasswordResetRequest = {
+  token: string;
+  accountId: string;
+  expiresAt: string;
+};
+
+type CreateAccountPayload = {
+  username: string;
+  email: string;
+  password: string;
+  baseId: string;
+};
+
+type SignInOptions = {
+  rememberDevice?: boolean;
+};
+
 type BaseListContextValue = {
   bases: Base[];
   currentBaseId: string;
@@ -35,10 +117,21 @@ type BaseListContextValue = {
   clearSearch: () => void;
   user: UserProfile;
   isAuthenticated: boolean;
-  signIn: () => void;
-  signOut: () => void;
-  isVerified: boolean;
+  isDodVerified: boolean;
   isModerator: boolean;
+  accounts: BaseListAccount[];
+  currentAccount: BaseListAccount | null;
+  createAccount: (payload: CreateAccountPayload) => BaseListAccount;
+  activateAccount: (accountId: string, options?: SignInOptions) => void;
+  signInWithPassword: (
+    identifier: string,
+    password: string,
+    options?: SignInOptions,
+  ) => void;
+  requestPasswordReset: (email: string) => string | null;
+  completePasswordReset: (token: string, newPassword: string) => void;
+  cancelPasswordReset: () => void;
+  signOut: () => void;
   listings: Listing[];
   addListing: (listing: Listing) => void;
   markListingSold: (listingId: string) => void;
@@ -51,6 +144,7 @@ type BaseListContextValue = {
   ) => MessageThread;
   markThreadAsRead: (threadId: string) => void;
   unreadMessageCount: number;
+  pendingPasswordReset?: PasswordResetRequest | null;
 };
 
 const BaseListContext = createContext<BaseListContextValue | undefined>(
@@ -67,7 +161,10 @@ export const BaseListProvider = ({
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [user, setUser] = useState<UserProfile>(CURRENT_USER);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [accounts, setAccounts] = useState<BaseListAccount[]>([]);
+  const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
+  const [pendingPasswordReset, setPendingPasswordReset] =
+    useState<PasswordResetRequest | null>(null);
   const [listings, setListings] = useState<Listing[]>(() => {
     return [...LISTING_SEED].sort(
       (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
@@ -88,30 +185,260 @@ export const BaseListProvider = ({
     Map<string, ReturnType<typeof setTimeout>>
   >(new Map());
 
-  const setCurrentBaseId = useCallback((baseId: string) => {
-    setCurrentBaseIdState(baseId);
-    setUser((prev) => ({ ...prev, currentBaseId: baseId }));
-  }, []);
+  const isAuthenticated = activeAccountId !== null;
+  const currentAccount = useMemo(
+    () => accounts.find((account) => account.id === activeAccountId) ?? null,
+    [accounts, activeAccountId],
+  );
+  const isDodVerified = currentAccount?.isDodVerified ?? false;
 
-  const signIn = useCallback(() => {
-    setIsAuthenticated(true);
-  }, []);
-
-  const signOut = useCallback(() => {
-    setIsAuthenticated(false);
-  }, []);
+  const setCurrentBaseId = useCallback(
+    (baseId: string) => {
+      setCurrentBaseIdState(baseId);
+      setUser((prev) => ({ ...prev, currentBaseId: baseId }));
+      setAccounts((prev) =>
+        prev.map((account) =>
+          account.id === activeAccountId
+            ? {
+                ...account,
+                baseId,
+              }
+            : account,
+        ),
+      );
+    },
+    [activeAccountId],
+  );
 
   const clearSearch = useCallback(() => setSearchQuery(""), []);
 
-  const addListing = useCallback((listing: Listing) => {
-    setListings((prev) => {
-      const next = [listing, ...prev];
-      next.sort(
-        (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
+  const ensureUniqueAccount = useCallback(
+    (username: string, email: string) => {
+      const normalizedUsername = username.trim().toLowerCase();
+      const normalizedEmail = email.trim().toLowerCase();
+
+      const usernameTaken = accounts.some(
+        (account) => account.username.toLowerCase() === normalizedUsername,
       );
-      return next;
-    });
+      if (usernameTaken) {
+        throw new Error("That username is already taken. Try another.");
+      }
+
+      const emailTaken = accounts.some(
+        (account) => account.email.toLowerCase() === normalizedEmail,
+      );
+      if (emailTaken) {
+        throw new Error("An account already exists with that email.");
+      }
+    },
+    [accounts],
+  );
+
+  const createAccount = useCallback(
+    ({ username, email, password, baseId }: CreateAccountPayload) => {
+      const trimmedUsername = username.trim();
+      const trimmedEmail = email.trim().toLowerCase();
+      const trimmedPassword = password.trim();
+
+      if (!trimmedUsername || !trimmedEmail || !trimmedPassword) {
+        throw new Error("Fill in all required fields.");
+      }
+
+      if (!USERNAME_PATTERN.test(trimmedUsername)) {
+        throw new Error(
+          "Username must be 3-20 characters using letters, numbers, or underscores.",
+        );
+      }
+
+      if (!EMAIL_PATTERN.test(trimmedEmail)) {
+        throw new Error("Enter a valid email address.");
+      }
+
+      if (trimmedPassword.length < PASSWORD_MIN_LENGTH) {
+        throw new Error("Passwords must be at least 12 characters long.");
+      }
+
+      ensureUniqueAccount(trimmedUsername, trimmedEmail);
+
+      const newAccount: BaseListAccount = {
+        id: `acct-${crypto.randomUUID()}`,
+        username: trimmedUsername,
+        email: trimmedEmail,
+        password: trimmedPassword,
+        isDodVerified: isDodEmail(trimmedEmail),
+        baseId,
+        createdAt: new Date().toISOString(),
+        avatarUrl: buildAvatarUrl(trimmedUsername),
+      };
+
+      setAccounts((prev) => [newAccount, ...prev]);
+
+      if (newAccount.isDodVerified) {
+        toast.success("DoD email detected", {
+          description: "We marked your account as verified automatically.",
+        });
+      }
+
+      return newAccount;
+    },
+    [ensureUniqueAccount],
+  );
+
+  const activateAccount = useCallback(
+    (accountId: string, options?: SignInOptions) => {
+      setAccounts((prev) =>
+        prev.map((account) =>
+          account.id === accountId
+            ? {
+                ...account,
+                lastLoginAt: new Date().toISOString(),
+                rememberDeviceUntil: options?.rememberDevice
+                  ? new Date(
+                      Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000,
+                    ).toISOString()
+                  : undefined,
+              }
+            : account,
+        ),
+      );
+
+      const account = accounts.find((item) => item.id === accountId);
+      if (!account) {
+        throw new Error("Account no longer exists.");
+      }
+
+      setActiveAccountId(accountId);
+      setCurrentBaseIdState(account.baseId);
+      setUser(buildUserProfileFromAccount({
+        ...account,
+        lastLoginAt: new Date().toISOString(),
+        rememberDeviceUntil: options?.rememberDevice
+          ? new Date(
+              Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000,
+            ).toISOString()
+          : undefined,
+      }));
+    },
+    [accounts],
+  );
+
+  const signInWithPassword = useCallback(
+    (identifier: string, password: string, options?: SignInOptions) => {
+      const normalized = identifier.trim().toLowerCase();
+      const account = accounts.find((candidate) => {
+        return (
+          candidate.username.toLowerCase() === normalized ||
+          candidate.email.toLowerCase() === normalized
+        );
+      });
+
+      if (!account) {
+        throw new Error("We couldn’t find an account with those details.");
+      }
+
+      if (account.password !== password) {
+        throw new Error("Incorrect password. Try again.");
+      }
+
+      activateAccount(account.id, options);
+      toast.success("Welcome back", {
+        description: options?.rememberDevice
+          ? "You’re signed in. We’ll remember this device for 30 days."
+          : "You’re signed in. We’ll keep you active for this session.",
+      });
+    },
+    [accounts, activateAccount],
+  );
+
+  const cancelPasswordReset = useCallback(() => {
+    setPendingPasswordReset(null);
   }, []);
+
+  const requestPasswordReset = useCallback(
+    (email: string) => {
+      const normalized = email.trim().toLowerCase();
+      const account = accounts.find(
+        (candidate) => candidate.email.toLowerCase() === normalized,
+      );
+
+      if (!account) {
+        return null;
+      }
+
+      const token = `reset-${crypto.randomUUID()}`;
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+
+      setPendingPasswordReset({
+        token,
+        accountId: account.id,
+        expiresAt,
+      });
+
+      return token;
+    },
+    [accounts],
+  );
+
+  const completePasswordReset = useCallback(
+    (token: string, newPassword: string) => {
+      if (!pendingPasswordReset || pendingPasswordReset.token !== token) {
+        throw new Error("Reset link has expired or is invalid.");
+      }
+
+      if (newPassword.trim().length < PASSWORD_MIN_LENGTH) {
+        throw new Error("Passwords must be at least 12 characters long.");
+      }
+
+      const now = new Date();
+      if (new Date(pendingPasswordReset.expiresAt) < now) {
+        setPendingPasswordReset(null);
+        throw new Error("Reset link has expired. Request a new one.");
+      }
+
+      setAccounts((prev) =>
+        prev.map((account) =>
+          account.id === pendingPasswordReset.accountId
+            ? { ...account, password: newPassword, rememberDeviceUntil: undefined }
+            : account,
+        ),
+      );
+
+      setPendingPasswordReset(null);
+      toast.success("Password updated", {
+        description: "Use your new password to sign in.",
+      });
+    },
+    [pendingPasswordReset],
+  );
+
+  const signOut = useCallback(() => {
+    setActiveAccountId(null);
+    setUser((prev) => ({
+      ...CURRENT_USER,
+      currentBaseId: prev.currentBaseId,
+    }));
+    setCurrentBaseIdState(CURRENT_USER.currentBaseId);
+  }, []);
+
+  const addListing = useCallback(
+    (listing: Listing) => {
+      if (!isAuthenticated) {
+        throw new Error("Sign in to post a listing.");
+      }
+      if (!isDodVerified) {
+        throw new Error("Verify DoD access before posting.");
+      }
+
+      setListings((prev) => {
+        const next = [listing, ...prev];
+        next.sort(
+          (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
+        );
+        return next;
+      });
+    },
+    [isAuthenticated, isDodVerified],
+  );
 
   const markListingSold = useCallback((listingId: string) => {
     setListings((prev) =>
@@ -166,13 +493,16 @@ export const BaseListProvider = ({
 
       simulatedReplyTimers.current.set(thread.id, timer);
     },
-    [setMessageThreads, user.name],
+    [user.name],
   );
 
   const sendMessageToSeller = useCallback(
     (listingId: string, sellerId: string, messageBody: string) => {
       if (!isAuthenticated) {
-        throw new Error("You must be signed in to send messages");
+        throw new Error("Sign in to send messages.");
+      }
+      if (!isDodVerified) {
+        throw new Error("Verify DoD access before messaging sellers.");
       }
 
       const trimmedMessage = messageBody.trim();
@@ -239,7 +569,7 @@ export const BaseListProvider = ({
 
       return targetThread!;
     },
-    [isAuthenticated, scheduleSimulatedReply, user.id],
+    [isAuthenticated, isDodVerified, scheduleSimulatedReply, user.id],
   );
 
   const markThreadAsRead = useCallback(
@@ -343,15 +673,14 @@ export const BaseListProvider = ({
     });
   }, [isAuthenticated, listings, messageThreads, navigate, user.id]);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    return () => {
       simulatedReplyTimers.current.forEach((timer) => {
         clearTimeout(timer);
       });
       simulatedReplyTimers.current.clear();
-    },
-    [],
-  );
+    };
+  }, []);
 
   const currentBase = useMemo<Base>(() => {
     return (
@@ -372,10 +701,17 @@ export const BaseListProvider = ({
       clearSearch,
       user,
       isAuthenticated,
-      signIn,
-      signOut,
-      isVerified: user.verificationStatus === "Verified",
+      isDodVerified,
       isModerator: user.role !== "member",
+      accounts,
+      currentAccount,
+      createAccount,
+      activateAccount,
+      signInWithPassword,
+      requestPasswordReset,
+      completePasswordReset,
+      cancelPasswordReset,
+      signOut,
       listings,
       addListing,
       markListingSold,
@@ -384,25 +720,35 @@ export const BaseListProvider = ({
       sendMessageToSeller,
       markThreadAsRead,
       unreadMessageCount,
+      pendingPasswordReset,
     }),
     [
+      accounts,
+      activateAccount,
       addListing,
+      cancelPasswordReset,
       clearSearch,
+      completePasswordReset,
+      createAccount,
+      currentAccount,
       currentBase,
       currentBaseId,
+      isAuthenticated,
+      isDodVerified,
       listings,
       markListingSold,
       markThreadAsRead,
       messageThreads,
+      pendingPasswordReset,
       removeListing,
+      requestPasswordReset,
       searchQuery,
       sendMessageToSeller,
       setCurrentBaseId,
-      signIn,
+      signInWithPassword,
       signOut,
       unreadMessageCount,
       user,
-      isAuthenticated,
     ],
   );
 
@@ -422,3 +768,6 @@ export const useBaseList = (): BaseListContextValue => {
 
   return context;
 };
+
+export { EMAIL_PATTERN, PASSWORD_MIN_LENGTH, isDodEmail };
+export const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
