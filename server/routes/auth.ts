@@ -6,7 +6,6 @@ import { z } from "zod";
 import { store } from "../data/store";
 import { authenticate, requireAuth } from "../middleware/authenticate";
 import {
-  compareRefreshToken,
   createAccessToken,
   createRefreshToken,
   revokeRefreshToken,
