@@ -1,15 +1,26 @@
 import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
+import { differenceInHours, formatDistanceToNow } from "date-fns";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 import { SELLERS } from "@/data/mock";
 import { useBaseList } from "@/context/BaseListContext";
 
 const ListingDetail = (): JSX.Element => {
   const navigate = useNavigate();
   const { listingId } = useParams<{ listingId: string }>();
-  const { listings } = useBaseList();
+  const {
+    listings,
+    bases,
+    sendMessageToSeller,
+    setSearchQuery,
+    setCurrentBaseId,
+  } = useBaseList();
 
   const listing = useMemo(
     () => listings.find((item) => item.id === listingId),
