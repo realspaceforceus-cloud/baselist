@@ -63,6 +63,24 @@ const ListingDetail = (): JSX.Element => {
         maximumFractionDigits: 0,
       }).format(listing.price);
 
+  const listedRelative = formatDistanceToNow(new Date(listing.postedAt), {
+    addSuffix: true,
+  });
+
+  const sellerFirstName = seller?.name?.split(" ")[0] ?? "there";
+  const defaultMessage = `Hi ${sellerFirstName}, is this still available?`;
+
+  const [isComposerOpen, setComposerOpen] = useState(false);
+  const [messageBody, setMessageBody] = useState(defaultMessage);
+
+  const sellerLastActive = seller?.lastActiveAt
+    ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
+      ? "Active today ✅"
+      : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
+          addSuffix: true,
+        })} 🕓`
+    : undefined;
+
   return (
     <section className="space-y-6">
       <Button
