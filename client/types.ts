@@ -24,6 +24,7 @@ export interface Seller {
   avatarUrl: string;
   rating?: number;
   completedSales?: number;
+  lastActiveAt?: string;
 }
 
 export interface UserProfile extends Seller {
