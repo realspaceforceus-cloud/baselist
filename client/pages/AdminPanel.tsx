@@ -735,6 +735,19 @@ const AdminPanel = (): JSX.Element => {
     [appendAuditEntry, reports],
   );
 
+  const handleOpenEvidence = useCallback(
+    (reportId: string) => {
+      const report = reports.find((entry) => entry.id === reportId);
+      if (report?.attachmentUrl) {
+        window.open(report.attachmentUrl, "_blank", "noopener");
+        appendAuditEntry(`Opened evidence for report ${reportId}`);
+      } else {
+        toast.info("No attachment", { description: "This report did not include evidence." });
+      }
+    },
+    [appendAuditEntry, reports],
+  );
+
   const handleAddReportNote = useCallback(
     (reportId: string) => {
       const note = window.prompt("Add moderation note", "Action taken by Admin Moser on Oct 14");
