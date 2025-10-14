@@ -65,6 +65,8 @@ export const SELLERS: Seller[] = [
     memberSince: "2018-02-01",
     avatarUrl:
       "https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=128&q=80",
+    rating: 4.9,
+    completedSales: 27,
   },
   {
     id: "seller-avery",
@@ -73,6 +75,8 @@ export const SELLERS: Seller[] = [
     memberSince: "2016-06-12",
     avatarUrl:
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=128&q=80",
+    rating: 4.8,
+    completedSales: 34,
   },
   {
     id: "seller-lena",
@@ -81,6 +85,8 @@ export const SELLERS: Seller[] = [
     memberSince: "2020-01-08",
     avatarUrl:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=128&q=80",
+    rating: 4.95,
+    completedSales: 18,
   },
   {
     id: "seller-marcus",
@@ -89,6 +95,8 @@ export const SELLERS: Seller[] = [
     memberSince: "2015-11-22",
     avatarUrl:
       "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=128&q=80",
+    rating: 4.7,
+    completedSales: 22,
   },
 ];
 
