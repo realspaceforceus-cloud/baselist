@@ -56,19 +56,29 @@ export const BottomNav = (): JSX.Element => {
               )
             }
           >
-            {({ isActive }) => (
-              <>
-                <span
-                  className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-full border border-transparent bg-transparent transition",
-                    isActive ? "bg-primary/10 text-primary" : "bg-transparent",
-                  )}
-                >
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
-                <span>{label}</span>
-              </>
-            )}
+            {({ isActive }) => {
+              const unreadForItem = label === "Messages" ? unreadMessageCount : 0;
+              const showUnread = unreadForItem > 0;
+
+              return (
+                <>
+                  <span
+                    className={cn(
+                      "relative flex h-9 w-9 items-center justify-center rounded-full border border-transparent bg-transparent transition",
+                      isActive ? "bg-primary/10 text-primary" : "bg-transparent",
+                    )}
+                  >
+                    <Icon className="h-5 w-5" aria-hidden />
+                    {showUnread ? (
+                      <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
+                        {Math.min(unreadForItem, 9)}
+                      </span>
+                    ) : null}
+                  </span>
+                  <span>{label}</span>
+                </>
+              );
+            }}
           </NavLink>
         ))}
       </div>
