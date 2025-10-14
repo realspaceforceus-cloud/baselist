@@ -554,9 +554,23 @@ const Landing = (): JSX.Element => {
                     className="h-11 rounded-full"
                     required
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.
-                  </p>
+                  {accountForm.password ? (
+                    passwordPositive ? (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                        <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        Password meets length requirements.
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                        <AlertCircle className="h-4 w-4" aria-hidden />
+                        {`Password must be at least ${PASSWORD_MIN_LENGTH} characters long.`}
+                      </p>
+                    )
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-start gap-3 rounded-2xl border border-border bg-background/80 p-4 text-sm text-muted-foreground">
                   <Checkbox
