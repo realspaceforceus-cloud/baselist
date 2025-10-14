@@ -155,6 +155,33 @@ export const BaseListProvider = ({
     [user.id],
   );
 
+  const markThreadAsRead = useCallback(
+    (threadId: string) => {
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (thread.id !== threadId) {
+            return thread;
+          }
+
+          const lastMessage = thread.messages[thread.messages.length - 1];
+
+          if (!lastMessage) {
+            return thread;
+          }
+
+          return {
+            ...thread,
+            lastReadAt: {
+              ...thread.lastReadAt,
+              [user.id]: lastMessage.sentAt,
+            },
+          };
+        }),
+      );
+    },
+    [user.id],
+  );
+
   const currentBase = useMemo<Base>(() => {
     return (
       BASES.find((base) => base.id === currentBaseId) ??
