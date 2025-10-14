@@ -285,24 +285,21 @@ export const BaseListProvider = ({
 
       ensureUniqueAccount(trimmedUsername, trimmedEmail);
 
+      const isDod = isDodEmail(trimmedEmail);
       const newAccount: BaseListAccount = {
         id: `acct-${crypto.randomUUID()}`,
         username: trimmedUsername,
         email: trimmedEmail,
         password: trimmedPassword,
-        isDodVerified: isDodEmail(trimmedEmail),
+        isDodVerified: false,
         baseId,
         createdAt: new Date().toISOString(),
         avatarUrl: buildAvatarUrl(trimmedUsername),
+        verificationToken: isDod ? `verify-${crypto.randomUUID()}` : null,
+        verificationRequestedAt: isDod ? new Date().toISOString() : null,
       };
 
       setAccounts((prev) => [newAccount, ...prev]);
-
-      if (newAccount.isDodVerified) {
-        toast.success("DoD email detected", {
-          description: "We marked your account as verified automatically.",
-        });
-      }
 
       return newAccount;
     },
