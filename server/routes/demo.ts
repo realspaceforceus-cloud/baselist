@@ -1,7 +1,9 @@
 import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
+
 import { DemoResponse } from "@shared/api";
 
-export const handleDemo: RequestHandler = (req, res) => {
+export const handleDemo: RequestHandler = (_req, res) => {
   const response: DemoResponse = {
     message: "Hello from Express server",
   };
