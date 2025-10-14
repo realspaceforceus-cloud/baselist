@@ -716,11 +716,25 @@ const Messages = (): JSX.Element => {
                   ) : (
                     <>
                       {activeSummary.thread.messages.map((message) => {
-                        const isOwn = message.authorId === user.id;
                         const timestamp = formatDistanceToNow(
                           new Date(message.sentAt),
                           { addSuffix: true },
                         );
+
+                        if (message.type === "system") {
+                          return (
+                            <div key={message.id} className="flex justify-center">
+                              <div className="max-w-[80%] rounded-2xl bg-primary/10 px-3 py-2 text-xs font-medium text-primary shadow-inner">
+                                <p>{message.body}</p>
+                                <span className="mt-2 block text-[0.65rem] text-primary/60">
+                                  {timestamp}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        const isOwn = message.authorId === user.id;
 
                         return (
                           <div
