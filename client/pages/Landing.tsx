@@ -1,7 +1,6 @@
 import { FormEvent, useState } from "react";
 import {
   ArrowRight,
-  BadgeCheck,
   MapPin,
   MessageCircle,
   Quote,
