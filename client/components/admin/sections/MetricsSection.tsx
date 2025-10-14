@@ -2,38 +2,21 @@ import { Clock3, Download, LineChart, Percent } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const metrics = [
-  {
-    id: "verified",
-    label: "New verified users",
-    value: "139",
-    period: "Last 30 days",
-    delta: "+12%",
-  },
-  {
-    id: "listings",
-    label: "Listings created / sold",
-    value: "412 / 287",
-    period: "Last 30 days",
-    delta: "+9%",
-  },
-  {
-    id: "reports",
-    label: "Reports resolved",
-    value: "94%",
-    period: "SLA 24h",
-    delta: "-3%",
-  },
-  {
-    id: "verifications",
-    label: "Verification response",
-    value: "01:42",
-    period: "Average time",
-    delta: "-18%",
-  },
-];
+export interface AdminMetricCard {
+  id: string;
+  label: string;
+  value: string;
+  period: string;
+  delta: string;
+}
 
-export const MetricsSection = (): JSX.Element => {
+interface MetricsSectionProps {
+  metrics: AdminMetricCard[];
+  onViewLog: () => void;
+  onExport: () => void;
+}
+
+export const MetricsSection = ({ metrics, onViewLog, onExport }: MetricsSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Metrics & Logs" subtitle="Metrics" accent="Pulse" />
@@ -58,6 +41,11 @@ export const MetricsSection = (): JSX.Element => {
             </div>
           </article>
         ))}
+        {metrics.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-nav-border bg-background/80 p-6 text-sm text-muted-foreground">
+            Nothing to report for this range.
+          </div>
+        ) : null}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border bg-card/90 p-4 shadow-soft text-sm">
         <div className="flex items-center gap-3 text-muted-foreground">
@@ -65,11 +53,19 @@ export const MetricsSection = (): JSX.Element => {
           <span>Weekly audit log stored for 90 days with export on demand.</span>
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold">
-          <button type="button" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2"
+            onClick={onViewLog}
+          >
             <Clock3 className="h-3.5 w-3.5" aria-hidden />
             View log
           </button>
-          <button type="button" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2"
+            onClick={onExport}
+          >
             <Download className="h-3.5 w-3.5" aria-hidden />
             Export CSV
           </button>
