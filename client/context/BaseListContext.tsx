@@ -88,6 +88,8 @@ type BaseListAccount = {
   lastLoginAt?: string;
   rememberDeviceUntil?: string;
   avatarUrl: string;
+  verificationToken: string | null;
+  verificationRequestedAt: string | null;
 };
 
 type PasswordResetRequest = {
