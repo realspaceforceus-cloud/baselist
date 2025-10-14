@@ -122,6 +122,8 @@ export const CURRENT_USER: UserProfile = {
   currentBaseId: "vance-afb",
   verificationStatus: "Verified",
   role: "moderator",
+  status: "active",
+  strikes: 0,
 };
 
 export const LISTINGS: Listing[] = [
