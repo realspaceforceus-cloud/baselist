@@ -26,6 +26,8 @@ const Profile = (): JSX.Element => {
     transactions,
     getUserRatingSummary,
     getMemberName,
+    notices,
+    markNoticeRead,
   } = useBaseList();
 
   const myListings = listings.filter((listing) => listing.sellerId === user.id);
