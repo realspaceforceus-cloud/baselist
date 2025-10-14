@@ -353,7 +353,7 @@ const Messages = (): JSX.Element => {
     setThreadFilter(nextFilter);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
