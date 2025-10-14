@@ -1,57 +1,44 @@
-import { Check, Eye, FileX, MailCheck, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Check, Eye, FileX } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const verificationQueues = [
-  {
-    id: "auto",
-    label: ".mil Verified",
-    count: 128,
-    description: "Auto-approved via base allow list",
-    icon: MailCheck,
-    tone: "text-success",
-  },
-  {
-    id: "invite",
-    label: "Invite Code",
-    count: 19,
-    description: "Moderator review required",
-    icon: Users,
-    tone: "text-primary",
-  },
-  {
-    id: "id",
-    label: "ID Review",
-    count: 7,
-    description: "Upload expires after action",
-    icon: Eye,
-    tone: "text-warning",
-  },
-];
+export interface VerificationQueueSummary {
+  id: string;
+  label: string;
+  count: number;
+  description: string;
+  icon: LucideIcon;
+  toneClass?: string;
+}
 
-const documents = [
-  {
-    id: "VRF-5102",
-    name: "SrA Teague",
-    method: "ID Review",
-    submitted: "7m ago",
-    url: "https://cdn.builder.io/api/v1/image/assets%2Fverification-proof.png",
-  },
-  {
-    id: "VRF-5103",
-    name: "Capt Bennett",
-    method: "Invite Code",
-    submitted: "12m ago",
-    url: "https://cdn.builder.io/api/v1/image/assets%2Fverification-proof-2.png",
-  },
-];
+export interface VerificationDocument {
+  id: string;
+  userId: string;
+  name: string;
+  method: string;
+  submitted: string;
+  url: string;
+}
 
-export const VerificationSection = (): JSX.Element => {
+interface VerificationSectionProps {
+  queues: VerificationQueueSummary[];
+  documents: VerificationDocument[];
+  onApprove: (documentId: string) => void;
+  onDeny: (documentId: string) => void;
+}
+
+export const VerificationSection = ({
+  queues,
+  documents,
+  onApprove,
+  onDeny,
+}: VerificationSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Verification Requests" subtitle="Verification" accent="Identity" />
       <div className="grid gap-3 md:grid-cols-3">
-        {verificationQueues.map((queue) => {
+        {queues.map((queue) => {
           const Icon = queue.icon;
 
           return (
@@ -69,7 +56,9 @@ export const VerificationSection = (): JSX.Element => {
               </div>
               <div className="mt-5 flex items-baseline justify-between">
                 <span className="text-3xl font-semibold text-foreground">{queue.count}</span>
-                <span className={`text-xs font-medium ${queue.tone}`}>{queue.description}</span>
+                <span className={`text-xs font-medium ${queue.toneClass ?? "text-muted-foreground"}`}>
+                  {queue.description}
+                </span>
               </div>
             </article>
           );
@@ -84,7 +73,10 @@ export const VerificationSection = (): JSX.Element => {
         </div>
         <div className="space-y-3">
           {documents.map((doc) => (
-            <div key={doc.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm">
+            <div
+              key={doc.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm"
+            >
               <div className="space-y-0.5">
                 <div className="font-semibold text-foreground">
                   {doc.name}
@@ -103,17 +95,30 @@ export const VerificationSection = (): JSX.Element => {
                 >
                   View proof
                 </a>
-                <button type="button" className="inline-flex items-center gap-1 rounded-full border border-success px-3 py-1 text-success">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-full border border-success px-3 py-1 text-success"
+                  onClick={() => onApprove(doc.id)}
+                >
                   <Check className="h-3.5 w-3.5" aria-hidden />
                   Approve
                 </button>
-                <button type="button" className="inline-flex items-center gap-1 rounded-full border border-destructive px-3 py-1 text-destructive">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-full border border-destructive px-3 py-1 text-destructive"
+                  onClick={() => onDeny(doc.id)}
+                >
                   <FileX className="h-3.5 w-3.5" aria-hidden />
                   Deny
                 </button>
               </div>
             </div>
           ))}
+          {documents.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-5 text-sm text-muted-foreground">
+              All manual requests are cleared.
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
