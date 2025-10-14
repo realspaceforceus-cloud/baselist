@@ -710,7 +710,7 @@ const Messages = (): JSX.Element => {
                       placeholder={activeDefaultComposerMessage}
                       className="h-12 rounded-full border-border bg-background/80 text-sm"
                     />
-                    <div className="flex gap-2 md:justify-end">
+                    <div className="flex flex-wrap gap-2 md:justify-end">
                       <Button
                         type="button"
                         variant="ghost"
@@ -726,6 +726,16 @@ const Messages = (): JSX.Element => {
                         {activeSummary?.listing && !activeSummary.listing.isFree
                           ? `Offer $${activeSummary.listing.price.toLocaleString("en-US")}`
                           : "Offer"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="rounded-full px-4 text-xs"
+                        onClick={handleMarkComplete}
+                        disabled={!canMarkComplete}
+                      >
+                        Mark complete
                       </Button>
                       <Button
                         type="submit"
