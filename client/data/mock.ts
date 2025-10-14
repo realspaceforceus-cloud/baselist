@@ -319,5 +319,8 @@ export const MESSAGE_THREADS: MessageThread[] = [
     lastReadAt: {
       [CURRENT_USER.id]: "2024-10-29T16:30:00Z",
     },
+    status: "active",
+    archivedBy: [],
+    deletedBy: [],
   },
 ];
