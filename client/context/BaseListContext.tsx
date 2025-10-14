@@ -272,6 +272,10 @@ export const BaseListProvider = ({
         throw new Error("Enter a valid email address.");
       }
 
+      if (!isDodEmail(trimmedEmail)) {
+        throw new Error("A verified DoD email (.mil or approved DoD domain) is required.");
+      }
+
       if (trimmedPassword.length < PASSWORD_MIN_LENGTH) {
         throw new Error("Passwords must be at least 12 characters long.");
       }
