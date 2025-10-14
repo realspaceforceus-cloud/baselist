@@ -30,6 +30,7 @@ import { SELLERS } from "@/data/mock";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { RatingBadge } from "@/components/shared/RatingBadge";
+import type { Listing, Message, MessageThread } from "@/types";
 
 type ThreadFilter = "all" | "active" | "completed" | "archived";
 
