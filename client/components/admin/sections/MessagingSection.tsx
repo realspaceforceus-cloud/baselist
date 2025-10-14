@@ -10,12 +10,13 @@ export interface AdminFlaggedThread {
   excerpt: string;
   accessedBy?: string;
   flaggedAt?: string;
+  offendingUserId?: string;
 }
 
 interface MessagingSectionProps {
   threads: AdminFlaggedThread[];
   onWarn: (threadId: string) => void;
-  onBan: (threadId: string) => void;
+  onBan: (threadId: string, offendingUserId?: string) => void;
   onMarkReviewed: (threadId: string) => void;
 }
 
