@@ -118,6 +118,7 @@ export const SELLERS: Seller[] = [
 
 export const CURRENT_USER: UserProfile = {
   ...SELLERS[1],
+  ratingCount: SELLERS[1].ratingCount,
   currentBaseId: "vance-afb",
   verificationStatus: "Verified",
   role: "moderator",
