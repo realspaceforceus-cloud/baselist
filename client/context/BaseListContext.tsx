@@ -35,6 +35,7 @@ type BaseListContextValue = {
     sellerId: string,
     messageBody: string,
   ) => MessageThread;
+  markThreadAsRead: (threadId: string) => void;
 };
 
 const BaseListContext = createContext<BaseListContextValue | undefined>(
