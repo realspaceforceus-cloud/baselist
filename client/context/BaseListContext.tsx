@@ -245,6 +245,27 @@ export const BaseListProvider = ({
 
   const clearSearch = useCallback(() => setSearchQuery(""), []);
 
+  const resolveDisplayName = useCallback(
+    (id: string): string => {
+      if (id === user.id) {
+        return user.name;
+      }
+
+      const accountMatch = accounts.find((account) => account.id === id);
+      if (accountMatch) {
+        return accountMatch.username;
+      }
+
+      const sellerMatch = SELLERS.find((seller) => seller.id === id);
+      if (sellerMatch) {
+        return sellerMatch.name;
+      }
+
+      return "member";
+    },
+    [accounts, user.id, user.name],
+  );
+
   const ensureUniqueAccount = useCallback(
     (username: string, email: string) => {
       const normalizedUsername = username.trim().toLowerCase();
