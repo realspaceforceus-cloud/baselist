@@ -6,6 +6,8 @@ export type ListingCategory =
   | "Free"
   | "Other";
 
+export type ListingFilter = "All" | ListingCategory;
+
 export interface Base {
   id: string;
   name: string;
