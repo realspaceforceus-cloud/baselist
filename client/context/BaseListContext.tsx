@@ -193,6 +193,8 @@ const INITIAL_NOTICES: AccountNotice[] = [
   },
 ];
 
+const ACCOUNT_SEED = buildSeedAccounts();
+
 type BaseListContextValue = {
   bases: Base[];
   currentBaseId: string;
