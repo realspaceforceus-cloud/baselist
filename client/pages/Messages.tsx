@@ -22,6 +22,7 @@ const Messages = (): JSX.Element => {
   const { threadId } = useParams<{ threadId?: string }>();
   const isMobile = useIsMobile();
   const conversationRef = useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const lastThreadIdRef = useRef<string | null>(null);
   const [composerMessage, setComposerMessage] = useState<string>("");
 
