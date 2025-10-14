@@ -610,6 +610,163 @@ export const BaseListProvider = ({
     );
   }, []);
 
+  const handleTransactionProgress = useCallback(
+    (threadId: string, confirmerId: string) => {
+      const confirmerName = resolveDisplayName(confirmerId);
+      let completionContext:
+        | {
+            threadId: string;
+            listingId: string;
+            buyerId: string;
+            sellerId: string;
+            price: number | null;
+            completedAt: string;
+          }
+        | null = null;
+      let createdNewTransaction = false;
+      let newlyConfirmed = false;
+
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (thread.id !== threadId) {
+            return thread;
+          }
+
+          const now = new Date().toISOString();
+          const listing = listings.find((item) => item.id === thread.listingId);
+          const existingTransaction = thread.transaction;
+
+          if (existingTransaction?.status === "completed") {
+            return thread;
+          }
+
+          const confirmedSet = new Set(existingTransaction?.confirmedBy ?? []);
+          const alreadyConfirmed = confirmedSet.has(confirmerId);
+          confirmedSet.add(confirmerId);
+
+          const transaction: ThreadTransaction = {
+            id: existingTransaction?.id ?? `txn-${crypto.randomUUID()}`,
+            status: "pending_confirmation",
+            initiatedBy: existingTransaction?.initiatedBy ?? confirmerId,
+            confirmedBy: Array.from(confirmedSet),
+            completedAt: existingTransaction?.completedAt,
+            ratingByUser: existingTransaction?.ratingByUser ?? {},
+          };
+
+          const messages = [...thread.messages];
+
+          if (!existingTransaction) {
+            createdNewTransaction = true;
+            messages.push({
+              id: `msg-${crypto.randomUUID()}`,
+              authorId: "system",
+              body: `This transaction has been marked complete by ${confirmerName}. Confirm?`,
+              sentAt: now,
+              type: "system",
+            });
+          } else if (!alreadyConfirmed) {
+            newlyConfirmed = true;
+            messages.push({
+              id: `msg-${crypto.randomUUID()}`,
+              authorId: "system",
+              body: `${confirmerName} confirmed completion. Waiting for the other member.`,
+              sentAt: now,
+              type: "system",
+            });
+          } else {
+            return thread;
+          }
+
+          const participants = thread.participants;
+          const allConfirmed = participants.every((participantId) =>
+            transaction.confirmedBy.includes(participantId),
+          );
+
+          if (allConfirmed) {
+            transaction.status = "completed";
+            transaction.completedAt = now;
+            messages.push({
+              id: `msg-${crypto.randomUUID()}`,
+              authorId: "system",
+              body: "Transaction completed. Listing marked sold.",
+              sentAt: now,
+              type: "system",
+            });
+
+            if (listing) {
+              const sellerId = listing.sellerId;
+              const buyerId =
+                participants.find((participantId) => participantId !== sellerId) ?? confirmerId;
+
+              completionContext = {
+                threadId: thread.id,
+                listingId: listing.id,
+                buyerId,
+                sellerId,
+                price: listing.isFree ? 0 : listing.price,
+                completedAt: now,
+              };
+            }
+          }
+
+          return {
+            ...thread,
+            transaction,
+            status: allConfirmed ? "completed" : thread.status,
+            messages,
+          };
+        }),
+      );
+
+      if (completionContext) {
+        markListingSold(completionContext.listingId);
+        setTransactions((prev) => {
+          if (prev.some((entry) => entry.threadId === completionContext!.threadId)) {
+            return prev;
+          }
+          return [
+            {
+              id: completionContext.threadId,
+              threadId: completionContext.threadId,
+              listingId: completionContext.listingId,
+              buyerId: completionContext.buyerId,
+              sellerId: completionContext.sellerId,
+              price: completionContext.price,
+              completedAt: completionContext.completedAt,
+            },
+            ...prev,
+          ];
+        });
+        toast.success("Transaction completed", {
+          description: "Listing marked sold and ratings unlocked.",
+        });
+      } else if (createdNewTransaction) {
+        toast.info("Transaction marked complete", {
+          description: "Waiting for the other member to confirm.",
+        });
+      } else if (newlyConfirmed) {
+        toast.info("Confirmation recorded", {
+          description: "Waiting for the other member.",
+        });
+      }
+    },
+    [listings, markListingSold, resolveDisplayName],
+  );
+
+  const initiateTransaction = useCallback(
+    (threadId: string, initiatedBy: string) => {
+      handleTransactionProgress(threadId, initiatedBy);
+    },
+    [handleTransactionProgress],
+  );
+
+  const confirmTransactionCompletion = useCallback(
+    (threadId: string, confirmerId: string) => {
+      handleTransactionProgress(threadId, confirmerId);
+    },
+    [handleTransactionProgress],
+  );
+
   const removeListing = useCallback((listingId: string) => {
     setListings((prev) => prev.filter((listing) => listing.id !== listingId));
   }, []);
