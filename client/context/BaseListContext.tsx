@@ -118,6 +118,45 @@ export const BaseListProvider = ({
     setListings((prev) => prev.filter((listing) => listing.id !== listingId));
   }, []);
 
+  const scheduleSimulatedReply = useCallback(
+    (thread: MessageThread, sellerId: string) => {
+      if (simulatedReplyTimers.current.has(thread.id)) {
+        return;
+      }
+
+      const partner = SELLERS.find((candidate) => candidate.id === sellerId);
+      const partnerFirstName = partner?.name.split(" ")[0] ?? "there";
+      const buyerFirstName = user.name.split(" ")[0];
+
+      const timer = setTimeout(() => {
+        setMessageThreads((prev) =>
+          prev.map((existingThread) => {
+            if (existingThread.id !== thread.id) {
+              return existingThread;
+            }
+
+            const replyMessage: Message = {
+              id: `msg-${crypto.randomUUID()}`,
+              authorId: sellerId,
+              body: `Hi ${buyerFirstName}, this is ${partnerFirstName}. It is still available — when would you like to pick it up?`,
+              sentAt: new Date().toISOString(),
+              type: "text",
+            };
+
+            return {
+              ...existingThread,
+              messages: [...existingThread.messages, replyMessage],
+            };
+          }),
+        );
+        simulatedReplyTimers.current.delete(thread.id);
+      }, 2200);
+
+      simulatedReplyTimers.current.set(thread.id, timer);
+    },
+    [setMessageThreads, user.name],
+  );
+
   const sendMessageToSeller = useCallback(
     (listingId: string, sellerId: string, messageBody: string) => {
       const trimmedMessage = messageBody.trim();
