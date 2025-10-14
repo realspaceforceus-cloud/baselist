@@ -53,6 +53,19 @@ const Profile = (): JSX.Element => {
             <p className="text-sm text-muted-foreground">
               Current base: <span className="font-semibold text-foreground">{currentBase.name}</span>
             </p>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <RatingBadge
+                userId={user.id}
+                size="md"
+                initialAverage={userRatingFallbackAverage}
+                initialCount={userRatingFallbackCount}
+                label={`${user.name} rating`}
+              />
+              <span>
+                {purchases.length + sales.length} transaction
+                {purchases.length + sales.length === 1 ? "" : "s"}
+              </span>
+            </div>
           </div>
         </div>
         <Button asChild variant="outline" className="rounded-full px-5">
