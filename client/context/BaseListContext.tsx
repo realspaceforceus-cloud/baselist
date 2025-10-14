@@ -454,15 +454,22 @@ export const BaseListProvider = ({
           return;
         }
 
+        const verificationToken = `verify-${crypto.randomUUID()}`;
+        const requestedAt = new Date().toISOString();
+
         setAccounts((prev) =>
           prev.map((account) =>
             account.id === currentAccount.id
-              ? { ...account, isDodVerified: true }
+              ? {
+                  ...account,
+                  verificationToken,
+                  verificationRequestedAt: requestedAt,
+                }
               : account,
           ),
         );
-        toast.success("DoD email verified", {
-          description: "You can now post listings and send messages.",
+        toast.success("Verification email sent", {
+          description: "Check your inbox and confirm to unlock posting.",
         });
         return;
       }
