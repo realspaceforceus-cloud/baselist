@@ -72,6 +72,17 @@ export const BaseListProvider = ({
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(
     () => [...MESSAGE_THREAD_SEED],
   );
+  const navigate = useNavigate();
+  const knownMessageIdsRef = useRef<Set<string>>(
+    new Set(
+      MESSAGE_THREAD_SEED.flatMap((thread) =>
+        thread.messages.map((message) => message.id),
+      ),
+    ),
+  );
+  const simulatedReplyTimers = useRef<
+    Map<string, ReturnType<typeof setTimeout>>
+  >(new Map());
 
   const setCurrentBaseId = useCallback((baseId: string) => {
     setCurrentBaseIdState(baseId);
