@@ -20,6 +20,9 @@ const Messages = (): JSX.Element => {
   } = useBaseList();
   const navigate = useNavigate();
   const { threadId } = useParams<{ threadId?: string }>();
+  const isMobile = useIsMobile();
+  const conversationRef = useRef<HTMLDivElement | null>(null);
+  const lastThreadIdRef = useRef<string | null>(null);
   const [composerMessage, setComposerMessage] = useState<string>("");
 
   const threadSummaries = useMemo(
