@@ -17,11 +17,19 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useBaseList } from "@/context/BaseListContext";
 import { SELLERS } from "@/data/mock";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { RatingBadge } from "@/components/shared/RatingBadge";
 
 const Messages = (): JSX.Element => {
   const {
