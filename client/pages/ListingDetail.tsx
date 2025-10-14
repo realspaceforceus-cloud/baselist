@@ -1,10 +1,13 @@
+import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
 import { useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
 import { SELLERS } from "@/data/mock";
 import { useBaseList } from "@/context/BaseListContext";
 
 const ListingDetail = (): JSX.Element => {
+  const navigate = useNavigate();
   const { listingId } = useParams<{ listingId: string }>();
   const { listings } = useBaseList();
 
@@ -21,6 +24,14 @@ const ListingDetail = (): JSX.Element => {
   if (!listing) {
     return (
       <section className="space-y-4">
+        <Button
+          variant="ghost"
+          className="-ml-2 w-fit gap-2 rounded-full px-3"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden />
+          Back
+        </Button>
         <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
           Listing not found. Browse the home feed for current posts.
         </div>
@@ -28,34 +39,96 @@ const ListingDetail = (): JSX.Element => {
     );
   }
 
+  const formattedPrice = listing.isFree || listing.price === 0
+    ? "Free"
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      }).format(listing.price);
+
   return (
     <section className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-foreground">{listing.title}</h1>
-        <p className="text-sm text-muted-foreground">
-          Detailed photos, seller card, and messaging actions will appear here. Continue refining the spec to unlock the full experience.
-        </p>
-      </header>
-      <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
-        <dl className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-              Status
-            </dt>
-            <dd className="text-sm font-semibold text-foreground">
-              {listing.status === "sold" ? "Sold" : "Available"}
-            </dd>
+      <Button
+        variant="ghost"
+        className="-ml-2 w-fit gap-2 rounded-full px-3"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden />
+        Back
+      </Button>
+
+      <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
+        <div className="space-y-4">
+          <div className="aspect-square overflow-hidden rounded-3xl border border-border bg-card shadow-card">
+            <img
+              src={listing.imageUrls[0]}
+              alt={`${listing.title} primary photo`}
+              className="h-full w-full object-cover"
+            />
           </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-              Seller
-            </dt>
-            <dd className="text-sm font-semibold text-foreground">
-              {seller?.name ?? "Verified member"}
-            </dd>
+          <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
+            Swipeable gallery, additional photos, and status chips will render here once the detail page is fully built.
           </div>
-        </dl>
-      </article>
+        </div>
+
+        <aside className="space-y-4">
+          <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
+            <h1 className="text-2xl font-semibold text-foreground">{listing.title}</h1>
+            <p className="mt-2 text-lg font-semibold text-primary">{formattedPrice}</p>
+            <p className="mt-4 text-sm text-muted-foreground">{listing.description}</p>
+          </article>
+
+          <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
+            <div className="flex items-center gap-3">
+              {seller?.avatarUrl ? (
+                <img
+                  src={seller.avatarUrl}
+                  alt={seller.name}
+                  className="h-12 w-12 rounded-full object-cover"
+                />
+              ) : (
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-lg font-semibold text-foreground">
+                  {seller?.name?.[0] ?? "B"}
+                </span>
+              )}
+              <div className="space-y-1">
+                <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  {seller?.name ?? "Verified member"}
+                  <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Member since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              <Button asChild className="w-full rounded-full">
+                <Link to="/messages">
+                  <MessageCircle className="h-4 w-4" aria-hidden />
+                  Message seller
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full rounded-full"
+                disabled
+              >
+                <Bookmark className="h-4 w-4" aria-hidden />
+                Save listing
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full rounded-full text-destructive hover:text-destructive"
+                disabled
+              >
+                <Flag className="h-4 w-4" aria-hidden />
+                Report
+              </Button>
+            </div>
+          </article>
+        </aside>
+      </div>
     </section>
   );
 };
