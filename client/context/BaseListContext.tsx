@@ -270,7 +270,7 @@ export const BaseListProvider = ({
     CURRENT_USER.currentBaseId,
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => ACCOUNT_SEED);
+  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [...ACCOUNT_SEED]);
   const [activeAccountId, setActiveAccountId] = useState<string | null>(CURRENT_USER.id);
   const [memberDiscipline, setMemberDiscipline] = useState<
     Record<string, MemberDisciplineRecord>
