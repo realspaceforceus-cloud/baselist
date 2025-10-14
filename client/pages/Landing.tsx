@@ -365,6 +365,22 @@ const Landing = (): JSX.Element => {
     setAccountForm(defaultAccountForm);
   };
 
+  const handleConfirmVerification = () => {
+    if (!pendingAccountId) {
+      return;
+    }
+
+    try {
+      completeDodVerification(pendingAccountId);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "We couldn’t complete your verification. Try again.",
+      );
+    }
+  };
+
   const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
 
   return (
