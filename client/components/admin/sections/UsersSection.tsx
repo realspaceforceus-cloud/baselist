@@ -1,44 +1,53 @@
-import { Ban, Check, History, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Ban, Check, Gavel, History, RotateCcw, Search, ShieldCheck } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const mockUsers = [
-  {
-    id: "u-001",
-    name: "SrA Jamie Cole",
-    base: "Joint Base Andrews",
-    verified: true,
-    joined: "Mar 2024",
-    ratings: "4.9 / 68",
-    reports: 1,
-    listings: 3,
-    messages: 12,
-  },
-  {
-    id: "u-002",
-    name: "Capt Alex Ramirez",
-    base: "Ramstein AB",
-    verified: false,
-    joined: "Jan 2024",
-    ratings: "4.6 / 22",
-    reports: 0,
-    listings: 1,
-    messages: 7,
-  },
-  {
-    id: "u-003",
-    name: "TSgt Erin Moss",
-    base: "Travis AFB",
-    verified: true,
-    joined: "Nov 2023",
-    ratings: "5.0 / 41",
-    reports: 0,
-    listings: 5,
-    messages: 18,
-  },
-];
+export interface AdminUserRecord {
+  id: string;
+  name: string;
+  base: string;
+  verified: boolean;
+  suspended: boolean;
+  joined: string;
+  ratingLabel: string;
+  reports: number;
+  listings: number;
+  messages: number;
+  strikes: number;
+}
 
-export const UsersSection = (): JSX.Element => {
+interface UsersSectionProps {
+  users: AdminUserRecord[];
+  onVerify: (userId: string) => void;
+  onSuspend: (userId: string) => void;
+  onReinstate: (userId: string) => void;
+  onResetVerification: (userId: string) => void;
+  onViewActivity: (userId: string) => void;
+  onIssueStrike: (userId: string) => void;
+}
+
+export const UsersSection = ({
+  users,
+  onVerify,
+  onSuspend,
+  onReinstate,
+  onResetVerification,
+  onViewActivity,
+  onIssueStrike,
+}: UsersSectionProps): JSX.Element => {
+  const [query, setQuery] = useState<string>("");
+
+  const filteredUsers = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) {
+      return users;
+    }
+    return users.filter((user) =>
+      [user.name, user.base].some((value) => value.toLowerCase().includes(normalized)),
+    );
+  }, [query, users]);
+
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="User Controls" subtitle="Users" accent="Access" />
@@ -50,6 +59,8 @@ export const UsersSection = (): JSX.Element => {
             placeholder="Search username, email, or base"
             className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
             aria-label="Search users"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
           />
         </label>
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -68,53 +79,89 @@ export const UsersSection = (): JSX.Element => {
         </div>
       </div>
       <div className="space-y-3">
-        {mockUsers.map((user) => (
-          <article
-            key={user.id}
-            className="flex flex-col gap-3 rounded-3xl border border-border bg-card/90 p-4 shadow-soft md:flex-row md:items-center md:justify-between"
-          >
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <span>{user.name}</span>
-                <span
-                  className={
-                    user.verified
-                      ? "rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-success"
-                      : "rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning"
-                  }
+        {filteredUsers.map((user) => {
+          const statusBadge = user.suspended
+            ? "rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-destructive"
+            : user.verified
+            ? "rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-success"
+            : "rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning";
+
+          return (
+            <article
+              key={user.id}
+              className="flex flex-col gap-3 rounded-3xl border border-border bg-card/90 p-4 shadow-soft md:flex-row md:items-center md:justify-between"
+            >
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
+                  <span>{user.name}</span>
+                  <span className={statusBadge}>
+                    {user.suspended ? "Suspended" : user.verified ? "Verified" : "Unverified"}
+                  </span>
+                  {user.strikes > 0 ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-warning">
+                      {user.strikes} strike{user.strikes === 1 ? "" : "s"}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {user.base} • Joined {user.joined}
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  <span>Ratings {user.ratingLabel}</span>
+                  <span>Reports {user.reports}</span>
+                  <span>Listings {user.listings}</span>
+                  <span>Messages {user.messages}</span>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                <button
+                  type="button"
+                  className="rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-card disabled:opacity-60"
+                  onClick={() => onVerify(user.id)}
+                  disabled={user.verified}
                 >
-                  {user.verified ? "Verified" : "Unverified"}
-                </span>
+                  <ShieldCheck className="mr-1 h-3.5 w-3.5" aria-hidden />
+                  Verify
+                </button>
+                <button
+                  type="button"
+                  className="rounded-full border border-border px-4 py-2"
+                  onClick={() => (user.suspended ? onReinstate(user.id) : onSuspend(user.id))}
+                >
+                  {user.suspended ? "Reinstate" : "Suspend"}
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-full border border-border px-4 py-2"
+                  onClick={() => onResetVerification(user.id)}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" aria-hidden />
+                  Reset method
+                </button>
+                <button
+                  type="button"
+                  className="rounded-full border border-border px-4 py-2"
+                  onClick={() => onViewActivity(user.id)}
+                >
+                  Activity log
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-full border border-warning px-4 py-2 text-warning"
+                  onClick={() => onIssueStrike(user.id)}
+                >
+                  <Gavel className="h-3.5 w-3.5" aria-hidden />
+                  Issue strike
+                </button>
               </div>
-              <div className="text-xs text-muted-foreground">
-                {user.base} • Joined {user.joined}
-              </div>
-              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                <span>Ratings {user.ratings}</span>
-                <span>Reports {user.reports}</span>
-                <span>Listings {user.listings}</span>
-                <span>Messages {user.messages}</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-              <button
-                type="button"
-                className="rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-card"
-              >
-                Verify
-              </button>
-              <button type="button" className="rounded-full border border-border px-4 py-2">
-                Suspend
-              </button>
-              <button type="button" className="rounded-full border border-border px-4 py-2">
-                Reset method
-              </button>
-              <button type="button" className="rounded-full border border-border px-4 py-2">
-                Activity log
-              </button>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
+        {filteredUsers.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
+            No users match your search.
+          </div>
+        ) : null}
       </div>
     </section>
   );
