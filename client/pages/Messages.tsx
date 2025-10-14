@@ -357,6 +357,13 @@ const Messages = (): JSX.Element => {
     setSearchTerm(event.target.value);
   };
 
+  const filterOptions: Array<{ value: ThreadFilter; label: string; count: number }> = [
+    { value: "all", label: "All", count: threadCounts.all },
+    { value: "active", label: "Active", count: threadCounts.active },
+    { value: "completed", label: "Completed", count: threadCounts.completed },
+    { value: "archived", label: "Archived", count: threadCounts.archived },
+  ];
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
