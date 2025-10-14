@@ -514,11 +514,27 @@ const Landing = (): JSX.Element => {
                     className="h-11 rounded-full"
                     required
                   />
-                  {accountForm.email && isDodEmail(accountForm.email) ? (
-                    <p className="text-xs font-semibold text-foreground">
-                      DoD email detected. We’ll verify you automatically.
+                  {accountForm.email ? (
+                    emailPositive ? (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                        <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        DoD email detected. Check your inbox for the confirmation link.
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                        <AlertCircle className="h-4 w-4" aria-hidden />
+                        {!emailFormatValid
+                          ? "Enter a valid email address."
+                          : !emailDod
+                          ? "Use an approved DoD email (.mil or .defense.gov)."
+                          : "An account already exists with that email."}
+                      </p>
+                    )
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Use your DoD email (.mil or .defense.gov).
                     </p>
-                  ) : null}
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="signup-password" className="text-sm font-semibold text-foreground">
