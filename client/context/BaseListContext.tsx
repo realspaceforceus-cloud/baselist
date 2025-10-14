@@ -634,11 +634,14 @@ export const BaseListProvider = ({
       setActiveAccountId(accountId);
       setCurrentBaseIdState(existing.baseId);
       setUser(
-        buildUserProfileFromAccount({
-          ...existing,
-          lastLoginAt,
-          rememberDeviceUntil: rememberUntil,
-        }),
+        buildUserProfileFromAccount(
+          {
+            ...existing,
+            lastLoginAt,
+            rememberDeviceUntil: rememberUntil,
+          },
+          memberDiscipline[accountId],
+        ),
       );
     },
     [accounts],
