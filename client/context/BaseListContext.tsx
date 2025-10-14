@@ -34,6 +34,9 @@ type BaseListContextValue = {
   setSearchQuery: (value: string) => void;
   clearSearch: () => void;
   user: UserProfile;
+  isAuthenticated: boolean;
+  signIn: () => void;
+  signOut: () => void;
   isVerified: boolean;
   isModerator: boolean;
   listings: Listing[];
