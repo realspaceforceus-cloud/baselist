@@ -1,33 +1,21 @@
-import { Crown, ShieldCheck, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Users } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const roles = [
-  {
-    name: "Admin",
-    permissions: [
-      "All bases",
-      "Verification overrides",
-      "Ban users",
-      "Access metrics",
-    ],
-    icon: Crown,
-    tone: "text-primary",
-  },
-  {
-    name: "Moderator",
-    permissions: [
-      "Assigned base only",
-      "Approve verification",
-      "Resolve reports",
-      "Hide listings",
-    ],
-    icon: ShieldCheck,
-    tone: "text-success",
-  },
-];
+export interface AdminRole {
+  name: string;
+  scope: "Global" | "Base";
+  permissions: string[];
+  icon: LucideIcon;
+  toneClass?: string;
+}
 
-export const RolesSection = (): JSX.Element => {
+interface RolesSectionProps {
+  roles: AdminRole[];
+}
+
+export const RolesSection = ({ roles }: RolesSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Moderator Roles" subtitle="Roles" accent="Access" />
@@ -50,8 +38,8 @@ export const RolesSection = (): JSX.Element => {
                     <p className="text-xs text-muted-foreground">Permission scope</p>
                   </div>
                 </div>
-                <span className={`text-xs font-semibold uppercase tracking-wide ${role.tone}`}>
-                  {role.name === "Admin" ? "Global" : "Base"}
+                <span className={`text-xs font-semibold uppercase tracking-wide ${role.toneClass ?? "text-muted-foreground"}`}>
+                  {role.scope}
                 </span>
               </div>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
