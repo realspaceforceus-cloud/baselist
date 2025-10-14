@@ -326,11 +326,8 @@ const Landing = (): JSX.Element => {
       });
       setPendingAccountId(account.id);
       setJoinStage("success");
-      setAccountIsDod(account.isDodVerified);
       toast.success("Account created", {
-        description: account.isDodVerified
-          ? "Your DoD email is verified automatically."
-          : "Browse freely. Verify DoD access before you post or DM.",
+        description: "Check your inbox to confirm your DoD email before entering BaseList.",
       });
     } catch (error) {
       toast.error(
