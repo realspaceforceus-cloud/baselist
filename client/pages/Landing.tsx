@@ -316,11 +316,6 @@ const Landing = (): JSX.Element => {
     setJoinStage("hidden");
   };
 
-  const pendingAccount = useMemo(
-    () => (pendingAccountId ? currentAccount ?? null : null),
-    [pendingAccountId, currentAccount],
-  );
-
   const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
 
   return (
