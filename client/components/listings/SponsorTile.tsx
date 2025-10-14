@@ -1,7 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
 
-import { ArrowUpRight } from "lucide-react";
-
 import type { SponsorPlacement } from "@/types";
 
 interface SponsorTileProps {
