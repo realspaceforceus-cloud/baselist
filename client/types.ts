@@ -22,6 +22,8 @@ export interface Seller {
   verified: boolean;
   memberSince: string;
   avatarUrl: string;
+  rating?: number;
+  completedSales?: number;
 }
 
 export interface UserProfile extends Seller {
