@@ -174,10 +174,14 @@ export const BaseListProvider = ({
       };
 
       let targetThread: MessageThread | undefined;
+      let shouldScheduleReply = false;
 
       setMessageThreads((prev) => {
         const existingIndex = prev.findIndex(
-          (thread) => thread.listingId === listingId,
+          (thread) =>
+            thread.listingId === listingId &&
+            thread.participants.includes(user.id) &&
+            thread.participants.includes(sellerId),
         );
 
         if (existingIndex !== -1) {
@@ -208,13 +212,18 @@ export const BaseListProvider = ({
         };
 
         targetThread = freshThread;
+        shouldScheduleReply = true;
 
         return [freshThread, ...prev];
       });
 
+      if (shouldScheduleReply && targetThread) {
+        scheduleSimulatedReply(targetThread, sellerId);
+      }
+
       return targetThread!;
     },
-    [user.id],
+    [scheduleSimulatedReply, user.id],
   );
 
   const markThreadAsRead = useCallback(
