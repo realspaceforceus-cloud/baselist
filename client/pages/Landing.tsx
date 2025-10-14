@@ -65,14 +65,19 @@ const defaultAccountForm = {
 };
 
 const Landing = (): JSX.Element => {
-  const { bases, createAccount, activateAccount, isAuthenticated } =
-    useBaseList();
+  const {
+    bases,
+    createAccount,
+    activateAccount,
+    isAuthenticated,
+    accounts,
+    completeDodVerification,
+  } = useBaseList();
   const { openSignIn } = useAuthDialog();
 
   const [joinStage, setJoinStage] = useState<JoinStage>("hidden");
   const [accountForm, setAccountForm] = useState(defaultAccountForm);
   const [accountError, setAccountError] = useState<string | null>(null);
-  const [accountIsDod, setAccountIsDod] = useState(false);
   const [pendingAccountId, setPendingAccountId] = useState<string | null>(null);
 
   const [selectedBaseId, setSelectedBaseId] = useState<string>(
