@@ -15,6 +15,8 @@ export const BASES: Base[] = [
     abbreviation: "VAFB",
     region: "Enid, OK",
     timezone: "CT",
+    latitude: 36.339167,
+    longitude: -97.916389,
   },
   {
     id: "jblm",
@@ -22,6 +24,8 @@ export const BASES: Base[] = [
     abbreviation: "JBLM",
     region: "Tacoma, WA",
     timezone: "PT",
+    latitude: 47.1126,
+    longitude: -122.5808,
   },
   {
     id: "ramstein-ab",
@@ -29,6 +33,8 @@ export const BASES: Base[] = [
     abbreviation: "RAB",
     region: "Kaiserslautern, Germany",
     timezone: "CET",
+    latitude: 49.4369,
+    longitude: 7.6003,
   },
   {
     id: "andrews-afb",
@@ -36,6 +42,8 @@ export const BASES: Base[] = [
     abbreviation: "JBA",
     region: "Prince George's County, MD",
     timezone: "ET",
+    latitude: 38.8108,
+    longitude: -76.867,
   },
 ];
 
