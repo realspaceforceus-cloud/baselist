@@ -169,6 +169,16 @@ const Landing = (): JSX.Element => {
     );
   }, [joinStage, locationStatus]);
 
+  const handleExpansionSubmit = () => {
+    if (!EMAIL_PATTERN.test(expansionEmail.trim())) {
+      toast.error("Enter a valid email to stay informed.");
+      return;
+    }
+    toast.success("Thanks! We’ll notify you as new bases launch.");
+    setExpansionEmail("");
+    setShowExpansionForm(false);
+  };
+
   const handleBaseSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedBaseId) {
