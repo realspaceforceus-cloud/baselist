@@ -1365,6 +1365,7 @@ export const BaseListProvider = ({
       unarchiveThread,
       unreadMessageCount,
       user,
+      resolveDisplayName,
     ],
   );
 
