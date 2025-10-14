@@ -244,6 +244,10 @@ export const BaseListProvider = ({
 
   const markThreadAsRead = useCallback(
     (threadId: string) => {
+      if (!isAuthenticated) {
+        return;
+      }
+
       setMessageThreads((prev) =>
         prev.map((thread) => {
           if (thread.id !== threadId) {
@@ -266,7 +270,7 @@ export const BaseListProvider = ({
         }),
       );
     },
-    [user.id],
+    [isAuthenticated, user.id],
   );
 
   const unreadMessageCount = useMemo(() => {
