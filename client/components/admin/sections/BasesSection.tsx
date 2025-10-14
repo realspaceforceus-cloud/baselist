@@ -2,51 +2,44 @@ import { Building2, MapPin, Pencil, Plus, Users } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const bases = [
-  {
-    id: "base-01",
-    name: "Travis AFB",
-    region: "Fairfield, CA",
-    moderator: "Capt Logan Pierce",
-    users: 812,
-    activeListings: 148,
-    pendingReports: 5,
-  },
-  {
-    id: "base-02",
-    name: "Ramstein AB",
-    region: "Kaiserslautern, Germany",
-    moderator: "MSgt Elise Harper",
-    users: 1_204,
-    activeListings: 172,
-    pendingReports: 4,
-  },
-  {
-    id: "base-03",
-    name: "Joint Base Elmendorf-Richardson",
-    region: "Anchorage, AK",
-    moderator: "Lt Col Nathan Reese",
-    users: 609,
-    activeListings: 96,
-    pendingReports: 2,
-  },
-];
+export interface AdminBaseRow {
+  id: string;
+  name: string;
+  region: string;
+  moderator: string;
+  users: number;
+  activeListings: number;
+  pendingReports: number;
+}
 
-export const BasesSection = (): JSX.Element => {
+interface BasesSectionProps {
+  bases: AdminBaseRow[];
+  onAddBase: () => void;
+  onEditBase: (baseId: string) => void;
+  onArchiveBase: (baseId: string) => void;
+  onAssignModerator: (baseId: string) => void;
+  onViewStats: (baseId: string) => void;
+}
+
+export const BasesSection = ({
+  bases,
+  onAddBase,
+  onEditBase,
+  onArchiveBase,
+  onAssignModerator,
+  onViewStats,
+}: BasesSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Base Management" subtitle="Bases" accent="Hubs" />
       <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-        <button type="button" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-card">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-card"
+          onClick={onAddBase}
+        >
           <Plus className="h-4 w-4" aria-hidden />
           Add base
-        </button>
-        <button type="button" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2">
-          <Pencil className="h-4 w-4" aria-hidden />
-          Edit
-        </button>
-        <button type="button" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2">
-          Archive
         </button>
       </div>
       <div className="space-y-3">
@@ -78,11 +71,34 @@ export const BasesSection = (): JSX.Element => {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-              <button type="button" className="rounded-full border border-border px-3 py-1">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1"
+                onClick={() => onEditBase(base.id)}
+              >
+                <Pencil className="h-3.5 w-3.5" aria-hidden />
+                Edit
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-border px-3 py-1"
+                onClick={() => onAssignModerator(base.id)}
+              >
                 Assign moderator
               </button>
-              <button type="button" className="rounded-full border border-border px-3 py-1">
+              <button
+                type="button"
+                className="rounded-full border border-border px-3 py-1"
+                onClick={() => onViewStats(base.id)}
+              >
                 View stats
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-destructive px-3 py-1 text-destructive"
+                onClick={() => onArchiveBase(base.id)}
+              >
+                Archive
               </button>
             </div>
           </article>
