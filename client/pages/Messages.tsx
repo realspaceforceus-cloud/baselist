@@ -77,6 +77,9 @@ const Messages = (): JSX.Element => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const lastThreadIdRef = useRef<string | null>(null);
   const [composerMessage, setComposerMessage] = useState<string>("");
+  const [threadFilter, setThreadFilter] = useState<ThreadFilter>("active");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   const threadSummaries = useMemo(
     () =>
