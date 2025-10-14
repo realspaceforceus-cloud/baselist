@@ -11,7 +11,7 @@ const LOGO_SRC =
   "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2F9f8d10811f0e4d94a520d1b0b4d411e2?format=webp&width=320";
 
 export const Header = (): JSX.Element => {
-  const { user, isVerified } = useBaseList();
+  const { user, isVerified, unreadMessageCount } = useBaseList();
 
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
@@ -44,6 +44,22 @@ export const Header = (): JSX.Element => {
           </div>
           <BaseSelector />
           <SearchInput />
+          <Link
+            to="/messages"
+            className="relative flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm font-medium text-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+          >
+            <span className="relative inline-flex">
+              <MessageSquare className="h-4 w-4" aria-hidden />
+              {unreadMessageCount > 0 ? (
+                <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
+                  {Math.min(unreadMessageCount, 9)}
+                </span>
+              ) : null}
+            </span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Messages
+            </span>
+          </Link>
         </div>
       </div>
     </header>
