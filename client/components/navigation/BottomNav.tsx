@@ -37,6 +37,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export const BottomNav = (): JSX.Element => {
+  const { unreadMessageCount } = useBaseList();
+
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-4 z-50 px-4">
       <div className="pointer-events-auto mx-auto flex w-full max-w-lg items-center justify-between rounded-full border border-nav-border bg-nav/95 px-3 py-2 shadow-soft backdrop-blur">
