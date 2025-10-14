@@ -31,6 +31,28 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { RatingBadge } from "@/components/shared/RatingBadge";
 
+type ThreadFilter = "all" | "active" | "completed" | "archived";
+
+type ThreadSummaryStatus = "active" | "completed" | "archived";
+
+interface ThreadSummary {
+  thread: MessageThread;
+  listing: Listing | undefined;
+  seller: (typeof SELLERS)[number] | undefined;
+  partnerId: string | undefined;
+  partnerName: string;
+  lastMessage: Message | undefined;
+  lastUpdated: string;
+  unread: boolean;
+  defaultComposerMessage: string;
+  userStatus: ThreadSummaryStatus;
+  isArchived: boolean;
+  isCompleted: boolean;
+  transaction: MessageThread["transaction"];
+  awaitingUserConfirmation: boolean;
+  ratingSubmitted: boolean;
+}
+
 const Messages = (): JSX.Element => {
   const {
     listings,
