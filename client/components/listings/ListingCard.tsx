@@ -2,6 +2,7 @@ import { BadgeCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 
+import { RatingBadge } from "@/components/shared/RatingBadge";
 import { cn } from "@/lib/utils";
 import type { Listing, Seller } from "@/types";
 
