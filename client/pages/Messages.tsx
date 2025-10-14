@@ -10,22 +10,26 @@ import { SELLERS } from "@/data/mock";
 const Messages = (): JSX.Element => {
   const { listings, messageThreads, user } = useBaseList();
 
-  const primaryThread = messageThreads[0];
-  const threadListing = primaryThread
-    ? listings.find((item) => item.id === primaryThread.listingId)
-    : undefined;
-  const partnerId = primaryThread
-    ? primaryThread.participants.find((participant) => participant !== user.id)
-    : undefined;
-  const threadPartner = partnerId
-    ? SELLERS.find((seller) => seller.id === partnerId)
-    : undefined;
-  const lastMessage = primaryThread
-    ? primaryThread.messages[primaryThread.messages.length - 1]
-    : undefined;
-  const lastUpdated = lastMessage
-    ? formatDistanceToNow(new Date(lastMessage.sentAt), { addSuffix: true })
-    : undefined;
+  const threadSummaries = messageThreads.map((thread) => {
+    const listing = listings.find((item) => item.id === thread.listingId);
+    const partnerId = thread.participants.find((participant) => participant !== user.id);
+    const seller = partnerId
+      ? SELLERS.find((candidate) => candidate.id === partnerId)
+      : undefined;
+    const lastMessage = thread.messages.at(-1);
+    const lastUpdated = lastMessage
+      ? formatDistanceToNow(new Date(lastMessage.sentAt), { addSuffix: true })
+      : "Just now";
+
+    return {
+      thread,
+      listing,
+      seller,
+      lastMessage,
+      lastUpdated,
+      unread: thread.lastReadAt?.[user.id] !== lastMessage?.sentAt,
+    };
+  });
 
   return (
     <section className="space-y-6">
