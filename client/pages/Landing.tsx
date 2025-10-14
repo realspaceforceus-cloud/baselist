@@ -4,7 +4,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { MapPin, MessageCircle, ShieldCheck } from "lucide-react";
+import { AlertCircle, CheckCircle2, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
