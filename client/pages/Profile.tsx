@@ -225,6 +225,59 @@ const Profile = (): JSX.Element => {
         </article>
       </div>
 
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <ShoppingBag className="h-5 w-5" aria-hidden />
+            </span>
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold text-foreground">My transactions</h2>
+              <p className="text-sm text-muted-foreground">
+                Purchases and sales history, all in one place.
+              </p>
+            </div>
+          </div>
+          <RatingBadge
+            userId={user.id}
+            size="sm"
+            initialAverage={
+              userRatingSummary.overallCount > 0
+                ? userRatingSummary.overallAverage
+                : userRatingFallbackAverage
+            }
+            initialCount={
+              userRatingSummary.overallCount > 0
+                ? userRatingSummary.overallCount
+                : userRatingFallbackCount
+            }
+            label={`${user.name} overall rating`}
+          />
+        </div>
+        <Tabs defaultValue={defaultTransactionTab} className="mt-4">
+          <TabsList className="grid w-full max-w-xs grid-cols-2 rounded-full bg-muted/60 p-1">
+            <TabsTrigger value="purchases" className="rounded-full text-xs font-semibold">
+              <span className="inline-flex items-center gap-1">
+                <ShoppingBag className="h-3.5 w-3.5" aria-hidden />
+                Purchases ({purchases.length})
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="sales" className="rounded-full text-xs font-semibold">
+              <span className="inline-flex items-center gap-1">
+                <Tag className="h-3.5 w-3.5" aria-hidden />
+                Sales ({sales.length})
+              </span>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="purchases" className="mt-4 space-y-3">
+            {renderTransactionList(purchases, "buyer")}
+          </TabsContent>
+          <TabsContent value="sales" className="mt-4 space-y-3">
+            {renderTransactionList(sales, "seller")}
+          </TabsContent>
+        </Tabs>
+      </section>
+
       {isModerator ? (
         <div className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
           <div className="flex items-center gap-3">
