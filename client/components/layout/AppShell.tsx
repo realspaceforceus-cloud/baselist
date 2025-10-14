@@ -1,6 +1,4 @@
-import { Outlet } from "react-router-dom";
-
-import { Outlet } from "react-router-dom";
+import { Outlet as RouterOutlet } from "react-router-dom";
 
 import { BottomNav } from "@/components/navigation/BottomNav";
 import { Header } from "@/components/layout/Header";
