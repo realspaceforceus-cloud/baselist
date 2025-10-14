@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { SponsorTile } from "@/components/listings/SponsorTile";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useBaseList } from "@/context/BaseListContext";
 import {
@@ -28,7 +29,15 @@ const buildSellerMap = (): Record<string, Seller> => {
 const sellerMap = buildSellerMap();
 
 const Index = (): JSX.Element => {
-  const { listings, currentBaseId, currentBase, searchQuery } = useBaseList();
+  const {
+    listings,
+    currentBaseId,
+    currentBase,
+    searchQuery,
+    isAuthenticated,
+    isDodVerified,
+    beginVerification,
+  } = useBaseList();
   const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
   const [visibleCount, setVisibleCount] = useState(6);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -123,8 +132,50 @@ const Index = (): JSX.Element => {
     return formatter.format(filteredListings.length);
   }, [filteredListings.length]);
 
+  const showVerificationBanner = isAuthenticated && !isDodVerified;
+
   return (
     <section className="space-y-8">
+      {showVerificationBanner ? (
+        <div className="rounded-3xl border border-warning/40 bg-warning/10 p-4 text-sm text-warning-foreground shadow-soft">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <p className="font-semibold text-foreground">
+                Verify DoD access to post and message.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Use your .mil email, an invite code, or a quick manual check to unlock posting and DMs.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                className="rounded-full px-4 py-1 text-xs font-semibold"
+                type="button"
+                onClick={() => beginVerification("email")}
+              >
+                .mil email
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-full px-4 py-1 text-xs font-semibold"
+                type="button"
+                onClick={() => beginVerification("invite")}
+              >
+                Invite code
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-full px-4 py-1 text-xs font-semibold"
+                type="button"
+                onClick={() => beginVerification("manual")}
+              >
+                Manual
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="space-y-3">
