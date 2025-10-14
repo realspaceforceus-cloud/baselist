@@ -103,6 +103,7 @@ const ListingDetail = (): JSX.Element => {
     });
 
     setComposerOpen(false);
+    setMessageBody(defaultMessage);
   }, [
     listing.id,
     listing.sellerId,
