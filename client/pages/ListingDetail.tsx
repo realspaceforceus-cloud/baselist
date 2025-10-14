@@ -91,18 +91,15 @@ const ListingDetail = (): JSX.Element => {
       return;
     }
 
-    sendMessageToSeller(listing.id, listing.sellerId, trimmed);
+    const thread = sendMessageToSeller(listing.id, listing.sellerId, trimmed);
 
     toast.success("Message sent", {
-      description: `We created a thread with ${seller?.name ?? "the seller"}.`,
-      action: {
-        label: "Open messages",
-        onClick: () => navigate("/messages"),
-      },
+      description: `Chatting with ${seller?.name ?? "the seller"} is ready to go.`,
     });
 
     setComposerOpen(false);
     setMessageBody(defaultMessage);
+    navigate(`/messages/${thread.id}`);
   }, [
     defaultMessage,
     listing.id,
