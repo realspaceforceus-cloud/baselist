@@ -141,18 +141,34 @@ const Landing = (): JSX.Element => {
     event.preventDefault();
     setAccountError(null);
 
-    const trimmedUsername = accountForm.username.trim();
-    const trimmedEmail = accountForm.email.trim();
-    const trimmedPassword = accountForm.password.trim();
-
-    if (!USERNAME_PATTERN.test(trimmedUsername)) {
+    if (!usernameValid) {
       setAccountError(
         "Username must be 3-20 characters using letters, numbers, or underscores.",
       );
       return;
     }
 
-    if (trimmedPassword.length < PASSWORD_MIN_LENGTH) {
+    if (usernameTaken) {
+      setAccountError("That username is already taken. Try another.");
+      return;
+    }
+
+    if (!emailFormatValid) {
+      setAccountError("Enter a valid email address.");
+      return;
+    }
+
+    if (!emailDod) {
+      setAccountError("Use an approved DoD email (.mil or .defense.gov) to continue.");
+      return;
+    }
+
+    if (emailTaken) {
+      setAccountError("An account already exists with that email.");
+      return;
+    }
+
+    if (!passwordStrong) {
       setAccountError("Password must be at least 12 characters long.");
       return;
     }
@@ -162,17 +178,6 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    if (!trimmedEmail || !EMAIL_PATTERN.test(trimmedEmail.toLowerCase())) {
-      setAccountError("Enter a valid email address.");
-      return;
-    }
-
-    if (!isDodEmail(trimmedEmail)) {
-      setAccountError("Use an approved DoD email (.mil or .defense.gov) to continue.");
-      return;
-    }
-
-    setAccountIsDod(true);
     setJoinStage("base");
   };
 
