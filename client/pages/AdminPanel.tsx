@@ -1147,7 +1147,7 @@ const AdminPanel = (): JSX.Element => {
               reports={reports}
               onApprove={handleApproveReport}
               onDismiss={handleDismissReport}
-              onOpenAttachment={(reportId) => handleApproveReport(reportId)}
+              onOpenAttachment={handleOpenEvidence}
               onAddNote={handleAddReportNote}
             />
           ) : null}
