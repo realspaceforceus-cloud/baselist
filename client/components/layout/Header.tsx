@@ -1,5 +1,8 @@
 import { ShieldCheck } from "lucide-react";
 
+import { MessageSquare, ShieldCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import { BaseSelector } from "@/components/layout/BaseSelector";
 import { SearchInput } from "@/components/layout/SearchInput";
 import { useBaseList } from "@/context/BaseListContext";
