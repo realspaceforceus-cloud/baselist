@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { BaseSelector } from "@/components/layout/BaseSelector";
 import { SearchInput } from "@/components/layout/SearchInput";
+import { RatingBadge } from "@/components/shared/RatingBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
