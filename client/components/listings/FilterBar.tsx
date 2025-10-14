@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { ListingFilter } from "@/types";
 
 interface FilterBarProps {
@@ -13,7 +14,7 @@ export const FilterBar = ({
   onFilterChange,
 }: FilterBarProps): JSX.Element => {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {filters.map((filter) => {
         const isActive = activeFilter === filter;
         return (
@@ -25,8 +26,8 @@ export const FilterBar = ({
             className={cn(
               "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition",
               isActive
-                ? "border-transparent bg-primary text-primary-foreground shadow-soft"
-                : "border-transparent bg-muted/80 text-foreground hover:bg-muted",
+                ? "border-primary/60 bg-primary/10 text-primary shadow-soft"
+                : "border-border/70 bg-background/60 text-foreground/80 hover:bg-muted/60",
             )}
           >
             {filter}
