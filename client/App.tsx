@@ -13,7 +13,7 @@ import Moderation from "./pages/Moderation";
 import NotFound from "./pages/NotFound";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
 import { createRoot } from "react-dom/client";
 
 const queryClient = new QueryClient();
@@ -25,7 +25,7 @@ const App = (): JSX.Element => (
         <BaseListProvider>
           <Routes>
             <Route element={<AppShell />}>
-              <Route index element={<Index />} />
+              <Route index element={<Home />} />
               <Route path="post" element={<Post />} />
               <Route path="messages" element={<Messages />} />
               <Route path="messages/:threadId" element={<Messages />} />
