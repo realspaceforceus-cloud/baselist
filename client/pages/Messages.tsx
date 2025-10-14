@@ -167,6 +167,35 @@ const Messages = (): JSX.Element => {
     }
   }, [navigate, threadId, threadSummaries]);
 
+  const threadCounts = useMemo(
+    () =>
+      threadSummaries.reduce(
+        (acc, summary) => {
+          acc.all += 1;
+          acc[summary.userStatus] += 1;
+          return acc;
+        },
+        { all: 0, active: 0, completed: 0, archived: 0 },
+      ),
+    [threadSummaries],
+  );
+
+  const filteredSummaries = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    return threadSummaries.filter((summary) => {
+      const matchesFilter = threadFilter === "all" || summary.userStatus === threadFilter;
+      if (!matchesFilter) {
+        return false;
+      }
+      if (!query) {
+        return true;
+      }
+      const listingText = summary.listing?.title.toLowerCase() ?? "";
+      const partnerText = summary.partnerName.toLowerCase();
+      return listingText.includes(query) || partnerText.includes(query);
+    });
+  }, [searchTerm, threadFilter, threadSummaries]);
+
   const activeSummary = useMemo(
     () =>
       threadSummaries.find((summary) => summary.thread.id === threadId) ??
