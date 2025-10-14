@@ -37,7 +37,7 @@ const Messages = (): JSX.Element => {
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold text-foreground">Messages</h1>
           <p className="text-sm text-muted-foreground">
-            Coordinate meetups, send quick offers, and keep every exchange on base. Threads live alongside each listing for context.
+            Your messages are tied to listings—quick offers, updates, and pickups.
           </p>
         </div>
         <Button asChild variant="outline" className="rounded-full px-5">
