@@ -775,6 +775,7 @@ export const BaseListProvider = ({
       requestPasswordReset,
       completePasswordReset,
       cancelPasswordReset,
+      beginVerification,
       signOut,
       listings,
       addListing,
