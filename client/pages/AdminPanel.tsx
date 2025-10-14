@@ -1043,7 +1043,7 @@ const AdminPanel = (): JSX.Element => {
         id: "queue",
         label: "Queue Health",
         value: queueHealthLabel,
-        meta: `${flaggedThreads.length} flagged threads",
+        meta: `${flaggedThreads.length} flagged threads`,
         icon: Activity,
         toneClass: queueHealthTone,
       },
