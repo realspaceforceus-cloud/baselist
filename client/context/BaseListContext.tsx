@@ -313,33 +313,35 @@ export const BaseListProvider = ({
       });
     });
 
-    if (newIncoming.length) {
-      newIncoming.forEach(({ thread, message }) => {
-        const listing = listings.find((item) => item.id === thread.listingId);
-        const partnerId = thread.participants.find(
-          (participant) => participant !== user.id,
-        );
-        const partner = partnerId
-          ? SELLERS.find((candidate) => candidate.id === partnerId)
-          : undefined;
+    knownMessageIdsRef.current = currentIds;
 
-        const preview =
-          message.body.length > 120
-            ? `${message.body.slice(0, 117)}...`
-            : message.body;
-
-        toast(`${partner?.name ?? "New message"} replied`, {
-          description: listing ? `${listing.title}: ${preview}` : preview,
-          action: {
-            label: "Open",
-            onClick: () => navigate(`/messages/${thread.id}`),
-          },
-        });
-      });
+    if (!isAuthenticated || newIncoming.length === 0) {
+      return;
     }
 
-    knownMessageIdsRef.current = currentIds;
-  }, [listings, messageThreads, navigate, user.id]);
+    newIncoming.forEach(({ thread, message }) => {
+      const listing = listings.find((item) => item.id === thread.listingId);
+      const partnerId = thread.participants.find(
+        (participant) => participant !== user.id,
+      );
+      const partner = partnerId
+        ? SELLERS.find((candidate) => candidate.id === partnerId)
+        : undefined;
+
+      const preview =
+        message.body.length > 120
+          ? `${message.body.slice(0, 117)}...`
+          : message.body;
+
+      toast(`${partner?.name ?? "New message"} replied`, {
+        description: listing ? `${listing.title}: ${preview}` : preview,
+        action: {
+          label: "Open",
+          onClick: () => navigate(`/messages/${thread.id}`),
+        },
+      });
+    });
+  }, [isAuthenticated, listings, messageThreads, navigate, user.id]);
 
   useEffect(
     () => () => {
