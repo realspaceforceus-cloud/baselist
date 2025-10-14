@@ -123,10 +123,6 @@ const createAuthRouter = () => {
     }
 
     const { stored } = verification;
-    const isMatch = await compareRefreshToken(refreshToken, stored);
-    if (!isMatch) {
-      return res.status(401).json({ error: "Refresh token invalid" });
-    }
 
     const user = store.getUser(stored.userId);
     if (!user) {
