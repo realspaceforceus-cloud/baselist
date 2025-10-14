@@ -217,6 +217,7 @@ export const BaseListProvider = ({
       currentBaseId,
       listings,
       markListingSold,
+      markThreadAsRead,
       messageThreads,
       removeListing,
       searchQuery,
