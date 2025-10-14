@@ -14,6 +14,8 @@ export interface Base {
   abbreviation: string;
   region: string;
   timezone: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface Seller {
