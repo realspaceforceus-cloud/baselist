@@ -207,6 +207,14 @@ type BaseListContextValue = {
   isModerator: boolean;
   accounts: BaseListAccount[];
   currentAccount: BaseListAccount | null;
+  memberDiscipline: Record<string, MemberDisciplineRecord>;
+  notices: AccountNotice[];
+  addNotice: (payload: AddNoticePayload) => AccountNotice;
+  markNoticeRead: (noticeId: string) => void;
+  markAllNoticesRead: () => void;
+  suspendMember: (memberId: string, reason: string) => void;
+  reinstateMember: (memberId: string) => void;
+  issueStrike: (memberId: string, reason: string) => void;
   createAccount: (payload: CreateAccountPayload) => BaseListAccount;
   activateAccount: (accountId: string, options?: SignInOptions) => void;
   signInWithPassword: (
