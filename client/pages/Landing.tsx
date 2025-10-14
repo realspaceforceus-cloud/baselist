@@ -131,7 +131,6 @@ const Landing = (): JSX.Element => {
     setJoinStage("account");
     setAccountForm(defaultAccountForm);
     setAccountError(null);
-    setAccountIsDod(false);
     setPendingAccountId(null);
     setSearchTerm("");
     setSelectedBaseId(bases[0]?.id ?? "");
