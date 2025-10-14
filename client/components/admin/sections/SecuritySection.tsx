@@ -2,28 +2,19 @@ import { Fingerprint, History, Lock, ShieldAlert } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const auditLog = [
-  {
-    id: "LOG-7845",
-    actor: "Admin Moser",
-    action: "Verified user u-003",
-    time: "Oct 14 • 09:24",
-  },
-  {
-    id: "LOG-7846",
-    actor: "Moderator Moss",
-    action: "Removed listing LST-8423",
-    time: "Oct 14 • 09:31",
-  },
-  {
-    id: "LOG-7847",
-    actor: "Admin Moser",
-    action: "Warned users in thread MSG-9022",
-    time: "Oct 14 • 09:42",
-  },
-];
+export interface AdminAuditEntry {
+  id: string;
+  actor: string;
+  action: string;
+  time: string;
+}
 
-export const SecuritySection = (): JSX.Element => {
+interface SecuritySectionProps {
+  auditEntries: AdminAuditEntry[];
+  onClearAudit: () => void;
+}
+
+export const SecuritySection = ({ auditEntries, onClearAudit }: SecuritySectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Security & Audit" subtitle="Security" accent="2FA" />
@@ -48,15 +39,21 @@ export const SecuritySection = (): JSX.Element => {
         </article>
       </div>
       <div className="rounded-3xl border border-border bg-card/90 p-4 shadow-soft">
-        <div className="flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <History className="h-4 w-4 text-primary" aria-hidden />
             Latest audit entries
           </div>
-          <Fingerprint className="h-4 w-4 text-muted-foreground" aria-hidden />
+          <button
+            type="button"
+            className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            onClick={onClearAudit}
+          >
+            Clear log
+          </button>
         </div>
-        <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-          {auditLog.map((entry) => (
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          {auditEntries.map((entry) => (
             <li
               key={entry.id}
               className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-2"
@@ -67,7 +64,16 @@ export const SecuritySection = (): JSX.Element => {
               </span>
             </li>
           ))}
+          {auditEntries.length === 0 ? (
+            <li className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-xs text-muted-foreground">
+              No administrative actions recorded yet today.
+            </li>
+          ) : null}
         </ul>
+        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+          <Fingerprint className="h-4 w-4 text-muted-foreground" aria-hidden />
+          Audit trail stored for 90 days.
+        </div>
       </div>
     </section>
   );
