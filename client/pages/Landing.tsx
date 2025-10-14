@@ -350,13 +350,19 @@ const Landing = (): JSX.Element => {
     if (!pendingAccountId) {
       return;
     }
+
+    if (!pendingAccountVerified) {
+      toast.error("Confirm your DoD email before entering BaseList.");
+      return;
+    }
+
     activateAccount(pendingAccountId, { rememberDevice: true });
     toast.success("You’re signed in", {
-      description: accountIsDod
-        ? "Welcome to BaseList. Start browsing your base feed."
-        : "Browse freely. Verify from your profile when you’re ready to post or DM.",
+      description: "Welcome to BaseList. Start browsing your base feed.",
     });
     setJoinStage("hidden");
+    setPendingAccountId(null);
+    setAccountForm(defaultAccountForm);
   };
 
   const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
