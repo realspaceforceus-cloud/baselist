@@ -15,7 +15,7 @@ const Messages = (): JSX.Element => {
     const seller = partnerId
       ? SELLERS.find((candidate) => candidate.id === partnerId)
       : undefined;
-    const lastMessage = thread.messages.at(-1);
+    const lastMessage = thread.messages[thread.messages.length - 1];
     const lastUpdated = lastMessage
       ? formatDistanceToNow(new Date(lastMessage.sentAt), { addSuffix: true })
       : "Just now";
