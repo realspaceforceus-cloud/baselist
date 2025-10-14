@@ -67,6 +67,7 @@ export const SELLERS: Seller[] = [
       "https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=128&q=80",
     rating: 4.9,
     completedSales: 27,
+    lastActiveAt: "2024-10-29T15:15:00Z",
   },
   {
     id: "seller-avery",
@@ -77,6 +78,7 @@ export const SELLERS: Seller[] = [
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=128&q=80",
     rating: 4.8,
     completedSales: 34,
+    lastActiveAt: "2024-10-30T12:45:00Z",
   },
   {
     id: "seller-lena",
@@ -87,6 +89,7 @@ export const SELLERS: Seller[] = [
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=128&q=80",
     rating: 4.95,
     completedSales: 18,
+    lastActiveAt: "2024-10-28T22:10:00Z",
   },
   {
     id: "seller-marcus",
@@ -97,6 +100,7 @@ export const SELLERS: Seller[] = [
       "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=128&q=80",
     rating: 4.7,
     completedSales: 22,
+    lastActiveAt: "2024-10-29T08:20:00Z",
   },
 ];
 
