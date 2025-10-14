@@ -1,27 +1,25 @@
-import { AlertTriangle, MessageCircleWarning, ShieldCheck, UserMinus } from "lucide-react";
+import { ShieldCheck, UserMinus, MessageCircleWarning } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-const flaggedThreads = [
-  {
-    id: "MSG-9021",
-    base: "Travis AFB",
-    reason: "Payment outside platform",
-    participants: "Harper • Cole",
-    excerpt: "Let’s move to Zelle. I’ll send you the details…",
-    accessedBy: "None",
-  },
-  {
-    id: "MSG-9022",
-    base: "Ramstein AB",
-    reason: "Harassment",
-    participants: "Ramirez • Young",
-    excerpt: "You’re wasting my time. Drop your price now…",
-    accessedBy: "Moderator Moss",
-  },
-];
+export interface AdminFlaggedThread {
+  id: string;
+  base: string;
+  reason: string;
+  participants: string;
+  excerpt: string;
+  accessedBy?: string;
+  flaggedAt?: string;
+}
 
-export const MessagingSection = (): JSX.Element => {
+interface MessagingSectionProps {
+  threads: AdminFlaggedThread[];
+  onWarn: (threadId: string) => void;
+  onBan: (threadId: string) => void;
+  onMarkReviewed: (threadId: string) => void;
+}
+
+export const MessagingSection = ({ threads, onWarn, onBan, onMarkReviewed }: MessagingSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Messaging Oversight" subtitle="Messaging" accent="Flagged" />
@@ -29,7 +27,7 @@ export const MessagingSection = (): JSX.Element => {
         Admins see only reported threads. Every access is recorded with timestamp and reviewer ID.
       </p>
       <div className="space-y-3">
-        {flaggedThreads.map((thread) => (
+        {threads.map((thread) => (
           <article
             key={thread.id}
             className="rounded-3xl border border-border bg-background/90 p-4 shadow-soft"
@@ -43,7 +41,10 @@ export const MessagingSection = (): JSX.Element => {
                     {thread.base}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground">Thread {thread.id} • {thread.participants}</div>
+                <div className="text-xs text-muted-foreground">
+                  Thread {thread.id} • {thread.participants}
+                  {thread.flaggedAt ? ` • Flagged ${thread.flaggedAt}` : ""}
+                </div>
                 <p className="rounded-2xl border border-dashed border-nav-border bg-card/90 px-3 py-2 text-sm text-foreground/80">
                   “{thread.excerpt}”
                 </p>
@@ -52,11 +53,22 @@ export const MessagingSection = (): JSX.Element => {
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2 text-xs font-semibold">
-                <button type="button" className="inline-flex items-center gap-1 rounded-full border border-border px-4 py-2">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-full border border-border px-4 py-2"
+                  onClick={() => {
+                    onWarn(thread.id);
+                    onMarkReviewed(thread.id);
+                  }}
+                >
                   <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
                   Warn users
                 </button>
-                <button type="button" className="inline-flex items-center gap-1 rounded-full border border-destructive px-4 py-2 text-destructive">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-full border border-destructive px-4 py-2 text-destructive"
+                  onClick={() => onBan(thread.id)}
+                >
                   <UserMinus className="h-3.5 w-3.5" aria-hidden />
                   Ban offender
                 </button>
@@ -64,6 +76,11 @@ export const MessagingSection = (): JSX.Element => {
             </div>
           </article>
         ))}
+        {threads.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-nav-border bg-background/80 p-6 text-sm text-muted-foreground">
+            No reported threads need review.
+          </div>
+        ) : null}
       </div>
       <div className="rounded-3xl border border-dashed border-nav-border bg-card/90 px-4 py-3 text-xs text-muted-foreground">
         Access log retained for 90 days with reviewer, timestamp, and action taken.
