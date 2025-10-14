@@ -253,6 +253,80 @@ export const BaseListProvider = ({
     [user.id],
   );
 
+  const unreadMessageCount = useMemo(() => {
+    return messageThreads.reduce((count, thread) => {
+      const lastReadAt = thread.lastReadAt?.[user.id];
+      return (
+        count +
+        thread.messages.reduce((threadCount, message) => {
+          if (message.authorId === user.id) {
+            return threadCount;
+          }
+          if (!lastReadAt) {
+            return threadCount + 1;
+          }
+          const isUnread =
+            new Date(message.sentAt).getTime() > new Date(lastReadAt).getTime();
+          return threadCount + (isUnread ? 1 : 0);
+        }, 0)
+      );
+    }, 0);
+  }, [messageThreads, user.id]);
+
+  useEffect(() => {
+    const currentIds = new Set<string>();
+    const newIncoming: Array<{ thread: MessageThread; message: Message }> = [];
+
+    messageThreads.forEach((thread) => {
+      thread.messages.forEach((message) => {
+        currentIds.add(message.id);
+        if (
+          !knownMessageIdsRef.current.has(message.id) &&
+          message.authorId !== user.id
+        ) {
+          newIncoming.push({ thread, message });
+        }
+      });
+    });
+
+    if (newIncoming.length) {
+      newIncoming.forEach(({ thread, message }) => {
+        const listing = listings.find((item) => item.id === thread.listingId);
+        const partnerId = thread.participants.find(
+          (participant) => participant !== user.id,
+        );
+        const partner = partnerId
+          ? SELLERS.find((candidate) => candidate.id === partnerId)
+          : undefined;
+
+        const preview =
+          message.body.length > 120
+            ? `${message.body.slice(0, 117)}...`
+            : message.body;
+
+        toast(`${partner?.name ?? "New message"} replied`, {
+          description: listing ? `${listing.title}: ${preview}` : preview,
+          action: {
+            label: "Open",
+            onClick: () => navigate(`/messages/${thread.id}`),
+          },
+        });
+      });
+    }
+
+    knownMessageIdsRef.current = currentIds;
+  }, [listings, messageThreads, navigate, user.id]);
+
+  useEffect(
+    () => () => {
+      simulatedReplyTimers.current.forEach((timer) => {
+        clearTimeout(timer);
+      });
+      simulatedReplyTimers.current.clear();
+    },
+    [],
+  );
+
   const currentBase = useMemo<Base>(() => {
     return (
       BASES.find((base) => base.id === currentBaseId) ??
