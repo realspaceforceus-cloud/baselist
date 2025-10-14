@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ShieldCheck } from "lucide-react";
+
 import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { SponsorTile } from "@/components/listings/SponsorTile";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useBaseList } from "@/context/BaseListContext";
 import {
   PROHIBITED_CONTENT,
