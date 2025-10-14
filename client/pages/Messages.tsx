@@ -597,15 +597,27 @@ const Messages = (): JSX.Element => {
                       <h2 className="text-base font-semibold text-foreground">
                         {activeSummary.listing?.title ?? "Listing removed"}
                       </h2>
-                      <p className="text-xs text-muted-foreground">
-                        {activeSummary.seller?.name ?? "Verified member"}
-                        {activeSummary.seller?.rating ? (
-                          <span className="ml-2 inline-flex items-center gap-1 text-muted-foreground">
-                            <span aria-hidden>⭐</span>
-                            {activeSummary.seller.rating.toFixed(1)}
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <span>{activeSummary.partnerName}</span>
+                        {activeSummary.partnerId ? (
+                          <RatingBadge
+                            userId={activeSummary.partnerId}
+                            initialAverage={activeSummary.seller?.rating ?? null}
+                            initialCount={
+                              activeSummary.seller?.ratingCount ??
+                              activeSummary.seller?.completedSales ??
+                              0
+                            }
+                            size="sm"
+                          />
+                        ) : null}
+                        {activeSummary.listing?.status === "sold" ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-700">
+                            <CheckCircle2 className="h-3 w-3" aria-hidden />
+                            Sold
                           </span>
                         ) : null}
-                      </p>
+                      </div>
                     </div>
                   </div>
                   {activeSummary.listing ? (
