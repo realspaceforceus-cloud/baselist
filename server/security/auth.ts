@@ -48,7 +48,7 @@ export const createRefreshToken = async (userId: string, deviceId: string, userA
   });
 
   const tokenHash = await bcrypt.hash(rawToken, 10);
-  const refreshTokenRecord = store.createRefreshToken(userId, deviceId, tokenHash, userAgent);
+  const refreshTokenRecord = store.createRefreshToken(userId, deviceId, tokenHash, jti, userAgent);
 
   return { rawToken, refreshTokenRecord };
 };
@@ -64,17 +64,25 @@ export const verifyAccessToken = (token: string): AccessTokenPayload | null => {
 export const verifyRefreshToken = async (token: string) => {
   try {
     const payload = jwt.verify(token, JWT_REFRESH_SECRET) as RefreshTokenPayload;
-    const stored = store.getRefreshTokenByHash(asyncHashComparisonToken(token));
+    const stored = store.getRefreshTokenById(payload.jti);
     if (!stored || stored.userId !== payload.sub) {
       return null;
     }
+    const isMatch = await bcrypt.compare(token, stored.tokenHash);
+    if (!isMatch) {
+      return null;
+    }
+    const expiresAtMs = new Date(stored.expiresAt).getTime();
+    if (expiresAtMs <= Date.now()) {
+      store.revokeRefreshToken(stored.id);
+      return null;
+    }
+    store.touchRefreshToken(stored.id);
     return { payload, stored };
   } catch (error) {
     return null;
   }
 };
-
-const asyncHashComparisonToken = (token: string) => token;
 
 export const compareRefreshToken = async (token: string, record: RefreshTokenRecord) => {
   return bcrypt.compare(token, record.tokenHash);
