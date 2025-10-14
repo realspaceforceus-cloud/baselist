@@ -228,6 +228,46 @@ const ListingDetail = (): JSX.Element => {
           </article>
         </aside>
       </div>
+
+      <Sheet open={isComposerOpen} onOpenChange={setComposerOpen}>
+        <SheetContent
+          side="bottom"
+          className="h-auto max-h-[80vh] rounded-t-3xl border border-border bg-card px-6 pb-6 pt-8"
+        >
+          <SheetHeader className="space-y-2 text-left">
+            <SheetTitle className="text-lg font-semibold text-foreground">
+              Message {seller?.name ?? "seller"}
+            </SheetTitle>
+            <p className="text-sm text-muted-foreground">
+              Send a quick note to confirm availability and handoff details.
+            </p>
+          </SheetHeader>
+          <div className="mt-6 space-y-4">
+            <div className="rounded-2xl border border-border bg-background/70 p-4 text-sm text-muted-foreground">
+              <p className="font-semibold text-foreground">{listing.title}</p>
+              <p>{formattedPrice}</p>
+            </div>
+            <Textarea
+              value={messageBody}
+              onChange={(event) => setMessageBody(event.target.value)}
+              rows={4}
+              className="rounded-2xl border-border text-sm"
+              aria-label="Message to seller"
+              placeholder="Hi, is this still available?"
+            />
+          </div>
+          <SheetFooter className="mt-6">
+            <Button
+              className="w-full rounded-full"
+              size="lg"
+              onClick={handleSendMessage}
+              disabled={!messageBody.trim()}
+            >
+              Send message
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </section>
   );
 };
