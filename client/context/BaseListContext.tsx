@@ -208,6 +208,7 @@ export const BaseListProvider = ({
       removeListing,
       messageThreads,
       sendMessageToSeller,
+      markThreadAsRead,
     }),
     [
       addListing,
