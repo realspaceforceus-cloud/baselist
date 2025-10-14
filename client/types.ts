@@ -101,3 +101,24 @@ export interface MessageThread {
   deletedBy?: string[];
   transaction?: ThreadTransaction;
 }
+
+export interface TransactionHistoryEntry {
+  id: string;
+  threadId: string;
+  listingId: string;
+  buyerId: string;
+  sellerId: string;
+  price: number | null;
+  completedAt: string;
+  buyerRatingAboutSeller?: number;
+  sellerRatingAboutBuyer?: number;
+}
+
+export interface RatingSummary {
+  overallAverage: number | null;
+  overallCount: number;
+  sellerAverage: number | null;
+  sellerCount: number;
+  buyerAverage: number | null;
+  buyerCount: number;
+}
