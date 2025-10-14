@@ -105,6 +105,7 @@ const ListingDetail = (): JSX.Element => {
     setComposerOpen(false);
     setMessageBody(defaultMessage);
   }, [
+    defaultMessage,
     listing.id,
     listing.sellerId,
     messageBody,
