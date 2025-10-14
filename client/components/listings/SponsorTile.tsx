@@ -1,5 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
+import { ArrowUpRight } from "lucide-react";
+
 import type { SponsorPlacement } from "@/types";
 
 interface SponsorTileProps {
@@ -16,9 +18,9 @@ export const SponsorTile = ({ placement }: SponsorTileProps): JSX.Element | null
       href={placement.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex w-full flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-card transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="group flex w-full flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
     >
-      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <span className="text-[0.65rem] font-semibold uppercase tracking-[0.4em] text-muted-foreground/80">
         Sponsor
       </span>
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
