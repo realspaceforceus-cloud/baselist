@@ -1,8 +1,21 @@
 import { Link } from "react-router-dom";
-import { BadgeCheck, ClipboardList, ShieldCheck, Stars } from "lucide-react";
+import {
+  BadgeCheck,
+  ClipboardList,
+  ShieldCheck,
+  ShoppingBag,
+  Star as StarIcon,
+  Stars,
+  Tag,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RatingBadge } from "@/components/shared/RatingBadge";
 import { useBaseList } from "@/context/BaseListContext";
+import { cn } from "@/lib/utils";
+import type { TransactionHistoryEntry } from "@/types";
 
 const Profile = (): JSX.Element => {
   const { user, currentBase, listings, isModerator } = useBaseList();
