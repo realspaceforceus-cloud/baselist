@@ -38,6 +38,14 @@ const Messages = (): JSX.Element => {
     user,
     markThreadAsRead,
     sendMessageToSeller,
+    initiateTransaction,
+    confirmTransactionCompletion,
+    submitTransactionRating,
+    archiveThread,
+    unarchiveThread,
+    deleteThread,
+    getUserRatingSummary,
+    getMemberName,
   } = useBaseList();
   const navigate = useNavigate();
   const { threadId } = useParams<{ threadId?: string }>();
