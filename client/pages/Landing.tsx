@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
@@ -54,6 +54,24 @@ const isDodEmail = (email: string): boolean => {
   return ALLOWED_DOD_DOMAINS.some((domain) => trimmed.endsWith(domain));
 };
 
+const toRadians = (value: number): number => (value * Math.PI) / 180;
+
+const getDistanceInKm = (a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }): number => {
+  const earthRadiusKm = 6371;
+  const dLat = toRadians(b.latitude - a.latitude);
+  const dLon = toRadians(b.longitude - a.longitude);
+  const lat1 = toRadians(a.latitude);
+  const lat2 = toRadians(b.latitude);
+
+  const sinLat = Math.sin(dLat / 2);
+  const sinLon = Math.sin(dLon / 2);
+
+  const aVal = sinLat * sinLat + sinLon * sinLon * Math.cos(lat1) * Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(aVal), Math.sqrt(1 - aVal));
+
+  return earthRadiusKm * c;
+};
+
 const Landing = (): JSX.Element => {
   const { signIn, bases, setCurrentBaseId } = useBaseList();
 
@@ -68,10 +86,14 @@ const Landing = (): JSX.Element => {
   const [username, setUsername] = useState("");
   const [acceptRules, setAcceptRules] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<"idle" | "requesting" | "granted" | "denied" | "unavailable">("idle");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleStartJoin = () => {
     setJoinStage("verify");
     setVerificationMethod("email");
+    setSearchTerm("");
   };
 
   const handleManualFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +133,37 @@ const Landing = (): JSX.Element => {
     setJoinStage("base");
   };
 
+  useEffect(() => {
+    if (joinStage !== "base" || locationStatus !== "idle") {
+      return;
+    }
+
+    setLocationStatus("requesting");
+
+    if (!("geolocation" in navigator)) {
+      setLocationStatus("unavailable");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserCoords({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationStatus("granted");
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          setLocationStatus("denied");
+        } else {
+          setLocationStatus("unavailable");
+        }
+      },
+      { enableHighAccuracy: false, maximumAge: 5 * 60 * 1000, timeout: 10 * 1000 },
+    );
+  }, [joinStage, locationStatus]);
+
   const handleBaseSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedBaseId) {
@@ -144,6 +197,100 @@ const Landing = (): JSX.Element => {
       setIsSubmitting(false);
     }
   };
+
+  const baseDistances = useMemo(
+    () =>
+      bases.map((base) => {
+        if (
+          userCoords &&
+          typeof base.latitude === "number" &&
+          typeof base.longitude === "number"
+        ) {
+          return {
+            base,
+            distance: getDistanceInKm(userCoords, {
+              latitude: base.latitude,
+              longitude: base.longitude,
+            }),
+          };
+        }
+
+        return {
+          base,
+          distance: Number.POSITIVE_INFINITY,
+        };
+      }),
+    [bases, userCoords],
+  );
+
+  const sortedBases = useMemo(() => {
+    const normalized = searchTerm.trim().toLowerCase();
+
+    const filtered = baseDistances.filter(({ base }) => {
+      if (!normalized) {
+        return true;
+      }
+      return (
+        base.name.toLowerCase().includes(normalized) ||
+        base.abbreviation.toLowerCase().includes(normalized)
+      );
+    });
+
+    const comparator = (a: { base: typeof bases[number]; distance: number }, b: { base: typeof bases[number]; distance: number }) => {
+      const aFinite = Number.isFinite(a.distance);
+      const bFinite = Number.isFinite(b.distance);
+
+      if (aFinite && bFinite && userCoords) {
+        if (a.distance !== b.distance) {
+          return a.distance - b.distance;
+        }
+        return a.base.name.localeCompare(b.base.name);
+      }
+
+      if (aFinite && !bFinite) {
+        return -1;
+      }
+      if (!aFinite && bFinite) {
+        return 1;
+      }
+
+      return a.base.name.localeCompare(b.base.name);
+    };
+
+    return filtered.slice().sort(comparator);
+  }, [baseDistances, searchTerm, userCoords]);
+
+  const recommendedBases = useMemo(() => {
+    if (searchTerm.trim()) {
+      return [];
+    }
+
+    const sorted = sortedBases.slice();
+    const recommended = sorted
+      .filter(({ distance }) => Number.isFinite(distance))
+      .slice(0, 4);
+
+    if (recommended.length < 4) {
+      const fallback = sorted.filter(
+        ({ base }) => !recommended.some((item) => item.base.id === base.id),
+      );
+      return [...recommended, ...fallback.slice(0, 4 - recommended.length)];
+    }
+
+    return recommended;
+  }, [sortedBases, searchTerm]);
+
+  const recommendedIds = useMemo(
+    () => recommendedBases.map(({ base }) => base.id),
+    [recommendedBases],
+  );
+
+  const remainingBases = useMemo(() => {
+    if (searchTerm.trim()) {
+      return sortedBases;
+    }
+    return sortedBases.filter(({ base }) => !recommendedIds.includes(base.id));
+  }, [recommendedIds, sortedBases, searchTerm]);
 
   const currentStep = useMemo(() => {
     switch (joinStage) {
@@ -353,30 +500,88 @@ const Landing = (): JSX.Element => {
 
             {joinStage === "base" ? (
               <form onSubmit={handleBaseSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <label htmlFor="base" className="text-sm font-semibold text-foreground">
+                <div className="space-y-3">
+                  <label htmlFor="base-search" className="text-sm font-semibold text-foreground">
                     Choose your base
                   </label>
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {bases.map((base) => (
-                      <button
-                        key={base.id}
-                        type="button"
-                        onClick={() => setSelectedBaseId(base.id)}
-                        className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left text-sm transition ${
-                          selectedBaseId === base.id
-                            ? "border-primary bg-primary/10 text-foreground"
-                            : "border-border bg-background text-muted-foreground hover:border-primary/40"
-                        }`}
-                      >
-                        <span className="font-semibold text-foreground">{base.name}</span>
-                        <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                          {base.abbreviation}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  <Input
+                    id="base-search"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    placeholder="Search your installation"
+                    className="h-11 rounded-full"
+                  />
+                  {locationStatus === "denied" ? (
+                    <p className="text-xs text-warning">
+                      Location access denied. Showing alphabetical list instead.
+                    </p>
+                  ) : locationStatus === "unavailable" ? (
+                    <p className="text-xs text-muted-foreground">
+                      Location unavailable. Pick your base manually.
+                    </p>
+                  ) : null}
                 </div>
+
+                {recommendedBases.length > 0 ? (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Nearby bases
+                    </p>
+                    <div className="grid gap-2 md:grid-cols-2">
+                      {recommendedBases.map(({ base, distance }) => (
+                        <button
+                          key={`recommended-${base.id}`}
+                          type="button"
+                          onClick={() => setSelectedBaseId(base.id)}
+                          className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                            selectedBaseId === base.id
+                              ? "border-primary bg-primary/10 text-foreground"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                          }`}
+                        >
+                          <span className="font-semibold text-foreground">{base.name}</span>
+                          <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                            {base.abbreviation}
+                            {Number.isFinite(distance) ? ` · ${Math.round(distance)} km` : ""}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {searchTerm.trim() ? "Matching bases" : "All bases"}
+                  </p>
+                  {remainingBases.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-nav-border bg-background/70 p-4 text-xs text-muted-foreground">
+                      No bases match your search yet. Try a different name or abbreviation.
+                    </div>
+                  ) : (
+                    <div className="grid gap-2 md:grid-cols-2">
+                      {remainingBases.map(({ base }) => (
+                        <button
+                          key={base.id}
+                          type="button"
+                          onClick={() => setSelectedBaseId(base.id)}
+                          className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                            selectedBaseId === base.id
+                              ? "border-primary bg-primary/10 text-foreground"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                          }`}
+                        >
+                          <span className="font-semibold text-foreground">{base.name}</span>
+                          <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                            {base.abbreviation}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <Button type="submit" className="w-full rounded-full" size="lg">
                   Continue
                 </Button>
