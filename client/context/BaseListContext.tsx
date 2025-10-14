@@ -274,6 +274,10 @@ export const BaseListProvider = ({
   );
 
   const unreadMessageCount = useMemo(() => {
+    if (!isAuthenticated) {
+      return 0;
+    }
+
     return messageThreads.reduce((count, thread) => {
       const lastReadAt = thread.lastReadAt?.[user.id];
       return (
@@ -291,7 +295,7 @@ export const BaseListProvider = ({
         }, 0)
       );
     }, 0);
-  }, [messageThreads, user.id]);
+  }, [isAuthenticated, messageThreads, user.id]);
 
   useEffect(() => {
     const currentIds = new Set<string>();
