@@ -382,6 +382,156 @@ export const BaseListProvider = ({
     [accounts, user.id, user.name],
   );
 
+  const addNotice = useCallback(
+    (payload: AddNoticePayload): AccountNotice => {
+      const severity = payload.severity ?? "info";
+      const notice: AccountNotice = {
+        id: `notice-${crypto.randomUUID()}`,
+        userId: payload.userId,
+        category: payload.category,
+        severity,
+        title: payload.title,
+        message: payload.message,
+        createdAt: new Date().toISOString(),
+        read: false,
+      };
+
+      setNotices((prev) => [notice, ...prev]);
+
+      if (payload.userId === user.id || payload.userId === "all") {
+        const description = payload.message;
+        switch (severity) {
+          case "success":
+            toast.success(payload.title, { description });
+            break;
+          case "warning":
+            toast.warning(payload.title, { description });
+            break;
+          case "danger":
+            toast.error(payload.title, { description });
+            break;
+          default:
+            toast.info(payload.title, { description });
+        }
+      }
+
+      return notice;
+    },
+    [user.id],
+  );
+
+  const markNoticeRead = useCallback((noticeId: string) => {
+    setNotices((prev) =>
+      prev.map((notice) => (notice.id === noticeId ? { ...notice, read: true } : notice)),
+    );
+  }, []);
+
+  const markAllNoticesRead = useCallback(() => {
+    setNotices((prev) => prev.map((notice) => ({ ...notice, read: true })));
+  }, []);
+
+  const suspendMember = useCallback(
+    (memberId: string, reason: string) => {
+      setMemberDiscipline((prev) => {
+        const existing = prev[memberId] ?? { strikes: 0 };
+        if (existing.suspendedAt) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [memberId]: {
+            ...existing,
+            suspendedAt: new Date().toISOString(),
+            reason,
+          },
+        };
+      });
+
+      addNotice({
+        userId: memberId,
+        category: "strike",
+        severity: "danger",
+        title: "Account suspended",
+        message: reason,
+      });
+
+      toast.error("Member suspended", {
+        description: reason,
+      });
+    },
+    [addNotice],
+  );
+
+  const reinstateMember = useCallback(
+    (memberId: string) => {
+      setMemberDiscipline((prev) => {
+        const existing = prev[memberId];
+        if (!existing) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [memberId]: {
+            strikes: existing.strikes,
+            reason: undefined,
+            suspendedAt: null,
+          },
+        };
+      });
+
+      addNotice({
+        userId: memberId,
+        category: "system",
+        severity: "success",
+        title: "Account reinstated",
+        message: "Moderator lifted your suspension. Welcome back!",
+      });
+
+      toast.success("Member reinstated", {
+        description: "Suspension lifted successfully.",
+      });
+    },
+    [addNotice],
+  );
+
+  const issueStrike = useCallback(
+    (memberId: string, reason: string) => {
+      let shouldSuspend = false;
+      setMemberDiscipline((prev) => {
+        const existing = prev[memberId] ?? { strikes: 0, suspendedAt: null };
+        const strikes = existing.strikes + 1;
+        if (strikes >= 3 && !existing.suspendedAt) {
+          shouldSuspend = true;
+        }
+        return {
+          ...prev,
+          [memberId]: {
+            ...existing,
+            strikes,
+            reason,
+          },
+        };
+      });
+
+      addNotice({
+        userId: memberId,
+        category: "strike",
+        severity: "warning",
+        title: "Conduct strike issued",
+        message: reason,
+      });
+
+      toast.warning("Strike recorded", {
+        description: reason,
+      });
+
+      if (shouldSuspend) {
+        suspendMember(memberId, "Automatic suspension after three strikes.");
+      }
+    },
+    [addNotice, suspendMember],
+  );
+
   const ensureUniqueAccount = useCallback(
     (username: string, email: string) => {
       const normalizedUsername = username.trim().toLowerCase();
