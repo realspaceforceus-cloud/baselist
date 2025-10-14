@@ -33,7 +33,7 @@ const NAV_ITEMS: NavItem[] = [
     to: "/profile",
     icon: User,
   },
-] as const;
+];
 
 export const BottomNav = (): JSX.Element => {
   return (
