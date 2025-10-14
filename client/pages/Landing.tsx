@@ -66,13 +66,8 @@ const defaultAccountForm = {
 };
 
 const Landing = (): JSX.Element => {
-  const {
-    bases,
-    createAccount,
-    activateAccount,
-    currentAccount,
-    isAuthenticated,
-  } = useBaseList();
+  const { bases, createAccount, activateAccount, isAuthenticated } =
+    useBaseList();
   const { openSignIn } = useAuthDialog();
 
   const [joinStage, setJoinStage] = useState<JoinStage>("hidden");
