@@ -1,4 +1,5 @@
 import { MessageSquare, ShieldCheck } from "lucide-react";
+import { MessageSquare, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { BaseSelector } from "@/components/layout/BaseSelector";
@@ -6,19 +7,16 @@ import { SearchInput } from "@/components/layout/SearchInput";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
+import { useAuthDialog } from "@/context/AuthDialogContext";
 
 const LOGO_SRC =
   "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2F9f8d10811f0e4d94a520d1b0b4d411e2?format=webp&width=320";
 
 export const Header = (): JSX.Element => {
-  const {
-    user,
-    isVerified,
-    unreadMessageCount,
-    isAuthenticated,
-    signIn,
-  } = useBaseList();
-  const firstName = user.name.split(" ")[0];
+  const { user, isDodVerified, unreadMessageCount, isAuthenticated, signOut } =
+    useBaseList();
+  const { openSignIn } = useAuthDialog();
+  const displayName = user.name.includes(" ") ? user.name.split(" ")[0] : user.name;
 
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
@@ -42,9 +40,9 @@ export const Header = (): JSX.Element => {
             <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm shadow-soft">
               <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
               <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {isVerified ? "Verified" : user.verificationStatus}
+                {isDodVerified ? "Verified" : user.verificationStatus}
               </span>
-              <span className="text-sm font-semibold text-foreground">{firstName}</span>
+              <span className="text-sm font-semibold text-foreground">{displayName}</span>
             </div>
             <BaseSelector />
             <SearchInput />
@@ -71,7 +69,7 @@ export const Header = (): JSX.Element => {
               variant="ghost"
               className="rounded-full px-5 py-2 text-sm font-semibold"
               type="button"
-              onClick={signIn}
+              onClick={openSignIn}
             >
               Sign In
             </Button>
