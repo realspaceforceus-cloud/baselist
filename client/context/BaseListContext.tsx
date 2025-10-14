@@ -192,6 +192,23 @@ export const BaseListProvider = ({
   );
   const isDodVerified = currentAccount?.isDodVerified ?? false;
 
+  useEffect(() => {
+    if (currentAccount) {
+      setUser(buildUserProfileFromAccount(currentAccount));
+      if (currentAccount.baseId !== currentBaseId) {
+        setCurrentBaseIdState(currentAccount.baseId);
+      }
+    } else if (!isAuthenticated) {
+      setUser((prev) => ({
+        ...CURRENT_USER,
+        currentBaseId: CURRENT_USER.currentBaseId,
+      }));
+      if (currentBaseId !== CURRENT_USER.currentBaseId) {
+        setCurrentBaseIdState(CURRENT_USER.currentBaseId);
+      }
+    }
+  }, [currentAccount, currentBaseId, isAuthenticated]);
+
   const setCurrentBaseId = useCallback(
     (baseId: string) => {
       setCurrentBaseIdState(baseId);
