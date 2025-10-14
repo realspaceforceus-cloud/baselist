@@ -46,8 +46,7 @@ export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element 
           loading="lazy"
         />
         {promotedLabel ? (
-          <span className="absolute left-4 top-4 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden />
+          <span className="absolute left-0 top-0 rounded-br-2xl bg-primary/90 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary-foreground/95 shadow-sm">
             {promotedLabel}
           </span>
         ) : null}
