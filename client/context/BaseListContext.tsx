@@ -159,6 +159,7 @@ type BaseListContextValue = {
   unreadMessageCount: number;
   transactions: TransactionHistoryEntry[];
   getUserRatingSummary: (userId: string) => RatingSummary;
+  getMemberName: (userId: string) => string;
   pendingPasswordReset?: PasswordResetRequest | null;
 };
 
