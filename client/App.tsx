@@ -7,6 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { AppShell } from "@/components/layout/AppShell";
 import { BaseListProvider } from "@/context/BaseListContext";
+import { AuthDialogProvider } from "@/context/AuthDialogContext";
+import { SignInDialog } from "@/components/auth/SignInDialog";
 import ListingDetail from "./pages/ListingDetail";
 import Messages from "./pages/Messages";
 import Moderation from "./pages/Moderation";
@@ -22,9 +24,10 @@ const App = (): JSX.Element => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <BrowserRouter>
-        <BaseListProvider>
-          <Routes>
-            <Route element={<AppShell />}>
+        <AuthDialogProvider>
+          <BaseListProvider>
+            <Routes>
+              <Route element={<AppShell />}>
               <Route index element={<Home />} />
               <Route path="post" element={<Post />} />
               <Route path="messages" element={<Messages />} />
@@ -35,9 +38,11 @@ const App = (): JSX.Element => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <SignInDialog />
           <Toaster />
           <Sonner />
         </BaseListProvider>
+      </AuthDialogProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
