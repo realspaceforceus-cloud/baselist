@@ -4,8 +4,15 @@ import {
   BASES,
   CURRENT_USER,
   LISTINGS as LISTING_SEED,
+  MESSAGE_THREADS as MESSAGE_THREAD_SEED,
 } from "@/data/mock";
-import type { Base, Listing, UserProfile } from "@/types";
+import type {
+  Base,
+  Listing,
+  Message,
+  MessageThread,
+  UserProfile,
+} from "@/types";
 
 type BaseListContextValue = {
   bases: Base[];
@@ -22,6 +29,12 @@ type BaseListContextValue = {
   addListing: (listing: Listing) => void;
   markListingSold: (listingId: string) => void;
   removeListing: (listingId: string) => void;
+  messageThreads: MessageThread[];
+  sendMessageToSeller: (
+    listingId: string,
+    sellerId: string,
+    messageBody: string,
+  ) => MessageThread;
 };
 
 const BaseListContext = createContext<BaseListContextValue | undefined>(
@@ -43,6 +56,9 @@ export const BaseListProvider = ({
       (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
     );
   });
+  const [messageThreads, setMessageThreads] = useState<MessageThread[]>(
+    () => [...MESSAGE_THREAD_SEED],
+  );
 
   const setCurrentBaseId = useCallback((baseId: string) => {
     setCurrentBaseIdState(baseId);
@@ -78,6 +94,60 @@ export const BaseListProvider = ({
     setListings((prev) => prev.filter((listing) => listing.id !== listingId));
   }, []);
 
+  const sendMessageToSeller = useCallback(
+    (listingId: string, sellerId: string, messageBody: string) => {
+      const trimmedMessage = messageBody.trim();
+      const timestamp = new Date().toISOString();
+      const newMessage: Message = {
+        id: `msg-${crypto.randomUUID()}`,
+        authorId: user.id,
+        body: trimmedMessage,
+        sentAt: timestamp,
+        type: "text",
+      };
+
+      let targetThread: MessageThread | undefined;
+
+      setMessageThreads((prev) => {
+        const existingThread = prev.find(
+          (thread) => thread.listingId === listingId,
+        );
+
+        if (existingThread) {
+          targetThread = {
+            ...existingThread,
+            messages: [...existingThread.messages, newMessage],
+            lastReadAt: {
+              ...existingThread.lastReadAt,
+              [user.id]: timestamp,
+            },
+          };
+
+          return prev.map((thread) =>
+            thread.id === existingThread.id ? (targetThread as MessageThread) : thread,
+          );
+        }
+
+        const freshThread: MessageThread = {
+          id: `thread-${crypto.randomUUID()}`,
+          listingId,
+          participants: [user.id, sellerId],
+          messages: [newMessage],
+          lastReadAt: {
+            [user.id]: timestamp,
+          },
+        };
+
+        targetThread = freshThread;
+
+        return [freshThread, ...prev];
+      });
+
+      return targetThread!;
+    },
+    [user.id],
+  );
+
   const currentBase = useMemo<Base>(() => {
     return (
       BASES.find((base) => base.id === currentBaseId) ??
@@ -102,6 +172,8 @@ export const BaseListProvider = ({
       addListing,
       markListingSold,
       removeListing,
+      messageThreads,
+      sendMessageToSeller,
     }),
     [
       addListing,
@@ -110,8 +182,10 @@ export const BaseListProvider = ({
       currentBaseId,
       listings,
       markListingSold,
+      messageThreads,
       removeListing,
       searchQuery,
+      sendMessageToSeller,
       setCurrentBaseId,
       user,
     ],
