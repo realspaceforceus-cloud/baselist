@@ -56,8 +56,11 @@ const isDodEmail = (email: string): boolean => {
 
 const toRadians = (value: number): number => (value * Math.PI) / 180;
 
-const getDistanceInKm = (a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }): number => {
-  const earthRadiusKm = 6371;
+const getDistanceInMiles = (
+  a: { latitude: number; longitude: number },
+  b: { latitude: number; longitude: number },
+): number => {
+  const earthRadiusMiles = 3958.8;
   const dLat = toRadians(b.latitude - a.latitude);
   const dLon = toRadians(b.longitude - a.longitude);
   const lat1 = toRadians(a.latitude);
@@ -69,7 +72,7 @@ const getDistanceInKm = (a: { latitude: number; longitude: number }, b: { latitu
   const aVal = sinLat * sinLat + sinLon * sinLon * Math.cos(lat1) * Math.cos(lat2);
   const c = 2 * Math.atan2(Math.sqrt(aVal), Math.sqrt(1 - aVal));
 
-  return earthRadiusKm * c;
+  return earthRadiusMiles * c;
 };
 
 const Landing = (): JSX.Element => {
@@ -89,6 +92,8 @@ const Landing = (): JSX.Element => {
   const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationStatus, setLocationStatus] = useState<"idle" | "requesting" | "granted" | "denied" | "unavailable">("idle");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showExpansionForm, setShowExpansionForm] = useState(false);
+  const [expansionEmail, setExpansionEmail] = useState("");
 
   const handleStartJoin = () => {
     setJoinStage("verify");
@@ -208,7 +213,7 @@ const Landing = (): JSX.Element => {
         ) {
           return {
             base,
-            distance: getDistanceInKm(userCoords, {
+            distance: getDistanceInMiles(userCoords, {
               latitude: base.latitude,
               longitude: base.longitude,
             }),
@@ -543,7 +548,7 @@ const Landing = (): JSX.Element => {
                           <span className="font-semibold text-foreground">{base.name}</span>
                           <span className="text-xs uppercase tracking-wide text-muted-foreground">
                             {base.abbreviation}
-                            {Number.isFinite(distance) ? ` · ${Math.round(distance)} km` : ""}
+                            {Number.isFinite(distance) ? ` · ${Math.round(distance)} mi` : ""}
                           </span>
                         </button>
                       ))}
@@ -561,7 +566,7 @@ const Landing = (): JSX.Element => {
                     </div>
                   ) : (
                     <div className="grid gap-2 md:grid-cols-2">
-                      {remainingBases.map(({ base }) => (
+                      {remainingBases.map(({ base, distance }) => (
                         <button
                           key={base.id}
                           type="button"
@@ -575,10 +580,54 @@ const Landing = (): JSX.Element => {
                           <span className="font-semibold text-foreground">{base.name}</span>
                           <span className="text-xs uppercase tracking-wide text-muted-foreground">
                             {base.abbreviation}
+                            {Number.isFinite(distance)
+                              ? ` · ${Math.round(distance)} mi`
+                              : ""}
                           </span>
                         </button>
                       ))}
                     </div>
+                  )}
+                </div>
+
+                <div className="space-y-3 rounded-2xl border border-dashed border-nav-border bg-background/70 p-4 text-xs text-muted-foreground">
+                  <p className="font-semibold text-foreground">
+                    Don’t see your base? We’re constantly expanding.
+                  </p>
+                  {showExpansionForm ? (
+                    <form
+                      className="flex flex-col gap-3 md:flex-row"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        if (!EMAIL_PATTERN.test(expansionEmail.trim())) {
+                          toast.error("Enter a valid email to stay informed.");
+                          return;
+                        }
+                        toast.success("Thanks! We’ll notify you as new bases launch.");
+                        setExpansionEmail("");
+                        setShowExpansionForm(false);
+                      }}
+                    >
+                      <Input
+                        type="email"
+                        value={expansionEmail}
+                        onChange={(event) => setExpansionEmail(event.target.value)}
+                        placeholder="Your email for updates"
+                        className="h-10 rounded-full"
+                        required
+                      />
+                      <Button type="submit" className="rounded-full px-5" size="sm">
+                        Notify me
+                      </Button>
+                    </form>
+                  ) : (
+                    <button
+                      type="button"
+                      className="text-sm font-semibold text-primary hover:underline"
+                      onClick={() => setShowExpansionForm(true)}
+                    >
+                      Click here to be informed!
+                    </button>
                   )}
                 </div>
 
