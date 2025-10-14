@@ -23,25 +23,18 @@ export const Header = (): JSX.Element => {
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:gap-8 md:py-5">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4">
           <img
             src={LOGO_SRC}
             alt="BaseList"
             className="h-8 w-auto object-contain md:h-9"
           />
-          <div className="flex flex-col">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-lg font-semibold tracking-tight text-foreground md:text-xl">
-                BaseList
-              </span>
-              <Badge variant="secondary" className="rounded-full text-[0.65rem] font-semibold uppercase tracking-wide">
-                Built by Active-Duty Airmen
-              </Badge>
-            </div>
-            <span className="text-xs text-muted-foreground md:text-sm">
-              Buy & sell on base. DoD-verified.
-            </span>
-          </div>
+          <span className="text-lg font-semibold tracking-tight text-foreground md:text-xl">
+            BaseList
+          </span>
+          <Badge variant="secondary" className="rounded-full text-[0.65rem] font-semibold uppercase tracking-wide">
+            Built by Active-Duty Airmen
+          </Badge>
         </div>
 
         {isAuthenticated ? (
@@ -73,20 +66,17 @@ export const Header = (): JSX.Element => {
             </Link>
           </div>
         ) : (
-          <div className="flex flex-1 items-center justify-start gap-3 md:ml-auto md:justify-end">
+          <div className="flex flex-1 items-center justify-end gap-3 md:ml-auto">
             <Button
               variant="ghost"
               className="rounded-full px-5 py-2 text-sm font-semibold"
               type="button"
               onClick={signIn}
             >
-              Sign in
+              Sign In
             </Button>
             <Button asChild className="rounded-full px-5 py-2 text-sm font-semibold">
-              <a href="#join" className="flex items-center gap-2">
-                Join Now
-                <ShieldCheck className="h-4 w-4" aria-hidden />
-              </a>
+              <a href="#join">Join Now</a>
             </Button>
           </div>
         )}
