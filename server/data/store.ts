@@ -818,6 +818,14 @@ export class BaseListStore {
     return updated;
   }
 
+  touchUserLogin(userId: string, rememberUntil: string | null) {
+    return this.updateRecord(this.users, userId, (current) => ({
+      ...current,
+      lastLoginAt: nowIso(),
+      rememberDeviceUntil: rememberUntil,
+    }));
+  }
+
   createRefreshToken(
     userId: string,
     deviceId: string,
