@@ -149,8 +149,16 @@ type BaseListContextValue = {
     sellerId: string,
     messageBody: string,
   ) => MessageThread;
+  initiateTransaction: (threadId: string, initiatedBy: string) => void;
+  confirmTransactionCompletion: (threadId: string, confirmerId: string) => void;
+  submitTransactionRating: (threadId: string, rating: number) => void;
+  archiveThread: (threadId: string) => void;
+  unarchiveThread: (threadId: string) => void;
+  deleteThread: (threadId: string) => void;
   markThreadAsRead: (threadId: string) => void;
   unreadMessageCount: number;
+  transactions: TransactionHistoryEntry[];
+  getUserRatingSummary: (userId: string) => RatingSummary;
   pendingPasswordReset?: PasswordResetRequest | null;
 };
 
