@@ -400,66 +400,158 @@ const Messages = (): JSX.Element => {
         </div>
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_1fr]">
-          <aside className="space-y-3">
-            <ul className="space-y-3">
-              {threadSummaries.map((summary) => {
-                const isActive = summary.thread.id === activeSummary?.thread.id;
-                return (
-                  <li key={summary.thread.id}>
+          <aside className="space-y-4">
+            <div className="rounded-3xl border border-border bg-card p-4 shadow-soft">
+              <div className="flex flex-wrap gap-2">
+                {filterOptions.map((option) => {
+                  const isActive = option.value === threadFilter;
+                  return (
                     <button
+                      key={option.value}
                       type="button"
-                      onClick={() => handleSelectThread(summary.thread.id)}
+                      onClick={() => handleFilterSelect(option.value)}
                       className={cn(
-                        "flex w-full items-center gap-4 rounded-3xl border border-border bg-card p-4 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                        isActive && "border-primary/50 bg-primary/5",
+                        "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                        isActive
+                          ? "bg-primary text-background shadow-sm"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80",
                       )}
-                      aria-current={isActive}
                     >
-                      <div className="h-12 w-12 overflow-hidden rounded-2xl border border-border bg-muted">
-                        {summary.listing?.imageUrls?.[0] ? (
-                          <img
-                            src={summary.listing.imageUrls[0]}
-                            alt={summary.listing.title}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <MessageSquare
-                            className="h-full w-full p-2 text-muted-foreground"
-                            aria-hidden
-                          />
-                        )}
-                      </div>
-                      <div className="flex flex-1 flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-foreground">
-                            {summary.listing?.title ?? "Listing removed"}
-                          </p>
-                          {summary.unread ? (
-                            <span
-                              className="inline-flex h-2.5 w-2.5 rounded-full bg-primary"
-                              aria-hidden
-                            />
-                          ) : null}
-                        </div>
-                        <p className="line-clamp-1 text-xs text-muted-foreground">
-                          {summary.lastMessage?.body ?? "No messages yet"}
-                        </p>
-                        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                          {summary.lastUpdated}
-                          {summary.seller ? (
-                            <>
-                              <Dot className="h-3 w-3 text-muted-foreground" aria-hidden />
-                              {summary.seller.name}
-                            </>
-                          ) : null}
-                        </p>
-                      </div>
-                      <span className="text-xs font-semibold text-primary">Open</span>
+                      {option.label}
+                      <span className="text-[0.65rem] uppercase tracking-wide">
+                        {option.count}
+                      </span>
                     </button>
-                  </li>
-                );
-              })}
-            </ul>
+                  );
+                })}
+              </div>
+              <Input
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="Search by item or name"
+                className="mt-3 h-9 rounded-full border-border bg-background/80 text-sm"
+              />
+            </div>
+
+            {filteredSummaries.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-center text-xs text-muted-foreground">
+                No conversations match your filters yet.
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {filteredSummaries.map((summary) => {
+                  const isActive = summary.thread.id === activeSummary?.thread.id;
+                  const statusLabel =
+                    summary.userStatus === "completed"
+                      ? "Completed"
+                      : summary.userStatus === "archived"
+                      ? "Archived"
+                      : "Active";
+                  const statusClass =
+                    summary.userStatus === "completed"
+                      ? "text-emerald-600"
+                      : summary.userStatus === "archived"
+                      ? "text-muted-foreground"
+                      : "text-primary";
+
+                  return (
+                    <li key={summary.thread.id}>
+                      <div className="flex items-start gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectThread(summary.thread.id)}
+                          className={cn(
+                            "flex w-full items-center gap-4 rounded-3xl border border-border bg-card p-4 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                            isActive && "border-primary/50 bg-primary/5",
+                          )}
+                          aria-current={isActive}
+                        >
+                          <div className="h-12 w-12 overflow-hidden rounded-2xl border border-border bg-muted">
+                            {summary.listing?.imageUrls?.[0] ? (
+                              <img
+                                src={summary.listing.imageUrls[0]}
+                                alt={summary.listing.title}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <MessageSquare
+                                className="h-full w-full p-2 text-muted-foreground"
+                                aria-hidden
+                              />
+                            )}
+                          </div>
+                          <div className="flex flex-1 flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold text-foreground">
+                                {summary.listing?.title ?? "Listing removed"}
+                              </p>
+                              {summary.unread ? (
+                                <span
+                                  className="inline-flex h-2.5 w-2.5 rounded-full bg-primary"
+                                  aria-hidden
+                                />
+                              ) : null}
+                            </div>
+                            <p className="line-clamp-1 text-xs text-muted-foreground">
+                              {summary.lastMessage?.body ?? "No messages yet"}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                              <span>{summary.lastUpdated}</span>
+                              {summary.partnerName ? (
+                                <>
+                                  <Dot className="h-3 w-3 text-muted-foreground" aria-hidden />
+                                  <span className="flex items-center gap-1">
+                                    {summary.partnerName}
+                                    {summary.seller ? (
+                                      <RatingBadge
+                                        userId={summary.seller.id}
+                                        initialAverage={summary.seller.rating ?? null}
+                                        initialCount={summary.seller.ratingCount ?? summary.seller.completedSales ?? 0}
+                                        size="sm"
+                                      />
+                                    ) : null}
+                                  </span>
+                                </>
+                              ) : null}
+                            </div>
+                          </div>
+                          <span className={cn("text-xs font-semibold", statusClass)}>{statusLabel}</span>
+                        </button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button
+                              type="button"
+                              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted"
+                              aria-label="Conversation actions"
+                            >
+                              <EllipsisVertical className="h-4 w-4" aria-hidden />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem onSelect={() => handleArchiveAction(summary)}>
+                              {summary.isArchived ? (
+                                <ArchiveRestore className="mr-2 h-4 w-4" aria-hidden />
+                              ) : (
+                                <Archive className="mr-2 h-4 w-4" aria-hidden />
+                              )}
+                              {summary.isArchived ? "Restore to inbox" : "Archive thread"}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onSelect={() => handleDeleteAction(summary)}
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" aria-hidden />
+                              Delete thread
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </aside>
 
           <section
