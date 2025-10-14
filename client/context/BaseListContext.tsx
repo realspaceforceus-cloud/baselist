@@ -369,6 +369,7 @@ export const BaseListProvider = ({
       searchQuery,
       sendMessageToSeller,
       setCurrentBaseId,
+      unreadMessageCount,
       user,
     ],
   );
