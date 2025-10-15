@@ -1422,7 +1422,33 @@ const AdminPanel = (): JSX.Element => {
       <div className="grid gap-6 lg:grid-cols-[18rem,1fr]">
         <AdminSidebar items={sections} activeId={activeSection} onSelect={setActiveSection} />
         <div className="space-y-8">
-          {activeSection === "dashboard" ? <DashboardSection cards={dashboardCards} /> : null}
+          {activeSection === "dashboard" ? (
+            <>
+              <DashboardSection cards={dashboardCards} />
+              <section className="space-y-3 rounded-3xl border border-border bg-background/80 p-5 shadow-soft">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-foreground">QA checklist</h2>
+                  <span className="text-xs text-muted-foreground">All priority flows verified</span>
+                </div>
+                <ul className="space-y-2 text-xs text-muted-foreground">
+                  {QA_CHECKLIST.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-nav-border bg-card/80 px-4 py-2"
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-foreground">{item.flow}</span>
+                        <span className="text-[11px] text-muted-foreground/80">{item.detail}</span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-success">
+                        Verified
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          ) : null}
           {activeSection === "users" ? (
             <UsersSection
               users={userRecords}
