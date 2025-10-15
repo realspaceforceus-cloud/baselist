@@ -80,12 +80,14 @@ export const SponsorsSection = ({
     if (!baseId || !label || !description || !href) {
       return;
     }
+    const backgroundImageUrl = createForm.backgroundImageUrl?.trim();
     onCreate({
       baseId,
       label,
       description,
       href,
       brandColor: normalizeHex(createForm.brandColor),
+      backgroundImageUrl: backgroundImageUrl ? backgroundImageUrl : undefined,
     });
     resetCreateForm();
     setIsCreateOpen(false);
