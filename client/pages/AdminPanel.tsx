@@ -1147,23 +1147,46 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleEditBase = useCallback(
-    async (baseId: string) => {
-      const moderator = window.prompt("Assign moderator", "Capt Logan Pierce");
-      if (!moderator) {
+    async (baseId: string, updates: { name?: string; region?: string; timezone?: string }) => {
+      if (!updates || Object.keys(updates).length === 0) {
+        return;
+      }
+      const payload: { name?: string; region?: string; timezone?: string } = {};
+      if (updates.name) {
+        payload.name = updates.name;
+      }
+      if (updates.region) {
+        payload.region = updates.region;
+      }
+      if (updates.timezone) {
+        payload.timezone = updates.timezone.toUpperCase();
+      }
+      if (Object.keys(payload).length === 0) {
         return;
       }
       try {
-        const baseName = baseRows.find((row) => row.id === baseId)?.name;
-        await adminApi.updateBase(baseId, baseName ? { name: baseName } : { region: "Updated" });
+        await adminApi.updateBase(baseId, payload);
+        setBaseRows((prev) =>
+          prev.map((row) =>
+            row.id === baseId
+              ? {
+                  ...row,
+                  ...(payload.name ? { name: payload.name } : {}),
+                  ...(payload.region ? { region: payload.region } : {}),
+                }
+              : row,
+          ),
+        );
+        const detail = Object.entries(payload)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", ");
+        appendAuditEntry(detail ? `Updated base ${baseId} (${detail})` : `Updated base ${baseId}`);
+        toast.success("Base updated", { description: detail || baseId });
       } catch (error) {
         toast.error("Unable to update base", { description: getApiErrorMessage(error) });
       }
-      setBaseRows((prev) =>
-        prev.map((row) => (row.id === baseId ? { ...row, moderator } : row)),
-      );
-      appendAuditEntry(`Updated moderator for base ${baseId}`);
     },
-    [appendAuditEntry, baseRows],
+    [appendAuditEntry],
   );
 
   const handleArchiveBase = useCallback(
