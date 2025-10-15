@@ -5,7 +5,7 @@ const Privacy = (): JSX.Element => {
         <h1 className="text-3xl font-semibold text-foreground">Privacy Policy</h1>
         <p className="mt-2 text-sm text-muted-foreground">Effective Date: January 1, 2025</p>
         <p className="mt-4 text-sm text-muted-foreground">
-          BaseList is a DoD-verified classifieds platform built by an Active-Duty Airman to give service
+          BaseList is a DoW-verified classifieds platform built by an Active-Duty Airman to give service
           members, families, and civilian teammates a safe, private place to buy and sell on base.
         </p>
       </header>
@@ -25,7 +25,7 @@ const Privacy = (): JSX.Element => {
       <div className="space-y-3 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
         <h2 className="text-xl font-semibold text-foreground">How We Use It</h2>
         <p className="text-sm text-muted-foreground">
-          To operate your account, verify DoD affiliation, and maintain a safe community. We never sell or
+          To operate your account, verify DoW affiliation, and maintain a safe community. We never sell or
           share personal data.
         </p>
       </div>
