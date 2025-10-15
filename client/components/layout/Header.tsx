@@ -50,20 +50,6 @@ export const Header = (): JSX.Element => {
           <span className="hidden sm:inline">Admin</span>
         </Link>
       ) : null}
-      <Link
-        to="/messages"
-        className="relative flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
-      >
-        <span className="relative inline-flex">
-          <MessageSquare className="h-4 w-4 text-foreground" aria-hidden />
-          {unreadMessageCount > 0 ? (
-            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
-              {Math.min(unreadMessageCount, 9)}
-            </span>
-          ) : null}
-        </span>
-        <span className="hidden sm:inline">Messages</span>
-      </Link>
       <Button
         variant="ghost"
         className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wide"
