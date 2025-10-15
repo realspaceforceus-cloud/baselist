@@ -33,71 +33,94 @@ export const Header = (): JSX.Element => {
   const avatarInitials = getAvatarInitials(user.name);
   const verificationLabel = isDodVerified ? "Verified" : user.verificationStatus;
 
+  const logo = (
+    <Link to="/" className="flex items-center" aria-label="BaseList home">
+      <img src={LOGO_SRC} alt="BaseList" className="h-8 w-auto object-contain md:h-9" />
+    </Link>
+  );
+
+  const authenticatedControls = (
+    <>
+      {showAdminLink ? (
+        <Link
+          to="/admin"
+          className="flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+        >
+          <Gauge className="h-4 w-4" aria-hidden />
+          <span className="hidden sm:inline">Admin</span>
+        </Link>
+      ) : null}
+      <Link
+        to="/messages"
+        className="relative flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+      >
+        <span className="relative inline-flex">
+          <MessageSquare className="h-4 w-4 text-foreground" aria-hidden />
+          {unreadMessageCount > 0 ? (
+            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
+              {Math.min(unreadMessageCount, 9)}
+            </span>
+          ) : null}
+        </span>
+        <span className="hidden sm:inline">Messages</span>
+      </Link>
+      <Button
+        variant="ghost"
+        className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wide"
+        type="button"
+        onClick={signOut}
+      >
+        <LogOut className="h-4 w-4" aria-hidden />
+        <span className="hidden sm:inline">Sign out</span>
+      </Button>
+      <div className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1.5 shadow-soft">
+        <Avatar className="h-9 w-9">
+          {user.avatarUrl ? (
+            <AvatarImage src={user.avatarUrl} alt={`${user.name} avatar`} />
+          ) : (
+            <AvatarFallback className="text-[0.65rem] font-semibold uppercase tracking-wide text-foreground">
+              {avatarInitials}
+            </AvatarFallback>
+          )}
+        </Avatar>
+        <div className="hidden sm:flex flex-col leading-tight">
+          <span className="truncate text-sm font-semibold text-foreground">{user.name}</span>
+          <span className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
+            <ShieldCheck
+              className={`h-3 w-3 ${isDodVerified ? "text-verified" : "text-warning"}`}
+              aria-hidden
+            />
+            {verificationLabel}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 md:gap-4 md:py-5">
-        <div className="flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center" aria-label="BaseList home">
-            <img src={LOGO_SRC} alt="BaseList" className="h-8 w-auto object-contain md:h-9" />
-          </Link>
-
-          {isAuthenticated ? (
-            <div className="flex items-center gap-2 sm:gap-3">
-              {showAdminLink ? (
-                <Link
-                  to="/admin"
-                  className="flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
-                >
-                  <Gauge className="h-4 w-4" aria-hidden />
-                  <span className="hidden sm:inline">Admin</span>
-                </Link>
-              ) : null}
-              <Link
-                to="/messages"
-                className="relative flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
-              >
-                <span className="relative inline-flex">
-                  <MessageSquare className="h-4 w-4 text-foreground" aria-hidden />
-                  {unreadMessageCount > 0 ? (
-                    <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
-                      {Math.min(unreadMessageCount, 9)}
-                    </span>
-                  ) : null}
-                </span>
-                <span className="hidden sm:inline">Messages</span>
-              </Link>
-              <Button
-                variant="ghost"
-                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wide"
-                type="button"
-                onClick={signOut}
-              >
-                <LogOut className="h-4 w-4" aria-hidden />
-                <span className="hidden sm:inline">Sign out</span>
-              </Button>
-              <div className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1.5 shadow-soft">
-                <Avatar className="h-9 w-9">
-                  {user.avatarUrl ? (
-                    <AvatarImage src={user.avatarUrl} alt={`${user.name} avatar`} />
-                  ) : (
-                    <AvatarFallback className="text-[0.65rem] font-semibold uppercase tracking-wide text-foreground">
-                      {avatarInitials}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-                <div className="hidden sm:flex flex-col leading-tight">
-                  <span className="truncate text-sm font-semibold text-foreground">{user.name}</span>
-                  <span className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-                    <ShieldCheck
-                      className={`h-3 w-3 ${isDodVerified ? "text-verified" : "text-warning"}`}
-                      aria-hidden
-                    />
-                    {verificationLabel}
-                  </span>
+      <div className="mx-auto w-full max-w-6xl px-4 py-4 md:py-5">
+        {isAuthenticated ? (
+          <>
+            <div className="flex w-full flex-col items-center gap-3 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-6">
+              <div className="flex w-full items-center justify-start md:w-auto">{logo}</div>
+              <div className="flex w-full justify-center md:w-auto">
+                <BaseSelector />
+              </div>
+              <div className="flex w-full items-center justify-end gap-2 sm:gap-3 md:w-auto">
+                <div className="hidden md:block md:w-56 lg:w-72">
+                  <SearchInput />
                 </div>
+                {authenticatedControls}
               </div>
             </div>
-          ) : (
+            <div className="w-full md:hidden">
+              <SearchInput />
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center justify-between gap-3">
+            {logo}
             <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 variant="ghost"
@@ -111,15 +134,8 @@ export const Header = (): JSX.Element => {
                 <a href="#join">Join Now</a>
               </Button>
             </div>
-          )}
-        </div>
-
-        {isAuthenticated ? (
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <BaseSelector />
-            <SearchInput />
           </div>
-        ) : null}
+        )}
       </div>
     </header>
   );
