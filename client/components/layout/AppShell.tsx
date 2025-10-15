@@ -24,6 +24,7 @@ export const AppShell = (): JSX.Element => {
           <RouterOutlet />
         </div>
       </main>
+      <Footer />
       {isAuthenticated ? <BottomNav /> : null}
     </div>
   );
