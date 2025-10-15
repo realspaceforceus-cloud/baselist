@@ -121,8 +121,9 @@ export const RatingBadge = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button
-          type="button"
+        <span
+          role="button"
+          tabIndex={0}
           className={cn(triggerClasses, "cursor-pointer")}
           aria-label={
             label
@@ -135,7 +136,7 @@ export const RatingBadge = ({
           <span className="text-[0.65rem] uppercase tracking-wide text-muted-foreground/80">
             {effectiveOverall.count}
           </span>
-        </button>
+        </span>
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
