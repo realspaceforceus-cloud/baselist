@@ -30,7 +30,7 @@ const Index = (): JSX.Element => {
     currentBase,
     searchQuery,
     isAuthenticated,
-    isDodVerified,
+    isDowVerified,
     beginVerification,
     sponsorPlacements,
   } = useBaseList();
@@ -128,7 +128,7 @@ const Index = (): JSX.Element => {
     return formatter.format(filteredListings.length);
   }, [filteredListings.length]);
 
-  const showVerificationBanner = isAuthenticated && !isDodVerified;
+  const showVerificationBanner = isAuthenticated && !isDowVerified;
 
   return (
     <section className="space-y-8">
@@ -137,7 +137,7 @@ const Index = (): JSX.Element => {
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
               <p className="font-semibold text-foreground">
-                Verify DoD access to post and message.
+                Verify DoW access to post and message.
               </p>
               <p className="text-xs text-muted-foreground">
                 Use your .mil email, an invite code, or a quick manual check to unlock posting and DMs.
@@ -176,7 +176,7 @@ const Index = (): JSX.Element => {
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="space-y-3">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-              {currentBase.name} classifieds, DoD-only.
+              {currentBase.name} classifieds, DoW-only.
             </h1>
             <p className="max-w-xl text-sm text-muted-foreground md:text-base">
               Browse verified listings from teammates at {currentBase.name}.
