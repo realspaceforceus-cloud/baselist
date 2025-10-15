@@ -1698,6 +1698,7 @@ export const BaseListProvider = ({
       unreadMessageCount,
       user,
       resolveDisplayName,
+      getMemberProfile,
       analyticsCounters,
     ],
   );
