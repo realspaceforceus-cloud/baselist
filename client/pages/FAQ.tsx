@@ -2,7 +2,7 @@ const FAQ = (): JSX.Element => {
   const items: Array<{ question: string; answer: string }> = [
     {
       question: "Who can join?",
-      answer: "Anyone with a .mil email, invite code, or verified DoD connection.",
+      answer: "Anyone with a .mil email, invite code, or verified DoW connection.",
     },
     {
       question: "Do I have to share my real name or rank?",
