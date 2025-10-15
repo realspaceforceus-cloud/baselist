@@ -122,12 +122,14 @@ export const SponsorsSection = ({
     if (!baseId || !label || !description || !href) {
       return;
     }
+    const backgroundImageUrl = editForm.backgroundImageUrl?.trim();
     onUpdate(placementId, {
       baseId,
       label,
       description,
       href,
       brandColor: normalizeHex(editForm.brandColor),
+      backgroundImageUrl: backgroundImageUrl ? backgroundImageUrl : undefined,
     });
     cancelEdit();
   };
