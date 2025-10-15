@@ -187,18 +187,33 @@ const Profile = (): JSX.Element => {
                         {role === "buyer" ? "Seller" : "Buyer"}:
                       </span>
                       <span className="flex items-center gap-2 text-foreground">
-                        {partnerName}
-                        <RatingBadge userId={partnerId} size="sm" />
+                        {partnerId ? (
+                          <Link
+                            to={`/profile/${partnerId}`}
+                            className="font-semibold text-foreground transition hover:text-primary"
+                          >
+                            {partnerName}
+                          </Link>
+                        ) : (
+                          partnerName
+                        )}
+                        {partnerId ? <RatingBadge userId={partnerId} size="sm" /> : null}
                       </span>
                     </div>
                   </div>
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <p className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">You rated</span>
+                      <span className="font-semibold text-foreground">
+                        {viewingOwnProfile ? "You rated" : `${profileFirstName} rated`}
+                      </span>
                       {renderStars(givenRating)}
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">They rated you</span>
+                      <span className="font-semibold text-foreground">
+                        {viewingOwnProfile
+                          ? "They rated you"
+                          : `${partnerName} rated ${profileFirstName}`}
+                      </span>
                       {renderStars(receivedRating)}
                     </p>
                   </div>
