@@ -392,7 +392,7 @@ const Landing = (): JSX.Element => {
             Verified classifieds for military bases.
           </h1>
           <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-            Built by an Active-Duty Airman for verified DoD members and families. Safe, local, and private—on base only.
+            Built by an Active-Duty Airman for verified DoW members and families. Safe, local, and private—on base only.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
             {ICON_STEPS.map(({ label, icon: Icon }) => (
