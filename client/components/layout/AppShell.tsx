@@ -17,15 +17,15 @@ export const AppShell = (): JSX.Element => {
           className={cn(
             "mx-auto w-full max-w-6xl px-4",
             isAuthenticated
-              ? "pb-32 pt-6 md:pb-24 md:pt-8"
-              : "pb-16 pt-12 md:pb-24 md:pt-20",
+              ? "pb-28 pt-4 md:pb-24 md:pt-8"
+              : "pb-20 pt-12 md:pb-24 md:pt-20",
           )}
         >
           <RouterOutlet />
         </div>
       </main>
       <Footer />
-      {isAuthenticated ? <div className="h-28" aria-hidden /> : null}
+      {isAuthenticated ? <div className="h-[calc(6.5rem+env(safe-area-inset-bottom))]" aria-hidden /> : null}
       {isAuthenticated ? <BottomNav /> : null}
     </div>
   );
