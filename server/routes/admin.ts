@@ -153,7 +153,7 @@ router.get("/reports", (_req, res) => {
   res.json({ reports });
 });
 
-router.post("/reports/:id/resolve", (req: AuthenticatedRequest, res) => {
+router.post("/reports/:id/resolve", async (req: AuthenticatedRequest, res) => {
   const parse = resolveReportSchema.safeParse(req.body);
   if (!parse.success) {
     return res.status(400).json({ error: "Resolution notes are required" });
@@ -164,6 +164,20 @@ router.post("/reports/:id/resolve", (req: AuthenticatedRequest, res) => {
     return res.status(404).json({ error: "Report not found" });
   }
 
+  const reporter = store.getUser(report.reporterId);
+  if (reporter) {
+    await sendTransactionalEmail({
+      to: reporter.email,
+      subject: `Report ${report.id} ${report.status}`,
+      template: "report-receipt",
+      context: {
+        reportId: report.id,
+        status: report.status,
+        notes: parse.data.notes,
+      },
+    });
+  }
+
   res.json({ report });
 });
 
@@ -172,7 +186,7 @@ router.get("/verifications", (_req, res) => {
   res.json({ verifications });
 });
 
-router.post("/verifications/:id", (req: AuthenticatedRequest, res) => {
+router.post("/verifications/:id", async (req: AuthenticatedRequest, res) => {
   const parse = adjudicateVerificationSchema.safeParse(req.body);
   if (!parse.success) {
     return res.status(400).json({ error: "Invalid adjudication payload" });
@@ -187,6 +201,20 @@ router.post("/verifications/:id", (req: AuthenticatedRequest, res) => {
 
   if (!verification) {
     return res.status(404).json({ error: "Verification not found" });
+  }
+
+  const member = store.getUser(verification.userId);
+  if (member) {
+    await sendTransactionalEmail({
+      to: member.email,
+      subject: `Verification ${parse.data.status}`,
+      template: "verify",
+      context: {
+        verificationId: verification.id,
+        status: verification.status,
+        notes: parse.data.notes,
+      },
+    });
   }
 
   res.json({ verification });
