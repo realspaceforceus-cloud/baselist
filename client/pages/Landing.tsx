@@ -96,7 +96,7 @@ const Landing = (): JSX.Element => {
   const emailTaken = emailFormatValid
     ? accounts.some((account) => account.email.toLowerCase() === normalizedEmail)
     : false;
-  const emailPositive = emailDod && !emailTaken;
+  const emailPositive = emailDow && !emailTaken;
 
   const passwordStrong = trimmedPassword.length >= PASSWORD_MIN_LENGTH;
   const passwordPositive = trimmedPassword.length > 0 && passwordStrong;
