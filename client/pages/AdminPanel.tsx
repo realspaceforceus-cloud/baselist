@@ -1510,11 +1510,11 @@ const AdminPanel = (): JSX.Element => {
 
   const pendingManualVerifications = useMemo(
     () =>
-      verificationQueues
+      visibleVerificationQueues
         .filter((queue) => queue.id !== "auto")
         .reduce((total, queue) => total + queue.count, 0) +
-      verificationDocs.length,
-    [verificationDocs.length, verificationQueues],
+      visibleVerificationDocs.length,
+    [visibleVerificationDocs.length, visibleVerificationQueues],
   );
 
   const topBasesStats = useMemo(() => {
