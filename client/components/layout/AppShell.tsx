@@ -1,6 +1,5 @@
 import { Outlet as RouterOutlet } from "react-router-dom";
 
-import { BottomNav } from "@/components/navigation/BottomNav";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { useBaseList } from "@/context/BaseListContext";
@@ -17,7 +16,7 @@ export const AppShell = (): JSX.Element => {
           className={cn(
             "mx-auto w-full max-w-6xl px-4",
             isAuthenticated
-              ? "pb-28 pt-4 md:pb-24 md:pt-8"
+              ? "pb-20 pt-4 md:pb-24 md:pt-8"
               : "pb-20 pt-12 md:pb-24 md:pt-20",
           )}
         >
@@ -25,14 +24,6 @@ export const AppShell = (): JSX.Element => {
         </div>
       </main>
       <Footer />
-      {isAuthenticated ? (
-        <div
-          className="h-[8.75rem]"
-          aria-hidden
-          style={{ height: "calc(7.5rem + env(safe-area-inset-bottom) + 10px)" }}
-        />
-      ) : null}
-      {isAuthenticated ? <BottomNav /> : null}
     </div>
   );
 };
