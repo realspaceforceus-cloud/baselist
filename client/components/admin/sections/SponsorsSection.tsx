@@ -42,6 +42,7 @@ export const SponsorsSection = ({
     description: "",
     href: "",
     brandColor: DEFAULT_BRAND_COLOR,
+    backgroundImageUrl: "",
   }));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Omit<SponsorPlacement, "id"> | null>(null);
