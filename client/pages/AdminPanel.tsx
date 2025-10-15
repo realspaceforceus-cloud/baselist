@@ -1629,6 +1629,15 @@ const AdminPanel = (): JSX.Element => {
               onViewStats={handleBaseStats}
             />
           ) : null}
+          {activeSection === "sponsors" ? (
+            <SponsorsSection
+              placements={sponsorRows}
+              bases={bases}
+              onCreate={handleCreateSponsor}
+              onUpdate={handleUpdateSponsor}
+              onDelete={handleRemoveSponsor}
+            />
+          ) : null}
           {activeSection === "messaging" ? (
             <MessagingSection
               threads={flaggedThreads}
