@@ -1269,6 +1269,37 @@ const AdminPanel = (): JSX.Element => {
     [appendAuditEntry],
   );
 
+  const handleCreateSponsor = useCallback(
+    (payload: Omit<SponsorPlacement, "id">) => {
+      const id = `sponsor-${crypto.randomUUID()}`;
+      addSponsorPlacement({ id, ...payload });
+      toast.success("Sponsor saved", { description: payload.label });
+    },
+    [addSponsorPlacement],
+  );
+
+  const handleUpdateSponsor = useCallback(
+    (
+      placementId: string,
+      updates: Partial<Omit<SponsorPlacement, "id">>,
+    ) => {
+      const existing = sponsorPlacements.find((placement) => placement.id === placementId);
+      updateSponsorPlacement(placementId, updates);
+      const label = updates.label ?? existing?.label ?? placementId;
+      toast.success("Sponsor updated", { description: label });
+    },
+    [sponsorPlacements, updateSponsorPlacement],
+  );
+
+  const handleRemoveSponsor = useCallback(
+    (placementId: string) => {
+      const existing = sponsorPlacements.find((placement) => placement.id === placementId);
+      removeSponsorPlacement(placementId);
+      toast.info("Sponsor removed", { description: existing?.label ?? placementId });
+    },
+    [removeSponsorPlacement, sponsorPlacements],
+  );
+
   const handleViewAuditLog = useCallback(async () => {
     try {
       const auditLog = await adminApi.getAudit(50);
