@@ -39,7 +39,7 @@ export const Header = (): JSX.Element => {
     </Link>
   );
 
-  const authenticatedControls = (
+  const userControls = (
     <>
       {showAdminLink ? (
         <Link
@@ -84,23 +84,25 @@ export const Header = (): JSX.Element => {
   );
 
   return (
-    <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
-      <div className="mx-auto w-full max-w-6xl px-4 py-4 md:py-5">
+    <header className="sticky top-0 z-30 border-b border-nav-border bg-background/95 backdrop-blur-lg">
+      <div className="mx-auto w-full max-w-6xl px-4 py-3 md:py-5">
         {isAuthenticated ? (
           <>
-            <div className="flex w-full flex-col items-center gap-3 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-6">
-              <div className="flex w-full items-center justify-start md:w-auto">{logo}</div>
-              <div className="flex w-full justify-center md:w-auto">
+            <div className="flex w-full flex-col gap-3 md:gap-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">{logo}</div>
+                <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                  <div className="hidden md:block md:w-56 lg:w-72">
+                    <SearchInput />
+                  </div>
+                  {userControls}
+                </div>
+              </div>
+              <div className="w-full">
                 <BaseSelector />
               </div>
-              <div className="flex w-full items-center justify-end gap-2 sm:gap-3 md:w-auto">
-                <div className="hidden md:block md:w-56 lg:w-72">
-                  <SearchInput />
-                </div>
-                {authenticatedControls}
-              </div>
             </div>
-            <div className="w-full md:hidden">
+            <div className="mt-3 w-full md:hidden">
               <SearchInput />
             </div>
           </>
