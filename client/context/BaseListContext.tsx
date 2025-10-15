@@ -354,10 +354,10 @@ export const BaseListProvider = ({
 
   useEffect(() => {
     const verifiedMembers = accounts.filter((account) => account.isDodVerified).length;
-    const activeBases = bases.length;
+    const activeBases = new Set(accounts.map((account) => account.baseId)).size || BASES.length;
     const completedTransactions = transactions.length;
     setAnalyticsCounters({ verifiedMembers, activeBases, completedTransactions });
-  }, [accounts, bases.length, transactions.length]);
+  }, [accounts, transactions.length]);
 
   const setCurrentBaseId = useCallback(
     (baseId: string) => {
