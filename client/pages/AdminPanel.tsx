@@ -813,14 +813,23 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleDismissReport = useCallback(
-    (reportId: string) => {
+    async (reportId: string) => {
       const report = reports.find((entry) => entry.id === reportId);
       if (!report) {
         return;
       }
-      setReports((prev) => prev.filter((entry) => entry.id !== reportId));
-      appendAuditEntry(`Dismissed report ${reportId}`);
-      toast.info("Report dismissed", { description: `${report.type} • ${report.targetLabel}` });
+      try {
+        await adminApi.resolveReport(reportId, {
+          status: "dismissed",
+          notes: `${report.type} dismissed by admin`,
+        });
+        setReports((prev) => prev.filter((entry) => entry.id !== reportId));
+        appendAuditEntry(`Dismissed report ${reportId}`);
+        toast.info("Report dismissed", { description: `${report.type} • ${report.targetLabel}` });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to dismiss report", { description: message });
+      }
     },
     [appendAuditEntry, reports],
   );
