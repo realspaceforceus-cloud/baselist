@@ -919,6 +919,14 @@ const AdminPanel = (): JSX.Element => {
           notes: `${report.type} approved by admin`,
         });
         setReports((prev) => prev.filter((entry) => entry.id !== reportId));
+        setReportNotes((prev) => {
+          if (!prev[reportId]) {
+            return prev;
+          }
+          const next = { ...prev };
+          delete next[reportId];
+          return next;
+        });
         if (report.targetType === "listing") {
           adjustListingReports(report.targetId, 1, "Flagged");
           appendAuditEntry(`Approved report ${reportId} for listing ${report.targetId}`);
@@ -950,6 +958,14 @@ const AdminPanel = (): JSX.Element => {
           notes: `${report.type} dismissed by admin`,
         });
         setReports((prev) => prev.filter((entry) => entry.id !== reportId));
+        setReportNotes((prev) => {
+          if (!prev[reportId]) {
+            return prev;
+          }
+          const next = { ...prev };
+          delete next[reportId];
+          return next;
+        });
         appendAuditEntry(`Dismissed report ${reportId}`);
         toast.info("Report dismissed", { description: `${report.type} • ${report.targetLabel}` });
       } catch (error) {
