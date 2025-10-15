@@ -266,15 +266,6 @@ const Messages = (): JSX.Element => {
     setHoveredRating(null);
   }, [activeThreadId]);
 
-  useEffect(() => {
-    if (!activeThreadId) {
-      return;
-    }
-
-    if (isMobile && conversationRef.current) {
-      conversationRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeThreadId, activeMessageCount, isMobile]);
 
   useEffect(() => {
     if (!messagesEndRef.current) {
