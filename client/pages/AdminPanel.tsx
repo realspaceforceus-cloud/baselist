@@ -718,23 +718,29 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleRestoreListing = useCallback(
-    (listingId: string) => {
+    async (listingId: string) => {
       const archived = archivedListingsRef.current[listingId];
       if (!archived) {
         toast.error("Nothing to restore", { description: "Archived listing not found." });
         return;
       }
-      addListing({ ...archived, postedAt: new Date().toISOString(), status: "active" });
-      adjustListingReports(listingId, 0, "Active");
-      appendAuditEntry(`Restored listing ${listingId}`);
-      addNotice({
-        userId: archived.sellerId,
-        category: "system",
-        severity: "success",
-        title: "Listing restored",
-        message: "Your listing is live again after moderation review.",
-      });
-      toast.success("Listing restored", { description: archived.title });
+      try {
+        await adminApi.restoreListing(listingId);
+        addListing({ ...archived, postedAt: new Date().toISOString(), status: "active" });
+        adjustListingReports(listingId, 0, "Active");
+        appendAuditEntry(`Restored listing ${listingId}`);
+        addNotice({
+          userId: archived.sellerId,
+          category: "system",
+          severity: "success",
+          title: "Listing restored",
+          message: "Your listing is live again after moderation review.",
+        });
+        toast.success("Listing restored", { description: archived.title });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to restore listing", { description: message });
+      }
     },
     [addListing, addNotice, adjustListingReports, appendAuditEntry],
   );
