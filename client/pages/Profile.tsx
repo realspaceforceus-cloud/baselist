@@ -19,13 +19,15 @@ import type { TransactionHistoryEntry } from "@/types";
 
 const Profile = (): JSX.Element => {
   const {
-    user,
+    user: currentUser,
+    bases,
     currentBase,
     listings,
     isModerator,
     transactions,
     getUserRatingSummary,
     getMemberName,
+    getMemberProfile,
     notices,
     markNoticeRead,
   } = useBaseList();
