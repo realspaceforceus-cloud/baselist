@@ -464,6 +464,7 @@ const AdminPanel = (): JSX.Element => {
 
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id ?? "dashboard");
   const [reports, setReports] = useState<AdminReportRecord[]>(() => createInitialReports(listings, bases));
+  const [reportNotes, setReportNotes] = useState<Record<string, string[]>>({});
   const [verificationDocs, setVerificationDocs] = useState<VerificationDocument[]>(
     INITIAL_VERIFICATION_DOCS,
   );
