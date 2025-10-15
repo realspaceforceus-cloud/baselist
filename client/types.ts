@@ -62,6 +62,7 @@ export interface SponsorPlacement {
   description: string;
   href: string;
   brandColor: string;
+  backgroundImageUrl?: string;
 }
 
 export interface MessagePreview {
