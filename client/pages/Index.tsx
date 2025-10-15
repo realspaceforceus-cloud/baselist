@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { ShieldCheck } from "lucide-react";
-
 import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { SponsorTile } from "@/components/listings/SponsorTile";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useBaseList } from "@/context/BaseListContext";
-import { PROHIBITED_CONTENT, SELLERS, LISTING_CATEGORIES } from "@/data/mock";
+import { SELLERS, LISTING_CATEGORIES } from "@/data/mock";
 import type { ListingFilter, Seller } from "@/types";
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
@@ -172,46 +169,6 @@ const Index = (): JSX.Element => {
           </div>
         </div>
       ) : null}
-      <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:p-7">
-        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-3">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-              {currentBase.name} classifieds, DoW-only.
-            </h1>
-            <p className="max-w-xl text-sm text-muted-foreground md:text-base">
-              Browse verified listings from teammates at {currentBase.name}.
-            </p>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span className="rounded-full bg-muted px-3 py-1 font-semibold text-foreground">
-                Prohibited content
-              </span>
-              {PROHIBITED_CONTENT.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-dashed border-border px-3 py-1 capitalize"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-primary transition hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-              >
-                <ShieldCheck className="h-5 w-5" aria-hidden />
-                <span className="sr-only">Verified user policy</span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="max-w-xs text-sm">
-              Verified users only. Moderators monitor activity.
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      </header>
-
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <FilterBar
