@@ -645,7 +645,7 @@ const AdminPanel = (): JSX.Element => {
             username: entry.username,
             baseId: entry.baseId,
             role: entry.role,
-            isDodVerified: Boolean(entry.dodVerifiedAt),
+            isDowVerified: Boolean(entry.dowVerifiedAt),
             createdAt: entry.createdAt,
           })),
         );
