@@ -106,7 +106,7 @@ const createAuthRouter = () => {
       });
   });
 
-  router.post("/refresh", authenticate, requireAuth, async (req, res) => {
+  router.post("/refresh", async (req, res) => {
     const parse = refreshSchema.safeParse(req.body);
     if (!parse.success) {
       return res.status(400).json({ error: "Invalid refresh payload" });
@@ -125,16 +125,16 @@ const createAuthRouter = () => {
     const { stored } = verification;
 
     const user = store.getUser(stored.userId);
-    if (!user) {
+    if (!user || user.status === "banned") {
       revokeRefreshToken(stored.id);
-      return res.status(401).json({ error: "User not found" });
+      return res.status(401).json({ error: "User not authorized" });
     }
 
     const accessToken = createAccessToken({
       sub: user.id,
       role: user.role,
       baseId: user.baseId,
-      scope: req.user?.scope ?? ["read:admin", "write:admin"],
+      scope: ["read:admin", "write:admin"],
     });
 
     res
