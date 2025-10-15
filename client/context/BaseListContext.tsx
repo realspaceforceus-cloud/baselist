@@ -352,6 +352,13 @@ export const BaseListProvider = ({
     }
   }, [currentAccount, currentBaseId, isAuthenticated, memberDiscipline]);
 
+  useEffect(() => {
+    const verifiedMembers = accounts.filter((account) => account.isDodVerified).length;
+    const activeBases = bases.length;
+    const completedTransactions = transactions.length;
+    setAnalyticsCounters({ verifiedMembers, activeBases, completedTransactions });
+  }, [accounts, bases.length, transactions.length]);
+
   const setCurrentBaseId = useCallback(
     (baseId: string) => {
       setCurrentBaseIdState(baseId);
