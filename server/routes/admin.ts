@@ -275,6 +275,10 @@ router.get("/audit", (_req, res) => {
   res.json({ audit: store.getAuditLog(200) });
 });
 
+router.get("/threads", (_req, res) => {
+  res.json({ threads: store.getThreads() });
+});
+
 router.get("/threads/flagged", (_req, res) => {
   const threads = store
     .getThreads()
