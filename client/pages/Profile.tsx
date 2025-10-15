@@ -56,6 +56,13 @@ const Profile = (): JSX.Element => {
       : profileUser.name;
   }, [profileUser.name]);
 
+  const profileMemberSinceYear = useMemo(
+    () => new Date(profileUser.memberSince).getFullYear(),
+    [profileUser.memberSince],
+  );
+
+  const totalTransactions = purchases.length + sales.length;
+
   const myListings = listings.filter((listing) => listing.sellerId === profileUser.id);
   const activeListings = myListings.filter((listing) => listing.status === "active");
   const soldListings = myListings.filter((listing) => listing.status === "sold");
