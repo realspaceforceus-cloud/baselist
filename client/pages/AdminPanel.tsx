@@ -610,13 +610,20 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleSuspendUser = useCallback(
-    (userId: string) => {
-      suspendMember(userId, "Manual suspension issued by admin.");
-      setUserOverrides((prev) => ({
-        ...prev,
-        [userId]: { ...(prev[userId] ?? {}), suspended: true },
-      }));
-      appendAuditEntry(`Suspended user ${getMemberName(userId)}`);
+    async (userId: string) => {
+      const reason = "Manual suspension issued by admin.";
+      try {
+        await adminApi.updateUser(userId, { status: "suspended", reason });
+        suspendMember(userId, reason);
+        setUserOverrides((prev) => ({
+          ...prev,
+          [userId]: { ...(prev[userId] ?? {}), suspended: true },
+        }));
+        appendAuditEntry(`Suspended user ${getMemberName(userId)}`);
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to suspend user", { description: message });
+      }
     },
     [appendAuditEntry, getMemberName, suspendMember],
   );
