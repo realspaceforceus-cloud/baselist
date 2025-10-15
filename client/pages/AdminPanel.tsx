@@ -1296,6 +1296,8 @@ const AdminPanel = (): JSX.Element => {
       const discipline = memberDiscipline[seller.id];
       const sellerListings = listings.filter((listing) => listing.sellerId === seller.id);
       const threads = messageThreads.filter((thread) => thread.participants.includes(seller.id));
+      const fallbackBaseId = bases[0]?.id;
+      const effectiveBaseId = account?.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
       const reportCount = reports.filter((report) => {
         if (report.targetType === "user") {
           return report.targetId === seller.id;
