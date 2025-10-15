@@ -5,6 +5,7 @@ import {
   Gauge,
   House,
   LogOut,
+  MapPin,
   Menu,
   MessageSquare,
   PlusCircle,
