@@ -61,8 +61,6 @@ const Profile = (): JSX.Element => {
     [profileUser.memberSince],
   );
 
-  const totalTransactions = purchases.length + sales.length;
-
   const myListings = listings.filter((listing) => listing.sellerId === profileUser.id);
   const activeListings = myListings.filter((listing) => listing.status === "active");
   const soldListings = myListings.filter((listing) => listing.status === "sold");
