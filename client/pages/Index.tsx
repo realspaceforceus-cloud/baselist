@@ -32,6 +32,7 @@ const Index = (): JSX.Element => {
     isAuthenticated,
     isDodVerified,
     beginVerification,
+    sponsorPlacements,
   } = useBaseList();
   const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
   const [visibleCount, setVisibleCount] = useState(6);
