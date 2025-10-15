@@ -309,6 +309,9 @@ export const BaseListProvider = ({
       (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
     );
   });
+  const [sponsorPlacements, setSponsorPlacements] = useState<SponsorPlacement[]>(() => [
+    ...SPONSOR_PLACEMENTS,
+  ]);
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(
     () => [...MESSAGE_THREAD_SEED],
   );
