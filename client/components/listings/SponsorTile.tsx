@@ -1,5 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
-
 import { type CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 
