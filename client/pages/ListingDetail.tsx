@@ -192,7 +192,7 @@ const ListingDetail = (): JSX.Element => {
                   ) : null}
                   <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
                 </button>
-                <p className="text-xs text-muted-foreground">Verified DoD Member</p>
+                <p className="text-xs text-muted-foreground">Verified DoW Member</p>
                 <p className="text-xs text-muted-foreground">
                   Member since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
                 </p>
