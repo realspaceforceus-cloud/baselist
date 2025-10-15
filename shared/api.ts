@@ -44,7 +44,7 @@ export interface AdminUsersResponse {
 }
 
 export interface AdminUserUpdateResponse {
-  user: Pick<AdminUserDTO, "id" | "username" | "role" | "status" | "dodVerifiedAt">;
+  user: Pick<AdminUserDTO, "id" | "username" | "role" | "status" | "dowVerifiedAt">;
 }
 
 export interface AdminListingsResponse {
