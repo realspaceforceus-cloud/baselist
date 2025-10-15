@@ -16,6 +16,7 @@ import {
   LISTINGS as LISTING_SEED,
   MESSAGE_THREADS as MESSAGE_THREAD_SEED,
   SELLERS,
+  SPONSOR_PLACEMENTS,
 } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
 import type {
