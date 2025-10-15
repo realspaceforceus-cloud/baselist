@@ -313,19 +313,19 @@ const Profile = (): JSX.Element => {
             </div>
           </div>
           <RatingBadge
-            userId={user.id}
+            userId={profileUser.id}
             size="sm"
             initialAverage={
-              userRatingSummary.overallCount > 0
-                ? userRatingSummary.overallAverage
-                : userRatingFallbackAverage
+              profileRatingSummary.overallCount > 0
+                ? profileRatingSummary.overallAverage
+                : profileRatingFallbackAverage
             }
             initialCount={
-              userRatingSummary.overallCount > 0
-                ? userRatingSummary.overallCount
-                : userRatingFallbackCount
+              profileRatingSummary.overallCount > 0
+                ? profileRatingSummary.overallCount
+                : profileRatingFallbackCount
             }
-            label={`${user.name} overall rating`}
+            label={`${profileUser.name} overall rating`}
           />
         </div>
         <Tabs defaultValue={defaultTransactionTab} className="mt-4">
