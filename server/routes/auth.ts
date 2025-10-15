@@ -4,7 +4,7 @@ import { Router } from "express";
 import { z } from "zod";
 
 import { store } from "../data/store";
-import { authenticate, requireAuth } from "../middleware/authenticate";
+import { authenticate } from "../middleware/authenticate";
 import {
   createAccessToken,
   createRefreshToken,
