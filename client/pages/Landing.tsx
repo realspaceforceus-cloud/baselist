@@ -453,8 +453,8 @@ const Landing = (): JSX.Element => {
                   : joinStage === "base"
                   ? "Pick your installation. You can switch later from your profile."
                   : pendingAccountVerified
-                  ? "Your DoD email is confirmed. Welcome aboard."
-                  : "Confirm your DoD email from the link we sent to finish setup."}
+                  ? "Your DoW email is confirmed. Welcome aboard."
+                  : "Confirm your DoW email from the link we sent to finish setup."}
               </p>
             </header>
 
