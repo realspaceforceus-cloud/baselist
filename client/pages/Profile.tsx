@@ -253,7 +253,9 @@ const Profile = (): JSX.Element => {
         <article className="rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">My listings</h2>
+              <h2 className="text-lg font-semibold text-foreground">
+                {viewingOwnProfile ? "My listings" : `${profileFirstName}'s listings`}
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Track active and sold posts in one place.
               </p>
