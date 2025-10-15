@@ -452,6 +452,10 @@ const AdminPanel = (): JSX.Element => {
     getUserRatingSummary,
     getMemberName,
     markAllNoticesRead,
+    sponsorPlacements,
+    addSponsorPlacement,
+    updateSponsorPlacement,
+    removeSponsorPlacement,
   } = useBaseList();
 
   const [accountList, setAccountList] = useState<AccountLike[]>(() =>
