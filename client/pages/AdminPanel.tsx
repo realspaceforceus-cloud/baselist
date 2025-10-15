@@ -971,13 +971,17 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleAddReportNote = useCallback(
-    (reportId: string) => {
-      const note = window.prompt("Add moderation note", "Action taken by Admin Moser on Oct 14");
-      if (!note) {
+    (reportId: string, note: string) => {
+      const trimmed = note.trim();
+      if (!trimmed) {
         return;
       }
-      appendAuditEntry(`Added note to report ${reportId}: ${note}`);
-      toast.success("Note saved", { description: note });
+      setReportNotes((prev) => {
+        const existing = prev[reportId] ?? [];
+        return { ...prev, [reportId]: [trimmed, ...existing] };
+      });
+      appendAuditEntry(`Added note to report ${reportId}: ${trimmed}`);
+      toast.success("Note saved", { description: trimmed });
     },
     [appendAuditEntry],
   );
