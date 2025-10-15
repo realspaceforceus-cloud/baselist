@@ -1,5 +1,7 @@
 import { Outlet as RouterOutlet } from "react-router-dom";
 
+import { Outlet as RouterOutlet } from "react-router-dom";
+
 import { BottomNav } from "@/components/navigation/BottomNav";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
