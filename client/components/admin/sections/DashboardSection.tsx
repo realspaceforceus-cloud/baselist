@@ -34,12 +34,6 @@ export const DashboardSection = ({ cards, onNavigate }: DashboardSectionProps): 
               key={card.id}
               type="button"
               onClick={handleClick}
-              onKeyUp={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleClick();
-                }
-              }}
               className="group flex h-full flex-col justify-between rounded-3xl border border-border bg-background/80 p-5 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               <div className="flex items-center justify-between gap-3">
@@ -61,7 +55,7 @@ export const DashboardSection = ({ cards, onNavigate }: DashboardSectionProps): 
               {card.chartData && card.chartData.length > 0 ? (
                 <div className="mt-5 space-y-2">
                   {card.chartData.map((entry) => {
-                    const width = card.chartMax ? Math.max((entry.value / card.chartMax) * 100, 6) : 0;
+                    const width = card.chartMax ? (entry.value / card.chartMax) * 100 : 0;
                     return (
                       <div key={entry.id} className="space-y-1">
                         <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
