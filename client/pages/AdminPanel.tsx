@@ -454,6 +454,90 @@ const AdminPanel = (): JSX.Element => {
   const archivedListingsRef = useRef<Record<string, Listing>>({});
 
   useEffect(() => {
+    let active = true;
+    const hydrateAdminData = async () => {
+      try {
+        const users = await adminApi.getUsers();
+        if (!active) {
+          return;
+        }
+        userDirectoryRef.current = new Map(users.map((entry) => [entry.id, entry]));
+        setAccountList(
+          users.map((entry) => ({
+            id: entry.id,
+            username: entry.username,
+            baseId: entry.baseId,
+            role: entry.role,
+            isDodVerified: Boolean(entry.dodVerifiedAt),
+            createdAt: entry.createdAt,
+          })),
+        );
+      } catch (error) {
+        toast.error("Unable to load members", { description: getApiErrorMessage(error) });
+      }
+
+      try {
+        const metricsResponse = await adminApi.getMetrics();
+        if (!active) {
+          return;
+        }
+        setMetrics((prev) =>
+          prev.map((card) => {
+            if (card.id === "verified") {
+              return { ...card, value: `${metricsResponse.snapshot.verifiedMembers}` };
+            }
+            if (card.id === "listings") {
+              return {
+                ...card,
+                value: `${metricsResponse.snapshot.totalListings} / ${metricsResponse.snapshot.soldListings}`,
+              };
+            }
+            if (card.id === "reports") {
+              const resolvedRate = metricsResponse.snapshot.openReports === 0
+                ? "100%"
+                : `${Math.max(0, 100 - metricsResponse.snapshot.openReports)}%`;
+              return { ...card, value: resolvedRate };
+            }
+            if (card.id === "verifications") {
+              return {
+                ...card,
+                value: `${metricsResponse.snapshot.manualVerificationBacklog}`,
+              };
+            }
+            return card;
+          }),
+        );
+      } catch (error) {
+        toast.error("Unable to load metrics", { description: getApiErrorMessage(error) });
+      }
+
+      try {
+        const auditLog = await adminApi.getAudit(20);
+        if (!active) {
+          return;
+        }
+        const directory = userDirectoryRef.current;
+        setAuditEntries(
+          auditLog.map((entry) => ({
+            id: entry.id,
+            actor: directory.get(entry.actorId)?.username ?? entry.actorId,
+            action: entry.action,
+            time: formatRelativeTime(entry.createdAt),
+          })),
+        );
+      } catch (error) {
+        toast.error("Unable to load audit log", { description: getApiErrorMessage(error) });
+      }
+    };
+
+    hydrateAdminData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
     setListingRows((prev) => {
       const rowMap = new Map(prev.map((row) => [row.id, row]));
       const next = [...prev];
