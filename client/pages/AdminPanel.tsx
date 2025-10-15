@@ -860,38 +860,50 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleApproveVerification = useCallback(
-    (docId: string) => {
+    async (docId: string) => {
       const doc = verificationDocs.find((entry) => entry.id === docId);
       if (!doc) {
         return;
       }
-      setVerificationDocs((prev) => prev.filter((entry) => entry.id !== docId));
-      handleVerifyUser(doc.userId, doc.method);
-      appendAuditEntry(`Approved verification for ${doc.name}`);
+      try {
+        await adminApi.adjudicateVerification(docId, { status: "approved", notes: "Approved by admin" });
+        setVerificationDocs((prev) => prev.filter((entry) => entry.id !== docId));
+        await handleVerifyUser(doc.userId, doc.method);
+        appendAuditEntry(`Approved verification for ${doc.name}`);
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to approve verification", { description: message });
+      }
     },
     [appendAuditEntry, handleVerifyUser, verificationDocs],
   );
 
   const handleDenyVerification = useCallback(
-    (docId: string) => {
+    async (docId: string) => {
       const doc = verificationDocs.find((entry) => entry.id === docId);
       if (!doc) {
         return;
       }
-      setVerificationDocs((prev) => prev.filter((entry) => entry.id !== docId));
-      const queueId = queueIdByMethod[doc.method];
-      if (queueId) {
-        updateQueueCount(queueId, -1);
+      try {
+        await adminApi.adjudicateVerification(docId, { status: "denied", notes: "Denied by admin" });
+        setVerificationDocs((prev) => prev.filter((entry) => entry.id !== docId));
+        const queueId = queueIdByMethod[doc.method];
+        if (queueId) {
+          updateQueueCount(queueId, -1);
+        }
+        addNotice({
+          userId: doc.userId,
+          category: "report",
+          severity: "warning",
+          title: "Verification denied",
+          message: "The information provided did not pass review. Please resubmit with clearer documentation.",
+        });
+        appendAuditEntry(`Denied verification for ${doc.name}`);
+        toast.error("Verification denied", { description: doc.name });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to deny verification", { description: message });
       }
-      addNotice({
-        userId: doc.userId,
-        category: "report",
-        severity: "warning",
-        title: "Verification denied",
-        message: "The information provided did not pass review. Please resubmit with clearer documentation.",
-      });
-      appendAuditEntry(`Denied verification for ${doc.name}`);
-      toast.error("Verification denied", { description: doc.name });
     },
     [addNotice, appendAuditEntry, updateQueueCount, verificationDocs],
   );
