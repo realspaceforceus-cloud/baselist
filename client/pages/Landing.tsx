@@ -328,7 +328,7 @@ const Landing = (): JSX.Element => {
       setPendingAccountId(account.id);
       setJoinStage("success");
       toast.success("Account created", {
-        description: "Check your inbox to confirm your DoD email before entering BaseList.",
+        description: "Check your inbox to confirm your DoW email before entering BaseList.",
       });
     } catch (error) {
       toast.error(
