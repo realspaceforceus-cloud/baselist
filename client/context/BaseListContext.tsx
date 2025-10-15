@@ -30,6 +30,7 @@ import type {
   ThreadTransaction,
   TransactionHistoryEntry,
   RatingSummary,
+  SponsorPlacement,
   UserProfile,
 } from "@/types";
 
