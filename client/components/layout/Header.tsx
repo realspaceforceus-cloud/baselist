@@ -182,6 +182,8 @@ export const Header = (): JSX.Element => {
     setMenuOpen(false);
   };
 
+  const hasBaseQuery = baseSearch.trim().length > 0;
+
   const logo = (
     <Link to="/" className="flex items-center" aria-label="BaseList home">
       <img src={LOGO_SRC} alt="BaseList" className="h-8 w-auto object-contain md:h-9" />
