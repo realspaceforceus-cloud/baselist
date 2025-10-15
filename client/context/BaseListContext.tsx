@@ -17,6 +17,7 @@ import {
   MESSAGE_THREADS as MESSAGE_THREAD_SEED,
   SELLERS,
 } from "@/data/mock";
+import { adminApi } from "@/lib/adminApi";
 import type {
   AccountNotice,
   AccountNoticeCategory,
