@@ -81,12 +81,14 @@ const createAuthRouter = () => {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
+        path: "/",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
+        path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       })
       .status(200)
@@ -147,6 +149,7 @@ const createAuthRouter = () => {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
+        path: "/",
         maxAge: 15 * 60 * 1000,
       })
       .status(200)
@@ -163,8 +166,8 @@ const createAuthRouter = () => {
     }
 
     res
-      .clearCookie("access_token")
-      .clearCookie("refresh_token")
+      .clearCookie("access_token", { path: "/" })
+      .clearCookie("refresh_token", { path: "/" })
       .status(200)
       .json({ ok: true });
   });
