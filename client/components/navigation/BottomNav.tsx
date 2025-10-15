@@ -42,7 +42,7 @@ export const BottomNav = (): JSX.Element => {
   return (
     <nav
       className="pointer-events-none fixed inset-x-0 bottom-4 z-50 px-4 md:hidden"
-      style={{ bottom: "calc(env(safe-area-inset-bottom) + 24px)" }}
+      style={{ bottom: "calc(env(safe-area-inset-bottom) + 34px)" }}
     >
       <div className="pointer-events-auto mx-auto flex w-full max-w-xl items-center justify-between rounded-full border border-nav-border bg-nav/95 px-4 py-2.5 text-sm font-medium text-foreground shadow-[0_18px_38px_-18px_rgba(15,23,42,0.5)] backdrop-blur-md">
         {NAV_ITEMS.map(({ label, to, icon: Icon, end = false }) => (
