@@ -67,6 +67,7 @@ const Profile = (): JSX.Element => {
 
   const purchases = transactions.filter((entry) => entry.buyerId === profileUser.id);
   const sales = transactions.filter((entry) => entry.sellerId === profileUser.id);
+  const totalTransactions = purchases.length + sales.length;
   const profileRatingSummary = getUserRatingSummary(profileUser.id);
   const profileRatingFallbackAverage = profileUser.rating ?? null;
   const profileRatingFallbackCount = profileUser.ratingCount ?? profileUser.completedSales ?? 0;
