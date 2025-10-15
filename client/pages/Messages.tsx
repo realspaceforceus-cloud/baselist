@@ -639,7 +639,16 @@ const Messages = (): JSX.Element => {
                         {activeSummary.listing?.title ?? "Listing removed"}
                       </h2>
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                        <span>{activeSummary.partnerName}</span>
+                        {activeSummary.partnerId ? (
+                          <Link
+                            to={`/profile/${activeSummary.partnerId}`}
+                            className="font-semibold text-foreground transition hover:text-primary"
+                          >
+                            {activeSummary.partnerName}
+                          </Link>
+                        ) : (
+                          <span>{activeSummary.partnerName}</span>
+                        )}
                         {activeSummary.partnerId ? (
                           <RatingBadge
                             userId={activeSummary.partnerId}
