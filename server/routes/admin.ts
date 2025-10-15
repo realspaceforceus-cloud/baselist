@@ -62,6 +62,19 @@ router.get("/dashboard", (_req, res) => {
   res.json(snapshot);
 });
 
+router.get("/metrics", (_req, res) => {
+  const snapshot = store.getDashboardSnapshot();
+  const transactions = store.getTransactions();
+  const ratings = store.getRatings();
+  res.json({
+    snapshot,
+    totals: {
+      transactions: transactions.length,
+      ratings: ratings.length,
+    },
+  });
+});
+
 router.get("/users", (_req, res) => {
   const users = store.getUsers().map((user) => ({
     id: user.id,
