@@ -1417,6 +1417,7 @@ const AdminPanel = (): JSX.Element => {
               Role • {user.role?.toUpperCase?.() ?? "ADMIN"}
             </span>
             <span className="text-muted-foreground/70">Listings sold: {soldListingCount}</span>
+            <span className="text-muted-foreground/70">Verified members: {analytics.verifiedMembers}</span>
           </div>
         </div>
       </header>
