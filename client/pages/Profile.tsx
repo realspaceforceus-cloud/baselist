@@ -300,7 +300,7 @@ const Profile = (): JSX.Element => {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Stars className="h-4 w-4 text-primary" aria-hidden />
-              Saved items & alerts
+              {viewingOwnProfile ? "Saved items & alerts" : `${profileFirstName}'s highlights`}
             </div>
             <p>
               Saved listings, base-wide alerts, and invite controls will appear here as the product expands.
