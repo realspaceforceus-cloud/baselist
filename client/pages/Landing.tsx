@@ -425,7 +425,7 @@ const Landing = (): JSX.Element => {
               <span role="img" aria-hidden>
                 🔒
               </span>
-              All data encrypted. No IDs stored. Trusted across the DoD.
+              All data encrypted. No IDs stored. Trusted across the DoW.
             </span>
           </p>
         </div>
