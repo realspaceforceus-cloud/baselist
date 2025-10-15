@@ -25,6 +25,7 @@ export const AppShell = (): JSX.Element => {
         </div>
       </main>
       <Footer />
+      {isAuthenticated ? <div className="h-28" aria-hidden /> : null}
       {isAuthenticated ? <BottomNav /> : null}
     </div>
   );
