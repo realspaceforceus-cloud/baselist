@@ -468,6 +468,9 @@ export const BaseListProvider = ({
 
   const reinstateMember = useCallback(
     (memberId: string) => {
+      void adminApi.updateUser(memberId, { status: "active" }).catch(() => {
+        /* noop */
+      });
       setMemberDiscipline((prev) => {
         const existing = prev[memberId];
         if (!existing) {
