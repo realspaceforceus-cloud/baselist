@@ -576,8 +576,9 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleVerifyUser = useCallback(
-    (userId: string, method?: string) => {
+    async (userId: string, method?: string) => {
       try {
+        await adminApi.updateUser(userId, { verify: true });
         completeDodVerification(userId);
         setUserOverrides((prev) => ({
           ...prev,
@@ -601,7 +602,7 @@ const AdminPanel = (): JSX.Element => {
           }
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message = getApiErrorMessage(error);
         toast.error("Unable to verify user", { description: message });
       }
     },
