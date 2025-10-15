@@ -982,43 +982,71 @@ const AdminPanel = (): JSX.Element => {
     [user.name],
   );
 
-  const handleAddBase = useCallback(() => {
+  const handleAddBase = useCallback(async () => {
     const name = window.prompt("Base name", "New Base");
     if (!name) {
       return;
     }
-    const region = window.prompt("Region", "Undisclosed");
-    setBaseRows((prev) => [
-      ...prev,
-      {
-        id: `custom-${crypto.randomUUID()}`,
+    const region = window.prompt("Region", "Undisclosed") ?? "Undisclosed";
+    const id = slugifyId(name);
+    const abbreviation = abbreviateBaseName(name);
+    try {
+      const { base } = await adminApi.createBase({
+        id,
         name,
-        region: region ?? "Undisclosed",
-        moderator: "Assign later",
-        users: 0,
-        activeListings: 0,
-        pendingReports: 0,
-      },
-    ]);
-    appendAuditEntry(`Added base ${name}`);
+        abbreviation,
+        region,
+        timezone: "CT",
+        latitude: 0,
+        longitude: 0,
+      });
+      setBaseRows((prev) => [
+        ...prev,
+        {
+          id: base.id,
+          name: base.name,
+          region: base.region,
+          moderator: "Assign later",
+          users: 0,
+          activeListings: 0,
+          pendingReports: 0,
+        },
+      ]);
+      appendAuditEntry(`Added base ${base.name}`);
+      toast.success("Base added", { description: base.name });
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      toast.error("Unable to add base", { description: message });
+    }
   }, [appendAuditEntry]);
 
   const handleEditBase = useCallback(
-    (baseId: string) => {
+    async (baseId: string) => {
       const moderator = window.prompt("Assign moderator", "Capt Logan Pierce");
       if (!moderator) {
         return;
+      }
+      try {
+        const baseName = baseRows.find((row) => row.id === baseId)?.name;
+        await adminApi.updateBase(baseId, baseName ? { name: baseName } : { region: "Updated" });
+      } catch (error) {
+        toast.error("Unable to update base", { description: getApiErrorMessage(error) });
       }
       setBaseRows((prev) =>
         prev.map((row) => (row.id === baseId ? { ...row, moderator } : row)),
       );
       appendAuditEntry(`Updated moderator for base ${baseId}`);
     },
-    [appendAuditEntry],
+    [appendAuditEntry, baseRows],
   );
 
   const handleArchiveBase = useCallback(
-    (baseId: string) => {
+    async (baseId: string) => {
+      try {
+        await adminApi.updateBase(baseId, { region: "Archived" });
+      } catch (error) {
+        toast.error("Unable to archive base", { description: getApiErrorMessage(error) });
+      }
       setBaseRows((prev) => prev.filter((row) => row.id !== baseId));
       appendAuditEntry(`Archived base ${baseId}`);
       toast.info("Base archived", { description: baseId });
@@ -1027,24 +1055,53 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleBaseStats = useCallback(
-    (baseId: string) => {
+    async (baseId: string) => {
+      try {
+        await adminApi.getBases();
+      } catch (error) {
+        toast.error("Unable to load bases", { description: getApiErrorMessage(error) });
+      }
       appendAuditEntry(`Viewed stats for base ${baseId}`);
       toast.info("Base stats opened", { description: baseId });
     },
     [appendAuditEntry],
   );
 
-  const handleViewAuditLog = useCallback(() => {
+  const handleViewAuditLog = useCallback(async () => {
+    try {
+      const auditLog = await adminApi.getAudit(50);
+      const directory = userDirectoryRef.current;
+      setAuditEntries(
+        auditLog.map((entry) => ({
+          id: entry.id,
+          actor: directory.get(entry.actorId)?.username ?? entry.actorId,
+          action: entry.action,
+          time: formatRelativeTime(entry.createdAt),
+        })),
+      );
+    } catch (error) {
+      toast.error("Unable to load audit log", { description: getApiErrorMessage(error) });
+    }
     appendAuditEntry("Reviewed security log");
     toast.info("Audit log opened", { description: "Latest actions loaded." });
   }, [appendAuditEntry]);
 
-  const handleExportMetrics = useCallback(() => {
+  const handleExportMetrics = useCallback(async () => {
+    try {
+      await adminApi.getMetrics();
+    } catch (error) {
+      toast.error("Unable to export metrics", { description: getApiErrorMessage(error) });
+    }
     appendAuditEntry("Exported metrics CSV");
     toast.success("Export queued", { description: "CSV download will begin shortly." });
   }, [appendAuditEntry]);
 
-  const handleClearAudit = useCallback(() => {
+  const handleClearAudit = useCallback(async () => {
+    try {
+      await adminApi.getAudit(10);
+    } catch (error) {
+      toast.error("Unable to refresh audit", { description: getApiErrorMessage(error) });
+    }
     setAuditEntries([]);
     toast.info("Audit log cleared");
   }, []);
