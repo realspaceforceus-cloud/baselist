@@ -1517,6 +1517,7 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "reports" ? (
             <ReportsSection
               reports={reports}
+              reportNotes={reportNotes}
               onApprove={handleApproveReport}
               onDismiss={handleDismissReport}
               onOpenAttachment={handleOpenEvidence}
