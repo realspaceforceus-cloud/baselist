@@ -1189,6 +1189,21 @@ const AdminPanel = (): JSX.Element => {
     [appendAuditEntry],
   );
 
+  const handleAssignModerator = useCallback(
+    (baseId: string, moderator: string) => {
+      const trimmed = moderator.trim();
+      if (!trimmed) {
+        return;
+      }
+      setBaseRows((prev) =>
+        prev.map((row) => (row.id === baseId ? { ...row, moderator: trimmed } : row)),
+      );
+      appendAuditEntry(`Assigned ${trimmed} as moderator for base ${baseId}`);
+      toast.success("Moderator assigned", { description: trimmed });
+    },
+    [appendAuditEntry],
+  );
+
   const handleArchiveBase = useCallback(
     async (baseId: string) => {
       try {
