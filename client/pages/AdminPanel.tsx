@@ -1463,11 +1463,14 @@ const AdminPanel = (): JSX.Element => {
       const account = accountList.find((item) => item.id === seller.id);
       const overrides = userOverrides[seller.id] ?? {};
       const discipline = memberDiscipline[seller.id];
-      const sellerListings = listings.filter((listing) => listing.sellerId === seller.id);
-      const threads = messageThreads.filter((thread) => thread.participants.includes(seller.id));
+      const sellerListings = scopedListings.filter((listing) => listing.sellerId === seller.id);
+      const threads = scopedMessageThreads.filter((thread) => thread.participants.includes(seller.id));
       const fallbackBaseId = bases[0]?.id;
       const effectiveBaseId = account?.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
-      const reportCount = reports.filter((report) => {
+      if (!isAdmin && moderatorBaseId && effectiveBaseId !== moderatorBaseId) {
+        return null;
+      }
+      const reportCount = visibleReports.filter((report) => {
         if (report.targetType === "user") {
           return report.targetId === seller.id;
         }
@@ -1489,9 +1492,22 @@ const AdminPanel = (): JSX.Element => {
         listings: sellerListings.length,
         messages: threads.length,
         strikes: discipline?.strikes ?? 0,
-      };
-    }).sort((a, b) => a.name.localeCompare(b.name));
-  }, [accountList, bases, getUserRatingSummary, listings, memberDiscipline, messageThreads, reports, userOverrides]);
+      } as AdminUserRecord | null;
+    })
+      .filter((record): record is AdminUserRecord => record !== null)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [
+    accountList,
+    bases,
+    getUserRatingSummary,
+    isAdmin,
+    memberDiscipline,
+    moderatorBaseId,
+    scopedListings,
+    scopedMessageThreads,
+    userOverrides,
+    visibleReports,
+  ]);
 
   const flaggedListingCount = useMemo(
     () => visibleListingRows.filter((row) => row.status === "Flagged").length,
