@@ -875,9 +875,9 @@ const Messages = (): JSX.Element => {
                     <div className="flex flex-wrap gap-2 md:justify-end">
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        className="rounded-full px-4 text-xs"
+                        className="rounded-full px-4 text-xs font-semibold"
                         onClick={handleQuickOffer}
                         disabled={
                           !activeSummary.listing ||
@@ -885,9 +885,7 @@ const Messages = (): JSX.Element => {
                           !activeSummary.listing.price
                         }
                       >
-                        {activeSummary?.listing && !activeSummary.listing.isFree
-                          ? `Offer $${activeSummary.listing.price.toLocaleString("en-US")}`
-                          : "Offer"}
+                        {quickOfferLabel}
                       </Button>
                       <Button
                         type="button"
