@@ -1,5 +1,9 @@
 import { ArrowUpRight } from "lucide-react";
 
+import { type CSSProperties } from "react";
+import { ArrowUpRight } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 import type { SponsorPlacement } from "@/types";
 
 interface SponsorTileProps {
@@ -11,12 +15,26 @@ export const SponsorTile = ({ placement }: SponsorTileProps): JSX.Element | null
     return null;
   }
 
+  const hasBackgroundImage = Boolean(placement.backgroundImageUrl);
+  const backgroundStyles: CSSProperties | undefined = hasBackgroundImage
+    ? {
+        backgroundImage: `linear-gradient(120deg, rgba(255,255,255,0.94), rgba(255,255,255,0.88)), url(${placement.backgroundImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }
+    : undefined;
+
   return (
     <a
       href={placement.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex w-full flex-col gap-3 overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+      className={cn(
+        "group flex w-full flex-col gap-3 overflow-hidden rounded-3xl border border-border p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30",
+        hasBackgroundImage ? "bg-white/95" : "bg-card",
+      )}
+      style={backgroundStyles}
     >
       <span className="text-[0.65rem] font-semibold uppercase tracking-[0.4em] text-muted-foreground/80">
         Sponsor
