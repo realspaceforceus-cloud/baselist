@@ -1632,6 +1632,7 @@ export const BaseListProvider = ({
       getUserRatingSummary,
       getMemberName: resolveDisplayName,
       pendingPasswordReset,
+      analytics: analyticsCounters,
     }),
     [
       accounts,
