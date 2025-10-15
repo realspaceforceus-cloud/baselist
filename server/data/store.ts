@@ -140,7 +140,7 @@ const seedUsers = (bases: BaseRecord[]): UserRecord[] => {
       baseId: bases[0]?.id ?? "vance-afb",
       createdAt: timestamp,
       updatedAt: timestamp,
-      dodVerifiedAt: timestamp,
+      dowVerifiedAt: timestamp,
       lastLoginAt: timestamp,
       rememberDeviceUntil: null,
       avatarUrl:
@@ -156,7 +156,7 @@ const seedUsers = (bases: BaseRecord[]): UserRecord[] => {
       baseId: bases[0]?.id ?? "vance-afb",
       createdAt: timestamp,
       updatedAt: timestamp,
-      dodVerifiedAt: timestamp,
+      dowVerifiedAt: timestamp,
       lastLoginAt: timestamp,
       rememberDeviceUntil: null,
       avatarUrl:
@@ -172,7 +172,7 @@ const seedUsers = (bases: BaseRecord[]): UserRecord[] => {
       baseId: bases[0]?.id ?? "vance-afb",
       createdAt: timestamp,
       updatedAt: timestamp,
-      dodVerifiedAt: timestamp,
+      dowVerifiedAt: timestamp,
       lastLoginAt: timestamp,
       rememberDeviceUntil: null,
       avatarUrl:
@@ -188,7 +188,7 @@ const seedUsers = (bases: BaseRecord[]): UserRecord[] => {
       baseId: bases[0]?.id ?? "vance-afb",
       createdAt: timestamp,
       updatedAt: timestamp,
-      dodVerifiedAt: timestamp,
+      dowVerifiedAt: timestamp,
       lastLoginAt: timestamp,
       rememberDeviceUntil: null,
       avatarUrl:
@@ -204,7 +204,7 @@ const seedUsers = (bases: BaseRecord[]): UserRecord[] => {
       baseId: bases[0]?.id ?? "vance-afb",
       createdAt: timestamp,
       updatedAt: timestamp,
-      dodVerifiedAt: timestamp,
+      dowVerifiedAt: timestamp,
       lastLoginAt: timestamp,
       rememberDeviceUntil: null,
       avatarUrl: avatar("Col Harper"),
@@ -642,7 +642,7 @@ export class BaseListStore {
   updateUserStatus(
     actorId: string,
     id: string,
-    updates: Partial<Pick<UserRecord, "status" | "dodVerifiedAt" | "role">>,
+    updates: Partial<Pick<UserRecord, "status" | "dowVerifiedAt" | "role">>,
     metadata: Record<string, unknown> = {},
   ) {
     const updated = this.updateRecord(this.users, id, (current) => ({ ...current, ...updates }));
@@ -733,7 +733,7 @@ export class BaseListStore {
       if (status === "approved") {
         this.updateRecord(this.users, updated.userId, (currentUser) => ({
           ...currentUser,
-          dodVerifiedAt: nowIso(),
+          dowVerifiedAt: nowIso(),
         }));
       }
       this.addAuditEntry({
@@ -795,7 +795,7 @@ export class BaseListStore {
   }
 
   getDashboardSnapshot() {
-    const verifiedMembers = Array.from(this.users.values()).filter((user) => user.dodVerifiedAt !== null)
+    const verifiedMembers = Array.from(this.users.values()).filter((user) => user.dowVerifiedAt !== null)
       .length;
     const totalListings = this.listings.size;
     const soldListings = Array.from(this.listings.values()).filter((listing) => listing.status === "sold")
