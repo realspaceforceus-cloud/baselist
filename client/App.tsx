@@ -42,6 +42,11 @@ const App = (): JSX.Element => (
                 <Route path="moderation" element={<Moderation />} />
                 <Route path="admin" element={<AdminPanel />} />
                 <Route path="listing/:listingId" element={<ListingDetail />} />
+                <Route path="faq" element={<FAQ />} />
+                <Route path="terms" element={<Terms />} />
+                <Route path="privacy" element={<Privacy />} />
+                <Route path="guidelines" element={<Guidelines />} />
+                <Route path="contact" element={<Contact />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
