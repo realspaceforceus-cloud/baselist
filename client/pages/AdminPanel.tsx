@@ -629,14 +629,20 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleReinstateUser = useCallback(
-    (userId: string) => {
-      reinstateMember(userId);
-      setUserOverrides((prev) => ({
-        ...prev,
-        [userId]: { ...(prev[userId] ?? {}), suspended: false },
-      }));
-      appendAuditEntry(`Reinstated user ${getMemberName(userId)}`);
-      toast.success("Member reinstated", { description: getMemberName(userId) });
+    async (userId: string) => {
+      try {
+        await adminApi.updateUser(userId, { status: "active" });
+        reinstateMember(userId);
+        setUserOverrides((prev) => ({
+          ...prev,
+          [userId]: { ...(prev[userId] ?? {}), suspended: false },
+        }));
+        appendAuditEntry(`Reinstated user ${getMemberName(userId)}`);
+        toast.success("Member reinstated", { description: getMemberName(userId) });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to reinstate", { description: message });
+      }
     },
     [appendAuditEntry, getMemberName, reinstateMember],
   );
