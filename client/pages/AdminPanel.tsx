@@ -687,24 +687,32 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleRemoveListing = useCallback(
-    (listingId: string) => {
+    async (listingId: string) => {
       const listing = listings.find((item) => item.id === listingId);
-      if (listing) {
-        archivedListingsRef.current[listingId] = listing;
-        addNotice({
-          userId: listing.sellerId,
-          category: "report",
-          severity: "danger",
-          title: "Listing removed",
-          message: "Your listing was removed pending review. Reply to the moderation email if needed.",
+      try {
+        await adminApi.hideListing(listingId, {
+          reason: "Removed by admin review",
         });
+        if (listing) {
+          archivedListingsRef.current[listingId] = listing;
+          addNotice({
+            userId: listing.sellerId,
+            category: "report",
+            severity: "danger",
+            title: "Listing removed",
+            message: "Your listing was removed pending review. Reply to the moderation email if needed.",
+          });
+        }
+        removeListing(listingId);
+        adjustListingReports(listingId, 0, "Removed");
+        appendAuditEntry(`Removed listing ${listingId}`);
+        toast.error("Listing removed", {
+          description: listing ? listing.title : listingId,
+        });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to remove listing", { description: message });
       }
-      removeListing(listingId);
-      adjustListingReports(listingId, 0, "Removed");
-      appendAuditEntry(`Removed listing ${listingId}`);
-      toast.error("Listing removed", {
-        description: listing ? listing.title : listingId,
-      });
     },
     [addNotice, adjustListingReports, appendAuditEntry, listings, removeListing],
   );
