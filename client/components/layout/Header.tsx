@@ -1,10 +1,9 @@
-import { Gauge, MessageSquare, ShieldCheck } from "lucide-react";
+import { Gauge, LogOut, MessageSquare, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { BaseSelector } from "@/components/layout/BaseSelector";
 import { SearchInput } from "@/components/layout/SearchInput";
-import { RatingBadge } from "@/components/shared/RatingBadge";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
@@ -12,118 +11,115 @@ import { useAuthDialog } from "@/context/AuthDialogContext";
 const LOGO_SRC =
   "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2F9f8d10811f0e4d94a520d1b0b4d411e2?format=webp&width=320";
 
+const getAvatarInitials = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "BL";
+  }
+  const words = trimmed.replace(/[_-]+/g, " ").split(" ");
+  const letters = words.filter(Boolean).map((word) => word[0]?.toUpperCase() ?? "");
+  if (letters.length > 1) {
+    return (letters[0] + letters[1]).slice(0, 2);
+  }
+  const fallback = trimmed.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2);
+  return fallback ? fallback.toUpperCase() : trimmed.slice(0, 2).toUpperCase();
+};
+
 export const Header = (): JSX.Element => {
-  const {
-    user,
-    isDodVerified,
-    unreadMessageCount,
-    isAuthenticated,
-    signOut,
-    getUserRatingSummary,
-  } = useBaseList();
+  const { user, isDodVerified, unreadMessageCount, isAuthenticated, signOut } = useBaseList();
   const { openSignIn } = useAuthDialog();
-  const displayName = user.name.includes(" ") ? user.name.split(" ")[0] : user.name;
-  const userRatingSummary = getUserRatingSummary(user.id);
-  const userRatingFallbackAverage = user.rating ?? null;
-  const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
-  const canManage = user.role !== "member";
+
+  const showAdminLink = user.role === "admin";
+  const avatarInitials = getAvatarInitials(user.name);
+  const verificationLabel = isDodVerified ? "Verified" : user.verificationStatus;
 
   return (
     <header className="sticky top-0 z-30 border-b border-nav-border bg-nav/90 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:gap-8 md:py-5">
-        <div className="flex flex-wrap items-center gap-3 md:gap-4">
-          <img
-            src={LOGO_SRC}
-            alt="BaseList"
-            className="h-8 w-auto object-contain md:h-9"
-          />
-          <span className="text-lg font-semibold tracking-tight text-foreground md:text-xl">
-            BaseList
-          </span>
-          <Badge variant="secondary" className="rounded-full text-[0.65rem] font-semibold uppercase tracking-wide">
-            Built by Active-Duty Airmen
-          </Badge>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 md:gap-4 md:py-5">
+        <div className="flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center" aria-label="BaseList home">
+            <img src={LOGO_SRC} alt="BaseList" className="h-8 w-auto object-contain md:h-9" />
+          </Link>
+
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2 sm:gap-3">
+              {showAdminLink ? (
+                <Link
+                  to="/admin"
+                  className="hidden items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card sm:flex"
+                >
+                  <Gauge className="h-4 w-4" aria-hidden />
+                  <span>Admin</span>
+                </Link>
+              ) : null}
+              <Link
+                to="/messages"
+                className="relative flex items-center gap-2 rounded-full border border-border bg-background px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+              >
+                <span className="relative inline-flex">
+                  <MessageSquare className="h-4 w-4 text-foreground" aria-hidden />
+                  {unreadMessageCount > 0 ? (
+                    <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
+                      {Math.min(unreadMessageCount, 9)}
+                    </span>
+                  ) : null}
+                </span>
+                <span className="hidden sm:inline">Messages</span>
+              </Link>
+              <Button
+                variant="ghost"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wide"
+                type="button"
+                onClick={signOut}
+              >
+                <LogOut className="h-4 w-4" aria-hidden />
+                <span className="hidden sm:inline">Sign out</span>
+              </Button>
+              <div className="flex items-center gap-2 rounded-full border border-border bg-background px-2 py-1.5 shadow-soft">
+                <Avatar className="h-9 w-9">
+                  {user.avatarUrl ? (
+                    <AvatarImage src={user.avatarUrl} alt={`${user.name} avatar`} />
+                  ) : (
+                    <AvatarFallback className="text-[0.65rem] font-semibold uppercase tracking-wide text-foreground">
+                      {avatarInitials}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="hidden sm:flex flex-col leading-tight">
+                  <span className="truncate text-sm font-semibold text-foreground">{user.name}</span>
+                  <span className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
+                    <ShieldCheck
+                      className={`h-3 w-3 ${isDodVerified ? "text-verified" : "text-warning"}`}
+                      aria-hidden
+                    />
+                    {verificationLabel}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button
+                variant="ghost"
+                className="rounded-full px-4 py-2 text-sm font-semibold"
+                type="button"
+                onClick={openSignIn}
+              >
+                Sign In
+              </Button>
+              <Button asChild className="rounded-full px-5 py-2 text-sm font-semibold">
+                <a href="#join">Join Now</a>
+              </Button>
+            </div>
+          )}
         </div>
 
         {isAuthenticated ? (
-          <div className="flex flex-1 flex-col gap-3 md:ml-auto md:flex-row md:items-center md:justify-end">
-            <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm shadow-soft">
-              <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
-              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {isDodVerified ? "Verified" : user.verificationStatus}
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-foreground">{displayName}</span>
-                <RatingBadge
-                  userId={user.id}
-                  size="sm"
-                  initialAverage={
-                    userRatingSummary.overallCount > 0
-                      ? userRatingSummary.overallAverage
-                      : userRatingFallbackAverage
-                  }
-                  initialCount={
-                    userRatingSummary.overallCount > 0
-                      ? userRatingSummary.overallCount
-                      : userRatingFallbackCount
-                  }
-                  label={`${user.name} rating`}
-                />
-              </div>
-            </div>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <BaseSelector />
             <SearchInput />
-            {canManage ? (
-              <Link
-                to="/admin"
-                className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
-              >
-                <span className="flex h-4 w-4 items-center justify-center">
-                  <Gauge className="h-4 w-4" aria-hidden />
-                </span>
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">Admin</span>
-              </Link>
-            ) : null}
-            <Link
-              to="/messages"
-              className="relative flex items-center gap-2 rounded-2xl border border-border bg-background px-3 py-2 text-sm font-medium text-foreground shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
-            >
-              <span className="relative inline-flex">
-                <MessageSquare className="h-4 w-4" aria-hidden />
-                {unreadMessageCount > 0 ? (
-                  <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-[0.2rem] text-[0.65rem] font-semibold leading-none text-background">
-                    {Math.min(unreadMessageCount, 9)}
-                  </span>
-                ) : null}
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Messages
-              </span>
-            </Link>
-            <Button
-              variant="ghost"
-              className="rounded-full px-4 py-2 text-xs font-semibold"
-              type="button"
-              onClick={signOut}
-            >
-              Sign out
-            </Button>
           </div>
-        ) : (
-          <div className="flex flex-1 items-center justify-end gap-3 md:ml-auto">
-            <Button
-              variant="ghost"
-              className="rounded-full px-5 py-2 text-sm font-semibold"
-              type="button"
-              onClick={openSignIn}
-            >
-              Sign In
-            </Button>
-            <Button asChild className="rounded-full px-5 py-2 text-sm font-semibold">
-              <a href="#join">Join Now</a>
-            </Button>
-          </div>
-        )}
+        ) : null}
       </div>
     </header>
   );
