@@ -453,7 +453,9 @@ const AdminPanel = (): JSX.Element => {
         if (!active) {
           return;
         }
-        userDirectoryRef.current = new Map(users.map((entry) => [entry.id, entry]));
+        userDirectoryRef.current = new Map<string, AdminUserDTO>(
+          users.map((entry) => [entry.id, entry]),
+        );
         setAccountList(
           users.map((entry) => ({
             id: entry.id,
