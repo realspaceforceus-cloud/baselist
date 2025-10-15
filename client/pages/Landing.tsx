@@ -511,7 +511,7 @@ const Landing = (): JSX.Element => {
                         email: event.target.value,
                       }))
                     }
-                    placeholder="Enter your .mil or DoD email"
+                    placeholder="Enter your .mil or DoW email"
                     className="h-11 rounded-full"
                     required
                   />
