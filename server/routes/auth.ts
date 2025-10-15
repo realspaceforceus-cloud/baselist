@@ -100,7 +100,7 @@ const createAuthRouter = () => {
           role: user.role,
           status: user.status,
           baseId: user.baseId,
-          dodVerifiedAt: user.dodVerifiedAt,
+          dowVerifiedAt: user.dowVerifiedAt,
           avatarUrl: user.avatarUrl,
         },
         deviceId,
