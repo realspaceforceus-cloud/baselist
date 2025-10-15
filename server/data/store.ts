@@ -662,7 +662,7 @@ export class BaseListStore {
   hideListing(actorId: string, listingId: string, reason: string) {
     const updated = this.updateRecord(this.listings, listingId, (current) => ({
       ...current,
-      status: "hidden",
+      status: "hidden" as ListingStatus,
     }));
     if (updated) {
       this.addAuditEntry({
@@ -680,7 +680,7 @@ export class BaseListStore {
   restoreListing(actorId: string, listingId: string) {
     const updated = this.updateRecord(this.listings, listingId, (current) => ({
       ...current,
-      status: "active",
+      status: "active" as ListingStatus,
     }));
     if (updated) {
       this.addAuditEntry({
