@@ -691,6 +691,14 @@ export class BaseListStore {
     return Array.from(this.threads.values());
   }
 
+  getTransactions() {
+    return Array.from(this.transactions.values());
+  }
+
+  getRatings() {
+    return Array.from(this.ratings.values());
+  }
+
   getAuditLog(limit = 100) {
     return this.audit.slice(0, limit);
   }
