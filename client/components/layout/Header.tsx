@@ -221,9 +221,20 @@ export const Header = (): JSX.Element => {
                 <SheetTrigger asChild>
                   <button
                     type="button"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
-                    <Menu className="h-5 w-5" aria-hidden />
+                    <Avatar className="h-9 w-9">
+                      {user.avatarUrl ? (
+                        <AvatarImage src={user.avatarUrl} alt={`${user.name} avatar`} />
+                      ) : (
+                        <AvatarFallback className="text-sm font-semibold uppercase tracking-wide text-foreground">
+                          {avatarInitials}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-background shadow-sm">
+                      <Menu className="h-3 w-3" aria-hidden />
+                    </span>
                     <span className="sr-only">Open menu</span>
                   </button>
                 </SheetTrigger>
