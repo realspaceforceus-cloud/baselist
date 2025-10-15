@@ -256,6 +256,11 @@ type BaseListContextValue = {
   getUserRatingSummary: (userId: string) => RatingSummary;
   getMemberName: (userId: string) => string;
   pendingPasswordReset?: PasswordResetRequest | null;
+  analytics: {
+    verifiedMembers: number;
+    activeBases: number;
+    completedTransactions: number;
+  };
 };
 
 const BaseListContext = createContext<BaseListContextValue | undefined>(
