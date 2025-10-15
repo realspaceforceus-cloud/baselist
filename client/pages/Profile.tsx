@@ -221,31 +221,32 @@ const Profile = (): JSX.Element => {
             <BadgeCheck className="h-7 w-7" aria-hidden />
           </span>
           <div className="space-y-1">
-            <h1 className="text-3xl font-semibold text-foreground">{user.name}</h1>
+            <h1 className="text-3xl font-semibold text-foreground">{profileUser.name}</h1>
             <p className="text-sm text-muted-foreground">
-              {user.verificationStatus} • Member since {new Date(user.memberSince).getFullYear()}
+              {profileUser.verificationStatus} • Member since {profileMemberSinceYear}
             </p>
             <p className="text-sm text-muted-foreground">
-              Current base: <span className="font-semibold text-foreground">{currentBase.name}</span>
+              Current base: <span className="font-semibold text-foreground">{profileBase.name}</span>
             </p>
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <RatingBadge
-                userId={user.id}
+                userId={profileUser.id}
                 size="md"
-                initialAverage={userRatingFallbackAverage}
-                initialCount={userRatingFallbackCount}
-                label={`${user.name} rating`}
+                initialAverage={profileRatingFallbackAverage}
+                initialCount={profileRatingFallbackCount}
+                label={`${profileUser.name} rating`}
               />
               <span>
-                {purchases.length + sales.length} transaction
-                {purchases.length + sales.length === 1 ? "" : "s"}
+                {totalTransactions} transaction{totalTransactions === 1 ? "" : "s"}
               </span>
             </div>
           </div>
         </div>
-        <Button asChild variant="outline" className="rounded-full px-5">
-          <Link to="/post">Create listing</Link>
-        </Button>
+        {viewingOwnProfile ? (
+          <Button asChild variant="outline" className="rounded-full px-5">
+            <Link to="/post">Create listing</Link>
+          </Button>
+        ) : null}
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">
