@@ -320,10 +320,25 @@ export const SponsorsSection = ({
                   </button>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Palette className="h-3.5 w-3.5" aria-hidden />
-                <span>Brand color </span>
-                <span className="font-semibold text-foreground">{normalizeHex(placement.brandColor)}</span>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                <span className="flex items-center gap-2">
+                  <Palette className="h-3.5 w-3.5" aria-hidden />
+                  <span>Brand color</span>
+                  <span className="font-semibold text-foreground">
+                    {normalizeHex(placement.brandColor)}
+                  </span>
+                </span>
+                {placement.backgroundImageUrl ? (
+                  <span className="flex items-center gap-2">
+                    <ImageIcon className="h-3.5 w-3.5" aria-hidden />
+                    <span className="font-semibold text-foreground">Background image enabled</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <ImageIcon className="h-3.5 w-3.5 text-muted-foreground/70" aria-hidden />
+                    <span>No background image</span>
+                  </span>
+                )}
               </div>
               {isEditing && editForm ? (
                 <form
