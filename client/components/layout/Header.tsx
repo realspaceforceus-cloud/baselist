@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Check,
-  ChevronDown,
   ClipboardList,
   Gauge,
   House,
   LogOut,
-  MapPin,
+  Menu,
   MessageSquare,
   PlusCircle,
   Search,
@@ -212,41 +211,13 @@ export const Header = (): JSX.Element => {
                     type="button"
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
-                    <Avatar className="h-9 w-9">
-                      {user.avatarUrl ? (
-                        <AvatarImage src={user.avatarUrl} alt={`${user.name} avatar`} />
-                      ) : (
-                        <AvatarFallback className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                          {avatarInitials}
-                        </AvatarFallback>
-                      )}
-                    </Avatar>
+                    <Menu className="h-5 w-5" aria-hidden />
                     <span className="sr-only">Open menu</span>
                   </button>
                 </SheetTrigger>
                 <span className="text-lg font-semibold text-foreground">BaseList</span>
               </div>
               <div className="flex items-center gap-2">
-                <SheetTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex min-w-0 items-center gap-3 rounded-2xl border border-border bg-background px-4 py-2 shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                  >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <MapPin className="h-4 w-4" aria-hidden />
-                    </span>
-                    <span className="flex min-w-0 flex-col text-left">
-                      <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-                        Base
-                      </span>
-                      <span className="truncate text-sm font-semibold text-foreground md:text-base">
-                        {currentBase.name}
-                      </span>
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden />
-                    <span className="sr-only">Switch base</span>
-                  </button>
-                </SheetTrigger>
                 {QUICK_ACTIONS.map(({ label, to, icon: Icon }) => (
                   <button
                     key={label}
