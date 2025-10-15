@@ -153,7 +153,7 @@ const createAuthRouter = () => {
       .json({ ok: true });
   });
 
-  router.post("/logout", authenticate, requireAuth, async (req, res) => {
+  router.post("/logout", authenticate, async (req, res) => {
     const refreshToken = req.cookies?.refresh_token;
     if (typeof refreshToken === "string" && refreshToken.length > 0) {
       const verification = await verifyRefreshToken(refreshToken);
