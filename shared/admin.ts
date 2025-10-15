@@ -27,7 +27,7 @@ export interface UserRecord {
   baseId: string;
   createdAt: string;
   updatedAt: string;
-  dodVerifiedAt: string | null;
+  dowVerifiedAt: string | null;
   lastLoginAt: string | null;
   rememberDeviceUntil: string | null;
   avatarUrl: string;
