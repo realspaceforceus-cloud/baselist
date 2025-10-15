@@ -493,6 +493,15 @@ const AdminPanel = (): JSX.Element => {
   const [metrics, setMetrics] = useState<AdminMetricCard[]>(() =>
     createMetricCards(accountList, listings, transactions, verificationDocs.length),
   );
+
+  const sponsorRows = useMemo<AdminSponsorRow[]>(
+    () =>
+      sponsorPlacements.map((placement) => ({
+        ...placement,
+        baseName: getBaseName(bases, placement.baseId),
+      })),
+    [bases, sponsorPlacements],
+  );
   const [userOverrides, setUserOverrides] = useState<
     Record<string, Partial<{ verified: boolean; suspended: boolean }>>
   >({});
