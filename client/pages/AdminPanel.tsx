@@ -73,6 +73,49 @@ const formatCurrency = (value: number): string =>
 const formatShortDate = (iso: string): string =>
   new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(iso));
 
+const formatRelativeTime = (iso: string): string => {
+  try {
+    return formatDistanceToNow(new Date(iso), { addSuffix: true });
+  } catch (error) {
+    return formatShortDate(iso);
+  }
+};
+
+const getApiErrorMessage = (error: unknown): string => {
+  if (error && typeof error === "object" && "payload" in error) {
+    const payload = (error as { payload?: unknown }).payload;
+    if (payload && typeof payload === "object" && "error" in payload) {
+      const message = (payload as { error?: unknown }).error;
+      if (typeof message === "string") {
+        return message;
+      }
+    }
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Something went wrong—try again.";
+};
+
+const slugifyId = (value: string): string => {
+  const slug = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+  return slug.length > 0 ? slug : `base-${crypto.randomUUID()}`;
+};
+
+const abbreviateBaseName = (value: string): string => {
+  const letters = value
+    .split(/\s+/)
+    .map((segment) => segment[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 5);
+  return letters.length > 0 ? letters : "BASE";
+};
+
 const getBaseName = (bases: Base[], baseId?: string): string => {
   if (!baseId) {
     return "Unknown base";
