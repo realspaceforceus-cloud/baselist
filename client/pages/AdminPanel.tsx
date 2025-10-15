@@ -785,20 +785,29 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleApproveReport = useCallback(
-    (reportId: string) => {
+    async (reportId: string) => {
       const report = reports.find((entry) => entry.id === reportId);
       if (!report) {
         return;
       }
-      setReports((prev) => prev.filter((entry) => entry.id !== reportId));
-      if (report.targetType === "listing") {
-        adjustListingReports(report.targetId, 1, "Flagged");
-        appendAuditEntry(`Approved report ${reportId} for listing ${report.targetId}`);
-      } else {
-        handleIssueStrike(report.targetId);
-        appendAuditEntry(`Approved report ${reportId} for user ${report.targetId}`);
+      try {
+        await adminApi.resolveReport(reportId, {
+          status: "resolved",
+          notes: `${report.type} approved by admin`,
+        });
+        setReports((prev) => prev.filter((entry) => entry.id !== reportId));
+        if (report.targetType === "listing") {
+          adjustListingReports(report.targetId, 1, "Flagged");
+          appendAuditEntry(`Approved report ${reportId} for listing ${report.targetId}`);
+        } else {
+          handleIssueStrike(report.targetId);
+          appendAuditEntry(`Approved report ${reportId} for user ${report.targetId}`);
+        }
+        toast.success("Report approved", { description: `${report.type} • ${report.targetLabel}` });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to approve report", { description: message });
       }
-      toast.success("Report approved", { description: `${report.type} • ${report.targetLabel}` });
     },
     [adjustListingReports, appendAuditEntry, handleIssueStrike, reports],
   );
