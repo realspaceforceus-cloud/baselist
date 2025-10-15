@@ -21,6 +21,13 @@ export function createServer() {
     }),
   );
   app.use(
+    helmet.hsts({
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    }),
+  );
+  app.use(
     cors({
       origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
       credentials: true,
