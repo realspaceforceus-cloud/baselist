@@ -7,6 +7,7 @@ import {
   Gauge,
   LockKeyhole,
   MailCheck,
+  Megaphone,
   MessageSquareWarning,
   PackageSearch,
   ShieldAlert,
