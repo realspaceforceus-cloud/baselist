@@ -4,6 +4,8 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
+import { authRouter } from "./routes/auth";
+import { adminRouter } from "./routes/admin";
 import { handleDemo } from "./routes/demo";
 
 export function createServer() {
@@ -35,6 +37,8 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+  app.use("/api/auth", authRouter);
+  app.use("/api/admin", adminRouter);
 
   return app;
 }
