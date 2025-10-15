@@ -110,7 +110,7 @@ const Landing = (): JSX.Element => {
     }
     return accounts.find((account) => account.id === pendingAccountId) ?? null;
   }, [accounts, pendingAccountId]);
-  const pendingAccountVerified = pendingAccount?.isDodVerified ?? false;
+  const pendingAccountVerified = pendingAccount?.isDowVerified ?? false;
   const pendingVerificationRequestedAt = pendingAccount?.verificationRequestedAt ?? null;
   const pendingAccountEmail = pendingAccount?.email ?? null;
 
@@ -766,7 +766,7 @@ const Landing = (): JSX.Element => {
                       I clicked the confirmation link
                     </Button>
                     <p className="text-xs text-muted-foreground">
-                      Once the link is confirmed you��ll unlock posting and messaging.
+                      Once the link is confirmed you’ll unlock posting and messaging.
                     </p>
                   </div>
                 ) : null}
