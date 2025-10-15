@@ -923,7 +923,10 @@ const AdminPanel = (): JSX.Element => {
           adjustListingReports(report.targetId, 1, "Flagged");
           appendAuditEntry(`Approved report ${reportId} for listing ${report.targetId}`);
         } else {
-          handleIssueStrike(report.targetId);
+          handleIssueStrike(
+            report.targetId,
+            `Strike issued after approving report ${reportId} (${report.type})`,
+          );
           appendAuditEntry(`Approved report ${reportId} for user ${report.targetId}`);
         }
         toast.success("Report approved", { description: `${report.type} • ${report.targetLabel}` });
