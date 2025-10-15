@@ -791,10 +791,10 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleIssueStrike = useCallback(
-    (userId: string) => {
-      issueStrike(userId, "Conduct strike issued by admin review.");
-      appendAuditEntry(`Issued strike to ${getMemberName(userId)}`);
-      toast.warning("Strike recorded", { description: getMemberName(userId) });
+    (userId: string, reason: string) => {
+      issueStrike(userId, reason);
+      appendAuditEntry(`Issued strike to ${getMemberName(userId)}: ${reason}`);
+      toast.warning("Strike recorded", { description: reason });
     },
     [appendAuditEntry, getMemberName, issueStrike],
   );
