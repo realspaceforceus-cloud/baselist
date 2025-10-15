@@ -159,13 +159,19 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    const exists = threadSummaries.some(
-      (summary) => summary.thread.id === threadId,
-    );
-    if (!threadId || !exists) {
-      navigate(`/messages/${threadSummaries[0].thread.id}`, { replace: true });
+    const exists = threadSummaries.some((summary) => summary.thread.id === threadId);
+    if (!threadId) {
+      if (!isMobile) {
+        navigate(`/messages/${threadSummaries[0].thread.id}`, { replace: true });
+      }
+      return;
     }
-  }, [navigate, threadId, threadSummaries]);
+    if (!exists) {
+      navigate(isMobile ? "/messages" : `/messages/${threadSummaries[0].thread.id}`, {
+        replace: true,
+      });
+    }
+  }, [navigate, threadId, threadSummaries, isMobile]);
 
   const threadCounts = useMemo(
     () =>
