@@ -28,6 +28,7 @@ import {
   ReportsSection,
   RolesSection,
   SecuritySection,
+  SponsorsSection,
   UsersSection,
   VerificationSection,
   type AdminAuditEntry,
