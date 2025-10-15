@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
-import { ExternalLink, Megaphone, Palette, Pencil, Plus, Trash2 } from "lucide-react";
+import { ExternalLink, Image as ImageIcon, Megaphone, Palette, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import type { Base, SponsorPlacement } from "@/types";
