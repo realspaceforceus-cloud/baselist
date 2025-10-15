@@ -426,6 +426,15 @@ const sections: AdminNavItem[] = [
   { id: "security", label: "Security", icon: LockKeyhole },
 ];
 
+const MODERATOR_SECTION_IDS = new Set<AdminNavItem["id"]>([
+  "dashboard",
+  "users",
+  "listings",
+  "reports",
+  "verification",
+  "messaging",
+]);
+
 const queueIdByMethod: Record<string, VerificationQueueSummary["id"]> = {
   ".mil Verified": "auto",
   "Invite Code": "invite",
