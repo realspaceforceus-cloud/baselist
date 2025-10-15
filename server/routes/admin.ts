@@ -85,7 +85,7 @@ router.get("/users", (_req, res) => {
     baseId: user.baseId,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
-    dodVerifiedAt: user.dodVerifiedAt,
+    dowVerifiedAt: user.dowVerifiedAt,
     lastLoginAt: user.lastLoginAt,
     rememberDeviceUntil: user.rememberDeviceUntil,
     avatarUrl: user.avatarUrl,
@@ -118,7 +118,7 @@ router.patch("/users/:id", (req: AuthenticatedRequest, res) => {
   const updated = store.updateUserStatus(req.user!.id, userId, {
     status: updates.status ?? user.status,
     role: updates.role ?? user.role,
-    dodVerifiedAt: updates.verify ? new Date().toISOString() : user.dodVerifiedAt,
+    dowVerifiedAt: updates.verify ? new Date().toISOString() : user.dowVerifiedAt,
   }, metadata);
 
   if (!updated) {
@@ -131,7 +131,7 @@ router.patch("/users/:id", (req: AuthenticatedRequest, res) => {
       username: updated.username,
       role: updated.role,
       status: updated.status,
-      dodVerifiedAt: updated.dodVerifiedAt,
+      dowVerifiedAt: updated.dowVerifiedAt,
     },
   });
 });
