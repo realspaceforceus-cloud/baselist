@@ -17,13 +17,15 @@ const hideListingSchema = z.object({
   reason: z.string().trim().min(3).max(240),
 });
 
+const reportResolutionValues = ["resolved", "dismissed"] as const;
 const resolveReportSchema = z.object({
-  status: z.enum(["resolved", "dismissed"] as ReportStatus[]),
+  status: z.enum(reportResolutionValues),
   notes: z.string().trim().min(3).max(280),
 });
 
+const verificationDecisionValues = ["approved", "denied"] as const;
 const adjudicateVerificationSchema = z.object({
-  status: z.enum(["approved", "denied"] satisfies VerificationStatus[]),
+  status: z.enum(verificationDecisionValues),
   notes: z.string().trim().max(280).optional(),
 });
 
@@ -32,14 +34,23 @@ const createBaseSchema = z.object({
   name: z.string().trim().min(3),
   abbreviation: z.string().trim().min(2).max(8),
   region: z.string().trim().min(3),
-  timezone: z.string().trim().min(2).max(4),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
+  timezone: z.string().trim().min(2).max(6),
+  latitude: z.coerce.number().min(-90).max(90),
+  longitude: z.coerce.number().min(-180).max(180),
 });
 
-const updateBaseSchema = createBaseSchema.partial({ id: true }).extend({
-  name: z.string().trim().min(3).optional(),
-});
+const updateBaseSchema = z
+  .object({
+    name: z.string().trim().min(3).optional(),
+    abbreviation: z.string().trim().min(2).max(8).optional(),
+    region: z.string().trim().min(3).optional(),
+    timezone: z.string().trim().min(2).max(6).optional(),
+    latitude: z.coerce.number().min(-90).max(90).optional(),
+    longitude: z.coerce.number().min(-180).max(180).optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "At least one field is required",
+  });
 
 const router = Router();
 
