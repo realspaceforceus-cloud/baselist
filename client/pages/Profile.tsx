@@ -32,24 +32,50 @@ const Profile = (): JSX.Element => {
     markNoticeRead,
   } = useBaseList();
 
-  const myListings = listings.filter((listing) => listing.sellerId === user.id);
+  const { memberId } = useParams<{ memberId?: string }>();
+
+  const profileUser = useMemo(() => {
+    if (!memberId || memberId === currentUser.id) {
+      return currentUser;
+    }
+    return getMemberProfile(memberId) ?? currentUser;
+  }, [currentUser, getMemberProfile, memberId]);
+
+  const viewingOwnProfile = !memberId || memberId === currentUser.id;
+
+  const profileBase = useMemo(() => {
+    if (viewingOwnProfile) {
+      return currentBase;
+    }
+    return bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase;
+  }, [bases, currentBase, profileUser.currentBaseId, viewingOwnProfile]);
+
+  const profileFirstName = useMemo(() => {
+    return profileUser.name.includes(" ")
+      ? profileUser.name.split(" ")[0]
+      : profileUser.name;
+  }, [profileUser.name]);
+
+  const myListings = listings.filter((listing) => listing.sellerId === profileUser.id);
   const activeListings = myListings.filter((listing) => listing.status === "active");
   const soldListings = myListings.filter((listing) => listing.status === "sold");
 
-  const purchases = transactions.filter((entry) => entry.buyerId === user.id);
-  const sales = transactions.filter((entry) => entry.sellerId === user.id);
-  const userRatingSummary = getUserRatingSummary(user.id);
-  const userRatingFallbackAverage = user.rating ?? null;
-  const userRatingFallbackCount = user.ratingCount ?? user.completedSales ?? 0;
+  const purchases = transactions.filter((entry) => entry.buyerId === profileUser.id);
+  const sales = transactions.filter((entry) => entry.sellerId === profileUser.id);
+  const profileRatingSummary = getUserRatingSummary(profileUser.id);
+  const profileRatingFallbackAverage = profileUser.rating ?? null;
+  const profileRatingFallbackCount = profileUser.ratingCount ?? profileUser.completedSales ?? 0;
 
   const userNotices = useMemo(
     () =>
-      notices
-        .filter((notice) => notice.userId === user.id || notice.userId === "all")
-        .sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        ),
-    [notices, user.id],
+      viewingOwnProfile
+        ? notices
+            .filter((notice) => notice.userId === profileUser.id || notice.userId === "all")
+            .sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+            )
+        : [],
+    [notices, profileUser.id, viewingOwnProfile],
   );
 
   const noticeSeverityClass: Record<string, string> = {
