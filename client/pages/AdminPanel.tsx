@@ -167,7 +167,7 @@ type AccountLike = {
   username: string;
   baseId: string;
   role: UserProfile["role"];
-  isDodVerified: boolean;
+  isDowVerified: boolean;
   createdAt: string;
 };
 
@@ -356,7 +356,7 @@ const createMetricCards = (
   transactions: TransactionHistoryEntry[],
   manualVerificationBacklog: number,
 ): AdminMetricCard[] => {
-  const verifiedCount = accounts.filter((account) => account.isDodVerified).length;
+  const verifiedCount = accounts.filter((account) => account.isDowVerified).length;
   const soldCount = listings.filter((listing) => listing.status === "sold").length;
   const activeCount = listings.length - soldCount;
   const fulfillmentRate = transactions.length + soldCount === 0
@@ -488,7 +488,7 @@ const AdminPanel = (): JSX.Element => {
       username: account.username,
       baseId: account.baseId,
       role: account.role,
-      isDodVerified: account.isDodVerified,
+      isDowVerified: account.isDowVerified,
       createdAt: account.createdAt,
     })),
   );
@@ -779,7 +779,7 @@ const AdminPanel = (): JSX.Element => {
         queue.id === "auto"
           ? {
               ...queue,
-              count: accountList.filter((account) => account.isDodVerified).length,
+              count: accountList.filter((account) => account.isDowVerified).length,
             }
           : queue,
       ),
@@ -1484,7 +1484,7 @@ const AdminPanel = (): JSX.Element => {
         id: seller.id,
         name: seller.name,
         base: getBaseName(bases, effectiveBaseId),
-        verified: overrides.verified ?? account?.isDodVerified ?? seller.verified,
+        verified: overrides.verified ?? account?.isDowVerified ?? seller.verified,
         suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
         joined: formatShortDate(account?.createdAt ?? seller.memberSince),
         ratingLabel: average ? `${average.toFixed(1)} / ${count}` : "No rating",
