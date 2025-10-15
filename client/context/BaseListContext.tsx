@@ -255,6 +255,7 @@ type BaseListContextValue = {
   transactions: TransactionHistoryEntry[];
   getUserRatingSummary: (userId: string) => RatingSummary;
   getMemberName: (userId: string) => string;
+  getMemberProfile: (userId: string) => UserProfile | null;
   pendingPasswordReset?: PasswordResetRequest | null;
   analytics: {
     verifiedMembers: number;
