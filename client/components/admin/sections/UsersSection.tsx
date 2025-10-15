@@ -61,8 +61,19 @@ export const UsersSection = ({
     });
   };
 
-  const cancelStrikeForm = () => {
+  const cancelStrikeForm = (userId?: string) => {
+    const target = userId ?? strikeTarget;
     setStrikeTarget(null);
+    if (target) {
+      setStrikeErrors((prev) => {
+        if (!prev[target]) {
+          return prev;
+        }
+        const next = { ...prev };
+        delete next[target];
+        return next;
+      });
+    }
   };
 
   const handleStrikeSubmit = (event: FormEvent<HTMLFormElement>, userId: string) => {
@@ -196,7 +207,7 @@ export const UsersSection = ({
                     type="button"
                     className="inline-flex items-center gap-1 rounded-full border border-warning px-4 py-2 text-warning"
                     onClick={() =>
-                      strikeTarget === user.id ? cancelStrikeForm() : openStrikeForm(user.id)
+                      strikeTarget === user.id ? cancelStrikeForm(user.id) : openStrikeForm(user.id)
                     }
                   >
                     <Gavel className="h-3.5 w-3.5" aria-hidden />
@@ -225,7 +236,7 @@ export const UsersSection = ({
                     <button
                       type="button"
                       className="rounded-full border border-border px-4 py-2"
-                      onClick={cancelStrikeForm}
+                      onClick={() => cancelStrikeForm(user.id)}
                     >
                       Cancel
                     </button>
