@@ -1518,7 +1518,7 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const topBasesStats = useMemo(() => {
-    const sorted = baseRows
+    const sorted = visibleBaseRows
       .slice()
       .sort((a, b) => b.users - a.users)
       .slice(0, 5);
@@ -1529,17 +1529,19 @@ const AdminPanel = (): JSX.Element => {
       topName: sorted[0]?.name ?? "—",
       topUsers: sorted[0]?.users ?? 0,
     };
-  }, [baseRows]);
+  }, [visibleBaseRows]);
 
   const queueHealthLabel = useMemo(() => {
-    if (flaggedThreads.length === 0 && reports.length === 0) {
+    const flaggedCount = visibleFlaggedThreads.length;
+    const reportCount = visibleReports.length;
+    if (flaggedCount === 0 && reportCount === 0) {
       return "Stable";
     }
-    if (flaggedThreads.length > 3 || reports.length > 6) {
+    if (flaggedCount > 3 || reportCount > 6) {
       return "Attention";
     }
     return "Healthy";
-  }, [flaggedThreads.length, reports.length]);
+  }, [visibleFlaggedThreads.length, visibleReports.length]);
 
   const queueHealthTone = queueHealthLabel === "Stable"
     ? "text-verified"
@@ -1561,10 +1563,10 @@ const AdminPanel = (): JSX.Element => {
       {
         id: "reports",
         label: "Active Reports",
-        value: `${reports.length}`,
+        value: `${visibleReports.length}`,
         meta: "Unresolved",
         icon: ShieldAlert,
-        toneClass: reports.length ? "text-warning" : "text-muted-foreground",
+        toneClass: visibleReports.length ? "text-warning" : "text-muted-foreground",
         target: "reports",
       },
       {
@@ -1579,7 +1581,7 @@ const AdminPanel = (): JSX.Element => {
       {
         id: "users",
         label: "New Users",
-        value: `${accountList.filter(
+        value: `${scopedAccounts.filter(
           (account) =>
             new Date(account.createdAt).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000,
         ).length}`,
@@ -1606,22 +1608,22 @@ const AdminPanel = (): JSX.Element => {
         id: "queue",
         label: "Queue Health",
         value: queueHealthLabel,
-        meta: `${flaggedThreads.length} flagged threads`,
+        meta: `${visibleFlaggedThreads.length} flagged threads`,
         icon: Activity,
         toneClass: queueHealthTone,
         target: "messaging",
       },
     ],
     [
-      accountList,
       activeListingCount,
       flaggedListingCount,
-      flaggedThreads.length,
       pendingManualVerifications,
       queueHealthLabel,
       queueHealthTone,
-      reports.length,
+      scopedAccounts,
       topBasesStats,
+      visibleFlaggedThreads.length,
+      visibleReports.length,
     ],
   );
 
