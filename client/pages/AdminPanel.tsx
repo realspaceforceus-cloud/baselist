@@ -1494,18 +1494,18 @@ const AdminPanel = (): JSX.Element => {
   }, [accountList, bases, getUserRatingSummary, listings, memberDiscipline, messageThreads, reports, userOverrides]);
 
   const flaggedListingCount = useMemo(
-    () => listingRows.filter((row) => row.status === "Flagged").length,
-    [listingRows],
+    () => visibleListingRows.filter((row) => row.status === "Flagged").length,
+    [visibleListingRows],
   );
 
   const activeListingCount = useMemo(
-    () => listingRows.filter((row) => row.status === "Active").length,
-    [listingRows],
+    () => visibleListingRows.filter((row) => row.status === "Active").length,
+    [visibleListingRows],
   );
 
   const soldListingCount = useMemo(
-    () => listingRows.filter((row) => row.status === "Sold").length,
-    [listingRows],
+    () => visibleListingRows.filter((row) => row.status === "Sold").length,
+    [visibleListingRows],
   );
 
   const pendingManualVerifications = useMemo(
