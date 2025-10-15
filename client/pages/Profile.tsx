@@ -367,54 +367,56 @@ const Profile = (): JSX.Element => {
         </Tabs>
       </section>
 
-      <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">Account notices</h2>
-            <p className="text-sm text-muted-foreground">
-              Audit trail of payouts, reports, and strikes on your account.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 space-y-3">
-          {userNotices.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm text-muted-foreground">
-              No notices yet—you're in good standing.
+      {viewingOwnProfile ? (
+        <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Account notices</h2>
+              <p className="text-sm text-muted-foreground">
+                Audit trail of payouts, reports, and strikes on your account.
+              </p>
             </div>
-          ) : (
-            userNotices.map((notice) => (
-              <article
-                key={notice.id}
-                className="rounded-2xl border border-border bg-background/80 px-4 py-3 shadow-soft"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[0.65rem] uppercase tracking-wide ${noticeSeverityClass[notice.severity] ?? "text-muted-foreground"}`}
-                    >
-                      {notice.category}
+          </div>
+          <div className="mt-4 space-y-3">
+            {userNotices.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm text-muted-foreground">
+                No notices yet—you're in good standing.
+              </div>
+            ) : (
+              userNotices.map((notice) => (
+                <article
+                  key={notice.id}
+                  className="rounded-2xl border border-border bg-background/80 px-4 py-3 shadow-soft"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[0.65rem] uppercase tracking-wide ${noticeSeverityClass[notice.severity] ?? "text-muted-foreground"}`}
+                      >
+                        {notice.category}
+                      </span>
+                      <span>{notice.title}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {formatNoticeDate(notice.createdAt)}
                     </span>
-                    <span>{notice.title}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    {formatNoticeDate(notice.createdAt)}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-muted-foreground">{notice.message}</p>
-                {!notice.read ? (
-                  <button
-                    type="button"
-                    className="mt-2 text-xs font-semibold text-primary hover:underline"
-                    onClick={() => markNoticeRead(notice.id)}
-                  >
-                    Mark as read
-                  </button>
-                ) : null}
-              </article>
-            ))
-          )}
-        </div>
-      </section>
+                  <p className="mt-2 text-sm text-muted-foreground">{notice.message}</p>
+                  {!notice.read ? (
+                    <button
+                      type="button"
+                      className="mt-2 text-xs font-semibold text-primary hover:underline"
+                      onClick={() => markNoticeRead(notice.id)}
+                    >
+                      Mark as read
+                    </button>
+                  ) : null}
+                </article>
+              ))
+            )}
+          </div>
+        </section>
+      ) : null}
 
       {isModerator ? (
         <div className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
