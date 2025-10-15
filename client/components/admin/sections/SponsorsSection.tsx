@@ -101,6 +101,7 @@ export const SponsorsSection = ({
       description: placement.description,
       href: placement.href,
       brandColor: normalizeHex(placement.brandColor),
+      backgroundImageUrl: placement.backgroundImageUrl ?? "",
     });
   };
 
