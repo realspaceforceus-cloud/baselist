@@ -1,4 +1,4 @@
-import { Gauge, LogOut, MessageSquare, ShieldCheck } from "lucide-react";
+import { Gauge, LogOut, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { BaseSelector } from "@/components/layout/BaseSelector";
@@ -26,7 +26,7 @@ const getAvatarInitials = (value: string): string => {
 };
 
 export const Header = (): JSX.Element => {
-  const { user, isDodVerified, unreadMessageCount, isAuthenticated, signOut } = useBaseList();
+  const { user, isDodVerified, isAuthenticated, signOut } = useBaseList();
   const { openSignIn } = useAuthDialog();
 
   const showAdminLink = user.role === "admin";
