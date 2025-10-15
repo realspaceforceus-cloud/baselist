@@ -234,7 +234,7 @@ type BaseListContextValue = {
   completePasswordReset: (token: string, newPassword: string) => void;
   cancelPasswordReset: () => void;
   beginVerification: (method: "email" | "invite" | "manual") => void;
-  completeDodVerification: (accountId: string) => void;
+  completeDowVerification: (accountId: string) => void;
   signOut: () => void;
   listings: Listing[];
   addListing: (listing: Listing) => void;
@@ -847,7 +847,7 @@ export const BaseListProvider = ({
     [currentAccount],
   );
 
-  const completeDodVerification = useCallback(
+  const completeDowVerification = useCallback(
     (accountId: string) => {
       void adminApi.updateUser(accountId, { verify: true }).catch(() => {
         /* noop */
@@ -1669,7 +1669,7 @@ export const BaseListProvider = ({
       completePasswordReset,
       cancelPasswordReset,
       beginVerification,
-      completeDodVerification,
+      completeDowVerification,
       signOut,
       listings,
       addListing,
@@ -1718,7 +1718,7 @@ export const BaseListProvider = ({
       issueStrike,
       listings,
       markListingSold,
-      completeDodVerification,
+      completeDowVerification,
       beginVerification,
       markNoticeRead,
       markAllNoticesRead,
