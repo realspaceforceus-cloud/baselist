@@ -124,6 +124,11 @@ const createAuthRouter = () => {
 
     const { stored } = verification;
 
+    if (parse.data.deviceId && stored.deviceId !== parse.data.deviceId) {
+      revokeRefreshToken(stored.id);
+      return res.status(401).json({ error: "Refresh token invalid" });
+    }
+
     const user = store.getUser(stored.userId);
     if (!user || user.status === "banned") {
       revokeRefreshToken(stored.id);
