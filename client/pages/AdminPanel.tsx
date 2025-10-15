@@ -188,6 +188,8 @@ const createListingRows = (
   }));
 };
 
+type AdminSponsorRow = SponsorPlacement & { baseName: string };
+
 const createBaseRows = (
   bases: Base[],
   accounts: AccountLike[],
