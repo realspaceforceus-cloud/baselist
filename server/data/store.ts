@@ -695,19 +695,41 @@ export class BaseListStore {
     return this.audit.slice(0, limit);
   }
 
-  addBase(payload: Omit<BaseRecord, "createdAt" | "updatedAt">) {
+  addBase(actorId: string, payload: Omit<BaseRecord, "createdAt" | "updatedAt">) {
     const record: BaseRecord = {
       ...payload,
       createdAt: nowIso(),
       updatedAt: nowIso(),
     };
     this.bases.set(record.id, record);
+    this.addAuditEntry({
+      actorId,
+      action: "base.create",
+      targetType: "base",
+      targetId: record.id,
+      metadata: { name: record.name },
+    });
     this.rebuildIndexes();
     return record;
   }
 
-  updateBase(id: string, updates: Partial<Omit<BaseRecord, "id" | "createdAt">>) {
-    return this.updateRecord(this.bases, id, (current) => ({ ...current, ...updates }));
+  updateBase(
+    actorId: string,
+    id: string,
+    updates: Partial<Omit<BaseRecord, "id" | "createdAt">>,
+  ) {
+    const updated = this.updateRecord(this.bases, id, (current) => ({ ...current, ...updates }));
+    if (updated) {
+      this.addAuditEntry({
+        actorId,
+        action: "base.update",
+        targetType: "base",
+        targetId: id,
+        metadata: updates,
+      });
+      this.rebuildIndexes();
+    }
+    return updated;
   }
 
   updateUserStatus(
