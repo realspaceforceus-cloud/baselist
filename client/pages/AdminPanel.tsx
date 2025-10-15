@@ -1538,7 +1538,7 @@ const AdminPanel = (): JSX.Element => {
               onAddBase={handleAddBase}
               onEditBase={handleEditBase}
               onArchiveBase={handleArchiveBase}
-              onAssignModerator={handleEditBase}
+              onAssignModerator={handleAssignModerator}
               onViewStats={handleBaseStats}
             />
           ) : null}
