@@ -1109,43 +1109,42 @@ const AdminPanel = (): JSX.Element => {
     [user.name],
   );
 
-  const handleAddBase = useCallback(async () => {
-    const name = window.prompt("Base name", "New Base");
-    if (!name) {
-      return;
-    }
-    const region = window.prompt("Region", "Undisclosed") ?? "Undisclosed";
-    const id = slugifyId(name);
-    const abbreviation = abbreviateBaseName(name);
-    try {
-      const { base } = await adminApi.createBase({
-        id,
-        name,
-        abbreviation,
-        region,
-        timezone: "CT",
-        latitude: 0,
-        longitude: 0,
-      });
-      setBaseRows((prev) => [
-        ...prev,
-        {
-          id: base.id,
-          name: base.name,
-          region: base.region,
-          moderator: "Assign later",
-          users: 0,
-          activeListings: 0,
-          pendingReports: 0,
-        },
-      ]);
-      appendAuditEntry(`Added base ${base.name}`);
-      toast.success("Base added", { description: base.name });
-    } catch (error) {
-      const message = getApiErrorMessage(error);
-      toast.error("Unable to add base", { description: message });
-    }
-  }, [appendAuditEntry]);
+  const handleAddBase = useCallback(
+    async ({ name, region, timezone }: { name: string; region: string; timezone: string }) => {
+      const id = slugifyId(name);
+      const abbreviation = abbreviateBaseName(name);
+      const sanitizedTimezone = timezone.trim().toUpperCase() || "CT";
+      try {
+        const { base } = await adminApi.createBase({
+          id,
+          name,
+          abbreviation,
+          region,
+          timezone: sanitizedTimezone,
+          latitude: 0,
+          longitude: 0,
+        });
+        setBaseRows((prev) => [
+          ...prev,
+          {
+            id: base.id,
+            name: base.name,
+            region: base.region,
+            moderator: "Assign later",
+            users: 0,
+            activeListings: 0,
+            pendingReports: 0,
+          },
+        ]);
+        appendAuditEntry(`Added base ${base.name}`);
+        toast.success("Base added", { description: base.name });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to add base", { description: message });
+      }
+    },
+    [appendAuditEntry],
+  );
 
   const handleEditBase = useCallback(
     async (baseId: string) => {
