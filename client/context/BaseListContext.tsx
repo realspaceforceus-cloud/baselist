@@ -628,7 +628,7 @@ export const BaseListProvider = ({
       }
 
       if (!isDowEmail(trimmedEmail)) {
-        throw new Error("A verified DoD email (.mil or approved DoD domain) is required.");
+        throw new Error("A verified DoW email (.mil or approved DoW domain) is required.");
       }
 
       if (trimmedPassword.length < PASSWORD_MIN_LENGTH) {
@@ -858,7 +858,7 @@ export const BaseListProvider = ({
       }
 
       if (!isDowEmail(account.email)) {
-        throw new Error("DoD email verification is only available for DoD addresses.");
+        throw new Error("DoW email verification is only available for DoW addresses.");
       }
 
       if (account.isDowVerified) {
