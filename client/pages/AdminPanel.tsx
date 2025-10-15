@@ -1311,7 +1311,7 @@ const AdminPanel = (): JSX.Element => {
       return {
         id: seller.id,
         name: seller.name,
-        base: getBaseName(bases, account?.baseId ?? sellerListings[0]?.baseId ?? seller.currentBaseId),
+        base: getBaseName(bases, effectiveBaseId ?? undefined),
         verified: overrides.verified ?? account?.isDodVerified ?? seller.verified,
         suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
         joined: formatShortDate(account?.createdAt ?? seller.memberSince),
