@@ -232,8 +232,16 @@ const Profile = (): JSX.Element => {
               <RatingBadge
                 userId={profileUser.id}
                 size="md"
-                initialAverage={profileRatingFallbackAverage}
-                initialCount={profileRatingFallbackCount}
+                initialAverage={
+                  profileRatingSummary.overallCount > 0
+                    ? profileRatingSummary.overallAverage
+                    : profileRatingFallbackAverage
+                }
+                initialCount={
+                  profileRatingSummary.overallCount > 0
+                    ? profileRatingSummary.overallCount
+                    : profileRatingFallbackCount
+                }
                 label={`${profileUser.name} rating`}
               />
               <span>
@@ -356,7 +364,7 @@ const Profile = (): JSX.Element => {
         <div className="mt-4 space-y-3">
           {userNotices.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm text-muted-foreground">
-              No notices yet��you're in good standing.
+              No notices yet—you're in good standing.
             </div>
           ) : (
             userNotices.map((notice) => (
