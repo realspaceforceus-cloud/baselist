@@ -47,8 +47,8 @@ const Index = (): JSX.Element => {
   }, [activeFilter, currentBaseId, searchQuery]);
 
   const sponsorPlacement = useMemo(
-    () => SPONSOR_PLACEMENTS.find((placement) => placement.baseId === currentBaseId),
-    [currentBaseId],
+    () => sponsorPlacements.find((placement) => placement.baseId === currentBaseId),
+    [currentBaseId, sponsorPlacements],
   );
 
   const filteredListings = useMemo(() => {
