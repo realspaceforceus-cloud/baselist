@@ -433,6 +433,9 @@ export const BaseListProvider = ({
 
   const suspendMember = useCallback(
     (memberId: string, reason: string) => {
+      void adminApi.updateUser(memberId, { status: "suspended", reason }).catch(() => {
+        /* noop */
+      });
       setMemberDiscipline((prev) => {
         const existing = prev[memberId] ?? { strikes: 0 };
         if (existing.suspendedAt) {
