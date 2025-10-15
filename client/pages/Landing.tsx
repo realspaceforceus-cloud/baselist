@@ -92,7 +92,7 @@ const Landing = (): JSX.Element => {
   const usernamePositive = usernameValid && !usernameTaken;
 
   const emailFormatValid = normalizedEmail.length > 0 && EMAIL_PATTERN.test(normalizedEmail);
-  const emailDod = emailFormatValid && isDodEmail(normalizedEmail);
+  const emailDow = emailFormatValid && isDowEmail(normalizedEmail);
   const emailTaken = emailFormatValid
     ? accounts.some((account) => account.email.toLowerCase() === normalizedEmail)
     : false;
