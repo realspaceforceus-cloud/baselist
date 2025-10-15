@@ -525,7 +525,16 @@ const Messages = (): JSX.Element => {
                                 <>
                                   <Dot className="h-3 w-3 text-muted-foreground" aria-hidden />
                                   <span className="flex items-center gap-1">
-                                    {summary.partnerName}
+                                    {summary.partnerId ? (
+                                      <Link
+                                        to={`/profile/${summary.partnerId}`}
+                                        className="font-semibold text-foreground transition hover:text-primary"
+                                      >
+                                        {summary.partnerName}
+                                      </Link>
+                                    ) : (
+                                      summary.partnerName
+                                    )}
                                     {summary.partnerId ? (
                                       <RatingBadge
                                         userId={summary.partnerId}
