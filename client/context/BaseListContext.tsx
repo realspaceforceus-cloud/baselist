@@ -401,6 +401,22 @@ export const BaseListProvider = ({
     [accounts, user.id, user.name],
   );
 
+  const getMemberProfile = useCallback(
+    (id: string): UserProfile | null => {
+      if (id === user.id) {
+        return user;
+      }
+
+      const accountMatch = accounts.find((account) => account.id === id);
+      if (!accountMatch) {
+        return null;
+      }
+
+      return buildUserProfileFromAccount(accountMatch, memberDiscipline[accountMatch.id]);
+    },
+    [accounts, memberDiscipline, user],
+  );
+
   const addNotice = useCallback(
     (payload: AddNoticePayload): AccountNotice => {
       const severity = payload.severity ?? "info";
