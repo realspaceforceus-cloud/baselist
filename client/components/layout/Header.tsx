@@ -120,6 +120,7 @@ export const Header = (): JSX.Element => {
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [baseSearch, setBaseSearch] = useState("");
+  const [selectedBaseId, setSelectedBaseId] = useState<string | null>(null);
 
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
@@ -157,8 +158,11 @@ export const Header = (): JSX.Element => {
   useEffect(() => {
     if (!isMenuOpen) {
       setBaseSearch("");
+      setSelectedBaseId(null);
+      return;
     }
-  }, [isMenuOpen]);
+    setSelectedBaseId(currentBase.id);
+  }, [isMenuOpen, currentBase.id]);
 
   const handleNavigate = (to: string) => {
     setMenuOpen(false);
@@ -166,7 +170,15 @@ export const Header = (): JSX.Element => {
   };
 
   const handleSelectBase = (baseId: string) => {
-    setCurrentBaseId(baseId);
+    setSelectedBaseId(baseId);
+  };
+
+  const handleSaveBase = () => {
+    if (!selectedBaseId || selectedBaseId === currentBase.id) {
+      setMenuOpen(false);
+      return;
+    }
+    setCurrentBaseId(selectedBaseId);
     setMenuOpen(false);
   };
 
