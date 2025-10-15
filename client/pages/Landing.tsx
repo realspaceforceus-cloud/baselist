@@ -519,7 +519,7 @@ const Landing = (): JSX.Element => {
                     emailPositive ? (
                       <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
                         <CheckCircle2 className="h-4 w-4" aria-hidden />
-                        DoD email detected. Check your inbox for the confirmation link.
+                        DoW email detected. Check your inbox for the confirmation link.
                       </p>
                     ) : (
                       <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
@@ -533,7 +533,7 @@ const Landing = (): JSX.Element => {
                     )
                   ) : (
                     <p className="text-xs text-muted-foreground">
-                      Use your DoD email (.mil or .defense.gov).
+                      Use your DoW email (.mil or .defense.gov).
                     </p>
                   )}
                 </div>
@@ -739,7 +739,7 @@ const Landing = (): JSX.Element => {
               <div className="space-y-5 text-center">
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold text-foreground">
-                    {pendingAccountVerified ? "DoD email confirmed" : "Check your inbox"}
+                    {pendingAccountVerified ? "DoW email confirmed" : "Check your inbox"}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {pendingAccountVerified
