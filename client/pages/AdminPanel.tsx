@@ -530,6 +530,97 @@ const AdminPanel = (): JSX.Element => {
       })),
     [bases, sponsorPlacements],
   );
+
+  const moderatorBaseId = isModerator ? user.currentBaseId : null;
+  const moderatorBaseName = useMemo(
+    () => (moderatorBaseId ? getBaseName(bases, moderatorBaseId) : null),
+    [bases, moderatorBaseId],
+  );
+
+  const scopedAccounts = useMemo(
+    () =>
+      isAdmin ? accountList : accountList.filter((account) => account.baseId === moderatorBaseId),
+    [accountList, isAdmin, moderatorBaseId],
+  );
+
+  const scopedListings = useMemo(
+    () =>
+      isAdmin ? listings : listings.filter((listing) => listing.baseId === moderatorBaseId),
+    [isAdmin, listings, moderatorBaseId],
+  );
+
+  const visibleReports = useMemo(
+    () =>
+      isAdmin || !moderatorBaseName
+        ? reports
+        : reports.filter((report) => report.base === moderatorBaseName),
+    [isAdmin, moderatorBaseName, reports],
+  );
+
+  const visibleListingRows = useMemo(
+    () =>
+      isAdmin || !moderatorBaseName
+        ? listingRows
+        : listingRows.filter((row) => row.base === moderatorBaseName),
+    [isAdmin, listingRows, moderatorBaseName],
+  );
+
+  const visibleBaseRows = useMemo(
+    () => (isAdmin ? baseRows : baseRows.filter((row) => row.id === moderatorBaseId)),
+    [baseRows, isAdmin, moderatorBaseId],
+  );
+
+  const visibleSponsorRows = useMemo(
+    () => (isAdmin ? sponsorRows : sponsorRows.filter((row) => row.baseId === moderatorBaseId)),
+    [isAdmin, moderatorBaseId, sponsorRows],
+  );
+
+  const scopedMessageThreads = useMemo(
+    () =>
+      isAdmin
+        ? messageThreads
+        : messageThreads.filter((thread) => {
+            const listing = listings.find((item) => item.id === thread.listingId);
+            return listing?.baseId === moderatorBaseId;
+          }),
+    [isAdmin, listings, messageThreads, moderatorBaseId],
+  );
+
+  const visibleFlaggedThreads = useMemo(
+    () =>
+      isAdmin || !moderatorBaseName
+        ? flaggedThreads
+        : flaggedThreads.filter((thread) => thread.base === moderatorBaseName),
+    [flaggedThreads, isAdmin, moderatorBaseName],
+  );
+
+  const visibleVerificationDocs = useMemo(
+    () =>
+      isAdmin
+        ? verificationDocs
+        : verificationDocs.filter((doc) => {
+            const account = accountList.find((item) => item.id === doc.userId);
+            return account?.baseId === moderatorBaseId;
+          }),
+    [accountList, isAdmin, moderatorBaseId, verificationDocs],
+  );
+
+  const visibleVerificationQueues = useMemo(() => {
+    if (isAdmin) {
+      return verificationQueues;
+    }
+    const counts: Record<string, number> = { auto: 0, invite: 0, id: 0 };
+    visibleVerificationDocs.forEach((doc) => {
+      const queueId = queueIdByMethod[doc.method];
+      if (queueId) {
+        counts[queueId] = (counts[queueId] ?? 0) + 1;
+      }
+    });
+    return verificationQueues.map((queue) => ({
+      ...queue,
+      count: counts[queue.id] ?? 0,
+    }));
+  }, [isAdmin, visibleVerificationDocs, verificationQueues]);
   const [userOverrides, setUserOverrides] = useState<
     Record<string, Partial<{ verified: boolean; suspended: boolean }>>
   >({});
