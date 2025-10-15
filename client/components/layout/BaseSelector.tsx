@@ -20,23 +20,23 @@ export const BaseSelector = (): JSX.Element => {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="group flex w-full items-center gap-3 rounded-2xl border border-transparent bg-primary/5 px-4 py-2 text-left transition hover:border-primary/40 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:w-auto"
+          className="group flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 md:w-auto"
         >
-          <span className="hidden rounded-full bg-primary/15 p-2 text-primary md:flex">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
             <MapPin className="h-5 w-5" aria-hidden />
           </span>
           <span className="flex flex-col gap-0.5">
-            <span className="text-xs uppercase tracking-wide text-muted-foreground">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground/80">
               Base
             </span>
             <span className="flex items-center gap-2 text-sm font-semibold text-foreground md:text-base">
               {currentBase.name}
             </span>
           </span>
-          <ChevronDown className="ml-auto h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
+          <ChevronDown className="ml-auto h-4 w-4 text-muted-foreground/80 transition group-hover:text-foreground" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 p-0">
+      <PopoverContent align="end" className="w-72 p-0 shadow-card">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>
             <p className="text-sm font-semibold text-foreground">Switch base</p>
