@@ -15,11 +15,11 @@ export interface AdminBaseRow {
 
 interface BasesSectionProps {
   bases: AdminBaseRow[];
-  onAddBase: (base: { name: string; region: string; timezone: string }) => void;
-  onEditBase: (baseId: string, updates: { name?: string; region?: string; timezone?: string }) => void;
-  onArchiveBase: (baseId: string) => void;
-  onAssignModerator: (baseId: string, moderator: string) => void;
-  onViewStats: (baseId: string) => void;
+  onAddBase: (base: { name: string; region: string; timezone: string }) => Promise<void> | void;
+  onEditBase: (baseId: string, updates: { name?: string; region?: string; timezone?: string }) => Promise<void> | void;
+  onArchiveBase: (baseId: string) => Promise<void> | void;
+  onAssignModerator: (baseId: string, moderator: string) => Promise<void> | void;
+  onViewStats: (baseId: string) => Promise<void> | void;
 }
 
 export const BasesSection = ({
@@ -51,7 +51,7 @@ export const BasesSection = ({
     setCreateForm({ name: "", region: "", timezone: "CT" });
   };
 
-  const handleCreateSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleCreateSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedName = createForm.name.trim();
     const trimmedRegion = createForm.region.trim();
@@ -59,7 +59,11 @@ export const BasesSection = ({
     if (!trimmedName || !trimmedRegion) {
       return;
     }
-    onAddBase({ name: trimmedName, region: trimmedRegion, timezone: trimmedTimezone.toUpperCase() });
+    await onAddBase({
+      name: trimmedName,
+      region: trimmedRegion,
+      timezone: trimmedTimezone.toUpperCase(),
+    });
     resetCreateForm();
     setIsCreateOpen(false);
   };
@@ -73,7 +77,7 @@ export const BasesSection = ({
     setEditingBaseId(null);
   };
 
-  const handleEditSubmit = (event: FormEvent<HTMLFormElement>, base: AdminBaseRow) => {
+  const handleEditSubmit = async (event: FormEvent<HTMLFormElement>, base: AdminBaseRow) => {
     event.preventDefault();
     const updates: { name?: string; region?: string; timezone?: string } = {};
     const trimmedName = editForm.name.trim();
@@ -95,7 +99,7 @@ export const BasesSection = ({
       return;
     }
 
-    onEditBase(base.id, updates);
+    await onEditBase(base.id, updates);
     setEditingBaseId(null);
   };
 
@@ -108,13 +112,13 @@ export const BasesSection = ({
     setModeratorBaseId(null);
   };
 
-  const handleModeratorSubmit = (event: FormEvent<HTMLFormElement>, baseId: string) => {
+  const handleModeratorSubmit = async (event: FormEvent<HTMLFormElement>, baseId: string) => {
     event.preventDefault();
     const draft = moderatorDrafts[baseId]?.trim();
     if (!draft) {
       return;
     }
-    onAssignModerator(baseId, draft);
+    await onAssignModerator(baseId, draft);
     setModeratorBaseId(null);
   };
 
