@@ -11,7 +11,7 @@ const Terms = (): JSX.Element => {
 
       <div className="space-y-4 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
         <h2 className="text-xl font-semibold text-foreground">Eligibility</h2>
-        <p className="text-sm text-muted-foreground">Users must be DoD-affiliated and 18 or older.</p>
+        <p className="text-sm text-muted-foreground">Users must be DoW-affiliated and 18 or older.</p>
       </div>
 
       <div className="space-y-4 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
