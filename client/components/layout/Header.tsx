@@ -26,12 +26,12 @@ const getAvatarInitials = (value: string): string => {
 };
 
 export const Header = (): JSX.Element => {
-  const { user, isDodVerified, isAuthenticated, signOut } = useBaseList();
+  const { user, isDowVerified, isAuthenticated, signOut } = useBaseList();
   const { openSignIn } = useAuthDialog();
 
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
-  const verificationLabel = isDodVerified ? "Verified" : user.verificationStatus;
+  const verificationLabel = isDowVerified ? "Verified" : user.verificationStatus;
 
   const logo = (
     <Link to="/" className="flex items-center" aria-label="BaseList home">
@@ -73,7 +73,7 @@ export const Header = (): JSX.Element => {
           <span className="truncate text-sm font-semibold text-foreground">{user.name}</span>
           <span className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
             <ShieldCheck
-              className={`h-3 w-3 ${isDodVerified ? "text-verified" : "text-warning"}`}
+              className={`h-3 w-3 ${isDowVerified ? "text-verified" : "text-warning"}`}
               aria-hidden
             />
             {verificationLabel}
