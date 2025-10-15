@@ -1,20 +1,24 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  Check,
+  ChevronDown,
   ClipboardList,
   Gauge,
   House,
   LogOut,
+  MapPin,
   MessageSquare,
   PlusCircle,
+  Search,
   ShieldCheck,
   User,
 } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
-import { BaseSelector } from "@/components/layout/BaseSelector";
 import { SearchInput } from "@/components/layout/SearchInput";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -103,11 +107,20 @@ const getAvatarInitials = (value: string): string => {
 };
 
 export const Header = (): JSX.Element => {
-  const { user, isDowVerified, isAuthenticated, signOut } = useBaseList();
+  const {
+    user,
+    isDowVerified,
+    isAuthenticated,
+    signOut,
+    bases,
+    currentBase,
+    setCurrentBaseId,
+  } = useBaseList();
   const { openSignIn } = useAuthDialog();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [baseSearch, setBaseSearch] = useState("");
 
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
@@ -130,9 +143,32 @@ export const Header = (): JSX.Element => {
     ];
   }, [showAdminLink]);
 
+  const filteredBases = useMemo(() => {
+    const query = baseSearch.trim().toLowerCase();
+    if (!query) {
+      return bases;
+    }
+
+    return bases.filter((base) => {
+      const haystack = `${base.name} ${base.abbreviation} ${base.region}`.toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [baseSearch, bases]);
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      setBaseSearch("");
+    }
+  }, [isMenuOpen]);
+
   const handleNavigate = (to: string) => {
     setMenuOpen(false);
     navigate(to);
+  };
+
+  const handleSelectBase = (baseId: string) => {
+    setCurrentBaseId(baseId);
+    setMenuOpen(false);
   };
 
   const logo = (
@@ -191,6 +227,26 @@ export const Header = (): JSX.Element => {
                 <span className="text-lg font-semibold text-foreground">BaseList</span>
               </div>
               <div className="flex items-center gap-2">
+                <SheetTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex min-w-0 items-center gap-3 rounded-2xl border border-border bg-background px-4 py-2 shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <MapPin className="h-4 w-4" aria-hidden />
+                    </span>
+                    <span className="flex min-w-0 flex-col text-left">
+                      <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Base
+                      </span>
+                      <span className="truncate text-sm font-semibold text-foreground md:text-base">
+                        {currentBase.name}
+                      </span>
+                    </span>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden />
+                    <span className="sr-only">Switch base</span>
+                  </button>
+                </SheetTrigger>
                 {QUICK_ACTIONS.map(({ label, to, icon: Icon }) => (
                   <button
                     key={label}
@@ -233,9 +289,6 @@ export const Header = (): JSX.Element => {
                 </NavLink>
               ))}
             </nav>
-            <div className="w-full">
-              <BaseSelector />
-            </div>
           </div>
           {showSearch ? (
             <div className="mt-3 w-full">
@@ -294,16 +347,65 @@ export const Header = (): JSX.Element => {
           </div>
           <div className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
-              Quick tools
+              Switch base
             </h3>
             <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-              <p className="text-sm font-semibold text-foreground">Switch base</p>
+              <p className="text-sm font-semibold text-foreground">Current: {currentBase.name}</p>
               <p className="text-xs text-muted-foreground">
-                Update your home installation to browse local listings.
+                Search installations to change your local marketplace.
               </p>
               <div className="mt-3">
-                <BaseSelector />
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={baseSearch}
+                    onChange={(event) => setBaseSearch(event.target.value)}
+                    placeholder="Search bases…"
+                    className="h-11 rounded-xl border-border bg-background pl-10"
+                  />
+                </div>
               </div>
+              <ul className="mt-3 max-h-72 overflow-y-auto pr-1">
+                {filteredBases.map((base) => {
+                  const isActive = base.id === currentBase.id;
+                  return (
+                    <li key={base.id}>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectBase(base.id)}
+                        className={cn(
+                          "flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition",
+                          isActive
+                            ? "bg-primary/10 font-semibold text-primary"
+                            : "text-foreground hover:bg-muted/60",
+                        )}
+                      >
+                        <span className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <MapPin className="h-4 w-4" aria-hidden />
+                        </span>
+                        <span className="flex min-w-0 flex-col">
+                          <span className="truncate text-sm font-semibold">{base.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {base.region} • {base.timezone}
+                          </span>
+                        </span>
+                        <Check
+                          className={cn(
+                            "ml-auto mt-1 h-4 w-4 text-primary transition",
+                            isActive ? "opacity-100" : "opacity-0",
+                          )}
+                          aria-hidden
+                        />
+                      </button>
+                    </li>
+                  );
+                })}
+                {filteredBases.length === 0 ? (
+                  <li className="px-3 py-6 text-center text-sm text-muted-foreground">
+                    No bases match that search.
+                  </li>
+                ) : null}
+              </ul>
             </div>
           </div>
         </div>
