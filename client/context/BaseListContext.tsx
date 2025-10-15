@@ -240,6 +240,13 @@ type BaseListContextValue = {
   addListing: (listing: Listing) => void;
   markListingSold: (listingId: string) => void;
   removeListing: (listingId: string) => void;
+  sponsorPlacements: SponsorPlacement[];
+  addSponsorPlacement: (placement: SponsorPlacement) => void;
+  updateSponsorPlacement: (
+    placementId: string,
+    updates: Partial<Omit<SponsorPlacement, "id">>,
+  ) => void;
+  removeSponsorPlacement: (placementId: string) => void;
   messageThreads: MessageThread[];
   sendMessageToSeller: (
     listingId: string,
