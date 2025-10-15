@@ -46,14 +46,14 @@ const buildUserProfileFromAccount = (
 ): UserProfile => ({
   id: account.id,
   name: account.username,
-  verified: account.isDodVerified,
+  verified: account.isDowVerified,
   memberSince: account.createdAt,
   avatarUrl: account.avatarUrl,
   rating: undefined,
   completedSales: undefined,
   lastActiveAt: account.lastLoginAt ?? account.createdAt,
   currentBaseId: account.baseId,
-  verificationStatus: account.isDodVerified ? "Verified" : "Pending verification",
+  verificationStatus: account.isDowVerified ? "Verified" : "Pending verification",
   role: account.role,
   status: discipline?.suspendedAt ? "suspended" : "active",
   strikes: discipline?.strikes ?? 0,
@@ -61,7 +61,7 @@ const buildUserProfileFromAccount = (
 
 const EMAIL_PATTERN = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-export const ALLOWED_DOD_DOMAINS = [
+export const ALLOWED_DOW_DOMAINS = [
   ".mil",
   ".defense.gov",
   ".disa.mil",
@@ -81,12 +81,12 @@ export const ALLOWED_DOD_DOMAINS = [
   ".us.af.mil",
 ] as const;
 
-const isDodEmail = (email: string): boolean => {
+const isDowEmail = (email: string): boolean => {
   const trimmed = email.trim().toLowerCase();
   if (!EMAIL_PATTERN.test(trimmed)) {
     return false;
   }
-  return ALLOWED_DOD_DOMAINS.some((domain) => trimmed.endsWith(domain));
+  return ALLOWED_DOW_DOMAINS.some((domain) => trimmed.endsWith(domain));
 };
 
 type BaseListAccount = {
@@ -94,7 +94,7 @@ type BaseListAccount = {
   username: string;
   email: string;
   password: string;
-  isDodVerified: boolean;
+  isDowVerified: boolean;
   baseId: string;
   createdAt: string;
   lastLoginAt?: string;
@@ -158,7 +158,7 @@ const buildSeedAccounts = (): BaseListAccount[] => {
       username,
       email: `${username}@us.af.mil`,
       password: "Password!2024",
-      isDodVerified: seller.verified,
+      isDowVerified: seller.verified,
       baseId: base.id,
       createdAt,
       lastLoginAt,
@@ -211,7 +211,7 @@ type BaseListContextValue = {
   clearSearch: () => void;
   user: UserProfile;
   isAuthenticated: boolean;
-  isDodVerified: boolean;
+  isDowVerified: boolean;
   isModerator: boolean;
   accounts: BaseListAccount[];
   currentAccount: BaseListAccount | null;
@@ -317,7 +317,7 @@ export const BaseListProvider = ({
   );
   const [transactions, setTransactions] = useState<TransactionHistoryEntry[]>([]);
   const [analyticsCounters, setAnalyticsCounters] = useState({
-    verifiedMembers: ACCOUNT_SEED.filter((account) => account.isDodVerified).length,
+    verifiedMembers: ACCOUNT_SEED.filter((account) => account.isDowVerified).length,
     activeBases: BASES.length,
     completedTransactions: 0,
   });
@@ -338,7 +338,7 @@ export const BaseListProvider = ({
     () => accounts.find((account) => account.id === activeAccountId) ?? null,
     [accounts, activeAccountId],
   );
-  const isDodVerified = currentAccount?.isDodVerified ?? false;
+  const isDowVerified = currentAccount?.isDowVerified ?? false;
 
   useEffect(() => {
     if (currentAccount) {
@@ -366,7 +366,7 @@ export const BaseListProvider = ({
   }, [currentAccount, currentBaseId, isAuthenticated, memberDiscipline]);
 
   useEffect(() => {
-    const verifiedMembers = accounts.filter((account) => account.isDodVerified).length;
+    const verifiedMembers = accounts.filter((account) => account.isDowVerified).length;
     const activeBases = new Set(accounts.map((account) => account.baseId)).size || BASES.length;
     const completedTransactions = transactions.length;
     setAnalyticsCounters({ verifiedMembers, activeBases, completedTransactions });
@@ -627,7 +627,7 @@ export const BaseListProvider = ({
         throw new Error("Enter a valid email address.");
       }
 
-      if (!isDodEmail(trimmedEmail)) {
+      if (!isDowEmail(trimmedEmail)) {
         throw new Error("A verified DoD email (.mil or approved DoD domain) is required.");
       }
 
@@ -637,18 +637,18 @@ export const BaseListProvider = ({
 
       ensureUniqueAccount(trimmedUsername, trimmedEmail);
 
-      const isDod = isDodEmail(trimmedEmail);
+      const isDow = isDowEmail(trimmedEmail);
       const newAccount: BaseListAccount = {
         id: `acct-${crypto.randomUUID()}`,
         username: trimmedUsername,
         email: trimmedEmail,
         password: trimmedPassword,
-        isDodVerified: false,
+        isDowVerified: false,
         baseId,
         createdAt: new Date().toISOString(),
         avatarUrl: buildAvatarUrl(trimmedUsername),
-        verificationToken: isDod ? `verify-${crypto.randomUUID()}` : null,
-        verificationRequestedAt: isDod ? new Date().toISOString() : null,
+        verificationToken: isDow ? `verify-${crypto.randomUUID()}` : null,
+        verificationRequestedAt: isDow ? new Date().toISOString() : null,
         rememberDeviceUntil: undefined,
         role: "member",
       };
@@ -718,7 +718,7 @@ export const BaseListProvider = ({
         throw new Error("Incorrect password. Try again.");
       }
 
-      if (!account.isDodVerified) {
+      if (!account.isDowVerified) {
         throw new Error("Confirm your DoD email from the link we sent before signing in.");
       }
 
@@ -801,14 +801,14 @@ export const BaseListProvider = ({
       }
 
       if (method === "email") {
-        if (!isDodEmail(currentAccount.email)) {
+        if (!isDowEmail(currentAccount.email)) {
           toast.info(
             "Add a DoD-issued email to verify automatically.",
           );
           return;
         }
 
-        if (currentAccount.isDodVerified) {
+        if (currentAccount.isDowVerified) {
           toast.success("Already verified", {
             description: "Your account is already cleared to post and message.",
           });
@@ -857,11 +857,11 @@ export const BaseListProvider = ({
         throw new Error("Account not found for verification.");
       }
 
-      if (!isDodEmail(account.email)) {
+      if (!isDowEmail(account.email)) {
         throw new Error("DoD email verification is only available for DoD addresses.");
       }
 
-      if (account.isDodVerified) {
+      if (account.isDowVerified) {
         return;
       }
 
@@ -872,7 +872,7 @@ export const BaseListProvider = ({
           item.id === accountId
             ? {
                 ...item,
-                isDodVerified: true,
+                isDowVerified: true,
                 verificationToken: null,
                 verificationRequestedAt: completedAt,
               }
@@ -909,7 +909,7 @@ export const BaseListProvider = ({
       if (!isAuthenticated) {
         throw new Error("Sign in to post a listing.");
       }
-      if (!isDodVerified) {
+      if (!isDowVerified) {
         throw new Error("Verify DoD access before posting.");
       }
 
@@ -921,7 +921,7 @@ export const BaseListProvider = ({
         return next;
       });
     },
-    [isAuthenticated, isDodVerified],
+    [isAuthenticated, isDowVerified],
   );
 
   const markListingSold = useCallback((listingId: string) => {
@@ -1170,7 +1170,7 @@ export const BaseListProvider = ({
       if (!isAuthenticated) {
         throw new Error("Sign in to send messages.");
       }
-      if (!isDodVerified) {
+      if (!isDowVerified) {
         throw new Error("Verify DoD access before messaging sellers.");
       }
 
@@ -1254,7 +1254,7 @@ export const BaseListProvider = ({
     [
       initiateTransaction,
       isAuthenticated,
-      isDodVerified,
+      isDowVerified,
       scheduleSimulatedReply,
       user.id,
     ],
@@ -1650,7 +1650,7 @@ export const BaseListProvider = ({
       clearSearch,
       user,
       isAuthenticated,
-      isDodVerified,
+      isDowVerified,
       isModerator: user.role !== "member",
       accounts,
       currentAccount,
@@ -1714,7 +1714,7 @@ export const BaseListProvider = ({
       initiateTransaction,
       confirmTransactionCompletion,
       isAuthenticated,
-      isDodVerified,
+      isDowVerified,
       issueStrike,
       listings,
       markListingSold,
@@ -1768,5 +1768,5 @@ export const useBaseList = (): BaseListContextValue => {
   return context;
 };
 
-export { EMAIL_PATTERN, PASSWORD_MIN_LENGTH, isDodEmail };
+export { EMAIL_PATTERN, PASSWORD_MIN_LENGTH, isDowEmail };
 export const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
