@@ -909,7 +909,12 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleWarnThread = useCallback(
-    (threadId: string) => {
+    async (threadId: string) => {
+      try {
+        await adminApi.getThreads();
+      } catch (error) {
+        toast.error("Unable to refresh threads", { description: getApiErrorMessage(error) });
+      }
       const thread = messageThreads.find((entry) => entry.id === threadId);
       if (thread) {
         thread.participants.forEach((participant) => {
@@ -942,9 +947,17 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleBanThread = useCallback(
-    (threadId: string, offendingUserId?: string) => {
+    async (threadId: string, offendingUserId?: string) => {
       if (offendingUserId) {
-        suspendMember(offendingUserId, "Removed after review of flagged messages.");
+        try {
+          await adminApi.updateUser(offendingUserId, {
+            status: "banned",
+            reason: "Removed after review of flagged messages.",
+          });
+          suspendMember(offendingUserId, "Removed after review of flagged messages.");
+        } catch (error) {
+          toast.error("Unable to ban user", { description: getApiErrorMessage(error) });
+        }
       }
       setFlaggedThreads((prev) => prev.filter((item) => item.id !== threadId));
       appendAuditEntry(`Banned user from thread ${threadId}`);
