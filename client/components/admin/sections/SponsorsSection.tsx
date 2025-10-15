@@ -410,6 +410,19 @@ export const SponsorsSection = ({
                     </label>
                   </div>
                   <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                    <span className="text-foreground">Background image URL (optional)</span>
+                    <input
+                      className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
+                      value={editForm.backgroundImageUrl ?? ""}
+                      onChange={(event) =>
+                        setEditForm((prev) =>
+                          prev ? { ...prev, backgroundImageUrl: event.target.value } : prev,
+                        )
+                      }
+                      placeholder="https://cdn..."
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
                     <span className="text-foreground">Description</span>
                     <textarea
                       className="min-h-[80px] rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
