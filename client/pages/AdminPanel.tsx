@@ -53,6 +53,7 @@ import type {
   Base,
   Listing,
   MessageThread,
+  SponsorPlacement,
   TransactionHistoryEntry,
   UserProfile,
 } from "@/types";
