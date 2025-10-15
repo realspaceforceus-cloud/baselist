@@ -357,7 +357,7 @@ export const BaseListProvider = ({
     const activeBases = new Set(accounts.map((account) => account.baseId)).size || BASES.length;
     const completedTransactions = transactions.length;
     setAnalyticsCounters({ verifiedMembers, activeBases, completedTransactions });
-  }, [accounts, transactions.length]);
+  }, [accounts, transactions]);
 
   const setCurrentBaseId = useCallback(
     (baseId: string) => {
