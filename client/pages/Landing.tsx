@@ -159,8 +159,8 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    if (!emailDod) {
-      setAccountError("Use an approved DoD email (.mil or .defense.gov) to continue.");
+    if (!emailDow) {
+      setAccountError("Use an approved DoW email (.mil or .defense.gov) to continue.");
       return;
     }
 
@@ -526,8 +526,8 @@ const Landing = (): JSX.Element => {
                         <AlertCircle className="h-4 w-4" aria-hidden />
                         {!emailFormatValid
                           ? "Enter a valid email address."
-                          : !emailDod
-                          ? "Use an approved DoD email (.mil or .defense.gov)."
+                          : !emailDow
+                          ? "Use an approved DoW email (.mil or .defense.gov)."
                           : "An account already exists with that email."}
                       </p>
                     )
