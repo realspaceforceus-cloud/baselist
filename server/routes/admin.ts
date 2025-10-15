@@ -201,7 +201,12 @@ router.post("/bases", (req: AuthenticatedRequest, res) => {
   if (!parse.success) {
     return res.status(400).json({ error: "Invalid base payload" });
   }
-  const base = store.addBase({
+
+  if (store.getBases().some((base) => base.id === parse.data.id)) {
+    return res.status(409).json({ error: "Base already exists" });
+  }
+
+  const base = store.addBase(req.user!.id, {
     id: parse.data.id,
     name: parse.data.name,
     abbreviation: parse.data.abbreviation,
@@ -209,18 +214,16 @@ router.post("/bases", (req: AuthenticatedRequest, res) => {
     timezone: parse.data.timezone,
     latitude: parse.data.latitude,
     longitude: parse.data.longitude,
-    createdAt: "",
-    updatedAt: "",
-  } as never);
+  });
   res.status(201).json({ base });
 });
 
 router.patch("/bases/:id", (req: AuthenticatedRequest, res) => {
   const parse = updateBaseSchema.safeParse(req.body);
   if (!parse.success) {
-    return res.status(400).json({ error: "Invalid base payload" });
+    return res.status(400).json({ error: parse.error.issues[0]?.message ?? "Invalid base payload" });
   }
-  const base = store.updateBase(req.params.id, parse.data);
+  const base = store.updateBase(req.user!.id, req.params.id, parse.data);
   if (!base) {
     return res.status(404).json({ error: "Base not found" });
   }
