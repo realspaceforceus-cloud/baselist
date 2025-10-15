@@ -11,16 +11,6 @@ export interface DemoResponse {
   message: string;
 }
 
-import type {
-  AuditEntry,
-  BaseRecord,
-  ListingRecord,
-  MessageThreadRecord,
-  ReportRecord,
-  UserRecord,
-  VerificationRecord,
-} from "./admin";
-
 export type AdminUserDTO = Omit<UserRecord, "passwordHash">;
 
 export interface AdminDashboardResponse {
