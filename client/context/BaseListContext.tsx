@@ -303,6 +303,11 @@ export const BaseListProvider = ({
     () => [...MESSAGE_THREAD_SEED],
   );
   const [transactions, setTransactions] = useState<TransactionHistoryEntry[]>([]);
+  const [analyticsCounters, setAnalyticsCounters] = useState({
+    verifiedMembers: ACCOUNT_SEED.filter((account) => account.isDodVerified).length,
+    activeBases: BASES.length,
+    completedTransactions: 0,
+  });
   const navigate = useNavigate();
   const knownMessageIdsRef = useRef<Set<string>>(
     new Set(
