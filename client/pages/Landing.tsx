@@ -71,7 +71,7 @@ const Landing = (): JSX.Element => {
     activateAccount,
     isAuthenticated,
     accounts,
-    completeDodVerification,
+    completeDowVerification,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
 
@@ -372,7 +372,7 @@ const Landing = (): JSX.Element => {
     }
 
     try {
-      completeDodVerification(pendingAccountId);
+      completeDowVerification(pendingAccountId);
     } catch (error) {
       toast.error(
         error instanceof Error
