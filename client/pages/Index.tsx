@@ -9,12 +9,7 @@ import { SponsorTile } from "@/components/listings/SponsorTile";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useBaseList } from "@/context/BaseListContext";
-import {
-  PROHIBITED_CONTENT,
-  SELLERS,
-  SPONSOR_PLACEMENTS,
-  LISTING_CATEGORIES,
-} from "@/data/mock";
+import { PROHIBITED_CONTENT, SELLERS, LISTING_CATEGORIES } from "@/data/mock";
 import type { ListingFilter, Seller } from "@/types";
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
