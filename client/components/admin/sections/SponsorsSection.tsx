@@ -67,6 +67,7 @@ export const SponsorsSection = ({
       description: "",
       href: "",
       brandColor: DEFAULT_BRAND_COLOR,
+      backgroundImageUrl: "",
     });
   };
 
