@@ -296,7 +296,9 @@ const Profile = (): JSX.Element => {
               <ShoppingBag className="h-5 w-5" aria-hidden />
             </span>
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-foreground">My transactions</h2>
+              <h2 className="text-lg font-semibold text-foreground">
+                {viewingOwnProfile ? "My transactions" : `${profileFirstName}'s transactions`}
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Purchases and sales history, all in one place.
               </p>
@@ -354,7 +356,7 @@ const Profile = (): JSX.Element => {
         <div className="mt-4 space-y-3">
           {userNotices.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm text-muted-foreground">
-              No notices yet—you're in good standing.
+              No notices yet��you're in good standing.
             </div>
           ) : (
             userNotices.map((notice) => (
