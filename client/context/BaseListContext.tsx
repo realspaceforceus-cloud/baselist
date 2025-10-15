@@ -719,7 +719,7 @@ export const BaseListProvider = ({
       }
 
       if (!account.isDowVerified) {
-        throw new Error("Confirm your DoD email from the link we sent before signing in.");
+        throw new Error("Confirm your DoW email from the link we sent before signing in.");
       }
 
       activateAccount(account.id, options);
@@ -803,7 +803,7 @@ export const BaseListProvider = ({
       if (method === "email") {
         if (!isDowEmail(currentAccount.email)) {
           toast.info(
-            "Add a DoD-issued email to verify automatically.",
+            "Add a DoW-issued email to verify automatically.",
           );
           return;
         }
@@ -841,7 +841,7 @@ export const BaseListProvider = ({
       }
 
       toast.info(
-        "Upload a redacted DoD ID from Profile → Verify. We delete uploads within 24h.",
+        "Upload a redacted DoW ID from Profile → Verify. We delete uploads within 24h.",
       );
     },
     [currentAccount],
@@ -888,7 +888,7 @@ export const BaseListProvider = ({
         }));
       }
 
-      toast.success("DoD email verified", {
+      toast.success("DoW email verified", {
         description: "You can now post listings and send messages.",
       });
     },
@@ -910,7 +910,7 @@ export const BaseListProvider = ({
         throw new Error("Sign in to post a listing.");
       }
       if (!isDowVerified) {
-        throw new Error("Verify DoD access before posting.");
+        throw new Error("Verify DoW access before posting.");
       }
 
       setListings((prev) => {
@@ -1171,7 +1171,7 @@ export const BaseListProvider = ({
         throw new Error("Sign in to send messages.");
       }
       if (!isDowVerified) {
-        throw new Error("Verify DoD access before messaging sellers.");
+        throw new Error("Verify DoW access before messaging sellers.");
       }
 
       const trimmedMessage = messageBody.trim();
