@@ -1,5 +1,5 @@
 import { Gauge, LogOut, ShieldCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { BaseSelector } from "@/components/layout/BaseSelector";
 import { SearchInput } from "@/components/layout/SearchInput";
@@ -28,10 +28,12 @@ const getAvatarInitials = (value: string): string => {
 export const Header = (): JSX.Element => {
   const { user, isDowVerified, isAuthenticated, signOut } = useBaseList();
   const { openSignIn } = useAuthDialog();
+  const location = useLocation();
 
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
   const verificationLabel = isDowVerified ? "Verified" : user.verificationStatus;
+  const showSearch = isAuthenticated && location.pathname === "/";
 
   const logo = (
     <Link to="/" className="flex items-center" aria-label="BaseList home">
@@ -92,9 +94,11 @@ export const Header = (): JSX.Element => {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">{logo}</div>
                 <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                  <div className="hidden md:block md:w-56 lg:w-72">
-                    <SearchInput />
-                  </div>
+                  {showSearch ? (
+                    <div className="hidden md:block md:w-56 lg:w-72">
+                      <SearchInput />
+                    </div>
+                  ) : null}
                   {userControls}
                 </div>
               </div>
@@ -102,9 +106,11 @@ export const Header = (): JSX.Element => {
                 <BaseSelector />
               </div>
             </div>
-            <div className="mt-3 w-full md:hidden">
-              <SearchInput />
-            </div>
+            {showSearch ? (
+              <div className="mt-3 w-full md:hidden">
+                <SearchInput />
+              </div>
+            ) : null}
           </>
         ) : (
           <div className="flex items-center justify-between gap-3">
