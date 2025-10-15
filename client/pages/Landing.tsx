@@ -353,7 +353,7 @@ const Landing = (): JSX.Element => {
     }
 
     if (!pendingAccountVerified) {
-      toast.error("Confirm your DoD email before entering BaseList.");
+      toast.error("Confirm your DoW email before entering BaseList.");
       return;
     }
 
@@ -493,7 +493,7 @@ const Landing = (): JSX.Element => {
                     )
                   ) : (
                     <p className="text-xs text-muted-foreground">
-                      3–20 characters. Letters, numbers, and underscores only.
+                      3���20 characters. Letters, numbers, and underscores only.
                     </p>
                   )}
                 </div>
