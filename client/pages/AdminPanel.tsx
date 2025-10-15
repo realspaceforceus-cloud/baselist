@@ -1730,7 +1730,7 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "listings" ? (
             <ListingsSection
-              listings={listingRows}
+              listings={visibleListingRows}
               onView={handleViewListing}
               onRemove={handleRemoveListing}
               onRestore={handleRestoreListing}
@@ -1740,7 +1740,7 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "reports" ? (
             <ReportsSection
-              reports={reports}
+              reports={visibleReports}
               reportNotes={reportNotes}
               onApprove={handleApproveReport}
               onDismiss={handleDismissReport}
@@ -1750,15 +1750,15 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "verification" ? (
             <VerificationSection
-              queues={verificationQueues}
-              documents={verificationDocs}
+              queues={visibleVerificationQueues}
+              documents={visibleVerificationDocs}
               onApprove={handleApproveVerification}
               onDeny={handleDenyVerification}
             />
           ) : null}
           {activeSection === "bases" ? (
             <BasesSection
-              bases={baseRows}
+              bases={visibleBaseRows}
               onAddBase={handleAddBase}
               onEditBase={handleEditBase}
               onArchiveBase={handleArchiveBase}
@@ -1768,7 +1768,7 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "sponsors" ? (
             <SponsorsSection
-              placements={sponsorRows}
+              placements={visibleSponsorRows}
               bases={bases}
               onCreate={handleCreateSponsor}
               onUpdate={handleUpdateSponsor}
@@ -1777,7 +1777,7 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "messaging" ? (
             <MessagingSection
-              threads={flaggedThreads}
+              threads={visibleFlaggedThreads}
               onWarn={handleWarnThread}
               onBan={handleBanThread}
               onMarkReviewed={handleMarkThreadReviewed}
