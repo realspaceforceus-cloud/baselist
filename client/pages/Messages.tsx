@@ -388,6 +388,18 @@ const Messages = (): JSX.Element => {
 
   const ratingOptions = [1, 2, 3, 4, 5];
 
+  const quickOfferLabel = useMemo(() => {
+    if (!activeSummary?.listing || activeSummary.listing.isFree || !activeSummary.listing.price) {
+      return "Quick offer";
+    }
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: activeSummary.listing.price % 1 === 0 ? 0 : 2,
+    });
+    return `Offer ${formatter.format(activeSummary.listing.price)}`;
+  }, [activeSummary?.listing]);
+
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
