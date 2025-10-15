@@ -285,7 +285,7 @@ export const BasesSection = ({
             ) : null}
             {moderatorBaseId === base.id ? (
               <form
-                className="space-y-3 rounded-2xl border border-dashed border-accent/40 bg-accent/5 p-4"
+                className="space-y-3 rounded-2xl border border-dashed border-muted/60 bg-muted/10 p-4"
                 onSubmit={(event) => handleModeratorSubmit(event, base.id)}
               >
                 <label className="flex flex-col gap-2 text-xs font-medium text-muted-foreground">
