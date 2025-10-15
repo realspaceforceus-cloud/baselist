@@ -10,6 +10,7 @@ export { VerificationSection } from "./VerificationSection";
 export type { VerificationQueueSummary, VerificationDocument } from "./VerificationSection";
 export { BasesSection } from "./BasesSection";
 export type { AdminBaseRow } from "./BasesSection";
+export { SponsorsSection } from "./SponsorsSection";
 export { MessagingSection } from "./MessagingSection";
 export type { AdminFlaggedThread } from "./MessagingSection";
 export { MetricsSection } from "./MetricsSection";
