@@ -459,7 +459,7 @@ const AdminPanel = (): JSX.Element => {
     suspendMember,
     reinstateMember,
     issueStrike,
-    completeDodVerification,
+    completeDowVerification,
     getUserRatingSummary,
     getMemberName,
     markAllNoticesRead,
@@ -840,7 +840,7 @@ const AdminPanel = (): JSX.Element => {
     async (userId: string, method?: string) => {
       try {
         await adminApi.updateUser(userId, { verify: true });
-        completeDodVerification(userId);
+        completeDowVerification(userId);
         setUserOverrides((prev) => ({
           ...prev,
           [userId]: { ...(prev[userId] ?? {}), verified: true, suspended: false },
@@ -867,7 +867,7 @@ const AdminPanel = (): JSX.Element => {
         toast.error("Unable to verify user", { description: message });
       }
     },
-    [addNotice, appendAuditEntry, completeDodVerification, getMemberName, updateQueueCount],
+    [addNotice, appendAuditEntry, completeDowVerification, getMemberName, updateQueueCount],
   );
 
   const handleSuspendUser = useCallback(
