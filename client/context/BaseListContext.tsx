@@ -1098,6 +1098,34 @@ export const BaseListProvider = ({
     setListings((prev) => prev.filter((listing) => listing.id !== listingId));
   }, []);
 
+  const addSponsorPlacement = useCallback((placement: SponsorPlacement) => {
+    setSponsorPlacements((prev) => {
+      const existing = prev.find((item) => item.id === placement.id);
+      if (existing) {
+        return prev.map((item) => (item.id === placement.id ? { ...item, ...placement } : item));
+      }
+      return [placement, ...prev];
+    });
+  }, []);
+
+  const updateSponsorPlacement = useCallback(
+    (
+      placementId: string,
+      updates: Partial<Omit<SponsorPlacement, "id">>,
+    ) => {
+      setSponsorPlacements((prev) =>
+        prev.map((placement) =>
+          placement.id === placementId ? { ...placement, ...updates } : placement,
+        ),
+      );
+    },
+    [],
+  );
+
+  const removeSponsorPlacement = useCallback((placementId: string) => {
+    setSponsorPlacements((prev) => prev.filter((placement) => placement.id !== placementId));
+  }, []);
+
   const scheduleSimulatedReply = useCallback(
     (thread: MessageThread, sellerId: string) => {
       if (simulatedReplyTimers.current.has(thread.id)) {
