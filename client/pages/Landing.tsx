@@ -15,7 +15,7 @@ import {
   EMAIL_PATTERN,
   PASSWORD_MIN_LENGTH,
   USERNAME_PATTERN,
-  isDodEmail,
+  isDowEmail,
   useBaseList,
 } from "@/context/BaseListContext";
 
@@ -766,7 +766,7 @@ const Landing = (): JSX.Element => {
                       I clicked the confirmation link
                     </Button>
                     <p className="text-xs text-muted-foreground">
-                      Once the link is confirmed you’ll unlock posting and messaging.
+                      Once the link is confirmed you��ll unlock posting and messaging.
                     </p>
                   </div>
                 ) : null}
