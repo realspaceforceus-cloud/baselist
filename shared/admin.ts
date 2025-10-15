@@ -101,6 +101,7 @@ export interface ReportRecord {
   notes: string;
   status: ReportStatus;
   createdAt: string;
+  updatedAt: string;
   resolvedAt: string | null;
   resolverId: string | null;
 }
@@ -112,6 +113,7 @@ export interface VerificationRecord {
   status: VerificationStatus;
   documentUrl: string | null;
   submittedAt: string;
+  updatedAt: string;
   expiresAt: string;
   adjudicatedAt: string | null;
   adjudicatedBy: string | null;
