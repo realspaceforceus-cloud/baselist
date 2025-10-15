@@ -440,6 +440,7 @@ const AdminPanel = (): JSX.Element => {
     memberDiscipline,
     notices,
     addNotice,
+    analytics,
     suspendMember,
     reinstateMember,
     issueStrike,
