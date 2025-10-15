@@ -1,7 +1,7 @@
 const Guidelines = (): JSX.Element => {
   const rules = [
     "Treat every member with respect — no harassment or hate speech.",
-    "Keep all listings legal and within DoD policy.",
+    "Keep all listings legal and within DoW policy.",
     "Meet safely on base whenever possible and avoid sharing personal information publicly.",
     "Do not spam, post duplicates, or advertise external payment platforms.",
     "Report suspicious activity immediately.",
