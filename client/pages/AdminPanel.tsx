@@ -469,6 +469,19 @@ const AdminPanel = (): JSX.Element => {
     removeSponsorPlacement,
   } = useBaseList();
 
+  const isAdmin = user.role === "admin";
+  const isModerator = user.role === "moderator";
+
+  const availableSections = useMemo<AdminNavItem[]>(() => {
+    if (isAdmin) {
+      return sections;
+    }
+    if (isModerator) {
+      return sections.filter((item) => MODERATOR_SECTION_IDS.has(item.id));
+    }
+    return sections.filter((item) => item.id === "dashboard");
+  }, [isAdmin, isModerator]);
+
   const [accountList, setAccountList] = useState<AccountLike[]>(() =>
     accounts.map((account) => ({
       id: account.id,
@@ -481,7 +494,13 @@ const AdminPanel = (): JSX.Element => {
   );
   const userDirectoryRef = useRef<Map<string, AdminUserDTO>>(new Map());
 
-  const [activeSection, setActiveSection] = useState<string>(sections[0]?.id ?? "dashboard");
+  const [activeSection, setActiveSection] = useState<string>(availableSections[0]?.id ?? "dashboard");
+
+  useEffect(() => {
+    if (!availableSections.some((item) => item.id === activeSection)) {
+      setActiveSection(availableSections[0]?.id ?? "dashboard");
+    }
+  }, [activeSection, availableSections]);
   const [reports, setReports] = useState<AdminReportRecord[]>(() => createInitialReports(listings, bases));
   const [reportNotes, setReportNotes] = useState<Record<string, string[]>>({});
   const [verificationDocs, setVerificationDocs] = useState<VerificationDocument[]>(
@@ -1560,7 +1579,7 @@ const AdminPanel = (): JSX.Element => {
         </div>
       </header>
       <div className="grid gap-6 lg:grid-cols-[18rem,1fr]">
-        <AdminSidebar items={sections} activeId={activeSection} onSelect={setActiveSection} />
+        <AdminSidebar items={availableSections} activeId={activeSection} onSelect={setActiveSection} />
         <div className="space-y-8">
           {activeSection === "dashboard" ? (
             <>
