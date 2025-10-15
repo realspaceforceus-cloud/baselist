@@ -361,47 +361,63 @@ export const Header = (): JSX.Element => {
                   />
                 </div>
               </div>
-              <ul className="mt-3 max-h-72 overflow-y-auto pr-1">
-                {filteredBases.map((base) => {
-                  const isActive = base.id === currentBase.id;
-                  return (
-                    <li key={base.id}>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectBase(base.id)}
-                        className={cn(
-                          "flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition",
-                          isActive
-                            ? "bg-primary/10 font-semibold text-primary"
-                            : "text-foreground hover:bg-muted/60",
-                        )}
-                      >
-                        <span className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                          <MapPin className="h-4 w-4" aria-hidden />
-                        </span>
-                        <span className="flex min-w-0 flex-col">
-                          <span className="truncate text-sm font-semibold">{base.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {base.region} • {base.timezone}
-                          </span>
-                        </span>
-                        <Check
-                          className={cn(
-                            "ml-auto mt-1 h-4 w-4 text-primary transition",
-                            isActive ? "opacity-100" : "opacity-0",
-                          )}
-                          aria-hidden
-                        />
-                      </button>
+              {hasBaseQuery ? (
+                <ul className="mt-3 max-h-72 overflow-y-auto pr-1">
+                  {filteredBases.length > 0 ? (
+                    filteredBases.map((base) => {
+                      const isActive = base.id === currentBase.id;
+                      const isSelected = selectedBaseId ? base.id === selectedBaseId : isActive;
+                      return (
+                        <li key={base.id}>
+                          <button
+                            type="button"
+                            onClick={() => handleSelectBase(base.id)}
+                            className={cn(
+                              "flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition",
+                              isSelected
+                                ? "bg-primary/10 font-semibold text-primary"
+                                : "text-foreground hover:bg-muted/60",
+                            )}
+                          >
+                            <span className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                              <MapPin className="h-4 w-4" aria-hidden />
+                            </span>
+                            <span className="flex min-w-0 flex-col">
+                              <span className="truncate text-sm font-semibold">{base.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {base.region} • {base.timezone}
+                              </span>
+                            </span>
+                            <Check
+                              className={cn(
+                                "ml-auto mt-1 h-4 w-4 text-primary transition",
+                                isSelected ? "opacity-100" : "opacity-0",
+                              )}
+                              aria-hidden
+                            />
+                          </button>
+                        </li>
+                      );
+                    })
+                  ) : (
+                    <li className="rounded-xl bg-muted/30 px-3 py-6 text-center text-sm text-muted-foreground">
+                      No bases match that search.
                     </li>
-                  );
-                })}
-                {filteredBases.length === 0 ? (
-                  <li className="px-3 py-6 text-center text-sm text-muted-foreground">
-                    No bases match that search.
-                  </li>
-                ) : null}
-              </ul>
+                  )}
+                </ul>
+              ) : (
+                <p className="mt-3 rounded-xl border border-dashed border-border px-3 py-4 text-sm text-muted-foreground">
+                  Start typing to search for bases.
+                </p>
+              )}
+              <Button
+                className="mt-4 w-full justify-center rounded-xl text-sm font-semibold"
+                type="button"
+                disabled={!selectedBaseId || selectedBaseId === currentBase.id}
+                onClick={handleSaveBase}
+              >
+                Save base
+              </Button>
             </div>
           </div>
         </div>
