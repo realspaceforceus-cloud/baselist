@@ -803,6 +803,9 @@ export const BaseListProvider = ({
 
   const completeDodVerification = useCallback(
     (accountId: string) => {
+      void adminApi.updateUser(accountId, { verify: true }).catch(() => {
+        /* noop */
+      });
       const account = accounts.find((item) => item.id === accountId);
       if (!account) {
         throw new Error("Account not found for verification.");
