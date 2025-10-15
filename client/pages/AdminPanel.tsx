@@ -1348,13 +1348,18 @@ const AdminPanel = (): JSX.Element => {
     [verificationDocs.length, verificationQueues],
   );
 
-  const topBases = useMemo(() => {
-    return baseRows
+  const topBasesStats = useMemo(() => {
+    const sorted = baseRows
       .slice()
-      .sort((a, b) => b.activeListings - a.activeListings)
-      .slice(0, 3)
-      .map((row) => row.name)
-      .join(", ");
+      .sort((a, b) => b.users - a.users)
+      .slice(0, 5);
+    const chartData = sorted.map((row) => ({ id: row.id, label: row.name, value: row.users }));
+    return {
+      chartData,
+      chartMax: sorted[0]?.users ?? 0,
+      topName: sorted[0]?.name ?? "—",
+      topUsers: sorted[0]?.users ?? 0,
+    };
   }, [baseRows]);
 
   const queueHealthLabel = useMemo(() => {
@@ -1382,6 +1387,7 @@ const AdminPanel = (): JSX.Element => {
         meta: "Awaiting action",
         icon: BadgeCheck,
         toneClass: "text-primary",
+        target: "verification",
       },
       {
         id: "reports",
@@ -1390,6 +1396,7 @@ const AdminPanel = (): JSX.Element => {
         meta: "Unresolved",
         icon: ShieldAlert,
         toneClass: reports.length ? "text-warning" : "text-muted-foreground",
+        target: "reports",
       },
       {
         id: "listings",
@@ -1398,6 +1405,7 @@ const AdminPanel = (): JSX.Element => {
         meta: "Active / Flagged",
         icon: PackageSearch,
         toneClass: flaggedListingCount ? "text-warning" : "text-muted-foreground",
+        target: "listings",
       },
       {
         id: "users",
@@ -1409,14 +1417,21 @@ const AdminPanel = (): JSX.Element => {
         meta: "This week",
         icon: Users2,
         toneClass: "text-success",
+        target: "users",
       },
       {
         id: "bases",
         label: "Top Bases",
-        value: topBases || "—",
-        meta: "Listings volume",
+        value: topBasesStats.topName,
+        meta:
+          topBasesStats.topUsers > 0
+            ? `${topBasesStats.topUsers.toLocaleString()} members`
+            : "No members yet",
         icon: Building2,
         toneClass: "text-muted-foreground",
+        target: "bases",
+        chartData: topBasesStats.chartData,
+        chartMax: topBasesStats.chartMax,
       },
       {
         id: "queue",
@@ -1425,6 +1440,7 @@ const AdminPanel = (): JSX.Element => {
         meta: `${flaggedThreads.length} flagged threads`,
         icon: Activity,
         toneClass: queueHealthTone,
+        target: "messaging",
       },
     ],
     [
@@ -1436,7 +1452,7 @@ const AdminPanel = (): JSX.Element => {
       queueHealthLabel,
       queueHealthTone,
       reports.length,
-      topBases,
+      topBasesStats,
     ],
   );
 
