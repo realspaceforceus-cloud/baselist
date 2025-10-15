@@ -27,9 +27,9 @@ export const AppShell = (): JSX.Element => {
       <Footer />
       {isAuthenticated ? (
         <div
-          className="h-32"
+          className="h-[8.75rem]"
           aria-hidden
-          style={{ height: "calc(7.5rem + env(safe-area-inset-bottom))" }}
+          style={{ height: "calc(7.5rem + env(safe-area-inset-bottom) + 10px)" }}
         />
       ) : null}
       {isAuthenticated ? <BottomNav /> : null}
