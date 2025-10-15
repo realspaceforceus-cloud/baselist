@@ -414,18 +414,17 @@ const AdminPanel = (): JSX.Element => {
     markAllNoticesRead,
   } = useBaseList();
 
-  const accountList = useMemo<AccountLike[]>(
-    () =>
-      accounts.map((account) => ({
-        id: account.id,
-        username: account.username,
-        baseId: account.baseId,
-        role: account.role,
-        isDodVerified: account.isDodVerified,
-        createdAt: account.createdAt,
-      })),
-    [accounts],
+  const [accountList, setAccountList] = useState<AccountLike[]>(() =>
+    accounts.map((account) => ({
+      id: account.id,
+      username: account.username,
+      baseId: account.baseId,
+      role: account.role,
+      isDodVerified: account.isDodVerified,
+      createdAt: account.createdAt,
+    })),
   );
+  const userDirectoryRef = useRef<Map<string, AdminUserDTO>>(new Map());
 
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id ?? "dashboard");
   const [reports, setReports] = useState<AdminReportRecord[]>(() => createInitialReports(listings, bases));
