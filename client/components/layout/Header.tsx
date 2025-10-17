@@ -278,11 +278,16 @@ export const Header = (): JSX.Element => {
                     <>
                       <span
                         className={cn(
-                          "flex h-9 w-9 items-center justify-center rounded-full",
+                          "relative flex h-9 w-9 items-center justify-center rounded-full",
                           isActive ? "bg-primary/10 text-primary" : "bg-transparent",
                         )}
                       >
                         <Icon className="h-5 w-5" aria-hidden />
+                        {label === "Messages" && unreadMessageCount > 0 && (
+                          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[0.65rem] font-bold text-background shadow-sm">
+                            {unreadMessageCount > 9 ? "9+" : unreadMessageCount}
+                          </span>
+                        )}
                       </span>
                       {label}
                     </>
