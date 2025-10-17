@@ -799,19 +799,13 @@ const Messages = (): JSX.Element => {
 
   return (
     <section className="space-y-6">
-      <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
+      <header className="rounded-3xl border border-border bg-card p-6 shadow-card">
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold text-foreground">Messages</h1>
           <p className="text-sm text-muted-foreground">
             Your messages are tied to listings—quick offers, updates, and pickups.
           </p>
         </div>
-        <Button asChild variant="outline" className="rounded-full px-5">
-          <Link to="/post">
-            <MessageSquarePlus className="h-4 w-4" aria-hidden />
-            Post an item
-          </Link>
-        </Button>
       </header>
 
       {threadSummaries.length === 0 ? (
