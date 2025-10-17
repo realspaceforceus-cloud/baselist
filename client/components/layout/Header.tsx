@@ -402,7 +402,7 @@ export const Header = (): JSX.Element => {
             />
           </div>
 
-          {filteredBases.length > 0 ? (
+          {baseSearch && filteredBases.length > 0 ? (
             <ul className="max-h-64 space-y-1 overflow-y-auto">
               {filteredBases.map((base) => (
                 <li key={base.id}>
