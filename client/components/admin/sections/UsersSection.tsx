@@ -209,6 +209,26 @@ export const UsersSection = ({
                     <RotateCcw className="h-3.5 w-3.5" aria-hidden />
                     Reset method
                   </button>
+                  {user.pendingEmail && onApprovePendingEmail && onRejectPendingEmail ? (
+                    <>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 rounded-full border border-success px-4 py-2 text-success"
+                        onClick={() => onApprovePendingEmail(user.id, user.pendingEmail!)}
+                      >
+                        <Check className="h-3.5 w-3.5" aria-hidden />
+                        Approve email
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 rounded-full border border-destructive px-4 py-2 text-destructive"
+                        onClick={() => onRejectPendingEmail(user.id)}
+                      >
+                        <Ban className="h-3.5 w-3.5" aria-hidden />
+                        Reject
+                      </button>
+                    </>
+                  ) : null}
                   <button
                     type="button"
                     className="rounded-full border border-border px-4 py-2"
