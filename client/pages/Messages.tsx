@@ -632,7 +632,9 @@ const Messages = (): JSX.Element => {
                       userId={activeSummary.partnerId}
                       initialAverage={activeSummary.seller?.rating ?? null}
                       initialCount={
-                        activeSummary.seller?.ratingCount ??\n                        activeSummary.seller?.completedSales ??\n                        0
+                        activeSummary.seller?.ratingCount ??
+                        activeSummary.seller?.completedSales ??
+                        0
                       }
                       size="sm"
                     />
