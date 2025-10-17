@@ -62,6 +62,7 @@ export const MyListings = (): JSX.Element => {
         // Find if there's a pending transaction
         const pendingThread = offers.find(
           (thread) =>
+            thread.transaction?.status === "pending_complete" ||
             thread.transaction?.status === "pending_confirmation" ||
             thread.status === "completed",
         );
