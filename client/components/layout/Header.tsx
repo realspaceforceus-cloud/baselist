@@ -386,12 +386,12 @@ export const Header = (): JSX.Element => {
     </Sheet>
 
     <Dialog open={isBaseSwitchOpen} onOpenChange={setIsBaseSwitchOpen}>
-      <DialogContent className="rounded-2xl max-w-sm">
-        <DialogHeader>
+      <DialogContent className="rounded-2xl max-w-sm max-h-[90vh] flex flex-col overflow-hidden p-0">
+        <DialogHeader className="border-b border-border px-6 py-4">
           <DialogTitle>Switch base</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
-          <div className="relative">
+        <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-6 py-4">
+          <div className="relative flex-shrink-0">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               autoFocus
@@ -403,7 +403,7 @@ export const Header = (): JSX.Element => {
           </div>
 
           {baseSearch && filteredBases.length > 0 ? (
-            <ul className="max-h-64 space-y-1 overflow-y-auto">
+            <ul className="flex flex-1 flex-col gap-1 overflow-y-auto min-h-0">
               {filteredBases.map((base) => (
                 <li key={base.id}>
                   <button
@@ -416,7 +416,7 @@ export const Header = (): JSX.Element => {
                         : "text-foreground hover:bg-muted/50",
                     )}
                   >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/50 text-[0.65rem]">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/50 text-[0.65rem] flex-shrink-0">
                       <MapPin className="h-3.5 w-3.5" aria-hidden />
                     </span>
                     <div className="flex-1 min-w-0">
@@ -436,6 +436,7 @@ export const Header = (): JSX.Element => {
             </p>
           ) : null}
         </div>
+        <div className="h-4 flex-shrink-0" />
       </DialogContent>
     </Dialog>
     </>
