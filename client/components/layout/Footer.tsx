@@ -27,7 +27,8 @@ export const Footer = (): JSX.Element => {
           ))}
         </nav>
         <p className="font-semibold uppercase tracking-wide text-muted-foreground/80">
-          Built by Active-Duty Airmen
+          Built by an<br />
+          Active-Duty Airmen
         </p>
       </div>
     </footer>
