@@ -40,6 +40,7 @@ const App = (): JSX.Element => (
                 <Route path="messages/:threadId" element={<Messages />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="profile/:memberId" element={<Profile />} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="moderation" element={<Moderation />} />
                 <Route path="admin" element={<AdminPanel />} />
                 <Route path="listing/:listingId" element={<ListingDetail />} />
