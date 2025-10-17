@@ -802,11 +802,8 @@ const Messages = (): JSX.Element => {
           </span>
           <div className="space-y-1">
             <h2 className="text-xl font-semibold text-foreground">
-              No messages yet. Find something you like.
+              No messages yet
             </h2>
-            <p className="text-sm text-muted-foreground">
-              Start a conversation from any listing to see the full inbox and thread experience.
-            </p>
           </div>
           <Button asChild className="rounded-full px-6">
             <Link to="/">Browse listings</Link>
