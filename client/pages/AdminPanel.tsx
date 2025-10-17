@@ -1483,6 +1483,8 @@ const AdminPanel = (): JSX.Element => {
       return {
         id: seller.id,
         name: seller.name,
+        email: (account as any)?.email ?? "unknown@example.com",
+        pendingEmail: (account as any)?.pendingEmail,
         base: getBaseName(bases, effectiveBaseId),
         verified: overrides.verified ?? account?.isDowVerified ?? seller.verified,
         suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
