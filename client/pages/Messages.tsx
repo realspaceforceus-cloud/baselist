@@ -66,7 +66,9 @@ interface ThreadSummary {
   isCompleted: boolean;
   transaction: MessageThread["transaction"];
   awaitingUserConfirmation: boolean;
+  userMarkedComplete: boolean;
   ratingSubmitted: boolean;
+  canSubmitRating: boolean;
 }
 
 const Messages = (): JSX.Element => {
