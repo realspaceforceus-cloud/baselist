@@ -843,6 +843,17 @@ const Messages = (): JSX.Element => {
                   >
                     Mark complete
                   </Button>
+              ) : null}
+                {!awaitingUserConfirmation && !isDisputed ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full px-4 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                    onClick={() => setShowDisputeDialog(true)}
+                  >
+                    Dispute
+                  </Button>
                 ) : null}
                 <Button
                   type="submit"
