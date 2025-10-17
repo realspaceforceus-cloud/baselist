@@ -233,6 +233,7 @@ export const MyListings = (): JSX.Element => {
                       const lastMessage =
                         thread.messages[thread.messages.length - 1];
                       const isPending =
+                        thread.transaction?.status === "pending_complete" ||
                         thread.transaction?.status === "pending_confirmation";
 
                       return (
