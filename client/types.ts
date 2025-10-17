@@ -38,6 +38,10 @@ export interface UserProfile extends Seller {
   role: "member" | "moderator" | "admin";
   status?: "active" | "suspended";
   strikes?: number;
+  email: string;
+  verified: boolean;
+  pendingEmail?: string;
+  notificationsEnabled?: boolean;
 }
 
 export interface Listing {
