@@ -2009,6 +2009,41 @@ export const BaseListProvider = ({
     ],
   );
 
+  // Auto-complete transactions after 72 hours
+  useEffect(() => {
+    const SEVENTY_TWO_HOURS_MS = 72 * 60 * 60 * 1000;
+    const timers: NodeJS.Timeout[] = [];
+
+    messageThreads.forEach((thread) => {
+      const transaction = thread.transaction;
+      if (
+        transaction?.status === "pending_complete" &&
+        transaction.markedCompleteAt &&
+        !transaction.autoCompletedAt
+      ) {
+        const markedTime = new Date(transaction.markedCompleteAt).getTime();
+        const now = Date.now();
+        const elapsedTime = now - markedTime;
+
+        if (elapsedTime >= SEVENTY_TWO_HOURS_MS) {
+          // Auto-complete immediately if already past 72 hours
+          autoCompleteTransaction(thread.id);
+        } else {
+          // Set a timer for when the 72 hours will be up
+          const timeUntilCompletion = SEVENTY_TWO_HOURS_MS - elapsedTime;
+          const timer = setTimeout(() => {
+            autoCompleteTransaction(thread.id);
+          }, timeUntilCompletion);
+          timers.push(timer);
+        }
+      }
+    });
+
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+    };
+  }, [messageThreads, autoCompleteTransaction]);
+
   return (
     <BaseListContext.Provider value={contextValue}>
       {children}
