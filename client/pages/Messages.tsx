@@ -445,21 +445,9 @@ const Messages = (): JSX.Element => {
           No conversations match your filters yet.
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="flex flex-col gap-1 overflow-y-auto">
           {filteredSummaries.map((summary) => {
             const isActive = summary.thread.id === activeSummary?.thread.id;
-            const statusLabel =
-              summary.userStatus === "completed"
-                ? "Completed"
-                : summary.userStatus === "archived"
-                ? "Archived"
-                : "Active";
-            const statusClass =
-              summary.userStatus === "completed"
-                ? "text-emerald-600"
-                : summary.userStatus === "archived"
-                ? "text-muted-foreground"
-                : "text-primary";
 
             return (
               <li key={summary.thread.id}>
@@ -467,12 +455,13 @@ const Messages = (): JSX.Element => {
                   type="button"
                   onClick={() => handleSelectThread(summary.thread.id)}
                   className={cn(
-                    "flex w-full items-start gap-3 rounded-2xl px-3 py-2.5 text-left transition hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                    isActive && "bg-muted/70",
+                    "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    isActive ? "bg-muted/70" : "hover:bg-muted/40",
+                    summary.unread && !isActive && "bg-muted/50",
                   )}
                   aria-current={isActive}
                 >
-                  <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted">
+                  <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-border/50 bg-muted">
                     {summary.listing?.imageUrls?.[0] ? (
                       <img
                         src={summary.listing.imageUrls[0]}
@@ -480,22 +469,23 @@ const Messages = (): JSX.Element => {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <MessageSquare className="h-full w-full p-2 text-muted-foreground" aria-hidden />
+                      <MessageSquare className="h-full w-full p-1.5 text-muted-foreground" aria-hidden />
+                    )}
+                    {summary.unread && (
+                      <span className="absolute -right-1 -top-1 inline-flex h-3 w-3 rounded-full bg-primary shadow-sm" aria-label="Unread message" />
                     )}
                   </div>
-                  <div className="flex flex-1 min-w-0 flex-col gap-0.5">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-semibold text-foreground">
-                        {summary.listing?.title ?? "Listing removed"}
-                      </p>
-                      {summary.unread ? (
-                        <span className="inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-primary" aria-hidden />
-                      ) : null}
-                    </div>
+                  <div className="flex flex-1 min-w-0 flex-col gap-0">
+                    <p className={cn(
+                      "truncate text-xs",
+                      summary.unread ? "font-bold text-foreground" : "font-medium text-foreground"
+                    )}>
+                      {summary.listing?.title ?? "Listing removed"}
+                    </p>
                     <p className="line-clamp-1 text-xs text-muted-foreground">
                       {summary.lastMessage?.body ?? "No messages yet"}
                     </p>
-                    <p className="text-[0.7rem] text-muted-foreground/70">{summary.lastUpdated}</p>
+                    <p className="text-[0.65rem] text-muted-foreground/60">{summary.lastUpdated}</p>
                   </div>
                 </button>
               </li>
