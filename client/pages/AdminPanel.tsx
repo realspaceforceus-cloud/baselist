@@ -947,6 +947,63 @@ const AdminPanel = (): JSX.Element => {
     [appendAuditEntry, getMemberName],
   );
 
+  const handleApprovePendingEmail = useCallback(
+    async (userId: string, newEmail: string) => {
+      try {
+        // In a real implementation, this would call an admin API endpoint
+        // to approve the pending email change
+        setUserOverrides((prev) => ({
+          ...prev,
+          [userId]: {
+            ...(prev[userId] ?? {}),
+          },
+        }));
+        appendAuditEntry(
+          `Approved pending email change for ${getMemberName(userId)}: ${newEmail}`,
+        );
+        toast.success("Email change approved", {
+          description: `${getMemberName(userId)} → ${newEmail}`,
+        });
+        addNotice({
+          userId,
+          category: "verification",
+          severity: "success",
+          title: "Email change approved",
+          message: `Your new email ${newEmail} has been verified and is now active.`,
+        });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to approve email", { description: message });
+      }
+    },
+    [addNotice, appendAuditEntry, getMemberName],
+  );
+
+  const handleRejectPendingEmail = useCallback(
+    async (userId: string) => {
+      try {
+        // In a real implementation, this would call an admin API endpoint
+        // to reject the pending email change
+        appendAuditEntry(`Rejected pending email change for ${getMemberName(userId)}`);
+        toast.info("Email change rejected", {
+          description: `${getMemberName(userId)} will need to try again.`,
+        });
+        addNotice({
+          userId,
+          category: "verification",
+          severity: "warning",
+          title: "Email change rejected",
+          message:
+            "Your email change was rejected by the admin team. Contact support if you have questions.",
+        });
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+        toast.error("Unable to reject email", { description: message });
+      }
+    },
+    [addNotice, appendAuditEntry, getMemberName],
+  );
+
   const handleRemoveListing = useCallback(
     async (listingId: string) => {
       const listing = listings.find((item) => item.id === listingId);
