@@ -129,6 +129,16 @@ export const Header = (): JSX.Element => {
   const verificationLabel = isDowVerified ? "Verified" : user.verificationStatus;
   const showSearch = isAuthenticated && location.pathname === "/";
 
+  const unreadMessageCount = useMemo(() => {
+    const threads = messageThreads || [];
+    return threads.filter((thread) => {
+      const lastReadAt = thread.lastReadAt?.[user.id];
+      if (!lastReadAt) return thread.messages.length > 0;
+      const lastMsg = thread.messages[thread.messages.length - 1];
+      return lastMsg && new Date(lastMsg.sentAt) > new Date(lastReadAt);
+    }).length;
+  }, [messageThreads, user.id]);
+
   const menuShortcuts = useMemo(() => {
     if (!showAdminLink) {
       return MENU_SHORTCUTS;
