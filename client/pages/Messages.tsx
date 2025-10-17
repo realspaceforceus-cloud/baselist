@@ -285,11 +285,6 @@ const Messages = (): JSX.Element => {
     setHoveredRating(null);
   }, [activeThreadId]);
 
-  useEffect(() => {
-    if (isMobile && threadId) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [isMobile, threadId]);
 
   useEffect(() => {
     if (!activeThreadId) {
