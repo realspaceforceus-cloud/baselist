@@ -175,7 +175,9 @@ const Messages = (): JSX.Element => {
           isCompleted,
           transaction,
           awaitingUserConfirmation,
+          userMarkedComplete,
           ratingSubmitted,
+          canSubmitRating,
         };
       })
       .filter((summary): summary is ThreadSummary => summary !== null);
