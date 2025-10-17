@@ -171,11 +171,9 @@ export const Header = (): JSX.Element => {
   useEffect(() => {
     if (!isMenuOpen) {
       setBaseSearch("");
-      setSelectedBaseId(null);
       return;
     }
-    setSelectedBaseId(currentBase.id);
-  }, [isMenuOpen, currentBase.id]);
+  }, [isMenuOpen]);
 
   const handleNavigate = (to: string) => {
     setMenuOpen(false);
