@@ -27,6 +27,8 @@ interface UsersSectionProps {
   onResetVerification: (userId: string) => void;
   onViewActivity: (userId: string) => void;
   onIssueStrike: (userId: string, note: string) => void;
+  onApprovePendingEmail?: (userId: string, newEmail: string) => void;
+  onRejectPendingEmail?: (userId: string) => void;
 }
 
 export const UsersSection = ({
