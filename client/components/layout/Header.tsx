@@ -216,7 +216,7 @@ export const Header = (): JSX.Element => {
 
   return (
     <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
-      <header className="sticky top-0 z-30 border-b border-nav-border bg-background/95 backdrop-blur-lg">
+      <header className="sticky top-0 z-50 border-b border-nav-border bg-background/95 backdrop-blur-lg">
         <div className="mx-auto w-full max-w-6xl px-4 py-3 md:py-5">
           <div className="flex flex-col gap-3 md:gap-4">
             <div className="flex items-center justify-between gap-3">
