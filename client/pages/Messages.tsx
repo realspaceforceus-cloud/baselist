@@ -103,6 +103,8 @@ const Messages = (): JSX.Element => {
   const [threadFilter, setThreadFilter] = useState<ThreadFilter>("active");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
+  const [disputeReason, setDisputeReason] = useState<string>("");
+  const [showDisputeDialog, setShowDisputeDialog] = useState(false);
 
   const threadSummaries = useMemo<ThreadSummary[]>(() => {
     return messageThreads
