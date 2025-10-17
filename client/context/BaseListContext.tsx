@@ -257,6 +257,7 @@ type BaseListContextValue = {
   markTransactionComplete: (threadId: string, userId: string) => void;
   confirmTransactionCompletion: (threadId: string, confirmerId: string) => void;
   raiseDispute: (threadId: string, userId: string, reason?: string) => void;
+  resolveDispute: (threadId: string, resolveTo: "pending_complete" | "completed") => void;
   autoCompleteTransaction: (threadId: string) => void;
   submitTransactionRating: (threadId: string, rating: number) => void;
   archiveThread: (threadId: string) => void;
