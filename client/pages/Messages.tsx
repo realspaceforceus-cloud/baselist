@@ -909,6 +909,37 @@ const Messages = (): JSX.Element => {
           {conversationPanel}
         </div>
       )}
+
+      <AlertDialog open={showDisputeDialog} onOpenChange={setShowDisputeDialog}>
+        <AlertDialogContent>
+          <AlertDialogTitle>Dispute Transaction</AlertDialogTitle>
+          <AlertDialogDescription className="space-y-3">
+            <p>
+              You're about to dispute this transaction. Moderators will review your case.
+            </p>
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-foreground">
+                Reason (optional)
+              </span>
+              <Input
+                value={disputeReason}
+                onChange={(e) => setDisputeReason(e.target.value)}
+                placeholder="Brief explanation of the issue..."
+                className="rounded-lg"
+              />
+            </label>
+          </AlertDialogDescription>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRaiseDispute}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Dispute
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };
