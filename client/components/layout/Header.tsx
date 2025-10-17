@@ -27,6 +27,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
