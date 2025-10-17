@@ -1988,6 +1988,7 @@ export const BaseListProvider = ({
       markTransactionComplete,
       confirmTransactionCompletion,
       raiseDispute,
+      resolveDispute,
       autoCompleteTransaction,
       submitTransactionRating,
       archiveThread,
