@@ -490,7 +490,7 @@ const Messages = (): JSX.Element => {
   const conversationPanel = (
     <section
       ref={conversationRef}
-      className="flex min-h-[420px] flex-col rounded-3xl border border-border bg-card shadow-card"
+      className="flex min-h-[420px] max-h-[calc(100vh-300px)] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card"
     >
       {activeSummary ? (
         <>
