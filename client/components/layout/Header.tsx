@@ -116,6 +116,7 @@ export const Header = (): JSX.Element => {
     bases,
     currentBase,
     setCurrentBaseId,
+    messageThreads,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
   const location = useLocation();
