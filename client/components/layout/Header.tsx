@@ -430,11 +430,11 @@ export const Header = (): JSX.Element => {
                 </li>
               ))}
             </ul>
-          ) : (
+          ) : baseSearch ? (
             <p className="rounded-lg bg-muted/30 px-3 py-4 text-center text-sm text-muted-foreground">
-              {baseSearch ? "No bases match that search." : "No bases available."}
+              No bases match that search.
             </p>
-          )}
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>
