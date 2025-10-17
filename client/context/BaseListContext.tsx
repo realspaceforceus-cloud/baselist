@@ -254,7 +254,10 @@ type BaseListContextValue = {
     messageBody: string,
   ) => MessageThread;
   initiateTransaction: (threadId: string, initiatedBy: string) => void;
+  markTransactionComplete: (threadId: string, userId: string) => void;
   confirmTransactionCompletion: (threadId: string, confirmerId: string) => void;
+  raiseDispute: (threadId: string, userId: string, reason?: string) => void;
+  autoCompleteTransaction: (threadId: string) => void;
   submitTransactionRating: (threadId: string, rating: number) => void;
   archiveThread: (threadId: string) => void;
   unarchiveThread: (threadId: string) => void;
