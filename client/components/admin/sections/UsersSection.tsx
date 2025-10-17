@@ -6,6 +6,8 @@ import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 export interface AdminUserRecord {
   id: string;
   name: string;
+  email: string;
+  pendingEmail?: string;
   base: string;
   verified: boolean;
   suspended: boolean;
