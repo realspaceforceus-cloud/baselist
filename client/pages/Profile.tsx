@@ -373,7 +373,7 @@ const Profile = (): JSX.Element => {
             <div>
               <h2 className="text-lg font-semibold text-foreground">Account notices</h2>
               <p className="text-sm text-muted-foreground">
-                Audit trail of payouts, reports, and strikes on your account.
+                Audit trail of reports and strikes on your account.
               </p>
             </div>
           </div>
