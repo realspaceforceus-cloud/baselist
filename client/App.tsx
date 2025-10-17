@@ -37,9 +37,10 @@ const App = (): JSX.Element => (
               <Route element={<AppShell />}>
                 <Route index element={<Home />} />
                 <Route path="post" element={<Post />} />
-                <Route path="messages" element={<Messages />} />
-                <Route path="messages/:threadId" element={<Messages />} />
-                <Route path="profile" element={<Profile />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="messages/:threadId" element={<Messages />} />
+              <Route path="my-listings" element={<MyListings />} />
+              <Route path="profile" element={<Profile />} />
                 <Route path="profile/:memberId" element={<Profile />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="moderation" element={<Moderation />} />
