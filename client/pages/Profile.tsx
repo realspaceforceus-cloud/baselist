@@ -269,11 +269,6 @@ const Profile = (): JSX.Element => {
             </div>
           </div>
         </div>
-        {viewingOwnProfile ? (
-          <Button asChild variant="outline" className="rounded-full px-5">
-            <Link to="/post">Create listing</Link>
-          </Button>
-        ) : null}
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">
