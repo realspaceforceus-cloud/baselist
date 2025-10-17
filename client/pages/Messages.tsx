@@ -791,10 +791,6 @@ const Messages = (): JSX.Element => {
 
   return (
     <section className="space-y-6">
-      <header className="rounded-3xl border border-border bg-card p-6 shadow-card">
-        <h1 className="text-3xl font-semibold text-foreground">Messages</h1>
-      </header>
-
       {threadSummaries.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-nav-border bg-background/70 p-10 text-center">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
