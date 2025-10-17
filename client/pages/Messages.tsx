@@ -251,15 +251,9 @@ const Messages = (): JSX.Element => {
   const activeDefaultComposerMessage =
     activeSummary?.defaultComposerMessage ?? "Hi, is this still available?";
   const activeTransaction = activeSummary?.transaction ?? null;
-  const userHasConfirmedTransaction = Boolean(
-    activeTransaction?.confirmedBy?.includes(user.id),
-  );
   const awaitingUserConfirmation = activeSummary?.awaitingUserConfirmation ?? false;
-  const partnerNeedsConfirmation = Boolean(
-    activeTransaction?.status === "pending_confirmation" &&
-      !awaitingUserConfirmation &&
-      userHasConfirmedTransaction,
-  );
+  const userMarkedComplete = activeSummary?.userMarkedComplete ?? false;
+  const canSubmitRating = activeSummary?.canSubmitRating ?? false;
   const userRatingValue = activeTransaction?.ratingByUser?.[user.id];
   const completedAtLabel = activeTransaction?.completedAt
     ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(
@@ -268,9 +262,12 @@ const Messages = (): JSX.Element => {
     : null;
   const canMarkComplete = Boolean(
     activeSummary &&
-      (!activeTransaction || activeTransaction.status !== "completed") &&
-      !userHasConfirmedTransaction,
+      (!activeTransaction ||
+        (activeTransaction.status !== "completed" &&
+         activeTransaction.status !== "pending_complete")) &&
+      !userMarkedComplete,
   );
+  const isDisputed = activeTransaction?.status === "disputed";
 
   useEffect(() => {
     if (!activeThreadId) {
