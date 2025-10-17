@@ -326,66 +326,22 @@ export const Header = (): JSX.Element => {
         <div className="space-y-4 overflow-y-auto">
           <div className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
-              Switch base
+              Base
             </h3>
-            <div className="space-y-2">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={baseSearch}
-                  onChange={(event) => setBaseSearch(event.target.value)}
-                  placeholder="Search bases…"
-                  className="h-8 rounded-lg border-border bg-background pl-8 text-xs"
-                  autoFocus={baseSearch !== ""}
-                />
+            <button
+              type="button"
+              onClick={() => setIsBaseSwitchOpen(true)}
+              className="flex w-full items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-left text-xs transition hover:bg-muted/50"
+            >
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <MapPin className="h-3 w-3" aria-hidden />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-foreground truncate">{currentBase.name}</p>
+                <p className="text-[0.65rem] text-muted-foreground truncate">{currentBase.region}</p>
               </div>
-              {filteredBases.length > 0 ? (
-                <ul className="max-h-48 space-y-1 overflow-y-auto">
-                  {filteredBases.map((base) => {
-                    const isActive = base.id === currentBase.id;
-                    const isSelected = selectedBaseId ? base.id === selectedBaseId : isActive;
-                    return (
-                      <li key={base.id}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleSelectBase(base.id);
-                            if (base.id !== currentBase.id) {
-                              handleSaveBase();
-                            }
-                          }}
-                          className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs transition",
-                            isActive
-                              ? "bg-primary/10 font-semibold text-primary"
-                              : "text-foreground hover:bg-muted/60",
-                          )}
-                        >
-                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted/50 text-[0.65rem] font-semibold">
-                            <MapPin className="h-3 w-3" aria-hidden />
-                          </span>
-                          <span className="flex-1 truncate">{base.name}</span>
-                          {isActive && (
-                            <Check
-                              className="h-3.5 w-3.5 text-primary"
-                              aria-hidden
-                            />
-                          )}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              ) : baseSearch ? (
-                <p className="rounded-lg bg-muted/30 px-2 py-2 text-center text-xs text-muted-foreground">
-                  No bases match that search.
-                </p>
-              ) : (
-                <p className="rounded-lg bg-muted/30 px-2 py-2 text-center text-xs text-muted-foreground">
-                  Type to search bases
-                </p>
-              )}
-            </div>
+              <span className="text-[0.65rem] font-semibold text-primary">Switch</span>
+            </button>
           </div>
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
