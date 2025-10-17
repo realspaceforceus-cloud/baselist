@@ -89,7 +89,7 @@ export const MyListings = (): JSX.Element => {
 
   const handleDeleteListing = (listingId: string) => {
     try {
-      deleteListing(listingId);
+      removeListing(listingId);
       setDeleteConfirm(null);
       toast.success("Listing deleted");
     } catch (error) {
