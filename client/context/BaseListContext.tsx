@@ -2022,6 +2022,7 @@ export const BaseListProvider = ({
       markTransactionComplete,
       confirmTransactionCompletion,
       raiseDispute,
+      resolveDispute,
       autoCompleteTransaction,
       isAuthenticated,
       isDowVerified,
