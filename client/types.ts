@@ -86,15 +86,24 @@ export interface Message {
   amount?: number;
 }
 
-export type ThreadLifecycleStatus = "active" | "completed";
+export type ThreadLifecycleStatus = "active" | "completed" | "disputed";
+
+export type TransactionStatus = "pending_complete" | "completed" | "disputed";
 
 export interface ThreadTransaction {
   id: string;
-  status: "pending_confirmation" | "completed";
-  initiatedBy: string;
+  status: TransactionStatus;
+  markedCompleteBy?: string;
+  markedCompleteAt?: string;
   confirmedBy: string[];
   completedAt?: string;
   ratingByUser: Record<string, number | undefined>;
+  autoCompletedAt?: string;
+  dispute?: {
+    raisedBy: string;
+    reason?: string;
+    raisedAt: string;
+  };
 }
 
 export interface MessageThread {
