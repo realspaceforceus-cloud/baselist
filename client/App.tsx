@@ -13,6 +13,7 @@ import Moderation from "./pages/Moderation";
 import NotFound from "./pages/NotFound";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import FAQ from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
