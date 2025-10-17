@@ -249,19 +249,17 @@ export const Header = (): JSX.Element => {
                 </SheetTrigger>
                 <span className="text-lg font-semibold text-foreground">BaseList</span>
               </div>
-              <div className="flex items-center gap-2">
-                {QUICK_ACTIONS.map(({ label, to, icon: Icon }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-soft transition hover:-translate-y-0.5 hover:text-primary"
-                    onClick={() => handleNavigate(to)}
-                  >
-                    <Icon className="h-5 w-5" aria-hidden />
-                    <span className="sr-only">{label}</span>
-                  </button>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => setIsBaseSwitchOpen(true)}
+                className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-2 py-1.5 text-left text-xs hover:bg-muted/50 transition"
+              >
+                <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden />
+                <div className="flex flex-col gap-0">
+                  <p className="font-semibold text-foreground">{currentBase.abbreviation}</p>
+                  <p className="text-[0.65rem] text-muted-foreground">Switch</p>
+                </div>
+              </button>
             </div>
             <nav className="flex items-center justify-between gap-2 rounded-2xl border border-nav-border bg-nav/70 px-2 py-2 shadow-soft">
               {NAV_ITEMS.map(({ label, to, icon: Icon, end = false }) => (
