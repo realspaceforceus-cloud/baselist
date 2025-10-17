@@ -463,110 +463,41 @@ const Messages = (): JSX.Element => {
 
             return (
               <li key={summary.thread.id}>
-                <div className="flex items-start gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleSelectThread(summary.thread.id)}
-                    className={cn(
-                      "flex w-full items-center gap-4 rounded-3xl border border-border bg-card p-4 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                      isActive && "border-primary/50 bg-primary/5",
+                <button
+                  type="button"
+                  onClick={() => handleSelectThread(summary.thread.id)}
+                  className={cn(
+                    "flex w-full items-start gap-3 rounded-2xl px-3 py-2.5 text-left transition hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    isActive && "bg-muted/70",
+                  )}
+                  aria-current={isActive}
+                >
+                  <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted">
+                    {summary.listing?.imageUrls?.[0] ? (
+                      <img
+                        src={summary.listing.imageUrls[0]}
+                        alt={summary.listing.title}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <MessageSquare className="h-full w-full p-2 text-muted-foreground" aria-hidden />
                     )}
-                    aria-current={isActive}
-                  >
-                    <div className="h-12 w-12 overflow-hidden rounded-2xl border border-border bg-muted">
-                      {summary.listing?.imageUrls?.[0] ? (
-                        <img
-                          src={summary.listing.imageUrls[0]}
-                          alt={summary.listing.title}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <MessageSquare className="h-full w-full p-2 text-muted-foreground" aria-hidden />
-                      )}
-                    </div>
-                    <div className="flex flex-1 flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-foreground">
-                          {summary.listing?.title ?? "Listing removed"}
-                        </p>
-                        {summary.unread ? (
-                          <span className="inline-flex h-2.5 w-2.5 rounded-full bg-primary" aria-hidden />
-                        ) : null}
-                      </div>
-                      <p className="line-clamp-1 text-xs text-muted-foreground">
-                        {summary.lastMessage?.body ?? "No messages yet"}
+                  </div>
+                  <div className="flex flex-1 min-w-0 flex-col gap-0.5">
+                    <div className="flex items-center gap-2">
+                      <p className="truncate text-sm font-semibold text-foreground">
+                        {summary.listing?.title ?? "Listing removed"}
                       </p>
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                        <span>{summary.lastUpdated}</span>
-                        {summary.partnerName ? (
-                          <>
-                            <Dot className="h-3 w-3 text-muted-foreground" aria-hidden />
-                            <span className="flex items-center gap-1">
-                              {summary.partnerId ? (
-                                <Link
-                                  to={`/profile/${summary.partnerId}`}
-                                  className="font-semibold text-foreground transition hover:text-primary"
-                                >
-                                  {summary.partnerName}
-                                </Link>
-                              ) : (
-                                summary.partnerName
-                              )}
-                              {summary.partnerId ? (
-                                <RatingBadge
-                                  userId={summary.partnerId}
-                                  initialAverage={
-                                    summary.partnerId === summary.seller?.id
-                                      ? summary.seller?.rating ?? null
-                                      : null
-                                  }
-                                  initialCount={
-                                    summary.partnerId === summary.seller?.id
-                                      ? summary.seller?.ratingCount ??
-                                        summary.seller?.completedSales ??
-                                        0
-                                      : 0
-                                  }
-                                  size="sm"
-                                />
-                              ) : null}
-                            </span>
-                          </>
-                        ) : null}
-                      </div>
+                      {summary.unread ? (
+                        <span className="inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-primary" aria-hidden />
+                      ) : null}
                     </div>
-                    <span className={cn("text-xs font-semibold", statusClass)}>{statusLabel}</span>
-                  </button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        className="rounded-full p-2 text-muted-foreground transition hover:bg-muted"
-                        aria-label="Conversation actions"
-                      >
-                        <EllipsisVertical className="h-4 w-4" aria-hidden />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem onSelect={() => handleArchiveAction(summary)}>
-                        {summary.isArchived ? (
-                          <ArchiveRestore className="mr-2 h-4 w-4" aria-hidden />
-                        ) : (
-                          <Archive className="mr-2 h-4 w-4" aria-hidden />
-                        )}
-                        {summary.isArchived ? "Restore to inbox" : "Archive thread"}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onSelect={() => handleDeleteAction(summary)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" aria-hidden />
-                        Delete thread
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                    <p className="line-clamp-1 text-xs text-muted-foreground">
+                      {summary.lastMessage?.body ?? "No messages yet"}
+                    </p>
+                    <p className="text-[0.7rem] text-muted-foreground/70">{summary.lastUpdated}</p>
+                  </div>
+                </button>
               </li>
             );
           })}
