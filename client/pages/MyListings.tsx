@@ -37,7 +37,7 @@ export const MyListings = (): JSX.Element => {
     listings,
     messageThreads,
     user,
-    deleteListing,
+    removeListing,
     initiateTransaction,
     confirmTransactionCompletion,
   } = useBaseList();
