@@ -291,8 +291,8 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current && conversationRef.current) {
+      conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
     }
   }, [activeThreadId, activeMessageCount]);
 
