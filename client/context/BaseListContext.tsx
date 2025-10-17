@@ -1047,6 +1047,36 @@ export const BaseListProvider = ({
 
       if (completionContext) {
         markListingSold(completionContext.listingId);
+
+        // Notify other message threads about this listing that it's sold
+        setMessageThreads((prev) =>
+          prev.map((thread) => {
+            if (
+              thread.id === completionContext!.threadId ||
+              thread.listingId !== completionContext!.listingId
+            ) {
+              return thread;
+            }
+
+            const now = new Date().toISOString();
+            const soldByName = resolveDisplayName(completionContext!.buyerId);
+
+            return {
+              ...thread,
+              messages: [
+                ...thread.messages,
+                {
+                  id: `msg-${crypto.randomUUID()}`,
+                  authorId: "system",
+                  body: `This item has been sold to ${soldByName}. It's no longer available.`,
+                  sentAt: now,
+                  type: "system",
+                },
+              ],
+            };
+          }),
+        );
+
         setTransactions((prev) => {
           if (prev.some((entry) => entry.threadId === completionContext!.threadId)) {
             return prev;
