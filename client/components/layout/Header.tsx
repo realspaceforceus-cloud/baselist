@@ -90,6 +90,12 @@ const MENU_SHORTCUTS = [
     to: "/post",
     icon: PlusCircle,
   },
+  {
+    label: "Settings",
+    description: "Manage your account and preferences.",
+    to: "/settings",
+    icon: User,
+  },
 ] as const;
 
 const getAvatarInitials = (value: string): string => {
