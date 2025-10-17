@@ -70,7 +70,7 @@ const MENU_SHORTCUTS = [
   {
     label: "My listings",
     description: "Track active and sold posts.",
-    to: "/profile",
+    to: "/my-listings",
     icon: ClipboardList,
   },
   {
