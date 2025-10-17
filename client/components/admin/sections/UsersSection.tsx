@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
-import { Ban, Check, Gavel, History, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import { Ban, Check, Gavel, History, RotateCcw, Search, ShieldCheck, MailCheck } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
