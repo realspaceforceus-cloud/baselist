@@ -792,12 +792,7 @@ const Messages = (): JSX.Element => {
   return (
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold text-foreground">Messages</h1>
-          <p className="text-sm text-muted-foreground">
-            Your messages are tied to listings—quick offers, updates, and pickups.
-          </p>
-        </div>
+        <h1 className="text-3xl font-semibold text-foreground">Messages</h1>
       </header>
 
       {threadSummaries.length === 0 ? (
