@@ -294,6 +294,11 @@ const Profile = (): JSX.Element => {
               <dd className="text-2xl font-semibold text-foreground">{soldListings.length}</dd>
             </div>
           </dl>
+          {viewingOwnProfile && (
+            <Button asChild variant="outline" className="mt-4 rounded-xl w-full" size="sm">
+              <Link to="/my-listings">Manage listings</Link>
+            </Button>
+          )}
         </article>
         <article className="flex h-full flex-col justify-between rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
           <div className="space-y-2">
