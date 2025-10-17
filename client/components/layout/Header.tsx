@@ -180,17 +180,12 @@ export const Header = (): JSX.Element => {
     navigate(to);
   };
 
-  const handleSelectBase = (baseId: string) => {
-    setSelectedBaseId(baseId);
-  };
-
-  const handleSaveBase = () => {
-    if (!selectedBaseId || selectedBaseId === currentBase.id) {
-      setMenuOpen(false);
-      return;
+  const handleSwitchBase = (baseId: string) => {
+    if (baseId !== currentBase.id) {
+      setCurrentBaseId(baseId);
     }
-    setCurrentBaseId(selectedBaseId);
-    setMenuOpen(false);
+    setIsBaseSwitchOpen(false);
+    setBaseSearch("");
   };
 
   const hasBaseQuery = baseSearch.trim().length > 0;
