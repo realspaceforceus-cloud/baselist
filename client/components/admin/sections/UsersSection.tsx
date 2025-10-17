@@ -176,6 +176,13 @@ export const UsersSection = ({
                     <span>Listings {user.listings}</span>
                     <span>Messages {user.messages}</span>
                   </div>
+                  {user.pendingEmail && (
+                    <div className="mt-2 rounded-lg border border-warning/30 bg-warning/5 p-2">
+                      <p className="text-xs font-semibold text-warning">
+                        Pending email change: {user.email} → {user.pendingEmail}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
                   <button
