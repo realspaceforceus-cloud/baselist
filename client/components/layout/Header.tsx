@@ -64,18 +64,7 @@ const NAV_ITEMS = [
   },
 ] as const;
 
-const QUICK_ACTIONS = [
-  {
-    label: "Create listing",
-    to: "/post",
-    icon: PlusCircle,
-  },
-  {
-    label: "Messages",
-    to: "/messages",
-    icon: MessageSquare,
-  },
-] as const;
+const QUICK_ACTIONS = [] as const;
 
 const MENU_SHORTCUTS = [
   {
