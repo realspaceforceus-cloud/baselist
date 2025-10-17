@@ -39,6 +39,8 @@ export const UsersSection = ({
   onResetVerification,
   onViewActivity,
   onIssueStrike,
+  onApprovePendingEmail,
+  onRejectPendingEmail,
 }: UsersSectionProps): JSX.Element => {
   const [query, setQuery] = useState<string>("");
   const [strikeTarget, setStrikeTarget] = useState<string | null>(null);
