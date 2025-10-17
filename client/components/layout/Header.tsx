@@ -256,7 +256,7 @@ export const Header = (): JSX.Element => {
               >
                 <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" aria-hidden />
                 <div className="flex flex-col gap-0">
-                  <p className="font-semibold text-foreground">{currentBase.abbreviation}</p>
+                  <p className="font-semibold text-foreground truncate">{currentBase.name}</p>
                   <p className="text-[0.65rem] text-muted-foreground">Switch</p>
                 </div>
               </button>
