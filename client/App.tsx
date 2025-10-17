@@ -10,6 +10,7 @@ import { SignInDialog } from "@/components/auth/SignInDialog";
 import ListingDetail from "./pages/ListingDetail";
 import Messages from "./pages/Messages";
 import Moderation from "./pages/Moderation";
+import MyListings from "./pages/MyListings";
 import NotFound from "./pages/NotFound";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
