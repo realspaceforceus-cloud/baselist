@@ -224,7 +224,6 @@ const Messages = (): JSX.Element => {
   const activeSummary = useMemo(
     () =>
       threadSummaries.find((summary) => summary.thread.id === threadId) ??
-      threadSummaries[0] ??
       null,
     [threadSummaries, threadId],
   );
