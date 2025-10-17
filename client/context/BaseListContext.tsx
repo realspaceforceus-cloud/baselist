@@ -1220,6 +1220,56 @@ export const BaseListProvider = ({
     [resolveDisplayName],
   );
 
+  // Resolve dispute (used by moderators or when auto-resolved after review)
+  const resolveDispute = useCallback(
+    (threadId: string, resolveTo: "pending_complete" | "completed") => {
+      const now = new Date().toISOString();
+
+      setMessageThreads((prev) =>
+        prev.map((thread) => {
+          if (thread.id !== threadId) {
+            return thread;
+          }
+
+          const transaction = thread.transaction;
+          if (!transaction || transaction.status !== "disputed") {
+            return thread;
+          }
+
+          const wasPendingComplete = resolveTo === "pending_complete";
+          transaction.status = resolveTo;
+          if (resolveTo === "completed") {
+            transaction.completedAt = now;
+          }
+          transaction.dispute = undefined;
+
+          return {
+            ...thread,
+            status: resolveTo === "completed" ? "completed" : thread.status,
+            transaction,
+            messages: [
+              ...thread.messages,
+              {
+                id: `msg-${crypto.randomUUID()}`,
+                authorId: "system",
+                body: wasPendingComplete
+                  ? "Dispute resolved. Transaction back to pending completion."
+                  : "Dispute resolved. Transaction marked complete.",
+                sentAt: now,
+                type: "system",
+              },
+            ],
+          };
+        }),
+      );
+
+      toast.info("Dispute resolved", {
+        description: "Transaction status updated.",
+      });
+    },
+    [],
+  );
+
   // Auto-complete after 72 hours if not disputed
   const autoCompleteTransaction = useCallback(
     (threadId: string) => {
