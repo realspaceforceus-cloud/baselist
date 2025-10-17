@@ -298,9 +298,6 @@ const Messages = (): JSX.Element => {
 
   const handleSelectThread = (id: string) => {
     navigate(`/messages/${id}`);
-    if (isMobile) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
   };
 
   const handleComposerSubmit = (event: FormEvent<HTMLFormElement>) => {
