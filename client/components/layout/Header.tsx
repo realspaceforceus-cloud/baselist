@@ -132,8 +132,8 @@ export const Header = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isBaseSwitchOpen, setIsBaseSwitchOpen] = useState(false);
   const [baseSearch, setBaseSearch] = useState("");
-  const [selectedBaseId, setSelectedBaseId] = useState<string | null>(null);
 
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
