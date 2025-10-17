@@ -820,7 +820,7 @@ const Messages = (): JSX.Element => {
       ) : isMobile ? (
         mobileShowingConversation ? conversationPanel : threadListPanel
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_1fr] h-[calc(100vh-250px)]">
           {threadListPanel}
           {conversationPanel}
         </div>
