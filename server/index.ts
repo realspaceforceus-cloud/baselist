@@ -6,6 +6,7 @@ import helmet from "helmet";
 
 import { authRouter } from "./routes/auth";
 import { adminRouter } from "./routes/admin";
+import { userRouter } from "./routes/user";
 import { handleDemo } from "./routes/demo";
 
 export function createServer() {
