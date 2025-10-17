@@ -141,12 +141,21 @@ const Messages = (): JSX.Element => {
 
         const transaction = thread.transaction;
         const awaitingUserConfirmation = Boolean(
-          transaction?.status === "pending_confirmation" &&
-            !(transaction.confirmedBy ?? []).includes(user.id),
+          transaction?.status === "pending_complete" &&
+            transaction.markedCompleteBy &&
+            transaction.markedCompleteBy !== user.id,
+        );
+        const userMarkedComplete = Boolean(
+          transaction?.status === "pending_complete" &&
+            transaction.markedCompleteBy === user.id,
         );
         const ratingSubmitted = Boolean(
           transaction?.status === "completed" &&
             transaction.ratingByUser?.[user.id] !== undefined,
+        );
+        const canSubmitRating = Boolean(
+          transaction?.status === "completed" ||
+            transaction?.status === "pending_complete",
         );
 
         return {
