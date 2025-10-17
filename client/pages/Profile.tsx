@@ -76,7 +76,11 @@ const Profile = (): JSX.Element => {
     () =>
       viewingOwnProfile
         ? notices
-            .filter((notice) => notice.userId === profileUser.id || notice.userId === "all")
+            .filter(
+              (notice) =>
+                (notice.userId === profileUser.id || notice.userId === "all") &&
+                notice.category !== "payout",
+            )
             .sort(
               (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
             )
