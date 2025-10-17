@@ -220,6 +220,7 @@ export const Header = (): JSX.Element => {
   }
 
   return (
+    <>
     <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
       <header className="sticky top-0 z-50 border-b border-nav-border bg-background/95 backdrop-blur-lg">
         <div className="mx-auto w-full max-w-6xl px-4 py-3 md:py-5">
@@ -383,5 +384,60 @@ export const Header = (): JSX.Element => {
         </div>
       </SheetContent>
     </Sheet>
+
+    <Dialog open={isBaseSwitchOpen} onOpenChange={setIsBaseSwitchOpen}>
+      <DialogContent className="rounded-2xl max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Switch base</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              autoFocus
+              value={baseSearch}
+              onChange={(event) => setBaseSearch(event.target.value)}
+              placeholder="Search bases…"
+              className="h-10 rounded-xl border-border bg-background pl-10"
+            />
+          </div>
+
+          {filteredBases.length > 0 ? (
+            <ul className="max-h-64 space-y-1 overflow-y-auto">
+              {filteredBases.map((base) => (
+                <li key={base.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchBase(base.id)}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition",
+                      base.id === currentBase.id
+                        ? "bg-primary/10 font-semibold text-primary"
+                        : "text-foreground hover:bg-muted/50",
+                    )}
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/50 text-[0.65rem]">
+                      <MapPin className="h-3.5 w-3.5" aria-hidden />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate">{base.name}</p>
+                      <p className="text-xs text-muted-foreground">{base.region}</p>
+                    </div>
+                    {base.id === currentBase.id && (
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" aria-hidden />
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="rounded-lg bg-muted/30 px-3 py-4 text-center text-sm text-muted-foreground">
+              {baseSearch ? "No bases match that search." : "No bases available."}
+            </p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 };
