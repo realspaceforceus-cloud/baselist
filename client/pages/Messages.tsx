@@ -362,7 +362,7 @@ const Messages = (): JSX.Element => {
     if (!activeSummary) {
       return;
     }
-    initiateTransaction(activeSummary.thread.id, user.id);
+    markTransactionComplete(activeSummary.thread.id, user.id);
   };
 
   const handleConfirmCompletion = () => {
@@ -373,6 +373,21 @@ const Messages = (): JSX.Element => {
       confirmTransactionCompletion(activeSummary.thread.id, user.id);
     } catch (error) {
       toast.error("Unable to confirm", {
+        description: error instanceof Error ? error.message : "Try again in a moment.",
+      });
+    }
+  };
+
+  const handleRaiseDispute = () => {
+    if (!activeSummary) {
+      return;
+    }
+    try {
+      raiseDispute(activeSummary.thread.id, user.id, disputeReason);
+      setShowDisputeDialog(false);
+      setDisputeReason("");
+    } catch (error) {
+      toast.error("Unable to raise dispute", {
         description: error instanceof Error ? error.message : "Try again in a moment.",
       });
     }
