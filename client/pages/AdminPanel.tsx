@@ -1785,6 +1785,8 @@ const AdminPanel = (): JSX.Element => {
               onResetVerification={handleResetVerification}
               onViewActivity={handleViewActivity}
               onIssueStrike={handleIssueStrike}
+              onApprovePendingEmail={handleApprovePendingEmail}
+              onRejectPendingEmail={handleRejectPendingEmail}
             />
           ) : null}
           {activeSection === "listings" ? (
