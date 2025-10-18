@@ -426,6 +426,7 @@ const sections: AdminNavItem[] = [
   { id: "metrics", label: "Metrics", icon: BarChart3 },
   { id: "roles", label: "Roles", icon: ShieldCheck },
   { id: "security", label: "Security", icon: LockKeyhole },
+  { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
 const MODERATOR_SECTION_IDS = new Set<AdminNavItem["id"]>([
