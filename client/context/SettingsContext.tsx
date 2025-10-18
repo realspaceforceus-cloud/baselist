@@ -1,0 +1,98 @@
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+export interface Settings {
+  website_name: string;
+  website_description: string;
+  website_logo_url: string;
+  support_email: string;
+  admin_email: string;
+  mailing_address: string;
+  phone_number: string;
+  facebook_url: string;
+  twitter_url: string;
+  instagram_url: string;
+  footer_copyright: string;
+  footer_show_links: string;
+  [key: string]: string;
+}
+
+interface SettingsContextType {
+  settings: Partial<Settings>;
+  loading: boolean;
+  error: string | null;
+  refreshSettings: () => Promise<void>;
+}
+
+const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+
+export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [settings, setSettings] = useState<Partial<Settings>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadSettings = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch("/api/settings");
+      const data = await response.json();
+
+      if (data.success) {
+        setSettings(data.settings || {});
+      } else {
+        setError(data.error || "Failed to load settings");
+        // Use defaults if load fails
+        setSettings({
+          website_name: "BaseList",
+          website_description: "Buy, sell, and connect—DoD verified.",
+          support_email: "support@yourdomain.com",
+          admin_email: "admin@yourdomain.com",
+          mailing_address: "123 Main Street, Anytown, ST 12345",
+          phone_number: "+1 (123) 456-7890",
+          footer_copyright: `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
+          footer_show_links: "true",
+        });
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      setError(errorMsg);
+      // Use defaults on error
+      setSettings({
+        website_name: "BaseList",
+        website_description: "Buy, sell, and connect—DoD verified.",
+        support_email: "support@yourdomain.com",
+        admin_email: "admin@yourdomain.com",
+        mailing_address: "123 Main Street, Anytown, ST 12345",
+        phone_number: "+1 (123) 456-7890",
+        footer_copyright: `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
+        footer_show_links: "true",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const refreshSettings = async () => {
+    await loadSettings();
+  };
+
+  return (
+    <SettingsContext.Provider value={{ settings, loading, error, refreshSettings }}>
+      {children}
+    </SettingsContext.Provider>
+  );
+};
+
+export const useSettings = (): SettingsContextType => {
+  const context = useContext(SettingsContext);
+  if (context === undefined) {
+    throw new Error("useSettings must be used within SettingsProvider");
+  }
+  return context;
+};
