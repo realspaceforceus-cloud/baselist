@@ -120,6 +120,7 @@ export const Header = (): JSX.Element => {
     messageThreads,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
+  const { settings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
