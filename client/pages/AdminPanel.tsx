@@ -1858,6 +1858,7 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "security" ? (
             <SecuritySection auditEntries={auditEntries} onClearAudit={handleClearAudit} />
           ) : null}
+          {activeSection === "settings" ? <SettingsSection /> : null}
         </div>
       </div>
     </div>
