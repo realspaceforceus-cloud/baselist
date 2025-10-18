@@ -28,6 +28,7 @@ import {
   ReportsSection,
   RolesSection,
   SecuritySection,
+  SettingsSection,
   SponsorsSection,
   UsersSection,
   VerificationSection,
