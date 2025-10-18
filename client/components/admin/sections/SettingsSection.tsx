@@ -73,11 +73,17 @@ export const SettingsSection = (): JSX.Element => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Website Settings</h2>
-        <p className="text-gray-600 mt-1">
-          Manage your website name, contact information, and footer details
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Website Settings</h2>
+          <p className="text-gray-600 mt-1">
+            Manage your website name, contact information, and footer details
+          </p>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
+          <Info className="w-4 h-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">v{APP_VERSION}</span>
+        </div>
       </div>
 
       {/* Website Information */}
