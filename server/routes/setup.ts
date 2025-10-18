@@ -424,18 +424,32 @@ setupRouter.post<never, SetupResponse>("/finalize", async (req, res) => {
       ]
     );
 
+    // Insert default settings
+    const defaultSettings = {
+      website_name: "BaseList",
+      website_description: "Buy, sell, and connect—DoD verified.",
+      website_logo_url: "/logo.png",
+      support_email: "support@yourdomain.com",
+      admin_email: adminEmail,
+      mailing_address: "123 Main Street, Anytown, ST 12345",
+      phone_number: "+1 (123) 456-7890",
+      facebook_url: "",
+      twitter_url: "",
+      instagram_url: "",
+      footer_copyright: `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
+      footer_show_links: "true",
+    };
+
+    for (const [key, value] of Object.entries(defaultSettings)) {
+      const settingId = randomUUID();
+      await connection.execute(
+        "INSERT INTO settings (id, key_name, value, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+        [settingId, key, String(value), now, now]
+      );
+    }
+
     // Insert sample data if requested
     if (includeSampleData) {
-      // Sample categories (as base data)
-      const categories = [
-        "Vehicles",
-        "Furniture",
-        "Electronics",
-        "Kids",
-        "Free",
-        "Other",
-      ];
-
       // Optional: Insert sample listing from admin
       const sampleListingId = randomUUID();
       await connection.execute(
