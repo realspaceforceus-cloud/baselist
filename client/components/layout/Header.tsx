@@ -250,8 +250,12 @@ export const Header = (): JSX.Element => {
                   </button>
                 </SheetTrigger>
                 <div className="flex flex-col gap-0">
-                  <span className="text-lg font-semibold text-foreground">BaseList</span>
-                  <span className="text-[0.65rem] text-muted-foreground">Buy, sell, and connect—DoD verified.</span>
+                  <span className="text-lg font-semibold text-foreground">
+                    {settings.website_name || "BaseList"}
+                  </span>
+                  <span className="text-[0.65rem] text-muted-foreground">
+                    {settings.website_description || "Buy, sell, and connect—DoD verified."}
+                  </span>
                 </div>
               </div>
               <button
