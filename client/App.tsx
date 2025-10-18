@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./global.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppShell } from "@/components/layout/AppShell";
@@ -21,9 +21,11 @@ import Privacy from "./pages/Privacy";
 import Guidelines from "./pages/Guidelines";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
+import Setup from "./pages/Setup";
 import AdminPanel from "./pages/AdminPanel";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
+import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
