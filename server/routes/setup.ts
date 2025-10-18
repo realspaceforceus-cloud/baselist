@@ -310,6 +310,16 @@ setupRouter.post<never, SetupResponse>("/initialize-database", async (req, res) 
         INDEX idx_user (user_id),
         INDEX idx_time (timestamp)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+      // Settings table
+      `CREATE TABLE IF NOT EXISTS settings (
+        id VARCHAR(36) PRIMARY KEY,
+        key_name VARCHAR(255) UNIQUE NOT NULL,
+        value LONGTEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_key (key_name)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
     ];
 
     // Execute all table creation queries
