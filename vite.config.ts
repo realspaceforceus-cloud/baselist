@@ -15,6 +15,12 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: "dist/spa",
+    cssMinify: "esbuild",
+    sourcemap: false,
+    chunkSizeWarningLimit: 1600,
+  },
+  css: {
+    transformer: "postcss",
   },
   plugins: [react(), expressPlugin()],
   resolve: {
