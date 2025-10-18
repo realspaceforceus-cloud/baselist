@@ -7,7 +7,9 @@ import helmet from "helmet";
 import { authRouter } from "./routes/auth";
 import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
+import { setupRouter } from "./routes/setup";
 import { handleDemo } from "./routes/demo";
+import { checkSetupComplete } from "./middleware/setupCheck";
 
 export function createServer() {
   const app = express();
@@ -37,6 +39,12 @@ export function createServer() {
   app.use(cookieParser());
   app.use(express.json({ limit: "1mb" }));
   app.use(express.urlencoded({ extended: true }));
+
+  // Setup middleware
+  app.use(checkSetupComplete);
+
+  // Setup routes (available before setup completion)
+  app.use("/api/setup", setupRouter);
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
