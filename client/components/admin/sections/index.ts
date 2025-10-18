@@ -1,5 +1,6 @@
 export { DashboardSection } from "./DashboardSection";
 export type { DashboardCard } from "./DashboardSection";
+export { SettingsSection } from "./SettingsSection";
 export { UsersSection } from "./UsersSection";
 export type { AdminUserRecord } from "./UsersSection";
 export { ListingsSection } from "./ListingsSection";
