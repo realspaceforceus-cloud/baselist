@@ -459,6 +459,8 @@ export class BaseListStore {
     this.verifications = new Map(verificationSeed.map((verification) => [verification.id, verification]));
     this.admins = new Map(adminSeed.map((admin) => [admin.id, admin]));
     this.refreshTokens = new Map(refreshTokenSeed.map((token) => [token.id, token]));
+    this.settings = new Map();
+    this.initializeDefaultSettings();
     this.audit = [];
     this.indexes = {
       usersByBase: new Map(),
