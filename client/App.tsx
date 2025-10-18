@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppShell } from "@/components/layout/AppShell";
 import { BaseListProvider } from "@/context/BaseListContext";
 import { AuthDialogProvider } from "@/context/AuthDialogContext";
+import { SettingsProvider } from "@/context/SettingsContext";
 import { SignInDialog } from "@/components/auth/SignInDialog";
 import ListingDetail from "./pages/ListingDetail";
 import Messages from "./pages/Messages";
