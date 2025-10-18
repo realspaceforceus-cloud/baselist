@@ -98,12 +98,14 @@ const App = (): JSX.Element => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthDialogProvider>
-          <BaseListProvider>
-            <AppContent />
-            <SignInDialog />
-            <Toaster />
-            <Sonner />
-          </BaseListProvider>
+          <SettingsProvider>
+            <BaseListProvider>
+              <AppContent />
+              <SignInDialog />
+              <Toaster />
+              <Sonner />
+            </BaseListProvider>
+          </SettingsProvider>
         </AuthDialogProvider>
       </BrowserRouter>
     </TooltipProvider>
