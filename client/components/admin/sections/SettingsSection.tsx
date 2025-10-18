@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, Save } from "lucide-react";
+import { AlertCircle, CheckCircle2, Save, Info } from "lucide-react";
 import { toast } from "sonner";
 import { useSettings } from "@/context/SettingsContext";
+
+const APP_VERSION = "1.0";
 
 export const SettingsSection = (): JSX.Element => {
   const { settings, refreshSettings } = useSettings();
