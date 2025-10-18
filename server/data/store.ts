@@ -816,6 +816,55 @@ export class BaseListStore {
       manualVerificationBacklog,
     };
   }
+
+  private initializeDefaultSettings() {
+    const defaults = {
+      website_name: "BaseList",
+      website_description: "Buy, sell, and connect—DoD verified.",
+      website_logo_url: "/logo.png",
+      support_email: "support@yourdomain.com",
+      admin_email: "admin@yourdomain.com",
+      mailing_address: "123 Main Street, Anytown, ST 12345",
+      phone_number: "+1 (123) 456-7890",
+      facebook_url: "",
+      twitter_url: "",
+      instagram_url: "",
+      footer_copyright: `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
+      footer_show_links: "true",
+    };
+
+    for (const [key, value] of Object.entries(defaults)) {
+      if (!this.settings.has(key)) {
+        this.settings.set(key, { keyName: key, value });
+      }
+    }
+  }
+
+  getSettings() {
+    return Array.from(this.settings.values());
+  }
+
+  getSetting(key: string) {
+    return this.settings.get(key)?.value ?? null;
+  }
+
+  updateSetting(key: string, value: string) {
+    const existing = this.settings.get(key);
+    if (existing) {
+      this.settings.set(key, { ...existing, value });
+    } else {
+      this.settings.set(key, { keyName: key, value });
+    }
+    return this.settings.get(key);
+  }
+
+  getAllSettingsAsObject() {
+    const obj: Record<string, string> = {};
+    this.settings.forEach((setting) => {
+      obj[setting.keyName] = setting.value;
+    });
+    return obj;
+  }
 }
 
 export const store = new BaseListStore();
