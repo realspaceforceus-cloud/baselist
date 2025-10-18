@@ -433,6 +433,7 @@ export class BaseListStore {
   private verifications: Map<string, VerificationRecord>;
   private admins: Map<string, AdminRecord>;
   private refreshTokens: Map<string, RefreshTokenRecord>;
+  private settings: Map<string, { keyName: string; value: string }>;
   private audit: AuditEntry[];
   private indexes: Indexes;
 
