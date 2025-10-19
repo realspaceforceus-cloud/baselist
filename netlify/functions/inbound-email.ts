@@ -52,7 +52,8 @@ const verifySPFDKIM = (
 
   // Check SPF
   if (email.spf) {
-    const spfResult = typeof email.spf === "string" ? email.spf : email.spf.result;
+    const spfResult =
+      typeof email.spf === "string" ? email.spf : email.spf.result;
     details.spf = spfResult;
     if (spfResult !== "pass") {
       return { valid: false, details };
@@ -199,7 +200,12 @@ const handler: Handler = async (event) => {
         const safeJsonParse = (str: string | undefined) => {
           if (!str) return undefined;
           // If it's a simple string like "pass", "fail", "neutral", return as-is (not as JSON)
-          if (str.trim() === "pass" || str.trim() === "fail" || str.trim() === "neutral" || str.trim() === "none") {
+          if (
+            str.trim() === "pass" ||
+            str.trim() === "fail" ||
+            str.trim() === "neutral" ||
+            str.trim() === "none"
+          ) {
             return { result: str.trim() };
           }
           try {
