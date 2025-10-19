@@ -8,7 +8,10 @@ const handleRequestVerification = async (event: any) => {
   const { email } = JSON.parse(event.body || "{}");
   const clientIp = event.headers["client-ip"] || "unknown";
 
+  console.log("[VERIFY REQUEST] Starting verification request for email:", email);
+
   if (!email) {
+    console.error("[VERIFY REQUEST] No email provided");
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Email required" }),
@@ -16,6 +19,7 @@ const handleRequestVerification = async (event: any) => {
   }
 
   const trimmedEmail = email.trim().toLowerCase();
+  console.log("[VERIFY REQUEST] Trimmed email:", trimmedEmail);
 
   // Rate limit: max 5 requests per email per hour
   const rateLimitCheck = await checkRateLimit(
@@ -28,6 +32,7 @@ const handleRequestVerification = async (event: any) => {
   );
 
   if (!rateLimitCheck.allowed) {
+    console.log("[VERIFY REQUEST] Rate limit exceeded for:", trimmedEmail);
     await logAbuseEvent("verify_request_rate_limit", trimmedEmail, {
       clientIp,
       remaining: rateLimitCheck.remaining,
@@ -42,16 +47,23 @@ const handleRequestVerification = async (event: any) => {
     };
   }
 
-  const client = await pool.connect();
-
+  let client;
   try {
+    console.log("[VERIFY REQUEST] Attempting to connect to database...");
+    client = await pool.connect();
+    console.log("[VERIFY REQUEST] Database connection established");
+
     // Find user by email
+    console.log("[VERIFY REQUEST] Querying user with email:", trimmedEmail);
     const userResult = await client.query(
       "SELECT id FROM users WHERE email = $1",
       [trimmedEmail],
     );
 
+    console.log("[VERIFY REQUEST] User query result rows:", userResult.rows.length);
+
     if (userResult.rows.length === 0) {
+      console.error("[VERIFY REQUEST] User not found for email:", trimmedEmail);
       return {
         statusCode: 404,
         body: JSON.stringify({ error: "User not found" }),
@@ -59,6 +71,7 @@ const handleRequestVerification = async (event: any) => {
     }
 
     const userId = userResult.rows[0].id;
+    console.log("[VERIFY REQUEST] Found user ID:", userId);
 
     // Generate code in format: VER-XXXXX (5 uppercase alphanumeric characters)
     const generateCode = (): string => {
@@ -74,19 +87,24 @@ const handleRequestVerification = async (event: any) => {
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
     const verificationId = randomUUID();
 
+    console.log("[VERIFY REQUEST] Generated code:", code, "Expires at:", expiresAt);
+
     // Create verification record
+    console.log("[VERIFY REQUEST] Inserting verification record...");
     await client.query(
       `INSERT INTO email_verifications (id, user_id, email, code, status, expires_at)
        VALUES ($1, $2, $3, $4, $5, $6)
-       ON CONFLICT (user_id, email, status) DO UPDATE 
+       ON CONFLICT (user_id, email, status) DO UPDATE
        SET code = $4, expires_at = $6, created_at = now()`,
       [verificationId, userId, trimmedEmail, code, "pending", expiresAt],
     );
+    console.log("[VERIFY REQUEST] Verification record inserted");
 
     // Log the code generation
+    console.log("[VERIFY REQUEST] Inserting audit log...");
     await client.query(
-      `INSERT INTO email_verification_audit (user_id, email, event_type, details)
-       VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO email_verification_audit (id, user_id, email, event_type, details)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
       [
         userId,
         trimmedEmail,
@@ -98,8 +116,9 @@ const handleRequestVerification = async (event: any) => {
         }),
       ],
     );
+    console.log("[VERIFY REQUEST] Audit log inserted");
 
-    console.log(`[VERIFY REQUEST] Generated code for ${trimmedEmail}: ${code}`);
+    console.log(`[VERIFY REQUEST] Successfully generated code for ${trimmedEmail}: ${code}`);
 
     return {
       statusCode: 201,
@@ -109,17 +128,24 @@ const handleRequestVerification = async (event: any) => {
         email: trimmedEmail,
         expiresAt,
         message:
-          "Verification code generated. Send this code in an email to verify@yourdomain.com",
+          "Verification code generated. Send this code in an email to verify@trustypcs.com",
       }),
     };
   } catch (error) {
-    console.error("Verify request error:", error);
+    console.error("[VERIFY REQUEST] Error occurred:", error);
+    if (error instanceof Error) {
+      console.error("[VERIFY REQUEST] Error message:", error.message);
+      console.error("[VERIFY REQUEST] Error stack:", error.stack);
+    }
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Failed to generate verification code" }),
     };
   } finally {
-    client.release();
+    if (client) {
+      console.log("[VERIFY REQUEST] Releasing database connection");
+      client.release();
+    }
   }
 };
 
