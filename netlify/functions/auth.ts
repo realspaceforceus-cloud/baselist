@@ -70,7 +70,9 @@ const sendVerificationCode = async (
   }
 
   try {
-    sgMail.setApiKey(apiKey);
+    // Lazy import to avoid build-time loading
+    const sgMail = await import("@sendgrid/mail");
+    sgMail.default.setApiKey(apiKey);
 
     let template = await getEmailTemplate("verify");
     let subject = "Verify your BaseList account";
@@ -106,7 +108,7 @@ const sendVerificationCode = async (
       html: htmlContent,
     };
 
-    await sgMail.send(msg);
+    await sgMail.default.send(msg);
     console.log(`[EMAIL SENT] Verification code sent to ${email}`);
     return true;
   } catch (error) {
