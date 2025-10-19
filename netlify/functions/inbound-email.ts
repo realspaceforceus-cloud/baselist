@@ -165,14 +165,18 @@ const handler: Handler = async (event) => {
               }
             }
 
-            console.log(`[INBOUND EMAIL] Field "${fieldName}": ${fieldValue.substring(0, 100)}`);
+            console.log(
+              `[INBOUND EMAIL] Field "${fieldName}": ${fieldValue.substring(0, 100)}`,
+            );
             formData[fieldName] = fieldValue;
           }
         }
 
         // If multipart parsing didn't work, try URL-encoded as fallback
         if (Object.keys(formData).length === 0) {
-          console.log("[INBOUND EMAIL] Multipart parsing failed, trying URL-encoded...");
+          console.log(
+            "[INBOUND EMAIL] Multipart parsing failed, trying URL-encoded...",
+          );
           const params = new URLSearchParams(bodyStr);
           for (const [key, value] of params.entries()) {
             formData[key] = value;
