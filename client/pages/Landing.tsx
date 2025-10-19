@@ -255,9 +255,22 @@ const Landing = (): JSX.Element => {
         }
         setPendingUserId(data.userId || pendingUserId);
         setJoinStage("success");
-        toast.success("Email verified", {
-          description: "Your account is ready to use!",
-        });
+
+        // Show success notification and confetti only once
+        if (!hasShownSuccessNotification) {
+          setHasShownSuccessNotification(true);
+
+          // Fire confetti
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+
+          toast.success("🎉 Congratulations!", {
+            description: "Your email has been verified! You're all set to use BaseList.",
+          });
+        }
       } else if (data.status === "expired") {
         setIsVerificationPending(false);
         setVerificationError(
