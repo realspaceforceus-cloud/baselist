@@ -1,6 +1,6 @@
 -- Abuse event log for tracking suspicious activity
 CREATE TABLE abuse_log (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY,
   event_type text NOT NULL, -- verification_failed, too_many_requests, invalid_code_attempts, duplicate_requests, etc.
   identifier text NOT NULL, -- IP address, email, user ID, etc.
   details jsonb, -- Additional context about the event
@@ -14,7 +14,7 @@ CREATE INDEX idx_abuse_log_identifier_created_at ON abuse_log(identifier, create
 
 -- Rate limit tracking (optional, for persistence across function invocations)
 CREATE TABLE rate_limit_tracking (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY,
   key text NOT NULL UNIQUE,
   count integer NOT NULL DEFAULT 0,
   reset_time timestamp with time zone NOT NULL,
