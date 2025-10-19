@@ -81,6 +81,12 @@ const Landing = (): JSX.Element => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
   const [pendingEmail, setPendingEmail] = useState<string>("");
+  const [generatedCode, setGeneratedCode] = useState<string>("");
+  const [isVerificationPending, setIsVerificationPending] = useState(false);
+  const [verificationCheckInterval, setVerificationCheckInterval] = useState<
+    NodeJS.Timeout | null
+  >(null);
+  const [timeRemaining, setTimeRemaining] = useState(1800); // 30 minutes
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
