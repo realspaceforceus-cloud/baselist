@@ -5,7 +5,10 @@ import { randomUUID } from "crypto";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/setup", "") || event.rawUrl?.split("?")[0]?.replace(/.*setup/, "") || "";
+  const path =
+    event.path.replace("/.netlify/functions/setup", "") ||
+    event.rawUrl?.split("?")[0]?.replace(/.*setup/, "") ||
+    "";
 
   // GET /api/setup/status
   if (method === "GET" && path === "/status") {
