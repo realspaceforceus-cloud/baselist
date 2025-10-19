@@ -1,10 +1,9 @@
 import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { createServer } from "./server";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -22,7 +21,7 @@ export default defineConfig(({ mode }) => ({
   css: {
     transformer: "postcss",
   },
-  plugins: [react(), expressPlugin()],
+  plugins: command === "serve" ? [react(), expressPlugin()] : [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
@@ -35,7 +34,9 @@ function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
     apply: "serve", // Only apply during development (serve mode)
-    configureServer(server) {
+    async configureServer(server) {
+      // Lazy import to avoid loading server dependencies during build
+      const { createServer } = await import("./server");
       const app = createServer();
 
       // Add Express app as middleware to Vite dev server
