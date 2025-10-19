@@ -102,14 +102,31 @@ const handler: Handler = async (event) => {
   try {
     let payload: InboundEmailPayload;
 
+    console.log("[INBOUND EMAIL] Raw event.body type:", typeof event.body);
+    console.log("[INBOUND EMAIL] Raw event.body:", event.body?.substring?.(0, 500) || event.body);
+    console.log("[INBOUND EMAIL] Event isBase64Encoded:", event.isBase64Encoded);
+
+    let bodyStr = event.body;
+
+    // Handle base64 encoded body
+    if (event.isBase64Encoded && typeof event.body === "string") {
+      bodyStr = Buffer.from(event.body, "base64").toString("utf-8");
+      console.log("[INBOUND EMAIL] Decoded base64 body:", bodyStr.substring(0, 500));
+    }
+
     // Parse the incoming email payload
-    if (typeof event.body === "string") {
+    if (typeof bodyStr === "string") {
       // Try to parse as JSON first, fall back to form-encoded
       try {
-        payload = JSON.parse(event.body);
+        payload = JSON.parse(bodyStr);
+        console.log("[INBOUND EMAIL] Parsed as JSON");
       } catch {
         // Parse as form-encoded data (SendGrid sends form data by default)
-        const params = new URLSearchParams(event.body);
+        console.log("[INBOUND EMAIL] Parsing as form-encoded...");
+        const params = new URLSearchParams(bodyStr);
+
+        console.log("[INBOUND EMAIL] Form params count:", Array.from(params.keys()).length);
+        console.log("[INBOUND EMAIL] Form param keys:", Array.from(params.keys()).slice(0, 10));
 
         // Parse JSON fields if they exist
         const dkim: Record<string, { result: string }> = {};
