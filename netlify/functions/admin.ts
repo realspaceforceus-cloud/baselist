@@ -56,7 +56,8 @@ export const handler: Handler = async (event) => {
       const updates: Record<string, unknown> = {};
       if (username) updates.username = username;
       if (email) updates.email = email;
-      if (newPassword) updates.password_hash = await bcrypt.hash(newPassword, 10);
+      if (newPassword)
+        updates.password_hash = await bcrypt.hash(newPassword, 10);
 
       if (Object.keys(updates).length === 0) {
         return {

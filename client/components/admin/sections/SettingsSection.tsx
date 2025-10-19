@@ -15,19 +15,23 @@ export const SettingsSection = (): JSX.Element => {
   const [isSaved, setIsSaved] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     website_name: settings.website_name || "BaseList",
-    website_description: settings.website_description || "Buy, sell, and connect—DoD verified.",
+    website_description:
+      settings.website_description || "Buy, sell, and connect—DoD verified.",
     website_logo_url: settings.website_logo_url || "/logo.png",
     support_email: settings.support_email || "support@yourdomain.com",
     admin_email: settings.admin_email || "admin@yourdomain.com",
-    mailing_address: settings.mailing_address || "123 Main Street, Anytown, ST 12345",
+    mailing_address:
+      settings.mailing_address || "123 Main Street, Anytown, ST 12345",
     phone_number: settings.phone_number || "+1 (123) 456-7890",
     facebook_url: settings.facebook_url || "",
     twitter_url: settings.twitter_url || "",
     instagram_url: settings.instagram_url || "",
-    footer_copyright: settings.footer_copyright || `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
+    footer_copyright:
+      settings.footer_copyright ||
+      `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
     footer_show_links: settings.footer_show_links || "true",
   });
 
@@ -40,7 +44,7 @@ export const SettingsSection = (): JSX.Element => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -73,16 +77,15 @@ export const SettingsSection = (): JSX.Element => {
       // Reset saved indicator after 3 seconds
       setTimeout(() => setIsSaved(false), 3000);
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Failed to save settings";
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to save settings";
       toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAdminAccountChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAdminAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAdminFormData((prev) => ({
       ...prev,
@@ -91,12 +94,19 @@ export const SettingsSection = (): JSX.Element => {
   };
 
   const handleUpdateAdminAccount = async () => {
-    if (!adminFormData.username && !adminFormData.email && !adminFormData.newPassword) {
+    if (
+      !adminFormData.username &&
+      !adminFormData.email &&
+      !adminFormData.newPassword
+    ) {
       toast.error("Please provide at least one change");
       return;
     }
 
-    if (adminFormData.newPassword && adminFormData.newPassword !== adminFormData.confirmPassword) {
+    if (
+      adminFormData.newPassword &&
+      adminFormData.newPassword !== adminFormData.confirmPassword
+    ) {
       toast.error("New passwords do not match");
       return;
     }
@@ -136,7 +146,10 @@ export const SettingsSection = (): JSX.Element => {
       });
       setShowPasswordForm(false);
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Failed to update admin account";
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to update admin account";
       toast.error(errorMsg);
     } finally {
       setIsAdminLoading(false);
@@ -155,7 +168,9 @@ export const SettingsSection = (): JSX.Element => {
         </div>
         <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
           <Info className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">v{APP_VERSION}</span>
+          <span className="text-sm font-medium text-gray-700">
+            v{APP_VERSION}
+          </span>
         </div>
       </div>
 
@@ -163,7 +178,9 @@ export const SettingsSection = (): JSX.Element => {
       <Card className="p-6 border-blue-200 bg-blue-50">
         <div className="flex items-center gap-2 mb-4">
           <Lock className="w-5 h-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Super Admin Account</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Super Admin Account
+          </h3>
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -231,9 +248,7 @@ export const SettingsSection = (): JSX.Element => {
                     placeholder="••••••••"
                     className="rounded-lg"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Min 8 characters
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Min 8 characters</p>
                 </div>
 
                 <div>
@@ -292,7 +307,9 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Website Information */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Website Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Website Information
+        </h3>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -349,7 +366,9 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Contact Information */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Contact Information
+        </h3>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -425,7 +444,9 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Social Media */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Social Media Links</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Social Media Links
+        </h3>
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div>
@@ -478,7 +499,9 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Footer Settings */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Footer Settings</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Footer Settings
+        </h3>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -545,7 +568,9 @@ export const SettingsSection = (): JSX.Element => {
         <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
         <div className="text-sm text-blue-800">
           <p className="font-medium">Changes take effect immediately</p>
-          <p>All settings are updated across the website as soon as you save.</p>
+          <p>
+            All settings are updated across the website as soon as you save.
+          </p>
         </div>
       </div>
     </div>

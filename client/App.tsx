@@ -64,7 +64,9 @@ const AppContent = (): JSX.Element => {
       <Route path="setup" element={<Setup />} />
 
       {/* If setup is not complete, redirect to setup */}
-      {!isSetupComplete && <Route path="*" element={<Navigate to="/setup" replace />} />}
+      {!isSetupComplete && (
+        <Route path="*" element={<Navigate to="/setup" replace />} />
+      )}
 
       {/* Main app routes - only show if setup is complete */}
       {isSetupComplete && (
