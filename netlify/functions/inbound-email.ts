@@ -130,50 +130,73 @@ const handler: Handler = async (event) => {
         payload = JSON.parse(bodyStr);
         console.log("[INBOUND EMAIL] Parsed as JSON");
       } catch {
-        // Parse as form-encoded data (SendGrid sends form data by default)
-        console.log("[INBOUND EMAIL] Parsing as form-encoded...");
-        const params = new URLSearchParams(bodyStr);
+        // Parse multipart/form-data (SendGrid sends this format)
+        console.log("[INBOUND EMAIL] Parsing as multipart/form-data...");
 
-        console.log(
-          "[INBOUND EMAIL] Form params count:",
-          Array.from(params.keys()).length,
-        );
-        console.log(
-          "[INBOUND EMAIL] Form param keys:",
-          Array.from(params.keys()).slice(0, 10),
-        );
+        // Extract boundary - it's often at the start of the body with --
+        const boundaryMatch = bodyStr.match(/^--([a-zA-Z0-9]+)/);
+        const boundary = boundaryMatch ? boundaryMatch[1] : null;
 
-        // Parse JSON fields if they exist
-        const dkim: Record<string, { result: string }> = {};
-        const spf: { result: string } | undefined = undefined;
+        console.log("[INBOUND EMAIL] Detected boundary:", boundary);
 
-        for (const [key, value] of params.entries()) {
-          if (key.startsWith("dkim")) {
-            try {
-              const parsed = JSON.parse(value);
-              Object.assign(dkim, parsed);
-            } catch {
-              // If parsing fails, skip
+        const formData: Record<string, string> = {};
+
+        if (boundary) {
+          // Split by boundary
+          const parts = bodyStr.split(`--${boundary}`);
+
+          for (const part of parts) {
+            if (!part.includes("Content-Disposition")) continue;
+
+            // Extract field name
+            const nameMatch = part.match(/name="([^"]+)"/);
+            if (!nameMatch) continue;
+
+            const fieldName = nameMatch[1];
+
+            // Extract value after the blank line
+            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?:\r?\n--?|$)/);
+            let fieldValue = "";
+            if (valueMatch && valueMatch[1]) {
+              fieldValue = valueMatch[1].trim();
+              // Remove trailing CRLF if present
+              if (fieldValue.endsWith("\r")) {
+                fieldValue = fieldValue.slice(0, -1);
+              }
             }
+
+            console.log(`[INBOUND EMAIL] Field "${fieldName}": ${fieldValue.substring(0, 100)}`);
+            formData[fieldName] = fieldValue;
           }
         }
 
+        // If multipart parsing didn't work, try URL-encoded as fallback
+        if (Object.keys(formData).length === 0) {
+          console.log("[INBOUND EMAIL] Multipart parsing failed, trying URL-encoded...");
+          const params = new URLSearchParams(bodyStr);
+          for (const [key, value] of params.entries()) {
+            formData[key] = value;
+          }
+        }
+
+        console.log("[INBOUND EMAIL] Form data keys:", Object.keys(formData));
+
         payload = {
-          from: params.get("from") || "",
-          to: params.get("to") || "",
-          subject: params.get("subject") || "",
-          text: params.get("text") || undefined,
-          html: params.get("html") || undefined,
-          headers: params.get("headers")
-            ? JSON.parse(params.get("headers") || "{}")
+          from: formData["from"] || "",
+          to: formData["to"] || "",
+          subject: formData["subject"] || "",
+          text: formData["text"] || undefined,
+          html: formData["html"] || undefined,
+          headers: formData["headers"]
+            ? JSON.parse(formData["headers"])
             : undefined,
-          envelope: params.get("envelope")
-            ? JSON.parse(params.get("envelope") || "{}")
+          envelope: formData["envelope"]
+            ? JSON.parse(formData["envelope"])
             : undefined,
-          spf: params.get("spf") ? JSON.parse(params.get("spf") || "{}") : spf,
-          dkim: Object.keys(dkim).length > 0 ? dkim : undefined,
-          spam_report: params.get("spam_report")
-            ? JSON.parse(params.get("spam_report") || "{}")
+          spf: formData["spf"] ? JSON.parse(formData["spf"]) : undefined,
+          dkim: formData["dkim"] ? JSON.parse(formData["dkim"]) : undefined,
+          spam_report: formData["spam_report"]
+            ? JSON.parse(formData["spam_report"])
             : undefined,
         };
       }
