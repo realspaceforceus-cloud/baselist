@@ -103,7 +103,7 @@ const sendVerificationCode = async (
       html: htmlContent,
     };
 
-    await sgMail.default.send(msg);
+    await sgMail.send(msg);
     console.log(`[EMAIL SENT] Verification code sent to ${email}`);
     return true;
   } catch (error) {
