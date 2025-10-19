@@ -52,15 +52,25 @@ const verifySPFDKIM = (
 
   // Check SPF
   if (email.spf) {
-    details.spf = email.spf.result;
-    if (email.spf.result !== "pass") {
+    const spfResult = typeof email.spf === "string" ? email.spf : email.spf.result;
+    details.spf = spfResult;
+    if (spfResult !== "pass") {
       return { valid: false, details };
     }
   }
 
   // Check DKIM - at least one signature should pass
   if (email.dkim) {
-    const dkimResults = Object.values(email.dkim).map((d) => d.result);
+    let dkimResults: string[] = [];
+    if (typeof email.dkim === "string") {
+      // If dkim is a string, check if it contains "pass"
+      dkimResults = [email.dkim];
+    } else if (typeof email.dkim === "object") {
+      // If it's an object, extract result values
+      dkimResults = Object.values(email.dkim)
+        .map((d) => (typeof d === "string" ? d : d.result))
+        .filter((r) => r);
+    }
     details.dkim = dkimResults;
     const hasDKIMPass = dkimResults.some((result) => result === "pass");
     if (!hasDKIMPass) {
