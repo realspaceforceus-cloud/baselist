@@ -56,16 +56,12 @@ const sendVerificationCode = async (
   email: string,
   code: string,
 ): Promise<boolean> => {
-  if (process.env.NODE_ENV !== "production") {
-    console.log(`[VERIFICATION CODE] Email: ${email}, Code: ${code}`);
-    return true;
-  }
-
   const apiKey = process.env.SENDGRID_API_KEY;
   const fromEmail = process.env.SENDGRID_FROM_EMAIL || "noreply@baselist.mil";
 
   if (!apiKey) {
     console.error("SENDGRID_API_KEY is not set");
+    console.log(`[VERIFICATION CODE - STUB] Email: ${email}, Code: ${code}`);
     return false;
   }
 
