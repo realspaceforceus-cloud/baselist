@@ -713,8 +713,8 @@ const Landing = (): JSX.Element => {
                     Verify your .mil email
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    We'll verify your DoD email by having you send us a code.
-                    This bypasses email filters to ensure safe delivery.
+                    Send an email from your .mil account with a verification code.
+                    This confirms you have access to your DoD email address.
                   </p>
                 </div>
 
@@ -728,7 +728,7 @@ const Landing = (): JSX.Element => {
                         1
                       </span>
                       <span>
-                        Copy this code:{" "}
+                        Copy your verification code:{" "}
                         <code className="rounded bg-muted px-2 py-1 font-mono font-semibold text-foreground">
                           {generatedCode}
                         </code>
@@ -739,8 +739,7 @@ const Landing = (): JSX.Element => {
                         2
                       </span>
                       <span>
-                        Open your .mil email account (Outlook/Gmail on your .mil
-                        account)
+                        Open your .mil email account (Outlook, Gmail, or your service email)
                       </span>
                     </li>
                     <li className="flex gap-3">
@@ -750,7 +749,7 @@ const Landing = (): JSX.Element => {
                       <span>
                         Send an email to{" "}
                         <code className="rounded bg-muted px-2 py-1 font-mono text-foreground">
-                          verify@yourdomain.com
+                          verify@trustypcs.com
                         </code>
                       </span>
                     </li>
@@ -759,7 +758,15 @@ const Landing = (): JSX.Element => {
                         4
                       </span>
                       <span>
-                        Put the code in the subject line or email body
+                        Put the verification code in the subject line or email body
+                      </span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 font-semibold text-primary">
+                        5
+                      </span>
+                      <span>
+                        Send the email and wait for confirmation below
                       </span>
                     </li>
                   </ol>
