@@ -784,7 +784,6 @@ const Landing = (): JSX.Element => {
         </section>
       ) : null}
 
-      <Footer />
     </div>
   );
 };
