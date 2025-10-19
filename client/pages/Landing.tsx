@@ -131,7 +131,7 @@ const Landing = (): JSX.Element => {
     setLocationStatus("idle");
   };
 
-  const handleAccountSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleAccountSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAccountError(null);
 
@@ -139,11 +139,6 @@ const Landing = (): JSX.Element => {
       setAccountError(
         "Username must be 3-20 characters using letters, numbers, or underscores.",
       );
-      return;
-    }
-
-    if (usernameTaken) {
-      setAccountError("That username is already taken. Try another.");
       return;
     }
 
@@ -159,11 +154,6 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    if (emailTaken) {
-      setAccountError("An account already exists with that email.");
-      return;
-    }
-
     if (!passwordStrong) {
       setAccountError("Password must be at least 12 characters long.");
       return;
@@ -174,7 +164,36 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    setJoinStage("base");
+    try {
+      const response = await fetch("/.netlify/functions/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: trimmedUsername,
+          email: normalizedEmail,
+          password: trimmedPassword,
+          baseId: selectedBaseId,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setAccountError(data.error || "Failed to create account");
+        return;
+      }
+
+      const data = await response.json();
+      setPendingUserId(data.userId);
+      setPendingEmail(data.email);
+      setJoinStage("verify");
+      toast.success("Account created", {
+        description: "Check your email for the verification code.",
+      });
+    } catch (error) {
+      setAccountError(
+        error instanceof Error ? error.message : "Failed to create account",
+      );
+    }
   };
 
   useEffect(() => {
