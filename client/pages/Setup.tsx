@@ -30,7 +30,7 @@ export const Setup = (): JSX.Element => {
     const checkSetup = async () => {
       try {
         const result = await setup.checkStatus();
-        if (result.setupComplete) {
+        if (result.isSetupComplete) {
           navigate("/");
         }
       } catch (error) {
