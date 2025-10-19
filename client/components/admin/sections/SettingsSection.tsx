@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, Save, Info } from "lucide-react";
+import { AlertCircle, CheckCircle2, Save, Info, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useSettings } from "@/context/SettingsContext";
 
@@ -13,6 +13,8 @@ export const SettingsSection = (): JSX.Element => {
   const { settings, refreshSettings } = useSettings();
   const [isLoading, setIsLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   
   const [formData, setFormData] = useState({
     website_name: settings.website_name || "BaseList",
