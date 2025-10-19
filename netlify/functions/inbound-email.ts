@@ -154,7 +154,10 @@ const handler: Handler = async (event) => {
       .toLowerCase()
       .trim();
 
+    console.log("[INBOUND EMAIL] Full payload:", JSON.stringify(payload));
     console.log("[INBOUND EMAIL] Received from:", senderEmail);
+    console.log("[INBOUND EMAIL] Envelope from:", payload.envelope?.from);
+    console.log("[INBOUND EMAIL] Payload from:", payload.from);
 
     // Validate sender is from .mil domain
     if (!isMilEmail(senderEmail)) {
