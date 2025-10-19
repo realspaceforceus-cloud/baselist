@@ -718,7 +718,7 @@ const Landing = (): JSX.Element => {
             Built by an Active-Duty Airman for verified DoW members and
             families. Safe, local, and private—on base only.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
+          <div className="flex items-center justify-center gap-8">
             {ICON_STEPS.map(({ label, icon: Icon }) => (
               <div key={label} className="flex flex-col items-center gap-2">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
