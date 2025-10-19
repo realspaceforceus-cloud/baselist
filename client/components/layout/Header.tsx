@@ -15,8 +15,9 @@ import {
   Sun,
   User,
 } from "lucide-react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
+import { Logo } from "@/components/layout/Logo";
 import { SearchInput } from "@/components/layout/SearchInput";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -39,9 +40,6 @@ import { cn } from "@/lib/utils";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
 import { useSettings } from "@/context/SettingsContext";
-
-const LOGO_SRC =
-  "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2F9f8d10811f0e4d94a520d1b0b4d411e2?format=webp&width=320";
 
 const NAV_ITEMS = [
   {
@@ -210,17 +208,11 @@ export const Header = (): JSX.Element => {
 
   const hasBaseQuery = baseSearch.trim().length > 0;
 
-  const logo = (
-    <Link to="/" className="flex items-center" aria-label="BaseList home">
-      <img src={LOGO_SRC} alt="BaseList" className="h-8 w-auto object-contain md:h-9" />
-    </Link>
-  );
-
   if (!isAuthenticated) {
     return (
       <header className="sticky top-0 z-30 border-b border-nav-border bg-background/95 backdrop-blur-lg">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 md:py-5">
-          {logo}
+          <Logo />
           <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="ghost"
