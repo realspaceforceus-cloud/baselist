@@ -1,7 +1,7 @@
 -- Email verification codes for inbound .mil email verification
 CREATE TABLE email_verifications (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   email text NOT NULL,
   code text NOT NULL UNIQUE,
   status text NOT NULL DEFAULT 'pending', -- pending, verified, expired
@@ -22,10 +22,10 @@ CREATE INDEX idx_email_verifications_expires_at ON email_verifications(expires_a
 
 -- Audit log for email verification events
 CREATE TABLE email_verification_audit (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES users(id) ON DELETE SET NULL,
+  id TEXT PRIMARY KEY,
+  user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
   email text NOT NULL,
-  verification_id uuid REFERENCES email_verifications(id) ON DELETE SET NULL,
+  verification_id TEXT REFERENCES email_verifications(id) ON DELETE SET NULL,
   event_type text NOT NULL, -- code_generated, verification_received, verification_success, verification_failed, code_expired
   details jsonb, -- SPF check result, DKIM result, parsed email data, etc.
   sender_email text, -- for inbound events, the email address that sent verification
