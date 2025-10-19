@@ -191,7 +191,9 @@ const handler: Handler = async (event) => {
           try {
             return JSON.parse(str);
           } catch (e) {
-            console.log(`[INBOUND EMAIL] Failed to parse JSON: ${str.substring(0, 100)}`);
+            console.log(
+              `[INBOUND EMAIL] Failed to parse JSON: ${str.substring(0, 100)}`,
+            );
             return undefined;
           }
         };
