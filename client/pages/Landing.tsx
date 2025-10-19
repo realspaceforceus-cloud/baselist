@@ -713,8 +713,9 @@ const Landing = (): JSX.Element => {
                     Verify your .mil email
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Send an email from your .mil account with a verification code.
-                    This confirms you have access to your DoD email address.
+                    Send an email from your .mil account with a verification
+                    code. This confirms you have access to your DoD email
+                    address.
                   </p>
                 </div>
 
@@ -739,7 +740,8 @@ const Landing = (): JSX.Element => {
                         2
                       </span>
                       <span>
-                        Open your .mil email account (Outlook, Gmail, or your service email)
+                        Open your .mil email account (Outlook, Gmail, or your
+                        service email)
                       </span>
                     </li>
                     <li className="flex gap-3">
@@ -758,7 +760,8 @@ const Landing = (): JSX.Element => {
                         4
                       </span>
                       <span>
-                        Put the verification code in the subject line or email body
+                        Put the verification code in the subject line or email
+                        body
                       </span>
                     </li>
                     <li className="flex gap-3">
