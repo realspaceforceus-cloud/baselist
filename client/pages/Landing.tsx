@@ -328,31 +328,90 @@ const Landing = (): JSX.Element => {
     return sortedBases.filter(({ base }) => !recommendedIds.includes(base.id));
   }, [recommendedIds, sortedBases, searchTerm]);
 
-  const handleBaseSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setVerificationError(null);
 
-    if (!selectedBaseId) {
-      toast.error("Choose your current base to continue.");
+    if (!verificationCode.trim()) {
+      setVerificationError("Enter the verification code from your email");
+      return;
+    }
+
+    setIsVerifying(true);
+
+    try {
+      const response = await fetch("/.netlify/functions/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: pendingEmail,
+          code: verificationCode.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setVerificationError(data.error || "Invalid code");
+        setIsVerifying(false);
+        return;
+      }
+
+      const data = await response.json();
+      setPendingUserId(data.userId);
+      setJoinStage("success");
+      toast.success("Email verified", {
+        description: "Your account is ready to use!",
+      });
+    } catch (error) {
+      setVerificationError(
+        error instanceof Error ? error.message : "Verification failed",
+      );
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      const response = await fetch("/.netlify/functions/auth/resend-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: pendingEmail }),
+      });
+
+      if (!response.ok) {
+        toast.error("Failed to resend code");
+        return;
+      }
+
+      toast.success("Code sent", {
+        description: "Check your email for the new verification code.",
+      });
+    } catch (error) {
+      toast.error("Failed to resend code");
+    }
+  };
+
+  const handleFinishSignup = async () => {
+    if (!pendingUserId || !pendingEmail) {
       return;
     }
 
     try {
-      const account = createAccount({
-        username: accountForm.username,
-        email: accountForm.email,
-        password: accountForm.password,
-        baseId: selectedBaseId,
+      setJoinStage("hidden");
+      setPendingUserId(null);
+      setPendingEmail("");
+      setAccountForm(defaultAccountForm);
+      setVerificationCode("");
+
+      toast.success("Welcome to BaseList!", {
+        description: "You can now post listings and message other members.",
       });
-      setPendingAccountId(account.id);
-      setJoinStage("success");
-      toast.success("Account created", {
-        description:
-          "Check your inbox to confirm your DoW email before entering BaseList.",
-      });
+
+      // Trigger a redirect to home or sign in
+      window.location.href = "/";
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Unable to create account.",
-      );
+      toast.error("Failed to complete signup");
     }
   };
 
