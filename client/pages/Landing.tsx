@@ -173,7 +173,8 @@ const Landing = (): JSX.Element => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/.netlify/functions/auth/signup", {
+      // First, create the account
+      const signupResponse = await fetch("/.netlify/functions/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -184,19 +185,44 @@ const Landing = (): JSX.Element => {
         }),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
+      if (!signupResponse.ok) {
+        const data = await signupResponse.json();
         setAccountError(data.error || "Failed to create account");
         setIsSubmitting(false);
         return;
       }
 
-      const data = await response.json();
-      setPendingUserId(data.userId);
-      setPendingEmail(data.email);
+      const signupData = await signupResponse.json();
+      setPendingUserId(signupData.userId);
+      setPendingEmail(signupData.email);
+
+      // Then request a verification code for inbound verification
+      const verifyResponse = await fetch(
+        "/.netlify/functions/verify-status/request",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: normalizedEmail,
+          }),
+        },
+      );
+
+      if (!verifyResponse.ok) {
+        const data = await verifyResponse.json();
+        setAccountError(data.error || "Failed to generate verification code");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const verifyData = await verifyResponse.json();
+      setGeneratedCode(verifyData.code);
+      setTimeRemaining(1800); // 30 minutes
+      setIsVerificationPending(false);
       setJoinStage("verify");
+
       toast.success("Account created", {
-        description: "Check your email for the verification code.",
+        description: "Follow the email instructions to verify your account.",
       });
     } catch (error) {
       setAccountError(
