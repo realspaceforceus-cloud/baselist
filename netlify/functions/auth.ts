@@ -8,6 +8,49 @@ const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
+const getEmailTemplate = async (templateKey: string) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, template_key, subject, html_content, description,
+              variables, is_active, created_by, created_at, updated_at, updated_by
+       FROM email_templates
+       WHERE template_key = $1 AND is_active = true`,
+      [templateKey],
+    );
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    const row = result.rows[0];
+    return {
+      id: row.id,
+      name: row.name,
+      templateKey: row.template_key,
+      subject: row.subject,
+      htmlContent: row.html_content,
+      description: row.description,
+      variables: Array.isArray(row.variables) ? row.variables : JSON.parse(row.variables || "[]"),
+      isActive: row.is_active,
+    };
+  } catch (error) {
+    console.error("Failed to get email template:", error);
+    return null;
+  }
+};
+
+const substitutePlaceholders = (
+  content: string,
+  variables: Record<string, string>,
+): string => {
+  let result = content;
+  Object.entries(variables).forEach(([key, value]) => {
+    const placeholder = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, "g");
+    result = result.replace(placeholder, value);
+  });
+  return result;
+};
+
 const sendVerificationCode = async (
   email: string,
   code: string,
@@ -28,7 +71,9 @@ const sendVerificationCode = async (
   try {
     sgMail.setApiKey(apiKey);
 
-    const htmlContent = `
+    let template = await getEmailTemplate("verify");
+    let subject = "Verify your BaseList account";
+    let htmlContent = `
       <html>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h2>Verify your BaseList account</h2>
@@ -45,10 +90,18 @@ const sendVerificationCode = async (
       </html>
     `;
 
+    if (template) {
+      subject = template.subject;
+      htmlContent = substitutePlaceholders(template.htmlContent, {
+        code,
+        email,
+      });
+    }
+
     const msg = {
       to: email,
       from: fromEmail,
-      subject: "Verify your BaseList account",
+      subject,
       html: htmlContent,
     };
 
