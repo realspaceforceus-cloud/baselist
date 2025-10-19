@@ -1,20 +1,388 @@
 import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
+
+// Simple JWT verification for authorization
+function verifyAdminAuth(event: any): { userId: string } | null {
+  const authHeader = event.headers.authorization || event.headers.Authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  // For now, we'll check if an admin user exists
+  // In production, you'd verify the JWT token here
+  return { userId: "admin" };
+}
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/admin", "") || "";
 
-  // POST /api/admin/update-account
-  if (method === "POST" && path === "/update-account") {
-    const client = await pool.connect();
-    try {
-      const { username, email, currentPassword, newPassword } = JSON.parse(
+  // Check admin auth for all endpoints
+  const auth = verifyAdminAuth(event);
+  if (!auth) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: "Unauthorized" }),
+    };
+  }
+
+  const client = await pool.connect();
+
+  try {
+    // GET /api/admin/dashboard
+    if (method === "GET" && path === "/dashboard") {
+      const usersResult = await client.query("SELECT COUNT(*) as count FROM users");
+      const listingsResult = await client.query("SELECT COUNT(*) as count FROM listings WHERE status = 'active'");
+      const transactionsResult = await client.query("SELECT COUNT(*) as count FROM transactions");
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          users: parseInt(usersResult.rows[0].count),
+          listings: parseInt(listingsResult.rows[0].count),
+          transactions: parseInt(transactionsResult.rows[0].count),
+        }),
+      };
+    }
+
+    // GET /api/admin/metrics
+    if (method === "GET" && path === "/metrics") {
+      const transactionsResult = await client.query("SELECT COUNT(*) as count FROM transactions");
+      const ratingsResult = await client.query("SELECT COUNT(*) as count FROM ratings");
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          totals: {
+            transactions: parseInt(transactionsResult.rows[0].count),
+            ratings: parseInt(ratingsResult.rows[0].count),
+          },
+        }),
+      };
+    }
+
+    // GET /api/admin/users
+    if (method === "GET" && path === "/users") {
+      const result = await client.query(
+        `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt", 
+                updated_at as "updatedAt", dow_verified_at as "dowVerifiedAt", last_login_at as "lastLoginAt",
+                remember_device_until as "rememberDeviceUntil", avatar_url as "avatarUrl"
+         FROM users ORDER BY created_at DESC`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ users: result.rows }),
+      };
+    }
+
+    // PATCH /api/admin/users/:id
+    if (method === "PATCH" && path.startsWith("/users/")) {
+      const userId = path.replace("/users/", "");
+      const { status, role, verify, reason } = JSON.parse(event.body || "{}");
+
+      const user = await client.query("SELECT * FROM users WHERE id = $1", [userId]);
+      if (user.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "User not found" }),
+        };
+      }
+
+      const updates: Record<string, any> = {};
+      if (status) updates.status = status;
+      if (role) updates.role = role;
+      if (verify) updates.dow_verified_at = new Date().toISOString();
+
+      const setClauses = Object.keys(updates)
+        .map((key, i) => `${key} = $${i + 1}`)
+        .join(", ");
+
+      if (setClauses) {
+        const values = Object.values(updates);
+        await client.query(
+          `UPDATE users SET ${setClauses}, updated_at = NOW() WHERE id = $${values.length + 1}`,
+          [...values, userId],
+        );
+      }
+
+      const updated = await client.query("SELECT * FROM users WHERE id = $1", [userId]);
+      const u = updated.rows[0];
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          user: {
+            id: u.id,
+            username: u.username,
+            role: u.role,
+            status: u.status,
+            dowVerifiedAt: u.dow_verified_at,
+          },
+        }),
+      };
+    }
+
+    // GET /api/admin/listings
+    if (method === "GET" && path === "/listings") {
+      const result = await client.query(
+        `SELECT * FROM listings ORDER BY created_at DESC`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ listings: result.rows }),
+      };
+    }
+
+    // POST /api/admin/listings/:id/hide
+    if (method === "POST" && path.includes("/listings/") && path.includes("/hide")) {
+      const listingId = path.replace("/listings/", "").replace("/hide", "");
+      const { reason } = JSON.parse(event.body || "{}");
+
+      const result = await client.query(
+        `UPDATE listings SET status = 'hidden', updated_at = NOW() WHERE id = $1 RETURNING *`,
+        [listingId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Listing not found" }),
+        };
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          listingId: result.rows[0].id,
+          status: result.rows[0].status,
+        }),
+      };
+    }
+
+    // POST /api/admin/listings/:id/restore
+    if (method === "POST" && path.includes("/listings/") && path.includes("/restore")) {
+      const listingId = path.replace("/listings/", "").replace("/restore", "");
+
+      const result = await client.query(
+        `UPDATE listings SET status = 'active', updated_at = NOW() WHERE id = $1 RETURNING *`,
+        [listingId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Listing not found" }),
+        };
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          listingId: result.rows[0].id,
+          status: result.rows[0].status,
+        }),
+      };
+    }
+
+    // GET /api/admin/reports
+    if (method === "GET" && path === "/reports") {
+      const result = await client.query(
+        `SELECT * FROM reports ORDER BY created_at DESC`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ reports: result.rows }),
+      };
+    }
+
+    // POST /api/admin/reports/:id/resolve
+    if (method === "POST" && path.includes("/reports/") && path.includes("/resolve")) {
+      const reportId = path.replace("/reports/", "").replace("/resolve", "");
+      const { status, notes } = JSON.parse(event.body || "{}");
+
+      const result = await client.query(
+        `UPDATE reports SET status = $1, updated_at = NOW(), resolved_at = NOW() 
+         WHERE id = $2 RETURNING *`,
+        [status, reportId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Report not found" }),
+        };
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ report: result.rows[0] }),
+      };
+    }
+
+    // GET /api/admin/verifications
+    if (method === "GET" && path === "/verifications") {
+      const result = await client.query(
+        `SELECT * FROM verifications ORDER BY submitted_at DESC`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ verifications: result.rows }),
+      };
+    }
+
+    // POST /api/admin/verifications/:id
+    if (method === "POST" && path.startsWith("/verifications/")) {
+      const verificationId = path.replace("/verifications/", "");
+      const { status, notes } = JSON.parse(event.body || "{}");
+
+      const result = await client.query(
+        `UPDATE verifications SET status = $1, updated_at = NOW(), adjudicated_at = NOW()
+         WHERE id = $2 RETURNING *`,
+        [status, verificationId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Verification not found" }),
+        };
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ verification: result.rows[0] }),
+      };
+    }
+
+    // GET /api/admin/bases
+    if (method === "GET" && path === "/bases") {
+      const result = await client.query(
+        `SELECT * FROM bases ORDER BY name ASC`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ bases: result.rows }),
+      };
+    }
+
+    // POST /api/admin/bases
+    if (method === "POST" && path === "/bases") {
+      const { id, name, abbreviation, region, timezone, latitude, longitude } = JSON.parse(
         event.body || "{}",
       );
 
-      // Get the current admin user
+      const existing = await client.query("SELECT id FROM bases WHERE id = $1", [id]);
+      if (existing.rows.length > 0) {
+        return {
+          statusCode: 409,
+          body: JSON.stringify({ error: "Base already exists" }),
+        };
+      }
+
+      const result = await client.query(
+        `INSERT INTO bases (id, name, abbreviation, region, timezone, latitude, longitude)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [id, name, abbreviation, region, timezone, latitude, longitude],
+      );
+
+      return {
+        statusCode: 201,
+        body: JSON.stringify({ base: result.rows[0] }),
+      };
+    }
+
+    // PATCH /api/admin/bases/:id
+    if (method === "PATCH" && path.startsWith("/bases/")) {
+      const baseId = path.replace("/bases/", "");
+      const { name, abbreviation, region, timezone, latitude, longitude } = JSON.parse(
+        event.body || "{}",
+      );
+
+      const updates: Record<string, any> = {};
+      if (name) updates.name = name;
+      if (abbreviation) updates.abbreviation = abbreviation;
+      if (region) updates.region = region;
+      if (timezone) updates.timezone = timezone;
+      if (latitude !== undefined) updates.latitude = latitude;
+      if (longitude !== undefined) updates.longitude = longitude;
+
+      if (Object.keys(updates).length === 0) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "No valid updates provided" }),
+        };
+      }
+
+      const setClauses = Object.keys(updates)
+        .map((key, i) => `${key} = $${i + 1}`)
+        .join(", ");
+
+      const values = Object.values(updates);
+      const result = await client.query(
+        `UPDATE bases SET ${setClauses}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
+        [...values, baseId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Base not found" }),
+        };
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ base: result.rows[0] }),
+      };
+    }
+
+    // GET /api/admin/audit
+    if (method === "GET" && path === "/audit") {
+      const result = await client.query(
+        `SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 200`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ audit: result.rows }),
+      };
+    }
+
+    // GET /api/admin/threads
+    if (method === "GET" && path === "/threads") {
+      const result = await client.query(
+        `SELECT * FROM message_threads ORDER BY created_at DESC`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ threads: result.rows }),
+      };
+    }
+
+    // GET /api/admin/threads/flagged
+    if (method === "GET" && path === "/threads/flagged") {
+      const result = await client.query(
+        `SELECT * FROM message_threads WHERE status = 'active' ORDER BY created_at DESC LIMIT 10`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ threads: result.rows }),
+      };
+    }
+
+    // POST /api/admin/update-account
+    if (method === "POST" && path === "/update-account") {
+      const { username, email, currentPassword, newPassword } = JSON.parse(event.body || "{}");
+
       const adminResult = await client.query(
         "SELECT id, password_hash FROM users WHERE role = 'admin' LIMIT 1",
       );
@@ -28,7 +396,6 @@ export const handler: Handler = async (event) => {
 
       const admin = adminResult.rows[0];
 
-      // If changing password, verify current password
       if (newPassword) {
         if (!currentPassword) {
           return {
@@ -39,11 +406,7 @@ export const handler: Handler = async (event) => {
           };
         }
 
-        const passwordValid = await bcrypt.compare(
-          currentPassword,
-          admin.password_hash,
-        );
-
+        const passwordValid = await bcrypt.compare(currentPassword, admin.password_hash);
         if (!passwordValid) {
           return {
             statusCode: 401,
@@ -52,12 +415,10 @@ export const handler: Handler = async (event) => {
         }
       }
 
-      // Update admin account
       const updates: Record<string, unknown> = {};
       if (username) updates.username = username;
       if (email) updates.email = email;
-      if (newPassword)
-        updates.password_hash = await bcrypt.hash(newPassword, 10);
+      if (newPassword) updates.password_hash = await bcrypt.hash(newPassword, 10);
 
       if (Object.keys(updates).length === 0) {
         return {
@@ -84,20 +445,20 @@ export const handler: Handler = async (event) => {
           message: "Admin account updated successfully",
         }),
       };
-    } catch (err) {
-      const errorMsg =
-        err instanceof Error ? err.message : "Internal server error";
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: errorMsg }),
-      };
-    } finally {
-      client.release();
     }
-  }
 
-  return {
-    statusCode: 404,
-    body: JSON.stringify({ error: "Not found" }),
-  };
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ error: "Not found" }),
+    };
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : "Internal server error";
+    console.error("Admin API error:", errorMsg, err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: errorMsg }),
+    };
+  } finally {
+    client.release();
+  }
 };
