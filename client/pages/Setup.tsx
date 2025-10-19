@@ -19,10 +19,9 @@ export const Setup = (): JSX.Element => {
   const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
-  const [baseId, setBaseId] = useState("");
+  const [baseId] = useState("vance-afb"); // Default to Vance AFB
   const [includeSampleData, setIncludeSampleData] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false);
-  const [bases, setBases] = useState<Array<{ id: string; name: string }>>([]);
 
   const [steps, setSteps] = useState<SetupStep[]>([
     {
