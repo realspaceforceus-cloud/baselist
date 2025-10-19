@@ -73,7 +73,10 @@ const verifySPFDKIM = (
         .filter((r) => r);
     }
     details.dkim = dkimResults;
-    const hasDKIMPass = dkimResults.some((result) => result === "pass");
+    // Check if any result contains "pass" (handles both "pass" and "{@domain : pass}" formats)
+    const hasDKIMPass = dkimResults.some((result) =>
+      typeof result === "string" && result.includes("pass")
+    );
     if (!hasDKIMPass) {
       return { valid: false, details };
     }
