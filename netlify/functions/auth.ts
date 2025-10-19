@@ -2,7 +2,6 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
-import sgMail from "@sendgrid/mail";
 
 const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
