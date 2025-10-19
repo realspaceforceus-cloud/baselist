@@ -20,7 +20,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -35,7 +36,10 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const id = path.slice(1);
-      const result = await client.query("SELECT * FROM listings WHERE id = $1", [id]);
+      const result = await client.query(
+        "SELECT * FROM listings WHERE id = $1",
+        [id],
+      );
 
       if (result.rows.length === 0) {
         return {
@@ -49,7 +53,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),
@@ -63,8 +68,16 @@ export const handler: Handler = async (event) => {
   if (method === "POST" && path === "") {
     const client = await pool.connect();
     try {
-      const { title, price, isFree, category, description, imageUrls, baseId, sellerId } =
-        JSON.parse(event.body || "{}");
+      const {
+        title,
+        price,
+        isFree,
+        category,
+        description,
+        imageUrls,
+        baseId,
+        sellerId,
+      } = JSON.parse(event.body || "{}");
 
       if (!title || !category || !baseId || !sellerId) {
         return {
@@ -98,7 +111,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -131,7 +145,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -154,7 +169,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({ success: true }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),

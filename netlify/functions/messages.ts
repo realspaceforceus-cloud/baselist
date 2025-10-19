@@ -22,7 +22,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -55,16 +56,18 @@ export const handler: Handler = async (event) => {
       );
 
       // Update thread's updated_at timestamp
-      await client.query("UPDATE message_threads SET updated_at = NOW() WHERE id = $1", [
-        threadId,
-      ]);
+      await client.query(
+        "UPDATE message_threads SET updated_at = NOW() WHERE id = $1",
+        [threadId],
+      );
 
       return {
         statusCode: 201,
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -90,7 +93,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -127,7 +131,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),

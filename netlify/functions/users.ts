@@ -29,7 +29,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),
@@ -73,7 +74,8 @@ export const handler: Handler = async (event) => {
         }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
         body: JSON.stringify({ error: errorMsg }),
@@ -106,13 +108,16 @@ export const handler: Handler = async (event) => {
       if (newPassword.length < 8) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: "Password must be at least 8 characters" }),
+          body: JSON.stringify({
+            error: "Password must be at least 8 characters",
+          }),
         };
       }
 
-      const result = await client.query("SELECT password_hash FROM users WHERE id = $1", [
-        userId,
-      ]);
+      const result = await client.query(
+        "SELECT password_hash FROM users WHERE id = $1",
+        [userId],
+      );
 
       if (result.rows.length === 0) {
         return {
@@ -121,7 +126,10 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const passwordMatch = await bcrypt.compare(currentPassword, result.rows[0].password_hash);
+      const passwordMatch = await bcrypt.compare(
+        currentPassword,
+        result.rows[0].password_hash,
+      );
       if (!passwordMatch) {
         return {
           statusCode: 401,
@@ -130,14 +138,21 @@ export const handler: Handler = async (event) => {
       }
 
       const newHash = await bcrypt.hash(newPassword, 10);
-      await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHash, userId]);
+      await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
+        newHash,
+        userId,
+      ]);
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, message: "Password changed successfully" }),
+        body: JSON.stringify({
+          success: true,
+          message: "Password changed successfully",
+        }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),
@@ -168,17 +183,23 @@ export const handler: Handler = async (event) => {
       );
 
       // Delete empty threads
-      await client.query("DELETE FROM message_threads WHERE array_length(participants, 1) = 0");
+      await client.query(
+        "DELETE FROM message_threads WHERE array_length(participants, 1) = 0",
+      );
 
       // Delete user account
       await client.query("DELETE FROM users WHERE id = $1", [userId]);
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, message: "Account deleted successfully" }),
+        body: JSON.stringify({
+          success: true,
+          message: "Account deleted successfully",
+        }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),

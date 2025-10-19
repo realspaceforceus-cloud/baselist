@@ -34,8 +34,13 @@ export const handler: Handler = async (event) => {
   if (method === "POST" && path === "/initialize") {
     const client = await pool.connect();
     try {
-      const { adminEmail, adminPassword, adminUsername, baseId, includeSampleData } =
-        JSON.parse(event.body || "{}");
+      const {
+        adminEmail,
+        adminPassword,
+        adminUsername,
+        baseId,
+        includeSampleData,
+      } = JSON.parse(event.body || "{}");
 
       if (!adminEmail || !adminPassword || !adminUsername || !baseId) {
         return {
@@ -64,7 +69,16 @@ export const handler: Handler = async (event) => {
       await client.query(
         `INSERT INTO users (id, email, username, password_hash, role, status, base_id, avatar_url)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [adminId, adminEmail, adminUsername, passwordHash, "admin", "active", baseId, ""],
+        [
+          adminId,
+          adminEmail,
+          adminUsername,
+          passwordHash,
+          "admin",
+          "active",
+          baseId,
+          "",
+        ],
       );
 
       // Mark setup complete
@@ -102,7 +116,8 @@ export const handler: Handler = async (event) => {
         }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),

@@ -11,7 +11,9 @@ export const handler: Handler = async (event) => {
   if (method === "POST" && path === "/register") {
     const client = await pool.connect();
     try {
-      const { email, password, username, baseId } = JSON.parse(event.body || "{}");
+      const { email, password, username, baseId } = JSON.parse(
+        event.body || "{}",
+      );
 
       if (!email || !password || !username || !baseId) {
         return {
@@ -21,7 +23,10 @@ export const handler: Handler = async (event) => {
       }
 
       // Check if user exists
-      const existing = await client.query("SELECT id FROM users WHERE email = $1", [email]);
+      const existing = await client.query(
+        "SELECT id FROM users WHERE email = $1",
+        [email],
+      );
 
       if (existing.rows.length > 0) {
         return {
@@ -44,7 +49,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({ success: true, userId }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),
@@ -67,7 +73,10 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
+      const result = await client.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email],
+      );
       const user = result.rows[0];
 
       if (!user) {
@@ -99,7 +108,8 @@ export const handler: Handler = async (event) => {
         }),
       };
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Internal server error";
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
         body: JSON.stringify({ error: errorMsg }),

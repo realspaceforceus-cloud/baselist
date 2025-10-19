@@ -60,6 +60,7 @@ Your database schema is now ready.
 **"Database does not exist"** → Run the SQL schema in Neon's SQL Editor
 
 **"Setup already complete"** → Your app was already initialized. Start fresh by deleting the `settings` table entry:
+
 ```sql
 DELETE FROM settings WHERE key_name = 'setup_complete';
 ```
@@ -69,6 +70,7 @@ Then refresh your app and run setup again.
 ## Environment Variables
 
 For local development, create `.env`:
+
 ```env
 DATABASE_URL=postgresql://user:password@host/database
 CORS_ORIGIN=http://localhost:5173
