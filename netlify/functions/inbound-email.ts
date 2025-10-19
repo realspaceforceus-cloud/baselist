@@ -132,11 +132,17 @@ const handler: Handler = async (event) => {
           subject: params.get("subject") || "",
           text: params.get("text") || undefined,
           html: params.get("html") || undefined,
-          headers: params.get("headers") ? JSON.parse(params.get("headers") || "{}") : undefined,
-          envelope: params.get("envelope") ? JSON.parse(params.get("envelope") || "{}") : undefined,
+          headers: params.get("headers")
+            ? JSON.parse(params.get("headers") || "{}")
+            : undefined,
+          envelope: params.get("envelope")
+            ? JSON.parse(params.get("envelope") || "{}")
+            : undefined,
           spf: params.get("spf") ? JSON.parse(params.get("spf") || "{}") : spf,
           dkim: Object.keys(dkim).length > 0 ? dkim : undefined,
-          spam_report: params.get("spam_report") ? JSON.parse(params.get("spam_report") || "{}") : undefined,
+          spam_report: params.get("spam_report")
+            ? JSON.parse(params.get("spam_report") || "{}")
+            : undefined,
         };
       }
     } else {
