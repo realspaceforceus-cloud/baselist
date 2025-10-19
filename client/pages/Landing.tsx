@@ -137,6 +137,7 @@ const Landing = (): JSX.Element => {
     setSearchTerm("");
     setSelectedBaseId(bases[0]?.id ?? "");
     setLocationStatus("idle");
+    setHasShownSuccessNotification(false);
   };
 
   const handleAccountSubmit = async (event: FormEvent<HTMLFormElement>) => {
