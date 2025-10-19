@@ -91,22 +91,12 @@ const Landing = (): JSX.Element => {
 
   const usernameValid =
     trimmedUsername.length > 0 && USERNAME_PATTERN.test(trimmedUsername);
-  const usernameTaken = usernameValid
-    ? accounts.some(
-        (account) => account.username.toLowerCase() === normalizedUsername,
-      )
-    : false;
-  const usernamePositive = usernameValid && !usernameTaken;
+  const usernamePositive = usernameValid;
 
   const emailFormatValid =
     normalizedEmail.length > 0 && EMAIL_PATTERN.test(normalizedEmail);
   const emailDow = emailFormatValid && isDowEmail(normalizedEmail);
-  const emailTaken = emailFormatValid
-    ? accounts.some(
-        (account) => account.email.toLowerCase() === normalizedEmail,
-      )
-    : false;
-  const emailPositive = emailDow && !emailTaken;
+  const emailPositive = emailDow;
 
   const passwordStrong = trimmedPassword.length >= PASSWORD_MIN_LENGTH;
   const passwordPositive = trimmedPassword.length > 0 && passwordStrong;
@@ -116,17 +106,6 @@ const Landing = (): JSX.Element => {
     emailPositive &&
     passwordStrong &&
     accountForm.agreeRules;
-
-  const pendingAccount = useMemo(() => {
-    if (!pendingAccountId) {
-      return null;
-    }
-    return accounts.find((account) => account.id === pendingAccountId) ?? null;
-  }, [accounts, pendingAccountId]);
-  const pendingAccountVerified = pendingAccount?.isDowVerified ?? false;
-  const pendingVerificationRequestedAt =
-    pendingAccount?.verificationRequestedAt ?? null;
-  const pendingAccountEmail = pendingAccount?.email ?? null;
 
   const [selectedBaseId, setSelectedBaseId] = useState<string>(
     bases[0]?.id ?? "",
