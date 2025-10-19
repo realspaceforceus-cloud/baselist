@@ -15,7 +15,6 @@ import {
   Sun,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { SearchInput } from "@/components/layout/SearchInput";
