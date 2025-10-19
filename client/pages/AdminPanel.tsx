@@ -1857,6 +1857,7 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "roles" ? <RolesSection roles={roles} /> : null}
+          {activeSection === "email-templates" ? <EmailTemplatesSection /> : null}
           {activeSection === "security" ? (
             <SecuritySection auditEntries={auditEntries} onClearAudit={handleClearAudit} />
           ) : null}
