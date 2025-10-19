@@ -785,25 +785,7 @@ const Landing = (): JSX.Element => {
         </section>
       ) : null}
 
-      <footer className="px-4 text-center text-xs text-muted-foreground">
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <span>© 2025 BaseList</span>
-          <span>·</span>
-          <a className="hover:text-foreground" href="#">
-            Privacy
-          </a>
-          <span>·</span>
-          <a className="hover:text-foreground" href="#">
-            Terms
-          </a>
-          <span>·</span>
-          <a className="hover:text-foreground" href="#">
-            Contact
-          </a>
-          <span>·</span>
-          <span>Built by Active-Duty Airmen</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
