@@ -7,7 +7,6 @@ import helmet from "helmet";
 import { authRouter } from "./routes/auth";
 import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
-import { setupRouter } from "./routes/setup";
 import { settingsRouter } from "./routes/settings";
 import { handleDemo } from "./routes/demo";
 import { checkSetupComplete } from "./middleware/setupCheck";
