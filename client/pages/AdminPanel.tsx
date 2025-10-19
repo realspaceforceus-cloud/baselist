@@ -2048,6 +2048,9 @@ const AdminPanel = (): JSX.Element => {
               onDeny={handleDenyVerification}
             />
           ) : null}
+          {activeSection === "family-verification" ? (
+            <FamilyVerificationSection userId={user.id} />
+          ) : null}
           {activeSection === "bases" ? (
             <BasesSection
               bases={visibleBaseRows}
