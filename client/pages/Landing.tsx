@@ -83,9 +83,8 @@ const Landing = (): JSX.Element => {
   const [pendingEmail, setPendingEmail] = useState<string>("");
   const [generatedCode, setGeneratedCode] = useState<string>("");
   const [isVerificationPending, setIsVerificationPending] = useState(false);
-  const [verificationCheckInterval, setVerificationCheckInterval] = useState<
-    NodeJS.Timeout | null
-  >(null);
+  const [verificationCheckInterval, setVerificationCheckInterval] =
+    useState<NodeJS.Timeout | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(1800); // 30 minutes
 
   const trimmedUsername = accountForm.username.trim();
@@ -258,7 +257,9 @@ const Landing = (): JSX.Element => {
         });
       } else if (data.status === "expired") {
         setIsVerificationPending(false);
-        setVerificationError("Verification code has expired. Generate a new one.");
+        setVerificationError(
+          "Verification code has expired. Generate a new one.",
+        );
       }
     } catch (error) {
       console.error("Status check failed:", error);
@@ -281,14 +282,11 @@ const Landing = (): JSX.Element => {
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch(
-        "/.netlify/functions/verify-status/resend",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: pendingEmail }),
-        },
-      );
+      const response = await fetch("/.netlify/functions/verify-status/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: pendingEmail }),
+      });
 
       if (!response.ok) {
         toast.error("Failed to resend code");
@@ -305,7 +303,6 @@ const Landing = (): JSX.Element => {
       toast.error("Failed to resend code");
     }
   };
-
 
   const handleFinishSignup = () => {
     if (!pendingUserId || !pendingEmail) {
@@ -761,7 +758,9 @@ const Landing = (): JSX.Element => {
                       <span className="flex-shrink-0 font-semibold text-primary">
                         4
                       </span>
-                      <span>Put the code in the subject line or email body</span>
+                      <span>
+                        Put the code in the subject line or email body
+                      </span>
                     </li>
                   </ol>
                 </div>
@@ -797,8 +796,7 @@ const Landing = (): JSX.Element => {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Code expires in{" "}
-                    {Math.floor(timeRemaining / 60)}:
+                    Code expires in {Math.floor(timeRemaining / 60)}:
                     {String(timeRemaining % 60).padStart(2, "0")}
                   </p>
                 </div>

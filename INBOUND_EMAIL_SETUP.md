@@ -40,6 +40,7 @@ Priority 100: mx3.sendgrid.net.
 ```
 
 Example (Route53, Cloudflare, etc.):
+
 - Host: `@` (or your domain)
 - Type: MX
 - Value: `1 mx.sendgrid.net`
@@ -63,7 +64,7 @@ Create an email address or subdomain for verification. Options:
    - **Hostname:** `yourdomain.com` (or your verification subdomain)
    - **URL:** `https://yourdomain.com/.netlify/functions/inbound-email`
    - **POST the raw, full MIME message:** Check this box
-   - **Spam Check:** Enable (optional, adds X-Spam-* headers)
+   - **Spam Check:** Enable (optional, adds X-Spam-\* headers)
    - **Open Tracking:** Disable
    - **Click Tracking:** Disable
 
@@ -82,6 +83,7 @@ v=spf1 include:sendgrid.net ~all
 **Add DKIM records:**
 
 SendGrid will give you DKIM records to add. Go to:
+
 - Settings > Sender Authentication > Domain Authentication
 - Follow the steps to add DKIM records to your DNS
 
@@ -151,7 +153,7 @@ The inbound email webhook validates:
 ✅ **DKIM Check**: Email has valid DKIM signature  
 ✅ **Sender Domain**: Email came from a .mil domain  
 ✅ **Code Match**: Extracted code matches a pending verification  
-✅ **Code Expiry**: Code hasn't expired (30 minutes)  
+✅ **Code Expiry**: Code hasn't expired (30 minutes)
 
 If any check fails, the request is rejected and logged as an abuse event.
 
@@ -162,6 +164,7 @@ If any check fails, the request is rejected and logged as an abuse event.
 **Problem**: SendGrid shows inbound emails but webhook isn't receiving them
 
 **Solutions**:
+
 1. Check MX records are configured correctly
 2. Verify SendGrid Inbound Parse endpoint URL is correct
 3. Check firewall/WAF isn't blocking SendGrid IPs
@@ -172,6 +175,7 @@ If any check fails, the request is rejected and logged as an abuse event.
 **Problem**: Webhook is rejecting all emails with "authentication failed"
 
 **Solutions**:
+
 1. Verify SPF record is correct: `v=spf1 include:sendgrid.net ~all`
 2. Ensure DKIM records are fully added to DNS (can take time to propagate)
 3. Check that the .mil sender's domain has valid SPF/DKIM records themselves
@@ -181,6 +185,7 @@ If any check fails, the request is rejected and logged as an abuse event.
 **Problem**: Email arrives but code isn't found
 
 **Solutions**:
+
 1. Code must be in format `VER-XXXXX` or just `XXXXX` (5+ alphanumeric chars)
 2. Code can be in subject line or first part of body
 3. Check the extraction regex in `netlify/functions/inbound-email.ts`
@@ -190,6 +195,7 @@ If any check fails, the request is rejected and logged as an abuse event.
 **Problem**: User sends email but polling shows it as still pending
 
 **Solutions**:
+
 1. Check database logs for webhook events
 2. Verify code hasn't expired (30 minutes)
 3. Check if email is being processed as spam (check SendGrid logs)
@@ -200,9 +206,10 @@ If any check fails, the request is rejected and logged as an abuse event.
 Monitor these metrics:
 
 **Database:**
+
 ```sql
 -- Check verification success rate
-SELECT 
+SELECT
   COUNT(*) as total,
   COUNT(CASE WHEN status = 'verified' THEN 1 END) as verified,
   COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending,
@@ -219,11 +226,13 @@ GROUP BY event_type;
 ```
 
 **SendGrid:**
+
 1. Go to **Activity > Search**
 2. Filter by recipient domain: `yourdomain.com`
 3. Check bounce rates and delivery status
 
 **Netlify:**
+
 1. Monitor function invocations and errors
 2. Check execution time (should be < 2 seconds)
 3. Monitor memory usage
@@ -243,6 +252,7 @@ Request a new verification code.
 ```
 
 Response:
+
 ```json
 {
   "verificationId": "uuid",
@@ -258,6 +268,7 @@ Response:
 Check verification status (poll this every 2 seconds).
 
 Response when pending:
+
 ```json
 {
   "email": "user@us.af.mil",
@@ -268,6 +279,7 @@ Response when pending:
 ```
 
 Response when verified:
+
 ```json
 {
   "email": "user@us.af.mil",
@@ -293,6 +305,7 @@ Generate a new code if the first one expired.
 SendGrid sends inbound emails here (automatic, no manual invocation needed).
 
 Payload structure:
+
 ```json
 {
   "from": "user@us.af.mil",
@@ -312,6 +325,7 @@ Payload structure:
 ### 1. Email Rate Limiting
 
 Current limits (configurable):
+
 - 5 verification requests per email per hour
 - 30-minute code expiration
 - 10-minute polling window
@@ -321,6 +335,7 @@ Adjust in `netlify/functions/rate-limit.ts` and `verify-status.ts`.
 ### 2. Database Backups
 
 The inbound verification system stores sensitive data:
+
 - User emails and verification status
 - SPF/DKIM validation results
 - Audit logs
@@ -330,6 +345,7 @@ Ensure your Supabase/PostgreSQL backups are configured.
 ### 3. Logging & Compliance
 
 All verification events are logged in `email_verification_audit` table including:
+
 - Code generation
 - Verification success/failure
 - SPF/DKIM results
@@ -340,6 +356,7 @@ This provides a complete audit trail for compliance.
 ### 4. Error Handling
 
 The webhook handles:
+
 - Invalid JSON payloads (400)
 - Missing verification code (400)
 - SPF/DKIM failures (401)
@@ -354,6 +371,7 @@ All errors are logged with details for debugging.
 ⚠️ **SPF/DKIM Validation is Critical**
 
 Never trust email origin without verifying SPF/DKIM headers. This prevents:
+
 - Spoofed .mil emails from non-military addresses
 - Replay attacks
 - Man-in-the-middle attacks
@@ -361,6 +379,7 @@ Never trust email origin without verifying SPF/DKIM headers. This prevents:
 ✅ **Code Expiration**
 
 Codes expire after 30 minutes. This prevents:
+
 - Brute force attacks
 - Reuse of old codes
 - Long-lived verification tokens
@@ -368,6 +387,7 @@ Codes expire after 30 minutes. This prevents:
 ✅ **Rate Limiting**
 
 Max 5 requests per email per hour. This prevents:
+
 - Verification code enumeration
 - Spam/DoS attacks
 - Abuse of the inbound email system

@@ -78,14 +78,11 @@ export const FamilyVerificationSection = ({
     setActionLoading(requestId);
 
     try {
-      const response = await fetch(
-        "/.netlify/functions/sponsor/approve",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ requestId }),
-        },
-      );
+      const response = await fetch("/.netlify/functions/sponsor/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId }),
+      });
 
       if (response.ok && dashboard) {
         setDashboard({
@@ -106,14 +103,11 @@ export const FamilyVerificationSection = ({
     setActionLoading(requestId);
 
     try {
-      const response = await fetch(
-        "/.netlify/functions/sponsor/deny",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ requestId, reason }),
-        },
-      );
+      const response = await fetch("/.netlify/functions/sponsor/deny", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, reason }),
+      });
 
       if (response.ok && dashboard) {
         setDashboard({
@@ -146,14 +140,11 @@ export const FamilyVerificationSection = ({
     setActionLoading("revoke");
 
     try {
-      const response = await fetch(
-        "/.netlify/functions/sponsor/revoke",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ linkId: dashboard.activeFamily.id }),
-        },
-      );
+      const response = await fetch("/.netlify/functions/sponsor/revoke", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ linkId: dashboard.activeFamily.id }),
+      });
 
       if (response.ok) {
         setDashboard({
@@ -168,12 +159,10 @@ export const FamilyVerificationSection = ({
     }
   };
 
-  const pendingRequests = dashboard?.requests.filter(
-    (r) => r.status === "pending",
-  ) ?? [];
-  const processedRequests = dashboard?.requests.filter(
-    (r) => r.status !== "pending",
-  ) ?? [];
+  const pendingRequests =
+    dashboard?.requests.filter((r) => r.status === "pending") ?? [];
+  const processedRequests =
+    dashboard?.requests.filter((r) => r.status !== "pending") ?? [];
 
   if (loading) {
     return (
@@ -223,7 +212,8 @@ export const FamilyVerificationSection = ({
                 Active Family Member
               </h3>
               <p className="text-sm text-emerald-800 dark:text-emerald-200">
-                {dashboard.activeFamily.username} ({dashboard.activeFamily.email})
+                {dashboard.activeFamily.username} (
+                {dashboard.activeFamily.email})
               </p>
               <p className="text-xs text-emerald-700 dark:text-emerald-300">
                 Linked on{" "}
@@ -248,7 +238,10 @@ export const FamilyVerificationSection = ({
       {dashboard?.cooldown ? (
         <div className="space-y-3 rounded-3xl border border-amber-200 bg-amber-50/50 p-5 dark:border-amber-900 dark:bg-amber-950/20">
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" aria-hidden />
+            <Clock
+              className="h-5 w-5 text-amber-600 dark:text-amber-400"
+              aria-hidden
+            />
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-amber-900 dark:text-amber-100">
                 Cooldown Period Active

@@ -115,7 +115,14 @@ const handleRequestApproval = async (event: any) => {
     await client.query(
       `INSERT INTO sponsor_requests (id, family_member_id, sponsor_id, sponsor_username, status, expires_at)
        VALUES ($1, $2, $3, $4, $5, $6)`,
-      [requestId, familyMemberId, sponsor.id, trimmedSponsorUsername, "pending", expiresAt],
+      [
+        requestId,
+        familyMemberId,
+        sponsor.id,
+        trimmedSponsorUsername,
+        "pending",
+        expiresAt,
+      ],
     );
 
     // Log the request
@@ -217,21 +224,23 @@ const handleGetRequests = async (event: any) => {
           createdAt: row.created_at,
           expiresAt: row.expires_at,
         })),
-        activeFamily: familyLinkResult.rows.length > 0
-          ? {
-              id: familyLinkResult.rows[0].id,
-              familyMemberId: familyLinkResult.rows[0].family_member_id,
-              username: familyLinkResult.rows[0].username,
-              email: familyLinkResult.rows[0].email,
-              avatarUrl: familyLinkResult.rows[0].avatar_url,
-              linkedAt: familyLinkResult.rows[0].created_at,
-            }
-          : null,
-        cooldown: cooldownResult.rows.length > 0
-          ? {
-              until: cooldownResult.rows[0].cooldown_until,
-            }
-          : null,
+        activeFamily:
+          familyLinkResult.rows.length > 0
+            ? {
+                id: familyLinkResult.rows[0].id,
+                familyMemberId: familyLinkResult.rows[0].family_member_id,
+                username: familyLinkResult.rows[0].username,
+                email: familyLinkResult.rows[0].email,
+                avatarUrl: familyLinkResult.rows[0].avatar_url,
+                linkedAt: familyLinkResult.rows[0].created_at,
+              }
+            : null,
+        cooldown:
+          cooldownResult.rows.length > 0
+            ? {
+                until: cooldownResult.rows[0].cooldown_until,
+              }
+            : null,
       }),
     };
   } catch (error) {
@@ -269,7 +278,9 @@ const handleApproveRequest = async (event: any) => {
     if (requestResult.rows.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "Request not found or already processed" }),
+        body: JSON.stringify({
+          error: "Request not found or already processed",
+        }),
       };
     }
 
@@ -376,7 +387,9 @@ const handleDenyRequest = async (event: any) => {
     if (requestResult.rows.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "Request not found or already processed" }),
+        body: JSON.stringify({
+          error: "Request not found or already processed",
+        }),
       };
     }
 

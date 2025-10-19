@@ -148,7 +148,10 @@ export const cleanupRateLimitStore = (): void => {
 
 // Run cleanup every 5 minutes
 if (typeof global !== "undefined") {
-  setInterval(() => {
-    cleanupRateLimitStore();
-  }, 5 * 60 * 1000);
+  setInterval(
+    () => {
+      cleanupRateLimitStore();
+    },
+    5 * 60 * 1000,
+  );
 }

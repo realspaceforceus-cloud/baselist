@@ -53,6 +53,7 @@ MX records tell email servers where to send emails for your domain.
 You should now see 3 MX records for trustypcs.com pointing to SendGrid.
 
 **Screenshot of what it looks like:**
+
 ```
 Type   Name  Value                  Priority  TTL
 MX     @     mx.sendgrid.net        1         3600
@@ -74,10 +75,9 @@ Now tell SendGrid where to send emails it receives.
 2. Navigate to **Settings > Inbound Parse** (left sidebar)
 3. Click **Create New Endpoint** (blue button, top right)
 4. Fill in the form:
-
    - **Hostname:** `trustypcs.com`
    - **URL:** `https://yournetlifysite.netlify.app/.netlify/functions/inbound-email`
-     
+
      ⚠️ **IMPORTANT:** Replace `yournetlifysite` with your actual Netlify site URL. If you don't know it:
      - Go to https://app.netlify.com
      - Select your BaseList project
@@ -112,6 +112,7 @@ DKIM proves emails are genuine. This is critical for security.
 7. Copy the CNAME records you see (usually 2-3 of them)
 
 **Example of what you'll see:**
+
 ```
 Host: k1._domainkey.trustypcs.com
 Value: k1.trustypcs.com.sendgrid.net
@@ -208,6 +209,7 @@ SendGrid has a test email feature:
 4. Click it
 
 You should see in your browser's console or server logs:
+
 ```
 [INBOUND EMAIL] Received from: test@us.af.mil
 ```
@@ -252,13 +254,16 @@ Send an email from a .mil account to `verify@trustypcs.com`:
 Right now emails can go to any address at trustypcs.com. You might want to create a specific mailbox for verification emails.
 
 ### Option 1: Catch-All Mailbox (Simple)
+
 - Let all emails to trustypcs.com be caught by a single mailbox
 - No action needed - emails are sent to your webhook regardless
 
 ### Option 2: Specific Verification Email (Recommended)
+
 Create an email address like `verify@trustypcs.com` or `noreply@trustypcs.com`:
 
 **In your email provider (Gmail, Outlook, etc.):**
+
 1. Create a new email account or alias
 2. Forward all emails to your main email or a team inbox
 3. Use this address in instructions: "Send emails to verify@trustypcs.com"
@@ -270,6 +275,7 @@ Create an email address like `verify@trustypcs.com` or `noreply@trustypcs.com`:
 ### Problem: MX records not showing up in DNS lookup
 
 **Solution:**
+
 - Wait 5-30 minutes for DNS to propagate
 - Clear your browser cache
 - Try a different DNS lookup tool: https://mxtoolbox.com/mxlookup.aspx
@@ -278,6 +284,7 @@ Create an email address like `verify@trustypcs.com` or `noreply@trustypcs.com`:
 ### Problem: Email arrives but webhook doesn't receive it
 
 **Solution:**
+
 1. Check SendGrid Activity log: Go to **Activity > Search** and filter by your domain
 2. Look for bounce, spam, or error messages
 3. Check Netlify function logs for errors
@@ -286,6 +293,7 @@ Create an email address like `verify@trustypcs.com` or `noreply@trustypcs.com`:
 ### Problem: DKIM verification stuck
 
 **Solution:**
+
 - DKIM can take 24-48 hours to fully propagate
 - Try clicking "Verify" again after waiting
 - Make sure CNAME records are exactly as SendGrid provided (no extra characters)
@@ -293,6 +301,7 @@ Create an email address like `verify@trustypcs.com` or `noreply@trustypcs.com`:
 ### Problem: SPF record conflicts
 
 **Solution:**
+
 - You can only have ONE SPF record per domain
 - If you already have one, edit it to include SendGrid:
   ```
@@ -304,7 +313,9 @@ Create an email address like `verify@trustypcs.com` or `noreply@trustypcs.com`:
 ## Next Steps After Setup
 
 ### 1. Test with Real .mil Email
+
 When you have access to a .mil email account:
+
 - Go to BaseList signup page
 - Sign up with your .mil email
 - Follow the inbound verification instructions
@@ -312,11 +323,13 @@ When you have access to a .mil email account:
 - Check if you get verified
 
 ### 2. Monitor Logs
+
 - Watch Netlify function logs during testing
 - Check SendGrid activity log for delivery status
 - Look for SPF/DKIM pass/fail results
 
 ### 3. Set Up Admin Dashboard
+
 - Create an admin account
 - Go to Family Verification section
 - Test sponsor approval flow

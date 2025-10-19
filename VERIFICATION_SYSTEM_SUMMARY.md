@@ -9,6 +9,7 @@ A comprehensive verification system built for BaseList that enables secure authe
 ### 1. **Inbound Email Verification System** (For .mil Addresses)
 
 #### How it Works
+
 - User signs up with .mil email
 - System generates a unique verification code (format: `VER-XXXXX`)
 - User sends email to `verify@yourdomain.com` with the code
@@ -16,16 +17,19 @@ A comprehensive verification system built for BaseList that enables secure authe
 - User marked as DoD-verified (no outbound email needed!)
 
 #### Database Tables
+
 - `email_verifications` - Stores verification codes, status, expiration
 - `email_verification_audit` - Audit trail of all verification events
 
 #### API Endpoints
+
 - `POST /.netlify/functions/verify-status/request` - Generate verification code
 - `GET /.netlify/functions/verify-status/status` - Poll verification status
 - `POST /.netlify/functions/verify-status/resend` - Request new code
 - `POST /.netlify/functions/inbound-email` - Webhook for incoming emails
 
 #### Frontend
+
 - Updated signup flow in `client/pages/Landing.tsx`
 - Shows user the code and step-by-step instructions
 - Polls for verification status every 2 seconds
@@ -34,6 +38,7 @@ A comprehensive verification system built for BaseList that enables secure authe
 ### 2. **Sponsor & Family Verification System**
 
 #### How it Works
+
 - DoD-verified users can approve exactly **one** family member
 - Family members create account with personal email
 - Family member requests sponsor approval by entering sponsor's username
@@ -43,12 +48,14 @@ A comprehensive verification system built for BaseList that enables secure authe
 - If revoked: 7-day cooldown before sponsor can approve another
 
 #### Database Tables
+
 - `family_links` - Active family member relationships (one per sponsor)
 - `sponsor_requests` - Pending approval requests (7-day expiration)
 - `sponsor_cooldowns` - Rate limiting after revocation
 - `sponsor_actions_audit` - Complete audit trail of all sponsor actions
 
 #### API Endpoints
+
 - `POST /.netlify/functions/sponsor/request` - Family member requests approval
 - `GET /.netlify/functions/sponsor/requests` - Get pending/active requests
 - `POST /.netlify/functions/sponsor/approve` - Approve a request
@@ -56,6 +63,7 @@ A comprehensive verification system built for BaseList that enables secure authe
 - `POST /.netlify/functions/sponsor/revoke` - Revoke active link
 
 #### Frontend
+
 - `FamilyVerificationSection` component in admin panel
 - Displays pending approval queue
 - Shows active family member (if any)
@@ -65,16 +73,19 @@ A comprehensive verification system built for BaseList that enables secure authe
 ### 3. **Rate Limiting & Abuse Prevention**
 
 #### Features
+
 - Per-email verification request limit: 5 per hour
 - Rate limit cleanup: every 5 minutes
 - Abuse event logging with full details
 - Configurable thresholds
 
 #### Database Table
+
 - `abuse_log` - Tracks suspicious activities
 - `rate_limit_tracking` - Persistent rate limit state (optional)
 
 #### Utilities
+
 - `checkRateLimit()` - Enforce rate limits
 - `logAbuseEvent()` - Log suspicious activities
 - `checkAbuseStatus()` - Query abuse patterns
@@ -205,7 +216,7 @@ netlify/functions/
 ✅ **Audit Trail** - Complete event logging for compliance  
 ✅ **One-Family-Per-Sponsor** - Prevents abuse of family verification  
 ✅ **Cooldown Periods** - 7-day cooldown after revocation  
-✅ **Request Expiration** - Sponsor requests expire after 7 days  
+✅ **Request Expiration** - Sponsor requests expire after 7 days
 
 ## User Flows
 
@@ -381,6 +392,7 @@ curl "https://yourdomain.com/.netlify/functions/sponsor/requests?sponsorId=USER_
 ## Support & Troubleshooting
 
 See `INBOUND_EMAIL_SETUP.md` for:
+
 - Setup troubleshooting
 - Testing procedures
 - Monitoring guidelines

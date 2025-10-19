@@ -99,9 +99,7 @@ const handleRequestVerification = async (event: any) => {
       ],
     );
 
-    console.log(
-      `[VERIFY REQUEST] Generated code for ${trimmedEmail}: ${code}`,
-    );
+    console.log(`[VERIFY REQUEST] Generated code for ${trimmedEmail}: ${code}`);
 
     return {
       statusCode: 201,
