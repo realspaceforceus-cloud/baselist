@@ -24,31 +24,32 @@ const handleRequestVerification = async (event: any) => {
   const trimmedEmail = email.trim().toLowerCase();
   console.log("[VERIFY REQUEST] Trimmed email:", trimmedEmail);
 
+  // TODO: Re-enable rate limiting after testing
   // Rate limit: max 5 requests per email per hour
-  const rateLimitCheck = await checkRateLimit(
-    {
-      windowMs: 60 * 60 * 1000, // 1 hour
-      maxRequests: 5,
-      key: "verify_request",
-    },
-    trimmedEmail,
-  );
+  // const rateLimitCheck = await checkRateLimit(
+  //   {
+  //     windowMs: 60 * 60 * 1000, // 1 hour
+  //     maxRequests: 5,
+  //     key: "verify_request",
+  //   },
+  //   trimmedEmail,
+  // );
 
-  if (!rateLimitCheck.allowed) {
-    console.log("[VERIFY REQUEST] Rate limit exceeded for:", trimmedEmail);
-    await logAbuseEvent("verify_request_rate_limit", trimmedEmail, {
-      clientIp,
-      remaining: rateLimitCheck.remaining,
-    });
+  // if (!rateLimitCheck.allowed) {
+  //   console.log("[VERIFY REQUEST] Rate limit exceeded for:", trimmedEmail);
+  //   await logAbuseEvent("verify_request_rate_limit", trimmedEmail, {
+  //     clientIp,
+  //     remaining: rateLimitCheck.remaining,
+  //   });
 
-    return {
-      statusCode: 429,
-      body: JSON.stringify({
-        error: "Too many verification requests. Try again later.",
-        resetTime: rateLimitCheck.resetTime,
-      }),
-    };
-  }
+  //   return {
+  //     statusCode: 429,
+  //     body: JSON.stringify({
+  //       error: "Too many verification requests. Try again later.",
+  //       resetTime: rateLimitCheck.resetTime,
+  //     }),
+  //   };
+  // }
 
   let client;
   try {
