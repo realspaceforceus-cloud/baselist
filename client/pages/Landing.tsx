@@ -75,7 +75,7 @@ const Landing = (): JSX.Element => {
     completeDowVerification,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
-  const joinSectionRef = React.useRef<HTMLDivElement>(null);
+  const joinSectionRef = useRef<HTMLDivElement>(null);
 
   const [joinStage, setJoinStage] = useState<JoinStage>("hidden");
   const [accountForm, setAccountForm] = useState(defaultAccountForm);
