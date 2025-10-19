@@ -312,12 +312,20 @@ const Landing = (): JSX.Element => {
       return;
     }
 
+    if (verificationCheckInterval) {
+      clearInterval(verificationCheckInterval);
+      setVerificationCheckInterval(null);
+    }
+
     setJoinStage("hidden");
     setPendingUserId(null);
     setPendingEmail("");
     setAccountForm(defaultAccountForm);
     setVerificationCode("");
     setVerificationError(null);
+    setGeneratedCode("");
+    setIsVerificationPending(false);
+    setTimeRemaining(1800);
 
     toast.success("Welcome to BaseList!", {
       description: "You can now post listings and message other members.",
@@ -325,6 +333,41 @@ const Landing = (): JSX.Element => {
 
     window.location.href = "/";
   };
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (verificationCheckInterval) {
+        clearInterval(verificationCheckInterval);
+      }
+    };
+  }, [verificationCheckInterval]);
+
+  // Countdown timer for verification code expiration
+  useEffect(() => {
+    if (joinStage !== "verify" || !isVerificationPending) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          if (verificationCheckInterval) {
+            clearInterval(verificationCheckInterval);
+            setVerificationCheckInterval(null);
+          }
+          setIsVerificationPending(false);
+          setVerificationError(
+            "Verification code expired. Please generate a new one.",
+          );
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [joinStage, isVerificationPending, verificationCheckInterval]);
 
   useEffect(() => {
     if (joinStage !== "account" || locationStatus !== "idle") {
