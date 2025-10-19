@@ -4,7 +4,6 @@ import { z } from "zod";
 import { store } from "../data/store";
 import type { AuthenticatedRequest } from "../middleware/authenticate";
 import { authenticate, requireAdmin } from "../middleware/authenticate";
-import { sendTransactionalEmail } from "../services/email";
 
 const updateUserSchema = z.object({
   status: z.enum(["active", "suspended", "banned"]).optional(),
