@@ -129,6 +129,22 @@ export const Header = (): JSX.Element => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isBaseSwitchOpen, setIsBaseSwitchOpen] = useState(false);
   const [baseSearch, setBaseSearch] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("theme") === "dark" ||
+           (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  });
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (isDarkMode) {
+      html.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      html.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
 
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
