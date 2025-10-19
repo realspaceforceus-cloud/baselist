@@ -387,8 +387,8 @@ const Landing = (): JSX.Element => {
   const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
 
   return (
-    <div className="space-y-10 py-10">
-      <section className="px-4">
+    <div className={`min-h-screen w-full flex items-center justify-center px-4 py-10 transition-all duration-300 ${isJoinActive ? "hidden" : ""}`}>
+      <section className="animate-fade-in">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-5 text-center">
           <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
             Verified classifieds for military bases.
