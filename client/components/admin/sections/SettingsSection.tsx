@@ -148,9 +148,9 @@ export const SettingsSection = (): JSX.Element => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Website Settings</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
           <p className="text-gray-600 mt-1">
-            Manage your website name, contact information, and footer details
+            Manage your admin account, website information, and contact details
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
@@ -158,6 +158,137 @@ export const SettingsSection = (): JSX.Element => {
           <span className="text-sm font-medium text-gray-700">v{APP_VERSION}</span>
         </div>
       </div>
+
+      {/* Admin Account Settings */}
+      <Card className="p-6 border-blue-200 bg-blue-50">
+        <div className="flex items-center gap-2 mb-4">
+          <Lock className="w-5 h-5 text-blue-600" />
+          <h3 className="text-lg font-semibold text-gray-900">Super Admin Account</h3>
+        </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Username
+              </label>
+              <Input
+                type="text"
+                name="username"
+                value={adminFormData.username}
+                onChange={handleAdminAccountChange}
+                placeholder="Enter new username"
+                className="rounded-lg"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Leave blank to keep current
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <Input
+                type="email"
+                name="email"
+                value={adminFormData.email}
+                onChange={handleAdminAccountChange}
+                placeholder="Enter new email"
+                className="rounded-lg"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Leave blank to keep current
+              </p>
+            </div>
+          </div>
+
+          {showPasswordForm ? (
+            <div className="space-y-4 pt-4 border-t">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Current Password
+                </label>
+                <Input
+                  type="password"
+                  name="currentPassword"
+                  value={adminFormData.currentPassword}
+                  onChange={handleAdminAccountChange}
+                  placeholder="��•••••••"
+                  className="rounded-lg"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password
+                  </label>
+                  <Input
+                    type="password"
+                    name="newPassword"
+                    value={adminFormData.newPassword}
+                    onChange={handleAdminAccountChange}
+                    placeholder="••••••••"
+                    className="rounded-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Min 8 characters
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm Password
+                  </label>
+                  <Input
+                    type="password"
+                    name="confirmPassword"
+                    value={adminFormData.confirmPassword}
+                    onChange={handleAdminAccountChange}
+                    placeholder="••••••••"
+                    className="rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Button
+              onClick={() => setShowPasswordForm(true)}
+              variant="outline"
+              className="w-full"
+            >
+              Change Password
+            </Button>
+          )}
+
+          <div className="flex gap-3 pt-4">
+            <Button
+              onClick={handleUpdateAdminAccount}
+              disabled={isAdminLoading}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            >
+              {isAdminLoading ? "Updating..." : "Update Admin Account"}
+            </Button>
+            {showPasswordForm && (
+              <Button
+                onClick={() => {
+                  setShowPasswordForm(false);
+                  setAdminFormData((prev) => ({
+                    ...prev,
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: "",
+                  }));
+                }}
+                variant="outline"
+                className="rounded-lg"
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+      </Card>
 
       {/* Website Information */}
       <Card className="p-6">
