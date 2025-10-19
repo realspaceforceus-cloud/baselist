@@ -749,6 +749,20 @@ const Landing = (): JSX.Element => {
                     >
                       {generatedCode}
                     </code>
+                    <div className="flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigator.clipboard.writeText(generatedCode);
+                          toast.success("Code copied to clipboard!");
+                        }}
+                        className="gap-2"
+                      >
+                        <Copy className="h-4 w-4" />
+                        Copy Code
+                      </Button>
+                    </div>
                     <p className="text-xs text-center text-muted-foreground">
                       Copy this 5-character code (0-9, A-Z only)
                     </p>
