@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import { supabase } from "./db";
+import { pool } from "./db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 
@@ -9,10 +9,9 @@ export const handler: Handler = async (event) => {
 
   // POST /api/auth/register
   if (method === "POST" && path === "/register") {
+    const client = await pool.connect();
     try {
-      const { email, password, username, baseId } = JSON.parse(
-        event.body || "{}",
-      );
+      const { email, password, username, baseId } = JSON.parse(event.body || "{}");
 
       if (!email || !password || !username || !baseId) {
         return {
@@ -22,13 +21,9 @@ export const handler: Handler = async (event) => {
       }
 
       // Check if user exists
-      const { data: existing } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", email)
-        .single();
+      const existing = await client.query("SELECT id FROM users WHERE email = $1", [email]);
 
-      if (existing) {
+      if (existing.rows.length > 0) {
         return {
           statusCode: 409,
           body: JSON.stringify({ error: "Email already registered" }),
@@ -38,38 +33,30 @@ export const handler: Handler = async (event) => {
       const passwordHash = await bcrypt.hash(password, 10);
       const userId = randomUUID();
 
-      const { error } = await supabase.from("users").insert({
-        id: userId,
-        email,
-        username,
-        password_hash: passwordHash,
-        role: "member",
-        status: "active",
-        base_id: baseId,
-        avatar_url: "",
-      });
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      await client.query(
+        `INSERT INTO users (id, email, username, password_hash, role, status, base_id, avatar_url)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [userId, email, username, passwordHash, "member", "active", baseId, ""],
+      );
 
       return {
         statusCode: 201,
         body: JSON.stringify({ success: true, userId }),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
   // POST /api/auth/login
   if (method === "POST" && path === "/login") {
+    const client = await pool.connect();
     try {
       const { email, password } = JSON.parse(event.body || "{}");
 
@@ -80,13 +67,10 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const { data: user, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email)
-        .single();
+      const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
+      const user = result.rows[0];
 
-      if (error || !user) {
+      if (!user) {
         return {
           statusCode: 401,
           body: JSON.stringify({ error: "Invalid credentials" }),
@@ -101,8 +85,6 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      // In production, generate JWT tokens here
-      // For now, return user data
       return {
         statusCode: 200,
         body: JSON.stringify({
@@ -117,10 +99,13 @@ export const handler: Handler = async (event) => {
         }),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
