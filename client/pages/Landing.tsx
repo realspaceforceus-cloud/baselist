@@ -233,46 +233,76 @@ const Landing = (): JSX.Element => {
     }
   };
 
-  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setVerificationError(null);
-
-    if (!verificationCode.trim()) {
-      setVerificationError("Enter the verification code from your email");
-      return;
-    }
-
-    setIsSubmitting(true);
-
+  const checkVerificationStatus = async () => {
     try {
-      const response = await fetch("/.netlify/functions/auth/verify-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: pendingEmail,
-          code: verificationCode.trim(),
-        }),
-      });
+      const response = await fetch(
+        `/.netlify/functions/verify-status/status?email=${encodeURIComponent(pendingEmail)}`,
+      );
 
       if (!response.ok) {
-        const data = await response.json();
-        setVerificationError(data.error || "Invalid code");
-        setIsSubmitting(false);
         return;
       }
 
       const data = await response.json();
-      setPendingUserId(data.userId);
-      setJoinStage("success");
-      toast.success("Email verified", {
-        description: "Your account is ready to use!",
+
+      if (data.status === "verified") {
+        setIsVerificationPending(false);
+        if (verificationCheckInterval) {
+          clearInterval(verificationCheckInterval);
+          setVerificationCheckInterval(null);
+        }
+        setPendingUserId(data.userId || pendingUserId);
+        setJoinStage("success");
+        toast.success("Email verified", {
+          description: "Your account is ready to use!",
+        });
+      } else if (data.status === "expired") {
+        setIsVerificationPending(false);
+        setVerificationError("Verification code has expired. Generate a new one.");
+      }
+    } catch (error) {
+      console.error("Status check failed:", error);
+    }
+  };
+
+  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setVerificationError(null);
+
+    setIsVerificationPending(true);
+
+    // Start polling for verification status
+    const interval = setInterval(checkVerificationStatus, 2000); // Check every 2 seconds
+    setVerificationCheckInterval(interval);
+
+    // Check immediately
+    checkVerificationStatus();
+  };
+
+  const handleResendCode = async () => {
+    try {
+      const response = await fetch(
+        "/.netlify/functions/verify-status/resend",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: pendingEmail }),
+        },
+      );
+
+      if (!response.ok) {
+        toast.error("Failed to resend code");
+        return;
+      }
+
+      const data = await response.json();
+      setGeneratedCode(data.code);
+      setTimeRemaining(1800); // Reset to 30 minutes
+      toast.success("Code sent", {
+        description: "New verification code generated.",
       });
     } catch (error) {
-      setVerificationError(
-        error instanceof Error ? error.message : "Verification failed",
-      );
-    } finally {
-      setIsSubmitting(false);
+      toast.error("Failed to resend code");
     }
   };
 
