@@ -386,55 +386,9 @@ const Landing = (): JSX.Element => {
 
   const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
 
-  return (
-    <div className={`space-y-10 py-10 ${isJoinActive ? "opacity-0 hidden" : "animate-fade-in"}`}>
-      <section className="px-4">
-        <div className="mx-auto flex max-w-4xl flex-col items-center gap-5 text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Verified classifieds for military bases.
-          </h1>
-          <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-            Built by an Active-Duty Airman for verified DoW members and families. Safe, local, and private—on base only.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
-            {ICON_STEPS.map(({ label, icon: Icon }) => (
-              <div key={label} className="flex flex-col items-center gap-2">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
-                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button size="lg" className="rounded-full px-8" onClick={handleStartJoin}>
-              Join Now
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-full px-8"
-              type="button"
-              onClick={openSignIn}
-            >
-              Sign In
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <span role="img" aria-hidden>
-                🔒
-              </span>
-              All data encrypted. No IDs stored. Trusted across the DoW.
-            </span>
-          </p>
-        </div>
-      </section>
-
-      {isJoinActive ? (
-        <section ref={joinSectionRef} className={`px-4 animate-fade-in ${isJoinActive ? "" : "hidden"}`}>
+  if (isJoinActive) {
+    return (
+      <section ref={joinSectionRef} className="space-y-10 py-10 px-4 animate-fade-in">
           <div className="mx-auto w-full max-w-3xl space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
             <header className="flex flex-col gap-2 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -784,8 +738,55 @@ const Landing = (): JSX.Element => {
             ) : null}
           </div>
         </section>
-      ) : null}
+      );
+  }
 
+  return (
+    <div className="space-y-10 py-10 animate-fade-in">
+      <section className="px-4">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-5 text-center">
+          <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+            Verified classifieds for military bases.
+          </h1>
+          <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
+            Built by an Active-Duty Airman for verified DoW members and families. Safe, local, and private—on base only.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
+            {ICON_STEPS.map(({ label, icon: Icon }) => (
+              <div key={label} className="flex flex-col items-center gap-2">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </span>
+                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button size="lg" className="rounded-full px-8" onClick={handleStartJoin}>
+              Join Now
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-full px-8"
+              type="button"
+              onClick={openSignIn}
+            >
+              Sign In
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1">
+              <span role="img" aria-hidden>
+                🔒
+              </span>
+              All data encrypted. No IDs stored. Trusted across the DoW.
+            </span>
+          </p>
+        </div>
+      </section>
     </div>
   );
 };
