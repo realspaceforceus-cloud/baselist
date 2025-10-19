@@ -43,9 +43,6 @@ export function createServer() {
   // Setup middleware
   app.use(checkSetupComplete);
 
-  // Setup routes (available before setup completion)
-  app.use("/api/setup", setupRouter);
-
   // Example API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
