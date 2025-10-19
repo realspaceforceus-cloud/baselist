@@ -710,48 +710,109 @@ const Landing = (): JSX.Element => {
 
           {joinStage === "verify" ? (
             <form onSubmit={handleVerifyCode} className="space-y-5">
-              <div className="space-y-2">
-                <label
-                  htmlFor="verify-code"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Verification Code
-                </label>
-                <Input
-                  id="verify-code"
-                  type="text"
-                  value={verificationCode}
-                  onChange={(event) =>
-                    setVerificationCode(
-                      event.target.value.replace(/\D/g, "").slice(0, 6),
-                    )
-                  }
-                  placeholder="000000"
-                  maxLength={6}
-                  className="h-11 rounded-full text-center text-lg tracking-widest font-mono"
-                  required
-                  disabled={isSubmitting}
-                  autoFocus
-                />
-                <p className="text-xs text-muted-foreground">
-                  We sent a 6-digit code to{" "}
-                  <span className="font-semibold">{pendingEmail}</span>
-                </p>
+              <div className="space-y-4 rounded-lg border border-border bg-card/50 p-4">
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-foreground">
+                    Verify your .mil email
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    We'll verify your DoD email by having you send us a code.
+                    This bypasses email filters to ensure safe delivery.
+                  </p>
+                </div>
+
+                <div className="space-y-3 rounded bg-background p-3">
+                  <p className="text-sm font-semibold text-foreground">
+                    Follow these steps:
+                  </p>
+                  <ol className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 font-semibold text-primary">
+                        1
+                      </span>
+                      <span>
+                        Copy this code:{" "}
+                        <code className="rounded bg-muted px-2 py-1 font-mono font-semibold text-foreground">
+                          {generatedCode}
+                        </code>
+                      </span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 font-semibold text-primary">
+                        2
+                      </span>
+                      <span>
+                        Open your .mil email account (Outlook/Gmail on your .mil
+                        account)
+                      </span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 font-semibold text-primary">
+                        3
+                      </span>
+                      <span>
+                        Send an email to{" "}
+                        <code className="rounded bg-muted px-2 py-1 font-mono text-foreground">
+                          verify@yourdomain.com
+                        </code>
+                      </span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 font-semibold text-primary">
+                        4
+                      </span>
+                      <span>Put the code in the subject line or email body</span>
+                    </li>
+                  </ol>
+                </div>
+
+                <div className="text-xs text-muted-foreground">
+                  <p>
+                    Sending from:{" "}
+                    <span className="font-semibold text-foreground">
+                      {pendingEmail}
+                    </span>
+                  </p>
+                </div>
               </div>
 
               {verificationError ? (
-                <p className="text-sm font-semibold text-destructive">
+                <p className="flex items-center gap-2 text-sm font-semibold text-destructive">
+                  <AlertCircle className="h-4 w-4" aria-hidden />
                   {verificationError}
                 </p>
+              ) : null}
+
+              {isVerificationPending ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-foreground">
+                    Waiting for verification...
+                  </p>
+                  <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full bg-primary transition-all duration-300"
+                      style={{
+                        width: `${(timeRemaining / 1800) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Code expires in{" "}
+                    {Math.floor(timeRemaining / 60)}:
+                    {String(timeRemaining % 60).padStart(2, "0")}
+                  </p>
+                </div>
               ) : null}
 
               <Button
                 type="submit"
                 className="w-full rounded-full"
                 size="lg"
-                disabled={verificationCode.length !== 6 || isSubmitting}
+                disabled={isVerificationPending || isSubmitting}
               >
-                {isSubmitting ? "Verifying..." : "Verify Email"}
+                {isVerificationPending
+                  ? "Waiting for verification..."
+                  : "I've sent the email"}
               </Button>
 
               <Button
@@ -759,9 +820,9 @@ const Landing = (): JSX.Element => {
                 variant="ghost"
                 className="w-full rounded-full"
                 onClick={handleResendCode}
-                disabled={isSubmitting}
+                disabled={isVerificationPending || isSubmitting}
               >
-                Didn't get the code? Resend
+                Generate a new code
               </Button>
             </form>
           ) : null}
