@@ -24,3 +24,4 @@ export type { AdminRole } from "./RolesSection";
 export { SecuritySection } from "./SecuritySection";
 export type { AdminAuditEntry } from "./SecuritySection";
 export { EmailTemplatesSection } from "./EmailTemplatesSection";
+export { FamilyVerificationSection } from "./FamilyVerificationSection";
