@@ -1,11 +1,11 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
-  AlertCircle,
-  CheckCircle2,
-  MapPin,
-  MessageCircle,
-  ShieldCheck,
-} from "lucide-react";
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { AlertCircle, CheckCircle2, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -50,14 +50,13 @@ const getDistanceInMiles = (
   const sinLat = Math.sin(dLat / 2);
   const sinLon = Math.sin(dLon / 2);
 
-  const aVal =
-    sinLat * sinLat + sinLon * sinLon * Math.cos(lat1) * Math.cos(lat2);
+  const aVal = sinLat * sinLat + sinLon * sinLon * Math.cos(lat1) * Math.cos(lat2);
   const c = 2 * Math.atan2(Math.sqrt(aVal), Math.sqrt(1 - aVal));
 
   return earthRadiusMiles * c;
 };
 
-type JoinStage = "hidden" | "account" | "base" | "verify" | "success";
+type JoinStage = "hidden" | "account" | "verify" | "success";
 
 const defaultAccountForm = {
   username: "",
@@ -69,7 +68,6 @@ const defaultAccountForm = {
 const Landing = (): JSX.Element => {
   const {
     bases,
-    activateAccount,
     isAuthenticated,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
@@ -80,12 +78,11 @@ const Landing = (): JSX.Element => {
   const [accountError, setAccountError] = useState<string | null>(null);
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationError, setVerificationError] = useState<string | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
   const [pendingEmail, setPendingEmail] = useState<string>("");
 
   const trimmedUsername = accountForm.username.trim();
-  const normalizedUsername = trimmedUsername.toLowerCase();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
   const trimmedPassword = accountForm.password.trim();
 
@@ -125,7 +122,10 @@ const Landing = (): JSX.Element => {
     setJoinStage("account");
     setAccountForm(defaultAccountForm);
     setAccountError(null);
-    setPendingAccountId(null);
+    setVerificationCode("");
+    setVerificationError(null);
+    setPendingUserId(null);
+    setPendingEmail("");
     setSearchTerm("");
     setSelectedBaseId(bases[0]?.id ?? "");
     setLocationStatus("idle");
@@ -164,6 +164,8 @@ const Landing = (): JSX.Element => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const response = await fetch("/.netlify/functions/auth/signup", {
         method: "POST",
@@ -179,6 +181,7 @@ const Landing = (): JSX.Element => {
       if (!response.ok) {
         const data = await response.json();
         setAccountError(data.error || "Failed to create account");
+        setIsSubmitting(false);
         return;
       }
 
@@ -193,11 +196,96 @@ const Landing = (): JSX.Element => {
       setAccountError(
         error instanceof Error ? error.message : "Failed to create account",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setVerificationError(null);
+
+    if (!verificationCode.trim()) {
+      setVerificationError("Enter the verification code from your email");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/.netlify/functions/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: pendingEmail,
+          code: verificationCode.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setVerificationError(data.error || "Invalid code");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const data = await response.json();
+      setPendingUserId(data.userId);
+      setJoinStage("success");
+      toast.success("Email verified", {
+        description: "Your account is ready to use!",
+      });
+    } catch (error) {
+      setVerificationError(
+        error instanceof Error ? error.message : "Verification failed",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      const response = await fetch("/.netlify/functions/auth/resend-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: pendingEmail }),
+      });
+
+      if (!response.ok) {
+        toast.error("Failed to resend code");
+        return;
+      }
+
+      toast.success("Code sent", {
+        description: "Check your email for the new verification code.",
+      });
+    } catch (error) {
+      toast.error("Failed to resend code");
+    }
+  };
+
+  const handleFinishSignup = () => {
+    if (!pendingUserId || !pendingEmail) {
+      return;
+    }
+
+    setJoinStage("hidden");
+    setPendingUserId(null);
+    setPendingEmail("");
+    setAccountForm(defaultAccountForm);
+    setVerificationCode("");
+    setVerificationError(null);
+
+    toast.success("Welcome to BaseList!", {
+      description: "You can now post listings and message other members.",
+    });
+
+    window.location.href = "/";
+  };
+
   useEffect(() => {
-    if (joinStage !== "base" || locationStatus !== "idle") {
+    if (joinStage !== "account" || locationStatus !== "idle") {
       return;
     }
 
@@ -223,11 +311,7 @@ const Landing = (): JSX.Element => {
           setLocationStatus("unavailable");
         }
       },
-      {
-        enableHighAccuracy: false,
-        maximumAge: 5 * 60 * 1000,
-        timeout: 10 * 1000,
-      },
+      { enableHighAccuracy: false, maximumAge: 5 * 60 * 1000, timeout: 10 * 1000 },
     );
   }, [joinStage, locationStatus]);
 
@@ -328,136 +412,14 @@ const Landing = (): JSX.Element => {
     return sortedBases.filter(({ base }) => !recommendedIds.includes(base.id));
   }, [recommendedIds, sortedBases, searchTerm]);
 
-  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setVerificationError(null);
-
-    if (!verificationCode.trim()) {
-      setVerificationError("Enter the verification code from your email");
-      return;
-    }
-
-    setIsVerifying(true);
-
-    try {
-      const response = await fetch("/.netlify/functions/auth/verify-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: pendingEmail,
-          code: verificationCode.trim(),
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        setVerificationError(data.error || "Invalid code");
-        setIsVerifying(false);
-        return;
-      }
-
-      const data = await response.json();
-      setPendingUserId(data.userId);
-      setJoinStage("success");
-      toast.success("Email verified", {
-        description: "Your account is ready to use!",
-      });
-    } catch (error) {
-      setVerificationError(
-        error instanceof Error ? error.message : "Verification failed",
-      );
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const handleResendCode = async () => {
-    try {
-      const response = await fetch("/.netlify/functions/auth/resend-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: pendingEmail }),
-      });
-
-      if (!response.ok) {
-        toast.error("Failed to resend code");
-        return;
-      }
-
-      toast.success("Code sent", {
-        description: "Check your email for the new verification code.",
-      });
-    } catch (error) {
-      toast.error("Failed to resend code");
-    }
-  };
-
-  const handleFinishSignup = async () => {
-    if (!pendingUserId || !pendingEmail) {
-      return;
-    }
-
-    try {
-      setJoinStage("hidden");
-      setPendingUserId(null);
-      setPendingEmail("");
-      setAccountForm(defaultAccountForm);
-      setVerificationCode("");
-
-      toast.success("Welcome to BaseList!", {
-        description: "You can now post listings and message other members.",
-      });
-
-      // Trigger a redirect to home or sign in
-      window.location.href = "/";
-    } catch (error) {
-      toast.error("Failed to complete signup");
-    }
-  };
-
   const handleExpansionSubmit = () => {
     if (!EMAIL_PATTERN.test(expansionEmail.trim())) {
       toast.error("Enter a valid email to stay informed.");
       return;
     }
-    toast.success("Thanks! We’ll notify you as new bases launch.");
+    toast.success("Thanks! We'll notify you as new bases launch.");
     setExpansionEmail("");
     setShowExpansionForm(false);
-  };
-
-  const handleFinishSignup = () => {
-    if (!pendingAccountId) {
-      return;
-    }
-
-    if (!pendingAccountVerified) {
-      toast.error("Confirm your DoW email before entering BaseList.");
-      return;
-    }
-
-    activateAccount(pendingAccountId, { rememberDevice: true });
-    toast.success("You’re signed in", {
-      description: "Welcome to BaseList. Start browsing your base feed.",
-    });
-    setJoinStage("hidden");
-    setPendingAccountId(null);
-    setAccountForm(defaultAccountForm);
-  };
-
-  const handleConfirmVerification = () => {
-    if (!pendingAccountId) {
-      return;
-    }
-
-    try {
-      completeDowVerification(pendingAccountId);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "We couldn’t complete your verification. Try again.",
-      );
-    }
   };
 
   const isJoinActive = joinStage !== "hidden" && !isAuthenticated;
@@ -469,24 +431,22 @@ const Landing = (): JSX.Element => {
           <header className="flex flex-col gap-2 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
               {joinStage === "account"
-                ? "Step 1 of 3"
-                : joinStage === "base"
-                  ? "Step 2 of 3"
-                  : "Step 3 of 3"}
+                ? "Step 1 of 2"
+                : joinStage === "verify"
+                  ? "Step 2 of 2"
+                  : "Complete"}
             </p>
             <h2 className="text-2xl font-semibold text-foreground">
               {joinStage === "account" && "Create your BaseList account"}
-              {joinStage === "base" && "Select your base"}
-              {joinStage === "success" && "You’re in"}
+              {joinStage === "verify" && "Verify your email"}
+              {joinStage === "success" && "You're all set!"}
             </h2>
             <p className="text-sm text-muted-foreground">
               {joinStage === "account"
                 ? "Username only. No real names required."
-                : joinStage === "base"
-                  ? "Pick your installation. You can switch later from your profile."
-                  : pendingAccountVerified
-                    ? "Your DoW email is confirmed. Welcome aboard."
-                    : "Confirm your DoW email from the link we sent to finish setup."}
+                : joinStage === "verify"
+                  ? "Enter the 6-digit code we sent to your email"
+                  : "Your account is ready. Sign in to get started."}
             </p>
           </header>
 
@@ -511,6 +471,7 @@ const Landing = (): JSX.Element => {
                   placeholder="Example: airman_421"
                   className="h-11 rounded-full"
                   required
+                  disabled={isSubmitting}
                 />
                 {accountForm.username ? (
                   usernamePositive ? (
@@ -528,10 +489,11 @@ const Landing = (): JSX.Element => {
                   )
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    3���20 characters. Letters, numbers, and underscores only.
+                    3-20 characters. Letters, numbers, and underscores only.
                   </p>
                 )}
               </div>
+
               <div className="space-y-2">
                 <label
                   htmlFor="signup-email"
@@ -552,22 +514,20 @@ const Landing = (): JSX.Element => {
                   placeholder="Enter your .mil or DoW email"
                   className="h-11 rounded-full"
                   required
+                  disabled={isSubmitting}
                 />
                 {accountForm.email ? (
                   emailPositive ? (
                     <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
                       <CheckCircle2 className="h-4 w-4" aria-hidden />
-                      DoW email detected. Check your inbox for the confirmation
-                      link.
+                      DoW email detected.
                     </p>
                   ) : (
                     <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
                       <AlertCircle className="h-4 w-4" aria-hidden />
                       {!emailFormatValid
                         ? "Enter a valid email address."
-                        : !emailDow
-                          ? "Use an approved DoW email (.mil or .defense.gov)."
-                          : "An account already exists with that email."}
+                        : "Use an approved DoW email (.mil or .defense.gov)."}
                     </p>
                   )
                 ) : (
@@ -576,6 +536,7 @@ const Landing = (): JSX.Element => {
                   </p>
                 )}
               </div>
+
               <div className="space-y-2">
                 <label
                   htmlFor="signup-password"
@@ -596,6 +557,7 @@ const Landing = (): JSX.Element => {
                   placeholder="Create a password"
                   className="h-11 rounded-full"
                   required
+                  disabled={isSubmitting}
                 />
                 {accountForm.password ? (
                   passwordPositive ? (
@@ -611,11 +573,11 @@ const Landing = (): JSX.Element => {
                   )
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works
-                    great.
+                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.
                   </p>
                 )}
               </div>
+
               <div className="flex items-start gap-3 rounded-2xl border border-border bg-background/80 p-4 text-sm text-muted-foreground">
                 <Checkbox
                   id="rules"
@@ -626,172 +588,85 @@ const Landing = (): JSX.Element => {
                       agreeRules: Boolean(checked),
                     }))
                   }
+                  disabled={isSubmitting}
                 />
                 <label htmlFor="rules" className="space-y-1">
-                  <span className="font-semibold text-foreground">
-                    I agree to the marketplace rules.
-                  </span>
+                  <span className="font-semibold text-foreground">I agree to the marketplace rules.</span>
                   <span className="block text-xs text-muted-foreground">
-                    No weapons, counterfeit, adult content, scams, or external
-                    payment demands.
+                    No weapons, counterfeit, adult content, scams, or external payment demands.
                   </span>
                 </label>
               </div>
+
               {accountError ? (
                 <p className="text-sm font-semibold text-destructive">
                   {accountError}
                 </p>
               ) : null}
+
               <Button
                 type="submit"
                 className="w-full rounded-full"
                 size="lg"
-                disabled={!canSubmitAccount}
+                disabled={!canSubmitAccount || isSubmitting}
               >
-                Create account
+                {isSubmitting ? "Creating account..." : "Create account"}
               </Button>
             </form>
           ) : null}
 
-          {joinStage === "base" ? (
-            <form onSubmit={handleBaseSubmit} className="space-y-5">
-              <div className="space-y-3">
+          {joinStage === "verify" ? (
+            <form onSubmit={handleVerifyCode} className="space-y-5">
+              <div className="space-y-2">
                 <label
-                  htmlFor="base-search"
+                  htmlFor="verify-code"
                   className="text-sm font-semibold text-foreground"
                 >
-                  Choose your base
+                  Verification Code
                 </label>
                 <Input
-                  id="base-search"
-                  type="search"
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Search your installation"
-                  className="h-11 rounded-full"
+                  id="verify-code"
+                  type="text"
+                  value={verificationCode}
+                  onChange={(event) =>
+                    setVerificationCode(event.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                  placeholder="000000"
+                  maxLength={6}
+                  className="h-11 rounded-full text-center text-lg tracking-widest font-mono"
+                  required
+                  disabled={isSubmitting}
+                  autoFocus
                 />
-                {locationStatus === "denied" ? (
-                  <p className="text-xs text-warning">
-                    Location access denied. Showing alphabetical list instead.
-                  </p>
-                ) : locationStatus === "unavailable" ? (
-                  <p className="text-xs text-muted-foreground">
-                    Location unavailable. Pick your base manually.
-                  </p>
-                ) : null}
+                <p className="text-xs text-muted-foreground">
+                  We sent a 6-digit code to <span className="font-semibold">{pendingEmail}</span>
+                </p>
               </div>
 
-              {recommendedBases.length > 0 ? (
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Nearby bases
-                  </p>
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {recommendedBases.map(({ base, distance }) => (
-                      <button
-                        key={`recommended-${base.id}`}
-                        type="button"
-                        onClick={() => setSelectedBaseId(base.id)}
-                        className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left text-sm transition ${
-                          selectedBaseId === base.id
-                            ? "border-primary bg-primary/10 text-foreground"
-                            : "border-border bg-background text-muted-foreground hover:border-primary/40"
-                        }`}
-                      >
-                        <span className="font-semibold text-foreground">
-                          {base.name}
-                        </span>
-                        <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                          {base.abbreviation}
-                          {Number.isFinite(distance)
-                            ? ` · ${Math.round(distance)} mi`
-                            : ""}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              {verificationError ? (
+                <p className="text-sm font-semibold text-destructive">
+                  {verificationError}
+                </p>
               ) : null}
 
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {searchTerm.trim() ? "Matching bases" : "All bases"}
-                </p>
-                {remainingBases.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-nav-border bg-background/70 p-4 text-xs text-muted-foreground">
-                    No bases match your search yet. Try a different name or
-                    abbreviation.
-                  </div>
-                ) : (
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {remainingBases.map(({ base, distance }) => (
-                      <button
-                        key={base.id}
-                        type="button"
-                        onClick={() => setSelectedBaseId(base.id)}
-                        className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left text-sm transition ${
-                          selectedBaseId === base.id
-                            ? "border-primary bg-primary/10 text-foreground"
-                            : "border-border bg-background text-muted-foreground hover:border-primary/40"
-                        }`}
-                      >
-                        <span className="font-semibold text-foreground">
-                          {base.name}
-                        </span>
-                        <span className="text-xs uppercase tracking-wide text-muted-foreground">
-                          {base.abbreviation}
-                          {Number.isFinite(distance)
-                            ? ` · ${Math.round(distance)} mi`
-                            : ""}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-3 rounded-2xl border border-dashed border-nav-border bg-background/70 p-4 text-xs text-muted-foreground">
-                <p className="font-semibold text-foreground">
-                  Don’t see your base? We’re constantly expanding.
-                </p>
-                {showExpansionForm ? (
-                  <div className="flex flex-col gap-3 md:flex-row">
-                    <Input
-                      type="email"
-                      value={expansionEmail}
-                      onChange={(event) =>
-                        setExpansionEmail(event.target.value)
-                      }
-                      placeholder="Your email for updates"
-                      className="h-10 rounded-full"
-                      required
-                    />
-                    <Button
-                      type="button"
-                      className="rounded-full px-5"
-                      size="sm"
-                      onClick={handleExpansionSubmit}
-                    >
-                      Notify me
-                    </Button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className="text-sm font-semibold text-primary hover:underline"
-                    onClick={() => setShowExpansionForm(true)}
-                  >
-                    Click here to be informed!
-                  </button>
-                )}
-              </div>
-
-              <Button type="submit" className="w-full rounded-full" size="lg">
-                Continue
+              <Button
+                type="submit"
+                className="w-full rounded-full"
+                size="lg"
+                disabled={verificationCode.length !== 6 || isSubmitting}
+              >
+                {isSubmitting ? "Verifying..." : "Verify Email"}
               </Button>
-              <p className="text-xs text-muted-foreground">
-                We show listings by base so meetups stay local and trusted.
-              </p>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full rounded-full"
+                onClick={handleResendCode}
+                disabled={isSubmitting}
+              >
+                Didn't get the code? Resend
+              </Button>
             </form>
           ) : null}
 
@@ -799,48 +674,19 @@ const Landing = (): JSX.Element => {
             <div className="space-y-5 text-center">
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">
-                  {pendingAccountVerified
-                    ? "DoW email confirmed"
-                    : "Check your inbox"}
+                  Account verified!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {pendingAccountVerified
-                    ? "Thanks for confirming. You can enter BaseList now."
-                    : pendingAccountEmail
-                      ? `We sent a confirmation link to ${pendingAccountEmail}. Click it to finish verification.`
-                      : "We sent a confirmation link. Click it to finish verification."}
+                  You're all set. Sign in to start browsing, posting, and messaging on BaseList.
                 </p>
-                {!pendingAccountVerified && pendingVerificationRequestedAt ? (
-                  <p className="text-xs text-muted-foreground">
-                    Verification requested{" "}
-                    {new Date(pendingVerificationRequestedAt).toLocaleString()}.
-                  </p>
-                ) : null}
               </div>
-              {!pendingAccountVerified ? (
-                <div className="space-y-3">
-                  <Button
-                    type="button"
-                    className="w-full rounded-full"
-                    size="lg"
-                    variant="outline"
-                    onClick={handleConfirmVerification}
-                  >
-                    I clicked the confirmation link
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    Once the link is confirmed you’ll unlock posting and
-                    messaging.
-                  </p>
-                </div>
-              ) : null}
+
               <Button
                 className="w-full rounded-full"
                 size="lg"
                 onClick={handleFinishSignup}
-                disabled={!pendingAccountVerified}
               >
-                Enter BaseList
+                Sign In
               </Button>
             </div>
           ) : null}
@@ -857,8 +703,7 @@ const Landing = (): JSX.Element => {
             Verified classifieds for military bases.
           </h1>
           <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-            Built by an Active-Duty Airman for verified DoW members and
-            families. Safe, local, and private—on base only.
+            Built by an Active-Duty Airman for verified DoW members and families. Safe, local, and private—on base only.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
             {ICON_STEPS.map(({ label, icon: Icon }) => (
@@ -873,11 +718,7 @@ const Landing = (): JSX.Element => {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button
-              size="lg"
-              className="rounded-full px-8"
-              onClick={handleStartJoin}
-            >
+            <Button size="lg" className="rounded-full px-8" onClick={handleStartJoin}>
               Join Now
             </Button>
             <Button
