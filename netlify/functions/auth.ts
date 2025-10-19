@@ -59,6 +59,12 @@ const sendVerificationCode = async (
   const apiKey = process.env.SENDGRID_API_KEY;
   const fromEmail = process.env.SENDGRID_FROM_EMAIL || "noreply@baselist.mil";
 
+  console.log("[DEBUG] SendGrid Configuration:", {
+    apiKeySet: !!apiKey,
+    apiKeyLength: apiKey?.length,
+    fromEmail,
+  });
+
   if (!apiKey) {
     console.error("SENDGRID_API_KEY is not set");
     console.log(`[VERIFICATION CODE - STUB] Email: ${email}, Code: ${code}`);
@@ -93,6 +99,35 @@ const sendVerificationCode = async (
       });
     }
 
+    const requestBody = {
+      personalizations: [
+        {
+          to: [
+            {
+              email,
+            },
+          ],
+        },
+      ],
+      from: {
+        email: fromEmail,
+      },
+      subject,
+      content: [
+        {
+          type: "text/html",
+          value: htmlContent,
+        },
+      ],
+    };
+
+    console.log("[DEBUG] SendGrid Request Body:", {
+      to: email,
+      from: fromEmail,
+      subject,
+      contentLength: htmlContent.length,
+    });
+
     // Send via SendGrid Web API
     const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
@@ -100,39 +135,34 @@ const sendVerificationCode = async (
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        personalizations: [
-          {
-            to: [
-              {
-                email,
-              },
-            ],
-          },
-        ],
-        from: {
-          email: fromEmail,
-        },
-        subject,
-        content: [
-          {
-            type: "text/html",
-            value: htmlContent,
-          },
-        ],
-      }),
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log("[DEBUG] SendGrid Response Status:", response.status);
+    console.log("[DEBUG] SendGrid Response Headers:", {
+      contentType: response.headers.get("content-type"),
+      contentLength: response.headers.get("content-length"),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      console.error(`SendGrid API error (${response.status}):`, error);
+      console.error(`[ERROR] SendGrid API error (${response.status}):`, error);
+      console.log("[DEBUG] Error response body:", error);
       return false;
     }
 
+    const responseBody = await response.text();
+    console.log("[DEBUG] SendGrid Response Body:", responseBody);
     console.log(`[EMAIL SENT] Verification code sent to ${email}`);
     return true;
   } catch (error) {
     console.error("Failed to send verification code email:", error);
+    if (error instanceof Error) {
+      console.log("[DEBUG] Error details:", {
+        message: error.message,
+        stack: error.stack,
+      });
+    }
     return false;
   }
 };
