@@ -718,9 +718,9 @@ const Landing = (): JSX.Element => {
             Built by an Active-Duty Airman for verified DoW members and
             families. Safe, local, and private—on base only.
           </p>
-          <div className="flex w-full max-w-2xl items-center justify-between">
-            {ICON_STEPS.map(({ label, icon: Icon }, index) => (
-              <div key={label} className={`flex flex-col items-center gap-2 ${index === 1 ? "ml-auto" : ""}`}>
+          <div className="flex items-center justify-center gap-8">
+            {ICON_STEPS.map(({ label, icon: Icon }) => (
+              <div key={label} className="flex flex-col items-center gap-2">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
