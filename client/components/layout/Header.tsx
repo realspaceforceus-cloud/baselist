@@ -225,6 +225,16 @@ export const Header = (): JSX.Element => {
           <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="ghost"
+              size="sm"
+              className="rounded-full p-2"
+              type="button"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              title={isDarkMode ? "Light mode" : "Dark mode"}
+            >
+              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            <Button
+              variant="ghost"
               className="rounded-full px-4 py-2 text-sm font-semibold"
               type="button"
               onClick={openSignIn}
