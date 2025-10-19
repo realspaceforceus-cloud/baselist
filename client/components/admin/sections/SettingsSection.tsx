@@ -31,6 +31,14 @@ export const SettingsSection = (): JSX.Element => {
     footer_show_links: settings.footer_show_links || "true",
   });
 
+  const [adminFormData, setAdminFormData] = useState({
+    username: "",
+    email: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
