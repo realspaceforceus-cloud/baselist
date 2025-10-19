@@ -1,3 +1,5 @@
+import sgMail from "@sendgrid/mail";
+
 interface TransactionalEmail {
   to: string;
   subject: string;
@@ -5,11 +7,18 @@ interface TransactionalEmail {
   context?: Record<string, unknown>;
 }
 
+const getEmailConfig = () => {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL || "noreply@baselist.mil";
+
+  return { apiKey, fromEmail };
+};
+
 const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-const buildVerificationEmailBody = (code: string, email: string): string => {
+const buildVerificationEmailBody = (code: string): string => {
   return `
     <html>
       <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -29,20 +38,43 @@ const buildVerificationEmailBody = (code: string, email: string): string => {
 };
 
 export const sendTransactionalEmail = async (email: TransactionalEmail) => {
+  const { apiKey, fromEmail } = getEmailConfig();
+
   if (process.env.NODE_ENV !== "production") {
     console.info("[email:stub]", { ...email, preview: true });
     return { ok: true };
   }
 
-  // In production, integrate with SendGrid, Mailgun, or AWS SES
-  // For now, this is a stub that logs the email
-  console.log("[email:production]", {
-    to: email.to,
-    subject: email.subject,
-    template: email.template,
-  });
+  if (!apiKey) {
+    console.error("SENDGRID_API_KEY is not set");
+    return { ok: false };
+  }
 
-  return { ok: true };
+  try {
+    sgMail.setApiKey(apiKey);
+
+    let htmlContent = "";
+
+    if (email.template === "verify" && email.context?.code) {
+      htmlContent = buildVerificationEmailBody(email.context.code as string);
+    } else {
+      htmlContent = `<p>Email template '${email.template}' not yet implemented</p>`;
+    }
+
+    const msg = {
+      to: email.to,
+      from: fromEmail,
+      subject: email.subject,
+      html: htmlContent,
+    };
+
+    await sgMail.send(msg);
+    console.log(`[email:sent] to: ${email.to}, template: ${email.template}`);
+    return { ok: true };
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    return { ok: false };
+  }
 };
 
 export const sendVerificationCode = async (
@@ -50,7 +82,7 @@ export const sendVerificationCode = async (
   code: string,
 ): Promise<boolean> => {
   try {
-    await sendTransactionalEmail({
+    const result = await sendTransactionalEmail({
       to: email,
       subject: "Verify your BaseList account",
       template: "verify",
@@ -59,7 +91,7 @@ export const sendVerificationCode = async (
         email,
       },
     });
-    return true;
+    return result.ok;
   } catch (error) {
     console.error("Failed to send verification code email:", error);
     return false;
