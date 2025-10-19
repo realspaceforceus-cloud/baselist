@@ -23,6 +23,7 @@ import { AdminSidebar, type AdminNavItem } from "@/components/admin/AdminSidebar
 import {
   BasesSection,
   DashboardSection,
+  EmailTemplatesSection,
   ListingsSection,
   MessagingSection,
   MetricsSection,
