@@ -1,10 +1,12 @@
 import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
+import { checkRateLimit, logAbuseEvent } from "./rate-limit";
 
 // POST /api/verify/request - Create a new verification code for .mil email
 const handleRequestVerification = async (event: any) => {
   const { email } = JSON.parse(event.body || "{}");
+  const clientIp = event.headers["client-ip"] || "unknown";
 
   if (!email) {
     return {
@@ -14,6 +16,31 @@ const handleRequestVerification = async (event: any) => {
   }
 
   const trimmedEmail = email.trim().toLowerCase();
+
+  // Rate limit: max 5 requests per email per hour
+  const rateLimitCheck = await checkRateLimit(
+    {
+      windowMs: 60 * 60 * 1000, // 1 hour
+      maxRequests: 5,
+      key: "verify_request",
+    },
+    trimmedEmail,
+  );
+
+  if (!rateLimitCheck.allowed) {
+    await logAbuseEvent("verify_request_rate_limit", trimmedEmail, {
+      clientIp,
+      remaining: rateLimitCheck.remaining,
+    });
+
+    return {
+      statusCode: 429,
+      body: JSON.stringify({
+        error: "Too many verification requests. Try again later.",
+        resetTime: rateLimitCheck.resetTime,
+      }),
+    };
+  }
 
   const client = await pool.connect();
 
