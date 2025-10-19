@@ -80,6 +80,69 @@ export const SettingsSection = (): JSX.Element => {
     }
   };
 
+  const handleAdminAccountChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setAdminFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateAdminAccount = async () => {
+    if (!adminFormData.username && !adminFormData.email && !adminFormData.newPassword) {
+      toast.error("Please provide at least one change");
+      return;
+    }
+
+    if (adminFormData.newPassword && adminFormData.newPassword !== adminFormData.confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    if (adminFormData.newPassword && adminFormData.newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters");
+      return;
+    }
+
+    try {
+      setIsAdminLoading(true);
+      const response = await fetch("/api/admin/update-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: adminFormData.username || undefined,
+          email: adminFormData.email || undefined,
+          currentPassword: adminFormData.currentPassword || undefined,
+          newPassword: adminFormData.newPassword || undefined,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "Failed to update admin account");
+        return;
+      }
+
+      toast.success("Admin account updated successfully!");
+      setAdminFormData({
+        username: "",
+        email: "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setShowPasswordForm(false);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Failed to update admin account";
+      toast.error(errorMsg);
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
