@@ -306,26 +306,6 @@ const Landing = (): JSX.Element => {
     }
   };
 
-  const handleResendCode = async () => {
-    try {
-      const response = await fetch("/.netlify/functions/auth/resend-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: pendingEmail }),
-      });
-
-      if (!response.ok) {
-        toast.error("Failed to resend code");
-        return;
-      }
-
-      toast.success("Code sent", {
-        description: "Check your email for the new verification code.",
-      });
-    } catch (error) {
-      toast.error("Failed to resend code");
-    }
-  };
 
   const handleFinishSignup = () => {
     if (!pendingUserId || !pendingEmail) {
