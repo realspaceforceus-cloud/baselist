@@ -87,6 +87,8 @@ const Landing = (): JSX.Element => {
   const [verificationCheckInterval, setVerificationCheckInterval] =
     useState<NodeJS.Timeout | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(1800); // 30 minutes
+  const [hasShownSuccessNotification, setHasShownSuccessNotification] =
+    useState(false);
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
