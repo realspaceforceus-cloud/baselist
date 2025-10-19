@@ -1,42 +1,23 @@
 import { Handler } from "@netlify/functions";
-import { supabase } from "./db";
+import { pool } from "./db";
 import bcrypt from "bcryptjs";
-
-// Helper to get user from Authorization header
-async function getUserFromToken(event: any) {
-  const authHeader = event.headers.authorization || "";
-  const token = authHeader.replace("Bearer ", "");
-
-  if (!token) return null;
-
-  // In production, verify JWT. For now, extract user ID from token
-  // This is simplified - in production, use proper JWT verification
-  try {
-    const decoded = JSON.parse(
-      Buffer.from(token.split(".")[1], "base64").toString(),
-    );
-    return decoded.sub;
-  } catch {
-    return null;
-  }
-}
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/users", "");
-  const userId = await getUserFromToken(event);
+  const userId = event.headers.authorization?.replace("Bearer ", "");
 
   // GET /api/users/:id
   if (method === "GET" && path.startsWith("/")) {
+    const client = await pool.connect();
     try {
       const id = path.slice(1);
-      const { data: user, error } = await supabase
-        .from("users")
-        .select("id, username, email, role, base_id, avatar_url, created_at")
-        .eq("id", id)
-        .single();
+      const result = await client.query(
+        "SELECT id, username, email, role, base_id, avatar_url, created_at FROM users WHERE id = $1",
+        [id],
+      );
 
-      if (error || !user) {
+      if (result.rows.length === 0) {
         return {
           statusCode: 404,
           body: JSON.stringify({ error: "User not found" }),
@@ -45,13 +26,16 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify(user),
+        body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
@@ -64,6 +48,7 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    const client = await pool.connect();
     try {
       const { name } = JSON.parse(event.body || "{}");
 
@@ -74,120 +59,27 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const { data: updated, error } = await supabase
-        .from("users")
-        .update({ username: name.trim() })
-        .eq("id", userId)
-        .select()
-        .single();
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          success: true,
-          message: "Profile updated",
-          name: updated?.username,
-        }),
-      };
-    } catch (err) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
-      };
-    }
-  }
-
-  // POST /api/users/email/request-change
-  if (method === "POST" && path === "/email/request-change") {
-    if (!userId) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: "Unauthorized" }),
-      };
-    }
-
-    try {
-      const { newEmail } = JSON.parse(event.body || "{}");
-
-      if (!newEmail || typeof newEmail !== "string") {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: "Invalid email address" }),
-        };
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(newEmail)) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: "Invalid email format" }),
-        };
-      }
-
-      const { data: user } = await supabase
-        .from("users")
-        .select("email")
-        .eq("id", userId)
-        .single();
-
-      if (!user) {
-        return {
-          statusCode: 404,
-          body: JSON.stringify({ error: "User not found" }),
-        };
-      }
-
-      if (newEmail === user.email) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({
-            error: "New email must be different from current email",
-          }),
-        };
-      }
-
-      // Check if email already exists
-      const { data: existing } = await supabase
-        .from("users")
-        .select("id")
-        .or(`email.eq.${newEmail},pending_email.eq.${newEmail}`)
-        .single()
-        .catch(() => ({ data: null }));
-
-      if (existing) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: "Email already in use" }),
-        };
-      }
-
-      // Store pending email (in real app, send verification email)
-      const verificationToken = Buffer.from(
-        `${userId}:${newEmail}:${Date.now()}`,
-      ).toString("base64");
-      console.log(
-        `[DEV] Email verification link: /verify-email?token=${verificationToken}`,
+      const result = await client.query(
+        "UPDATE users SET username = $1 WHERE id = $2 RETURNING username",
+        [name.trim(), userId],
       );
 
       return {
         statusCode: 200,
         body: JSON.stringify({
           success: true,
-          message: `Verification link sent to ${newEmail}`,
+          message: "Profile updated",
+          name: result.rows[0]?.username,
         }),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
@@ -200,6 +92,7 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    const client = await pool.connect();
     try {
       const { currentPassword, newPassword } = JSON.parse(event.body || "{}");
 
@@ -213,29 +106,22 @@ export const handler: Handler = async (event) => {
       if (newPassword.length < 8) {
         return {
           statusCode: 400,
-          body: JSON.stringify({
-            error: "Password must be at least 8 characters",
-          }),
+          body: JSON.stringify({ error: "Password must be at least 8 characters" }),
         };
       }
 
-      const { data: user } = await supabase
-        .from("users")
-        .select("password_hash")
-        .eq("id", userId)
-        .single();
+      const result = await client.query("SELECT password_hash FROM users WHERE id = $1", [
+        userId,
+      ]);
 
-      if (!user) {
+      if (result.rows.length === 0) {
         return {
           statusCode: 404,
           body: JSON.stringify({ error: "User not found" }),
         };
       }
 
-      const passwordMatch = await bcrypt.compare(
-        currentPassword,
-        user.password_hash,
-      );
+      const passwordMatch = await bcrypt.compare(currentPassword, result.rows[0].password_hash);
       if (!passwordMatch) {
         return {
           statusCode: 401,
@@ -244,23 +130,20 @@ export const handler: Handler = async (event) => {
       }
 
       const newHash = await bcrypt.hash(newPassword, 10);
-      await supabase
-        .from("users")
-        .update({ password_hash: newHash })
-        .eq("id", userId);
+      await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHash, userId]);
 
       return {
         statusCode: 200,
-        body: JSON.stringify({
-          success: true,
-          message: "Password changed successfully",
-        }),
+        body: JSON.stringify({ success: true, message: "Password changed successfully" }),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
@@ -273,47 +156,35 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    const client = await pool.connect();
     try {
       // Delete user's listings
-      await supabase.from("listings").delete().eq("seller_id", userId);
+      await client.query("DELETE FROM listings WHERE seller_id = $1", [userId]);
 
       // Remove user from message threads
-      const { data: threads } = await supabase
-        .from("message_threads")
-        .select("id, participants")
-        .contains("participants", [userId]);
+      await client.query(
+        "UPDATE message_threads SET participants = array_remove(participants, $1) WHERE $1 = ANY(participants)",
+        [userId],
+      );
 
-      if (threads) {
-        for (const thread of threads) {
-          const updatedParticipants = thread.participants.filter(
-            (p) => p !== userId,
-          );
-          if (updatedParticipants.length === 0) {
-            await supabase.from("message_threads").delete().eq("id", thread.id);
-          } else {
-            await supabase
-              .from("message_threads")
-              .update({ participants: updatedParticipants })
-              .eq("id", thread.id);
-          }
-        }
-      }
+      // Delete empty threads
+      await client.query("DELETE FROM message_threads WHERE array_length(participants, 1) = 0");
 
       // Delete user account
-      await supabase.from("users").delete().eq("id", userId);
+      await client.query("DELETE FROM users WHERE id = $1", [userId]);
 
       return {
         statusCode: 200,
-        body: JSON.stringify({
-          success: true,
-          message: "Account deleted successfully",
-        }),
+        body: JSON.stringify({ success: true, message: "Account deleted successfully" }),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
