@@ -32,64 +32,27 @@ import React from "react";
 const queryClient = new QueryClient();
 
 const AppContent = (): JSX.Element => {
-  const [isSetupComplete, setIsSetupComplete] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    // Check setup status
-    fetch("/api/setup/status")
-      .then((res) => res.json())
-      .then((data) => {
-        setIsSetupComplete(data.isSetupComplete ?? false);
-      })
-      .catch(() => {
-        // If check fails, assume setup is complete (so app doesn't redirect to setup)
-        setIsSetupComplete(true);
-      });
-  }, []);
-
-  // Loading state
-  if (isSetupComplete === null) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Routes>
-      {/* Setup page - only accessible if setup not complete */}
-      <Route path="setup" element={<Setup />} />
-
-      {/* If setup is not complete, redirect to setup */}
-      {!isSetupComplete && (
-        <Route path="*" element={<Navigate to="/setup" replace />} />
-      )}
-
-      {/* Main app routes - only show if setup is complete */}
-      {isSetupComplete && (
-        <Route element={<AppShell />}>
-          <Route index element={<Home />} />
-          <Route path="post" element={<Post />} />
-          <Route path="messages" element={<Messages />} />
-          <Route path="messages/:threadId" element={<Messages />} />
-          <Route path="my-listings" element={<MyListings />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="profile/:memberId" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="moderation" element={<Moderation />} />
-          <Route path="admin" element={<AdminPanel />} />
-          <Route path="listing/:listingId" element={<ListingDetail />} />
-          <Route path="faq" element={<FAQ />} />
-          <Route path="terms" element={<Terms />} />
-          <Route path="privacy" element={<Privacy />} />
-          <Route path="guidelines" element={<Guidelines />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
-      )}
+      {/* Main app routes */}
+      <Route element={<AppShell />}>
+        <Route index element={<Home />} />
+        <Route path="post" element={<Post />} />
+        <Route path="messages" element={<Messages />} />
+        <Route path="messages/:threadId" element={<Messages />} />
+        <Route path="my-listings" element={<MyListings />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="profile/:memberId" element={<Profile />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="moderation" element={<Moderation />} />
+        <Route path="admin" element={<AdminPanel />} />
+        <Route path="listing/:listingId" element={<ListingDetail />} />
+        <Route path="faq" element={<FAQ />} />
+        <Route path="terms" element={<Terms />} />
+        <Route path="privacy" element={<Privacy />} />
+        <Route path="guidelines" element={<Guidelines />} />
+        <Route path="contact" element={<Contact />} />
+      </Route>
 
       <Route path="*" element={<NotFound />} />
     </Routes>
