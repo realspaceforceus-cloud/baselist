@@ -38,11 +38,11 @@ const AppContent = (): JSX.Element => {
     fetch("/api/setup/status")
       .then((res) => res.json())
       .then((data) => {
-        setIsSetupComplete(data.isSetupComplete);
+        setIsSetupComplete(data.isSetupComplete ?? false);
       })
       .catch(() => {
-        // If check fails, assume setup is not complete
-        setIsSetupComplete(false);
+        // If check fails, assume setup is complete (so app doesn't redirect to setup)
+        setIsSetupComplete(true);
       });
   }, []);
 
