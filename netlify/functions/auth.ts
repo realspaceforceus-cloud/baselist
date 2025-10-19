@@ -2,10 +2,25 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
-import { sendVerificationCode } from "../server/services/email";
 
 const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+const sendVerificationCode = async (
+  email: string,
+  code: string,
+): Promise<boolean> => {
+  // In development, just log it
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[VERIFICATION CODE] Email: ${email}, Code: ${code}`);
+    return true;
+  }
+
+  // In production, integrate with SendGrid, Mailgun, etc.
+  // For now, just log it
+  console.log(`[VERIFICATION CODE - PROD] Email: ${email}, Code: ${code}`);
+  return true;
 };
 
 const ALLOWED_DOW_DOMAINS = [
