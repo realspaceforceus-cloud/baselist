@@ -103,15 +103,24 @@ const handler: Handler = async (event) => {
     let payload: InboundEmailPayload;
 
     console.log("[INBOUND EMAIL] Raw event.body type:", typeof event.body);
-    console.log("[INBOUND EMAIL] Raw event.body:", event.body?.substring?.(0, 500) || event.body);
-    console.log("[INBOUND EMAIL] Event isBase64Encoded:", event.isBase64Encoded);
+    console.log(
+      "[INBOUND EMAIL] Raw event.body:",
+      event.body?.substring?.(0, 500) || event.body,
+    );
+    console.log(
+      "[INBOUND EMAIL] Event isBase64Encoded:",
+      event.isBase64Encoded,
+    );
 
     let bodyStr = event.body;
 
     // Handle base64 encoded body
     if (event.isBase64Encoded && typeof event.body === "string") {
       bodyStr = Buffer.from(event.body, "base64").toString("utf-8");
-      console.log("[INBOUND EMAIL] Decoded base64 body:", bodyStr.substring(0, 500));
+      console.log(
+        "[INBOUND EMAIL] Decoded base64 body:",
+        bodyStr.substring(0, 500),
+      );
     }
 
     // Parse the incoming email payload
@@ -125,8 +134,14 @@ const handler: Handler = async (event) => {
         console.log("[INBOUND EMAIL] Parsing as form-encoded...");
         const params = new URLSearchParams(bodyStr);
 
-        console.log("[INBOUND EMAIL] Form params count:", Array.from(params.keys()).length);
-        console.log("[INBOUND EMAIL] Form param keys:", Array.from(params.keys()).slice(0, 10));
+        console.log(
+          "[INBOUND EMAIL] Form params count:",
+          Array.from(params.keys()).length,
+        );
+        console.log(
+          "[INBOUND EMAIL] Form param keys:",
+          Array.from(params.keys()).slice(0, 10),
+        );
 
         // Parse JSON fields if they exist
         const dkim: Record<string, { result: string }> = {};

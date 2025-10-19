@@ -724,7 +724,10 @@ const Landing = (): JSX.Element => {
                     </p>
                     <code
                       className="block rounded bg-muted px-4 py-4 font-[monospace] text-4xl font-bold text-foreground text-center tracking-[0.3em] select-all"
-                      style={{ fontFamily: "monospace", letterSpacing: "0.3em" }}
+                      style={{
+                        fontFamily: "monospace",
+                        letterSpacing: "0.3em",
+                      }}
                     >
                       {generatedCode}
                     </code>
