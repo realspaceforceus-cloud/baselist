@@ -308,9 +308,9 @@ const handler: Handler = async (event) => {
         console.log("[INBOUND EMAIL] Code not found or already used:", code);
 
         await client.query(
-          `INSERT INTO email_verification_audit 
-           (email, event_type, details, sender_email) 
-           VALUES ($1, $2, $3, $4)`,
+          `INSERT INTO email_verification_audit
+           (id, email, event_type, details, sender_email)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
           [
             senderEmail,
             "verification_failed",
