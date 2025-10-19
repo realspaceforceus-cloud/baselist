@@ -524,14 +524,14 @@ const Landing = (): JSX.Element => {
             </p>
             <h2 className="text-2xl font-semibold text-foreground">
               {joinStage === "account" && "Create your BaseList account"}
-              {joinStage === "verify" && "Verify your email"}
+              {joinStage === "verify" && "Verify your .mil email"}
               {joinStage === "success" && "You're all set!"}
             </h2>
             <p className="text-sm text-muted-foreground">
               {joinStage === "account"
                 ? "Username only. No real names required."
                 : joinStage === "verify"
-                  ? "Enter the 6-digit code we sent to your email"
+                  ? "Send a verification code from your .mil email to confirm your identity"
                   : "Your account is ready. Sign in to get started."}
             </p>
           </header>
