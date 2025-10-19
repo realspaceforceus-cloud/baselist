@@ -137,6 +137,11 @@ const Landing = (): JSX.Element => {
     setSearchTerm("");
     setSelectedBaseId(bases[0]?.id ?? "");
     setLocationStatus("idle");
+
+    // Scroll to join section smoothly
+    setTimeout(() => {
+      joinSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
   };
 
   const handleAccountSubmit = (event: FormEvent<HTMLFormElement>) => {
