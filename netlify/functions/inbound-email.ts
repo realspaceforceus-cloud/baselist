@@ -188,13 +188,18 @@ const handler: Handler = async (event) => {
         // Helper to safely parse JSON
         const safeJsonParse = (str: string | undefined) => {
           if (!str) return undefined;
+          // If it's a simple string like "pass", "fail", "neutral", return as-is (not as JSON)
+          if (str.trim() === "pass" || str.trim() === "fail" || str.trim() === "neutral" || str.trim() === "none") {
+            return { result: str.trim() };
+          }
           try {
             return JSON.parse(str);
           } catch (e) {
             console.log(
-              `[INBOUND EMAIL] Failed to parse JSON: ${str.substring(0, 100)}`,
+              `[INBOUND EMAIL] Failed to parse JSON, returning as string: ${str.substring(0, 100)}`,
             );
-            return undefined;
+            // Return the raw value if it's not JSON
+            return str;
           }
         };
 
