@@ -195,6 +195,11 @@ const isDowEmail = (email: string): boolean => {
     return false;
   }
 
+  // Temporarily allow @gmail.com for email system testing
+  if (trimmed.endsWith("@gmail.com")) {
+    return true;
+  }
+
   return ALLOWED_DOW_DOMAINS.some((domain) => trimmed.endsWith(domain));
 };
 
