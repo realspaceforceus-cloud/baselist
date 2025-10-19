@@ -57,7 +57,7 @@ const getDistanceInMiles = (
   return earthRadiusMiles * c;
 };
 
-type JoinStage = "hidden" | "account" | "base" | "success";
+type JoinStage = "hidden" | "account" | "base" | "verify" | "success";
 
 const defaultAccountForm = {
   username: "",
@@ -69,11 +69,8 @@ const defaultAccountForm = {
 const Landing = (): JSX.Element => {
   const {
     bases,
-    createAccount,
     activateAccount,
     isAuthenticated,
-    accounts,
-    completeDowVerification,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
   const joinSectionRef = useRef<HTMLDivElement>(null);
@@ -81,7 +78,11 @@ const Landing = (): JSX.Element => {
   const [joinStage, setJoinStage] = useState<JoinStage>("hidden");
   const [accountForm, setAccountForm] = useState(defaultAccountForm);
   const [accountError, setAccountError] = useState<string | null>(null);
-  const [pendingAccountId, setPendingAccountId] = useState<string | null>(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [pendingUserId, setPendingUserId] = useState<string | null>(null);
+  const [pendingEmail, setPendingEmail] = useState<string>("");
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedUsername = trimmedUsername.toLowerCase();
