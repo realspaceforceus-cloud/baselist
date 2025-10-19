@@ -37,7 +37,7 @@ export const auth = {
 // Setup endpoints
 export const setup = {
   checkStatus: async () => {
-    return apiRequest<{ setupComplete: boolean }>("/api/setup/status", {
+    return apiRequest<{ isSetupComplete: boolean }>("/api/setup/status", {
       method: "GET",
     });
   },
