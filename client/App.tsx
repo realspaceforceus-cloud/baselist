@@ -27,6 +27,7 @@ import AdminPanel from "./pages/AdminPanel";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
+import React from "react";
 
 const queryClient = new QueryClient();
 
