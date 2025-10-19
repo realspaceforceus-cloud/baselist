@@ -269,7 +269,8 @@ const Landing = (): JSX.Element => {
           });
 
           toast.success("🎉 Congratulations!", {
-            description: "Your email has been verified! You're all set to use BaseList.",
+            description:
+              "Your email has been verified! You're all set to use BaseList.",
           });
         }
       } else if (data.status === "expired") {
