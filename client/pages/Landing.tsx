@@ -713,40 +713,24 @@ const Landing = (): JSX.Element => {
                     Verify your .mil email
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Send an email from your .mil account with a verification
-                    code. This confirms you have access to your DoD email
-                    address.
+                    Send your verification code from your .mil email account.
                   </p>
                 </div>
 
                 <div className="space-y-3 rounded bg-background p-3">
-                  <p className="text-sm font-semibold text-foreground">
-                    Follow these steps:
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-muted-foreground">
+                      Your code:
+                    </p>
+                    <code className="block rounded bg-muted px-3 py-2 font-mono text-lg font-bold text-foreground text-center">
+                      {generatedCode}
+                    </code>
+                  </div>
+
                   <ol className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex gap-3">
                       <span className="flex-shrink-0 font-semibold text-primary">
                         1
-                      </span>
-                      <span>
-                        Copy your verification code:{" "}
-                        <code className="rounded bg-muted px-2 py-1 font-mono font-semibold text-foreground">
-                          {generatedCode}
-                        </code>
-                      </span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="flex-shrink-0 font-semibold text-primary">
-                        2
-                      </span>
-                      <span>
-                        Open your .mil email account (Outlook, Gmail, or your
-                        service email)
-                      </span>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="flex-shrink-0 font-semibold text-primary">
-                        3
                       </span>
                       <span>
                         Send an email to{" "}
@@ -757,32 +741,43 @@ const Landing = (): JSX.Element => {
                     </li>
                     <li className="flex gap-3">
                       <span className="flex-shrink-0 font-semibold text-primary">
-                        4
+                        2
                       </span>
                       <span>
-                        Put the verification code in the subject line or email
-                        body
+                        Put the code in the subject or body
                       </span>
                     </li>
                     <li className="flex gap-3">
                       <span className="flex-shrink-0 font-semibold text-primary">
-                        5
+                        3
                       </span>
                       <span>
-                        Send the email and wait for confirmation below
+                        We'll verify immediately
                       </span>
                     </li>
                   </ol>
                 </div>
 
-                <div className="text-xs text-muted-foreground">
-                  <p>
-                    Sending from:{" "}
-                    <span className="font-semibold text-foreground">
-                      {pendingEmail}
-                    </span>
-                  </p>
-                </div>
+                <a
+                  href={`mailto:verify@trustypcs.com?subject=${encodeURIComponent(generatedCode)}&body=${encodeURIComponent(`Verification code: ${generatedCode}`)}`}
+                  className="inline-flex w-full justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                  Open Email Client
+                </a>
               </div>
 
               {verificationError ? (
