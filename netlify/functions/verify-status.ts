@@ -8,7 +8,10 @@ const handleRequestVerification = async (event: any) => {
   const { email } = JSON.parse(event.body || "{}");
   const clientIp = event.headers["client-ip"] || "unknown";
 
-  console.log("[VERIFY REQUEST] Starting verification request for email:", email);
+  console.log(
+    "[VERIFY REQUEST] Starting verification request for email:",
+    email,
+  );
 
   if (!email) {
     console.error("[VERIFY REQUEST] No email provided");
@@ -60,7 +63,10 @@ const handleRequestVerification = async (event: any) => {
       [trimmedEmail],
     );
 
-    console.log("[VERIFY REQUEST] User query result rows:", userResult.rows.length);
+    console.log(
+      "[VERIFY REQUEST] User query result rows:",
+      userResult.rows.length,
+    );
 
     if (userResult.rows.length === 0) {
       console.error("[VERIFY REQUEST] User not found for email:", trimmedEmail);
@@ -87,7 +93,12 @@ const handleRequestVerification = async (event: any) => {
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
     const verificationId = randomUUID();
 
-    console.log("[VERIFY REQUEST] Generated code:", code, "Expires at:", expiresAt);
+    console.log(
+      "[VERIFY REQUEST] Generated code:",
+      code,
+      "Expires at:",
+      expiresAt,
+    );
 
     // Create verification record
     console.log("[VERIFY REQUEST] Inserting verification record...");
@@ -118,7 +129,9 @@ const handleRequestVerification = async (event: any) => {
     );
     console.log("[VERIFY REQUEST] Audit log inserted");
 
-    console.log(`[VERIFY REQUEST] Successfully generated code for ${trimmedEmail}: ${code}`);
+    console.log(
+      `[VERIFY REQUEST] Successfully generated code for ${trimmedEmail}: ${code}`,
+    );
 
     return {
       statusCode: 201,
