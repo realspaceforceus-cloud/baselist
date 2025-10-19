@@ -27,7 +27,7 @@ export const Setup = (): JSX.Element => {
     {
       id: "verify",
       title: "Verify Database",
-      description: "Checking Supabase connection",
+      description: "Checking database connection",
       completed: false,
       loading: false,
     },
