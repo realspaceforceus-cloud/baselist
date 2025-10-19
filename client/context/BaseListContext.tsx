@@ -781,6 +781,8 @@ export const BaseListProvider = ({
     setPendingPasswordReset(null);
   }, []);
 
+  // Remove signInWithPassword that used mock data - we'll use API instead below
+
   const requestPasswordReset = useCallback(
     (email: string) => {
       const normalized = email.trim().toLowerCase();
