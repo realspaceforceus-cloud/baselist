@@ -33,9 +33,15 @@ export const handler: Handler = async (event) => {
   try {
     // GET /api/admin/dashboard
     if (method === "GET" && path === "/dashboard") {
-      const usersResult = await client.query("SELECT COUNT(*) as count FROM users");
-      const listingsResult = await client.query("SELECT COUNT(*) as count FROM listings WHERE status = 'active'");
-      const transactionsResult = await client.query("SELECT COUNT(*) as count FROM transactions");
+      const usersResult = await client.query(
+        "SELECT COUNT(*) as count FROM users",
+      );
+      const listingsResult = await client.query(
+        "SELECT COUNT(*) as count FROM listings WHERE status = 'active'",
+      );
+      const transactionsResult = await client.query(
+        "SELECT COUNT(*) as count FROM transactions",
+      );
 
       return {
         statusCode: 200,
@@ -49,8 +55,12 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/metrics
     if (method === "GET" && path === "/metrics") {
-      const transactionsResult = await client.query("SELECT COUNT(*) as count FROM transactions");
-      const ratingsResult = await client.query("SELECT COUNT(*) as count FROM ratings");
+      const transactionsResult = await client.query(
+        "SELECT COUNT(*) as count FROM transactions",
+      );
+      const ratingsResult = await client.query(
+        "SELECT COUNT(*) as count FROM ratings",
+      );
 
       return {
         statusCode: 200,
@@ -83,7 +93,9 @@ export const handler: Handler = async (event) => {
       const userId = path.replace("/users/", "");
       const { status, role, verify, reason } = JSON.parse(event.body || "{}");
 
-      const user = await client.query("SELECT * FROM users WHERE id = $1", [userId]);
+      const user = await client.query("SELECT * FROM users WHERE id = $1", [
+        userId,
+      ]);
       if (user.rows.length === 0) {
         return {
           statusCode: 404,
@@ -108,7 +120,9 @@ export const handler: Handler = async (event) => {
         );
       }
 
-      const updated = await client.query("SELECT * FROM users WHERE id = $1", [userId]);
+      const updated = await client.query("SELECT * FROM users WHERE id = $1", [
+        userId,
+      ]);
       const u = updated.rows[0];
 
       return {
@@ -138,7 +152,11 @@ export const handler: Handler = async (event) => {
     }
 
     // POST /api/admin/listings/:id/hide
-    if (method === "POST" && path.includes("/listings/") && path.includes("/hide")) {
+    if (
+      method === "POST" &&
+      path.includes("/listings/") &&
+      path.includes("/hide")
+    ) {
       const listingId = path.replace("/listings/", "").replace("/hide", "");
       const { reason } = JSON.parse(event.body || "{}");
 
@@ -164,7 +182,11 @@ export const handler: Handler = async (event) => {
     }
 
     // POST /api/admin/listings/:id/restore
-    if (method === "POST" && path.includes("/listings/") && path.includes("/restore")) {
+    if (
+      method === "POST" &&
+      path.includes("/listings/") &&
+      path.includes("/restore")
+    ) {
       const listingId = path.replace("/listings/", "").replace("/restore", "");
 
       const result = await client.query(
@@ -201,7 +223,11 @@ export const handler: Handler = async (event) => {
     }
 
     // POST /api/admin/reports/:id/resolve
-    if (method === "POST" && path.includes("/reports/") && path.includes("/resolve")) {
+    if (
+      method === "POST" &&
+      path.includes("/reports/") &&
+      path.includes("/resolve")
+    ) {
       const reportId = path.replace("/reports/", "").replace("/resolve", "");
       const { status, notes } = JSON.parse(event.body || "{}");
 
@@ -274,11 +300,13 @@ export const handler: Handler = async (event) => {
 
     // POST /api/admin/bases
     if (method === "POST" && path === "/bases") {
-      const { id, name, abbreviation, region, timezone, latitude, longitude } = JSON.parse(
-        event.body || "{}",
-      );
+      const { id, name, abbreviation, region, timezone, latitude, longitude } =
+        JSON.parse(event.body || "{}");
 
-      const existing = await client.query("SELECT id FROM bases WHERE id = $1", [id]);
+      const existing = await client.query(
+        "SELECT id FROM bases WHERE id = $1",
+        [id],
+      );
       if (existing.rows.length > 0) {
         return {
           statusCode: 409,
@@ -301,9 +329,8 @@ export const handler: Handler = async (event) => {
     // PATCH /api/admin/bases/:id
     if (method === "PATCH" && path.startsWith("/bases/")) {
       const baseId = path.replace("/bases/", "");
-      const { name, abbreviation, region, timezone, latitude, longitude } = JSON.parse(
-        event.body || "{}",
-      );
+      const { name, abbreviation, region, timezone, latitude, longitude } =
+        JSON.parse(event.body || "{}");
 
       const updates: Record<string, any> = {};
       if (name) updates.name = name;
@@ -381,7 +408,9 @@ export const handler: Handler = async (event) => {
 
     // POST /api/admin/update-account
     if (method === "POST" && path === "/update-account") {
-      const { username, email, currentPassword, newPassword } = JSON.parse(event.body || "{}");
+      const { username, email, currentPassword, newPassword } = JSON.parse(
+        event.body || "{}",
+      );
 
       const adminResult = await client.query(
         "SELECT id, password_hash FROM users WHERE role = 'admin' LIMIT 1",
@@ -406,7 +435,10 @@ export const handler: Handler = async (event) => {
           };
         }
 
-        const passwordValid = await bcrypt.compare(currentPassword, admin.password_hash);
+        const passwordValid = await bcrypt.compare(
+          currentPassword,
+          admin.password_hash,
+        );
         if (!passwordValid) {
           return {
             statusCode: 401,
@@ -418,7 +450,8 @@ export const handler: Handler = async (event) => {
       const updates: Record<string, unknown> = {};
       if (username) updates.username = username;
       if (email) updates.email = email;
-      if (newPassword) updates.password_hash = await bcrypt.hash(newPassword, 10);
+      if (newPassword)
+        updates.password_hash = await bcrypt.hash(newPassword, 10);
 
       if (Object.keys(updates).length === 0) {
         return {
@@ -452,7 +485,8 @@ export const handler: Handler = async (event) => {
       body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : "Internal server error";
+    const errorMsg =
+      err instanceof Error ? err.message : "Internal server error";
     console.error("Admin API error:", errorMsg, err);
     return {
       statusCode: 500,

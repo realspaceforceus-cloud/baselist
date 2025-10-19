@@ -53,7 +53,9 @@ const buildUserProfileFromAccount = (
   completedSales: undefined,
   lastActiveAt: account.lastLoginAt ?? account.createdAt,
   currentBaseId: account.baseId,
-  verificationStatus: account.isDowVerified ? "Verified" : "Pending verification",
+  verificationStatus: account.isDowVerified
+    ? "Verified"
+    : "Pending verification",
   role: account.role,
   status: discipline?.suspendedAt ? "suspended" : "active",
   strikes: discipline?.strikes ?? 0,
@@ -150,8 +152,12 @@ const buildSeedAccounts = (): BaseListAccount[] => {
   return SELLERS.map((seller, index) => {
     const username = toUsername(seller.name, `member_${index + 1}`);
     const base = BASES[index % BASES.length];
-    const createdAt = new Date(Date.now() - (index + 3) * 24 * 60 * 60 * 1000).toISOString();
-    const lastLoginAt = new Date(Date.now() - (index + 1) * 60 * 60 * 1000).toISOString();
+    const createdAt = new Date(
+      Date.now() - (index + 3) * 24 * 60 * 60 * 1000,
+    ).toISOString();
+    const lastLoginAt = new Date(
+      Date.now() - (index + 1) * 60 * 60 * 1000,
+    ).toISOString();
 
     return {
       id: seller.id,
@@ -164,7 +170,9 @@ const buildSeedAccounts = (): BaseListAccount[] => {
       lastLoginAt,
       rememberDeviceUntil: undefined,
       avatarUrl: seller.avatarUrl ?? buildAvatarUrl(seller.name),
-      verificationToken: seller.verified ? null : `verify-${crypto.randomUUID()}`,
+      verificationToken: seller.verified
+        ? null
+        : `verify-${crypto.randomUUID()}`,
       verificationRequestedAt: seller.verified ? null : createdAt,
       role: seller.id === CURRENT_USER.id ? CURRENT_USER.role : "member",
     } satisfies BaseListAccount;
@@ -193,7 +201,8 @@ const INITIAL_NOTICES: AccountNotice[] = [
     category: "report",
     severity: "info",
     title: "Report resolved",
-    message: "Buyer feedback for thread MSG-9022 was reviewed and closed with no action.",
+    message:
+      "Buyer feedback for thread MSG-9022 was reviewed and closed with no action.",
     createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     read: true,
   },
@@ -257,7 +266,10 @@ type BaseListContextValue = {
   markTransactionComplete: (threadId: string, userId: string) => void;
   confirmTransactionCompletion: (threadId: string, confirmerId: string) => void;
   raiseDispute: (threadId: string, userId: string, reason?: string) => void;
-  resolveDispute: (threadId: string, resolveTo: "pending_complete" | "completed") => void;
+  resolveDispute: (
+    threadId: string,
+    resolveTo: "pending_complete" | "completed",
+  ) => void;
   autoCompleteTransaction: (threadId: string) => void;
   submitTransactionRating: (threadId: string, rating: number) => void;
   archiveThread: (threadId: string) => void;
@@ -290,14 +302,20 @@ export const BaseListProvider = ({
     CURRENT_USER.currentBaseId,
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [...ACCOUNT_SEED]);
+  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
+    ...ACCOUNT_SEED,
+  ]);
   const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
   const [memberDiscipline, setMemberDiscipline] = useState<
     Record<string, MemberDisciplineRecord>
   >(() => ({ ...INITIAL_DISCIPLINE }));
-  const [notices, setNotices] = useState<AccountNotice[]>(() => [...INITIAL_NOTICES]);
+  const [notices, setNotices] = useState<AccountNotice[]>(() => [
+    ...INITIAL_NOTICES,
+  ]);
   const [user, setUser] = useState<UserProfile>(() => {
-    const initialAccount = ACCOUNT_SEED.find((account) => account.id === CURRENT_USER.id);
+    const initialAccount = ACCOUNT_SEED.find(
+      (account) => account.id === CURRENT_USER.id,
+    );
     if (initialAccount) {
       return buildUserProfileFromAccount(
         initialAccount,
@@ -313,15 +331,18 @@ export const BaseListProvider = ({
       (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
     );
   });
-  const [sponsorPlacements, setSponsorPlacements] = useState<SponsorPlacement[]>(() => [
-    ...SPONSOR_PLACEMENTS,
+  const [sponsorPlacements, setSponsorPlacements] = useState<
+    SponsorPlacement[]
+  >(() => [...SPONSOR_PLACEMENTS]);
+  const [messageThreads, setMessageThreads] = useState<MessageThread[]>(() => [
+    ...MESSAGE_THREAD_SEED,
   ]);
-  const [messageThreads, setMessageThreads] = useState<MessageThread[]>(
-    () => [...MESSAGE_THREAD_SEED],
+  const [transactions, setTransactions] = useState<TransactionHistoryEntry[]>(
+    [],
   );
-  const [transactions, setTransactions] = useState<TransactionHistoryEntry[]>([]);
   const [analyticsCounters, setAnalyticsCounters] = useState({
-    verifiedMembers: ACCOUNT_SEED.filter((account) => account.isDowVerified).length,
+    verifiedMembers: ACCOUNT_SEED.filter((account) => account.isDowVerified)
+      .length,
     activeBases: BASES.length,
     completedTransactions: 0,
   });
@@ -370,10 +391,17 @@ export const BaseListProvider = ({
   }, [currentAccount, currentBaseId, isAuthenticated, memberDiscipline]);
 
   useEffect(() => {
-    const verifiedMembers = accounts.filter((account) => account.isDowVerified).length;
-    const activeBases = new Set(accounts.map((account) => account.baseId)).size || BASES.length;
+    const verifiedMembers = accounts.filter(
+      (account) => account.isDowVerified,
+    ).length;
+    const activeBases =
+      new Set(accounts.map((account) => account.baseId)).size || BASES.length;
     const completedTransactions = transactions.length;
-    setAnalyticsCounters({ verifiedMembers, activeBases, completedTransactions });
+    setAnalyticsCounters({
+      verifiedMembers,
+      activeBases,
+      completedTransactions,
+    });
   }, [accounts, transactions]);
 
   const setCurrentBaseId = useCallback(
@@ -428,7 +456,10 @@ export const BaseListProvider = ({
         return null;
       }
 
-      return buildUserProfileFromAccount(accountMatch, memberDiscipline[accountMatch.id]);
+      return buildUserProfileFromAccount(
+        accountMatch,
+        memberDiscipline[accountMatch.id],
+      );
     },
     [accounts, memberDiscipline, user],
   );
@@ -473,7 +504,9 @@ export const BaseListProvider = ({
 
   const markNoticeRead = useCallback((noticeId: string) => {
     setNotices((prev) =>
-      prev.map((notice) => (notice.id === noticeId ? { ...notice, read: true } : notice)),
+      prev.map((notice) =>
+        notice.id === noticeId ? { ...notice, read: true } : notice,
+      ),
     );
   }, []);
 
@@ -483,9 +516,11 @@ export const BaseListProvider = ({
 
   const suspendMember = useCallback(
     (memberId: string, reason: string) => {
-      void adminApi.updateUser(memberId, { status: "suspended", reason }).catch(() => {
-        /* noop */
-      });
+      void adminApi
+        .updateUser(memberId, { status: "suspended", reason })
+        .catch(() => {
+          /* noop */
+        });
       setMemberDiscipline((prev) => {
         const existing = prev[memberId] ?? { strikes: 0 };
         if (existing.suspendedAt) {
@@ -632,7 +667,9 @@ export const BaseListProvider = ({
       }
 
       if (!isDowEmail(trimmedEmail)) {
-        throw new Error("A verified DoW email (.mil or approved DoW domain) is required.");
+        throw new Error(
+          "A verified DoW email (.mil or approved DoW domain) is required.",
+        );
       }
 
       if (trimmedPassword.length < PASSWORD_MIN_LENGTH) {
@@ -672,7 +709,9 @@ export const BaseListProvider = ({
       }
 
       const rememberUntil = options?.rememberDevice
-        ? new Date(Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000).toISOString()
+        ? new Date(
+            Date.now() + REMEMBER_DEVICE_DAYS * 24 * 60 * 60 * 1000,
+          ).toISOString()
         : undefined;
       const lastLoginAt = new Date().toISOString();
 
@@ -723,7 +762,9 @@ export const BaseListProvider = ({
       }
 
       if (!account.isDowVerified) {
-        throw new Error("Confirm your DoW email from the link we sent before signing in.");
+        throw new Error(
+          "Confirm your DoW email from the link we sent before signing in.",
+        );
       }
 
       activateAccount(account.id, options);
@@ -784,7 +825,11 @@ export const BaseListProvider = ({
       setAccounts((prev) =>
         prev.map((account) =>
           account.id === pendingPasswordReset.accountId
-            ? { ...account, password: newPassword, rememberDeviceUntil: undefined }
+            ? {
+                ...account,
+                password: newPassword,
+                rememberDeviceUntil: undefined,
+              }
             : account,
         ),
       );
@@ -806,9 +851,7 @@ export const BaseListProvider = ({
 
       if (method === "email") {
         if (!isDowEmail(currentAccount.email)) {
-          toast.info(
-            "Add a DoW-issued email to verify automatically.",
-          );
+          toast.info("Add a DoW-issued email to verify automatically.");
           return;
         }
 
@@ -862,7 +905,9 @@ export const BaseListProvider = ({
       }
 
       if (!isDowEmail(account.email)) {
-        throw new Error("DoW email verification is only available for DoW addresses.");
+        throw new Error(
+          "DoW email verification is only available for DoW addresses.",
+        );
       }
 
       if (account.isDowVerified) {
@@ -920,7 +965,8 @@ export const BaseListProvider = ({
       setListings((prev) => {
         const next = [listing, ...prev];
         next.sort(
-          (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
+          (a, b) =>
+            new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
         );
         return next;
       });
@@ -961,15 +1007,24 @@ export const BaseListProvider = ({
           };
 
           // Don't allow marking complete if already completed or disputed
-          if (transaction.status === "completed" || transaction.status === "disputed") {
+          if (
+            transaction.status === "completed" ||
+            transaction.status === "disputed"
+          ) {
             return thread;
           }
 
           // Already pending, just confirm instead
-          if (transaction.status === "pending_complete" && transaction.markedCompleteBy && transaction.markedCompleteBy !== userId) {
+          if (
+            transaction.status === "pending_complete" &&
+            transaction.markedCompleteBy &&
+            transaction.markedCompleteBy !== userId
+          ) {
             const confirmedSet = new Set(transaction.confirmedBy);
             confirmedSet.add(userId);
-            const allConfirmed = thread.participants.every((p) => confirmedSet.has(p));
+            const allConfirmed = thread.participants.every((p) =>
+              confirmedSet.has(p),
+            );
 
             if (allConfirmed) {
               transaction.status = "completed";
@@ -1044,16 +1099,14 @@ export const BaseListProvider = ({
     (threadId: string, userId: string) => {
       const userName = resolveDisplayName(userId);
       const now = new Date().toISOString();
-      let completionContext:
-        | {
-            threadId: string;
-            listingId: string;
-            buyerId: string;
-            sellerId: string;
-            price: number | null;
-            completedAt: string;
-          }
-        | null = null;
+      let completionContext: {
+        threadId: string;
+        listingId: string;
+        buyerId: string;
+        sellerId: string;
+        price: number | null;
+        completedAt: string;
+      } | null = null;
 
       setMessageThreads((prev) =>
         prev.map((thread) => {
@@ -1062,7 +1115,11 @@ export const BaseListProvider = ({
           }
 
           const transaction = thread.transaction;
-          if (!transaction || transaction.status === "completed" || transaction.status === "disputed") {
+          if (
+            !transaction ||
+            transaction.status === "completed" ||
+            transaction.status === "disputed"
+          ) {
             return thread;
           }
 
@@ -1075,7 +1132,9 @@ export const BaseListProvider = ({
           confirmedSet.add(userId);
           transaction.confirmedBy = Array.from(confirmedSet);
 
-          const allConfirmed = thread.participants.every((p) => confirmedSet.has(p));
+          const allConfirmed = thread.participants.every((p) =>
+            confirmedSet.has(p),
+          );
 
           if (allConfirmed) {
             transaction.status = "completed";
@@ -1083,7 +1142,8 @@ export const BaseListProvider = ({
 
             if (listing) {
               const sellerId = listing.sellerId;
-              const buyerId = thread.participants.find((p) => p !== sellerId) ?? userId;
+              const buyerId =
+                thread.participants.find((p) => p !== sellerId) ?? userId;
               completionContext = {
                 threadId: thread.id,
                 listingId: listing.id,
@@ -1147,7 +1207,9 @@ export const BaseListProvider = ({
         );
 
         setTransactions((prev) => {
-          if (prev.some((entry) => entry.threadId === completionContext!.threadId)) {
+          if (
+            prev.some((entry) => entry.threadId === completionContext!.threadId)
+          ) {
             return prev;
           }
           return [
@@ -1275,16 +1337,14 @@ export const BaseListProvider = ({
   const autoCompleteTransaction = useCallback(
     (threadId: string) => {
       const now = new Date().toISOString();
-      let completionContext:
-        | {
-            threadId: string;
-            listingId: string;
-            buyerId: string;
-            sellerId: string;
-            price: number | null;
-            completedAt: string;
-          }
-        | null = null;
+      let completionContext: {
+        threadId: string;
+        listingId: string;
+        buyerId: string;
+        sellerId: string;
+        price: number | null;
+        completedAt: string;
+      } | null = null;
 
       setMessageThreads((prev) =>
         prev.map((thread) => {
@@ -1368,7 +1428,9 @@ export const BaseListProvider = ({
         );
 
         setTransactions((prev) => {
-          if (prev.some((entry) => entry.threadId === completionContext!.threadId)) {
+          if (
+            prev.some((entry) => entry.threadId === completionContext!.threadId)
+          ) {
             return prev;
           }
           return [
@@ -1405,20 +1467,21 @@ export const BaseListProvider = ({
     setSponsorPlacements((prev) => {
       const existing = prev.find((item) => item.id === placement.id);
       if (existing) {
-        return prev.map((item) => (item.id === placement.id ? { ...item, ...placement } : item));
+        return prev.map((item) =>
+          item.id === placement.id ? { ...item, ...placement } : item,
+        );
       }
       return [placement, ...prev];
     });
   }, []);
 
   const updateSponsorPlacement = useCallback(
-    (
-      placementId: string,
-      updates: Partial<Omit<SponsorPlacement, "id">>,
-    ) => {
+    (placementId: string, updates: Partial<Omit<SponsorPlacement, "id">>) => {
       setSponsorPlacements((prev) =>
         prev.map((placement) =>
-          placement.id === placementId ? { ...placement, ...updates } : placement,
+          placement.id === placementId
+            ? { ...placement, ...updates }
+            : placement,
         ),
       );
     },
@@ -1426,7 +1489,9 @@ export const BaseListProvider = ({
   );
 
   const removeSponsorPlacement = useCallback((placementId: string) => {
-    setSponsorPlacements((prev) => prev.filter((placement) => placement.id !== placementId));
+    setSponsorPlacements((prev) =>
+      prev.filter((placement) => placement.id !== placementId),
+    );
   }, []);
 
   const scheduleSimulatedReply = useCallback(
@@ -1484,7 +1549,8 @@ export const BaseListProvider = ({
 
       const normalizedMessage = trimmedMessage.toLowerCase();
       const shouldInitiateTransaction =
-        normalizedMessage === "offer accepted" || normalizedMessage === "mark sold";
+        normalizedMessage === "offer accepted" ||
+        normalizedMessage === "mark sold";
 
       const timestamp = new Date().toISOString();
       const newMessage: Message = {
@@ -1515,8 +1581,10 @@ export const BaseListProvider = ({
               ...existingThread.lastReadAt,
               [user.id]: timestamp,
             },
-            archivedBy: existingThread.archivedBy?.filter((id) => id !== user.id) ?? [],
-            deletedBy: existingThread.deletedBy?.filter((id) => id !== user.id) ?? [],
+            archivedBy:
+              existingThread.archivedBy?.filter((id) => id !== user.id) ?? [],
+            deletedBy:
+              existingThread.deletedBy?.filter((id) => id !== user.id) ?? [],
           };
 
           targetThread = updatedThread;
@@ -1612,7 +1680,11 @@ export const BaseListProvider = ({
         const existing = prev.find((entry) => entry.threadId === threadId);
         if (!existing) {
           const thread = messageThreads.find((item) => item.id === threadId);
-          if (!thread || !thread.transaction || thread.transaction.status !== "completed") {
+          if (
+            !thread ||
+            !thread.transaction ||
+            thread.transaction.status !== "completed"
+          ) {
             return prev;
           }
           const listing = listings.find((item) => item.id === thread.listingId);
@@ -1621,7 +1693,9 @@ export const BaseListProvider = ({
           }
           const sellerId = listing.sellerId;
           const buyerId =
-            thread.participants.find((participantId) => participantId !== sellerId) ?? user.id;
+            thread.participants.find(
+              (participantId) => participantId !== sellerId,
+            ) ?? user.id;
 
           return [
             {
@@ -1631,7 +1705,8 @@ export const BaseListProvider = ({
               buyerId,
               sellerId,
               price: listing.isFree ? 0 : listing.price,
-              completedAt: thread.transaction.completedAt ?? new Date().toISOString(),
+              completedAt:
+                thread.transaction.completedAt ?? new Date().toISOString(),
               ...(buyerId === user.id
                 ? { buyerRatingAboutSeller: rating }
                 : { sellerRatingAboutBuyer: rating }),
@@ -1815,7 +1890,12 @@ export const BaseListProvider = ({
 
     const ensureTotals = (id: string): Totals => {
       if (!totalsMap.has(id)) {
-        totalsMap.set(id, { sellerTotal: 0, sellerCount: 0, buyerTotal: 0, buyerCount: 0 });
+        totalsMap.set(id, {
+          sellerTotal: 0,
+          sellerCount: 0,
+          buyerTotal: 0,
+          buyerCount: 0,
+        });
       }
       return totalsMap.get(id)!;
     };
@@ -1851,9 +1931,13 @@ export const BaseListProvider = ({
       summaryMap.set(key, {
         overallAverage: overallCount ? overallTotal / overallCount : null,
         overallCount,
-        sellerAverage: value.sellerCount ? value.sellerTotal / value.sellerCount : null,
+        sellerAverage: value.sellerCount
+          ? value.sellerTotal / value.sellerCount
+          : null,
         sellerCount: value.sellerCount,
-        buyerAverage: value.buyerCount ? value.buyerTotal / value.buyerCount : null,
+        buyerAverage: value.buyerCount
+          ? value.buyerTotal / value.buyerCount
+          : null,
         buyerCount: value.buyerCount,
       });
     });
