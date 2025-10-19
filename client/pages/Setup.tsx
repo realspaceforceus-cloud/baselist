@@ -214,23 +214,6 @@ export const Setup = (): JSX.Element => {
                 <p className="text-xs text-slate-400 mt-1">Min 8 characters</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-200 mb-2">
-                  Military Base / Installation
-                </label>
-                <select
-                  value={baseId}
-                  onChange={(e) => setBaseId(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-white rounded-md disabled:opacity-50"
-                  disabled={setupStarted}
-                >
-                  <option value="">Select a base...</option>
-                  <option value="vance-afb">Vance AFB</option>
-                  <option value="jblm">Joint Base Lewis-McChord</option>
-                  <option value="ramstein-ab">Ramstein Air Base</option>
-                </select>
-              </div>
-
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
