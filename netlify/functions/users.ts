@@ -12,7 +12,9 @@ async function getUserFromToken(event: any) {
   // In production, verify JWT. For now, extract user ID from token
   // This is simplified - in production, use proper JWT verification
   try {
-    const decoded = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+    const decoded = JSON.parse(
+      Buffer.from(token.split(".")[1], "base64").toString(),
+    );
     return decoded.sub;
   } catch {
     return null;
@@ -145,7 +147,9 @@ export const handler: Handler = async (event) => {
       if (newEmail === user.email) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: "New email must be different from current email" }),
+          body: JSON.stringify({
+            error: "New email must be different from current email",
+          }),
         };
       }
 
@@ -165,10 +169,12 @@ export const handler: Handler = async (event) => {
       }
 
       // Store pending email (in real app, send verification email)
-      const verificationToken = Buffer.from(`${userId}:${newEmail}:${Date.now()}`).toString(
-        "base64",
+      const verificationToken = Buffer.from(
+        `${userId}:${newEmail}:${Date.now()}`,
+      ).toString("base64");
+      console.log(
+        `[DEV] Email verification link: /verify-email?token=${verificationToken}`,
       );
-      console.log(`[DEV] Email verification link: /verify-email?token=${verificationToken}`);
 
       return {
         statusCode: 200,
@@ -207,7 +213,9 @@ export const handler: Handler = async (event) => {
       if (newPassword.length < 8) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: "Password must be at least 8 characters" }),
+          body: JSON.stringify({
+            error: "Password must be at least 8 characters",
+          }),
         };
       }
 
@@ -224,7 +232,10 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const passwordMatch = await bcrypt.compare(currentPassword, user.password_hash);
+      const passwordMatch = await bcrypt.compare(
+        currentPassword,
+        user.password_hash,
+      );
       if (!passwordMatch) {
         return {
           statusCode: 401,
@@ -233,11 +244,17 @@ export const handler: Handler = async (event) => {
       }
 
       const newHash = await bcrypt.hash(newPassword, 10);
-      await supabase.from("users").update({ password_hash: newHash }).eq("id", userId);
+      await supabase
+        .from("users")
+        .update({ password_hash: newHash })
+        .eq("id", userId);
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, message: "Password changed successfully" }),
+        body: JSON.stringify({
+          success: true,
+          message: "Password changed successfully",
+        }),
       };
     } catch (err) {
       return {
@@ -268,7 +285,9 @@ export const handler: Handler = async (event) => {
 
       if (threads) {
         for (const thread of threads) {
-          const updatedParticipants = thread.participants.filter((p) => p !== userId);
+          const updatedParticipants = thread.participants.filter(
+            (p) => p !== userId,
+          );
           if (updatedParticipants.length === 0) {
             await supabase.from("message_threads").delete().eq("id", thread.id);
           } else {
@@ -285,7 +304,10 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, message: "Account deleted successfully" }),
+        body: JSON.stringify({
+          success: true,
+          message: "Account deleted successfully",
+        }),
       };
     } catch (err) {
       return {

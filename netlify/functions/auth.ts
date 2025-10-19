@@ -10,7 +10,9 @@ export const handler: Handler = async (event) => {
   // POST /api/auth/register
   if (method === "POST" && path === "/register") {
     try {
-      const { email, password, username, baseId } = JSON.parse(event.body || "{}");
+      const { email, password, username, baseId } = JSON.parse(
+        event.body || "{}",
+      );
 
       if (!email || !password || !username || !baseId) {
         return {

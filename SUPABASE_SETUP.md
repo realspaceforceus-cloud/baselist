@@ -35,6 +35,7 @@ Your database schema is now ready.
 ## 4. Set Up Netlify Environment Variables
 
 If you haven't already:
+
 1. Go to [netlify.com](https://netlify.com)
 2. Click **"New site from Git"**
 3. Connect your repository
@@ -42,6 +43,7 @@ If you haven't already:
 5. Click **"Edit variables"**
 
 Add these two variables:
+
 ```
 SUPABASE_URL = https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
@@ -75,6 +77,7 @@ Netlify will automatically build and deploy your app.
 ## 7. Initialize Setup
 
 Once deployed, visit your Netlify URL and complete the setup wizard:
+
 - Enter your admin credentials
 - Select your base (military installation)
 - Optionally include sample data

@@ -26,7 +26,11 @@ userRouter.post("/profile/update", authenticate, (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
 
   const updated = updateUser(userId, (u) => ({ ...u, name: name.trim() }));
-  return res.json({ success: true, message: "Profile updated", name: updated?.name });
+  return res.json({
+    success: true,
+    message: "Profile updated",
+    name: updated?.name,
+  });
 });
 
 userRouter.post("/email/request-change", authenticate, (req, res) => {
@@ -47,28 +51,42 @@ userRouter.post("/email/request-change", authenticate, (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
 
   if (newEmail === user.email) {
-    return res.status(400).json({ message: "New email must be different from current email" });
+    return res
+      .status(400)
+      .json({ message: "New email must be different from current email" });
   }
 
-  const emailExists = store.getUsers().some(
-    (u) => u.email === newEmail || (u.pendingEmail && u.pendingEmail === newEmail),
-  );
+  const emailExists = store
+    .getUsers()
+    .some(
+      (u) =>
+        u.email === newEmail || (u.pendingEmail && u.pendingEmail === newEmail),
+    );
   if (emailExists) {
     return res.status(400).json({ message: "Email already in use" });
   }
 
   updateUser(userId, (u) => ({ ...u, pendingEmail: newEmail }));
-  const verificationToken = Buffer.from(`${userId}:${newEmail}:${Date.now()}`).toString("base64");
-  console.log(`[DEV] Email verification link: /verify-email?token=${verificationToken}`);
+  const verificationToken = Buffer.from(
+    `${userId}:${newEmail}:${Date.now()}`,
+  ).toString("base64");
+  console.log(
+    `[DEV] Email verification link: /verify-email?token=${verificationToken}`,
+  );
 
-  return res.json({ success: true, message: `Verification link sent to ${newEmail}` });
+  return res.json({
+    success: true,
+    message: `Verification link sent to ${newEmail}`,
+  });
 });
 
 userRouter.post("/email/verify", (req, res) => {
   const { token } = req.body;
 
   if (!token) {
-    return res.status(400).json({ message: "Invalid or missing verification token" });
+    return res
+      .status(400)
+      .json({ message: "Invalid or missing verification token" });
   }
 
   try {
@@ -102,14 +120,17 @@ userRouter.post("/password/change", authenticate, async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
   if (newPassword.length < 8) {
-    return res.status(400).json({ message: "Password must be at least 8 characters" });
+    return res
+      .status(400)
+      .json({ message: "Password must be at least 8 characters" });
   }
 
   const user = store.getUser(userId);
   if (!user) return res.status(404).json({ message: "User not found" });
 
   const ok = await bcrypt.compare(currentPassword, user.passwordHash);
-  if (!ok) return res.status(401).json({ message: "Current password is incorrect" });
+  if (!ok)
+    return res.status(401).json({ message: "Current password is incorrect" });
 
   const newHash = await bcrypt.hash(newPassword, 10);
   updateUser(userId, (u) => ({ ...u, passwordHash: newHash }));
@@ -129,7 +150,10 @@ userRouter.post("/notifications/toggle", authenticate, (req, res) => {
   const user = store.getUser(userId);
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  const updated = updateUser(userId, (u) => ({ ...u, notificationsEnabled: enabled }));
+  const updated = updateUser(userId, (u) => ({
+    ...u,
+    notificationsEnabled: enabled,
+  }));
   return res.json({
     success: true,
     message: `Notifications ${enabled ? "enabled" : "disabled"}`,
@@ -158,7 +182,9 @@ userRouter.post("/account/delete", authenticate, (req, res) => {
   // Remove user from threads; delete empty threads
   const threadsMap = (store as any).threads as Map<string, any>;
   for (const [id, thread] of threadsMap) {
-    const participants = thread.participants.filter((p: string) => p !== userId);
+    const participants = thread.participants.filter(
+      (p: string) => p !== userId,
+    );
     if (participants.length === 0) {
       threadsMap.delete(id);
     } else if (participants.length !== thread.participants.length) {

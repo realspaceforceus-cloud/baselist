@@ -37,8 +37,13 @@ export const handler: Handler = async (event) => {
   // POST /api/setup/initialize
   if (method === "POST" && path === "/initialize") {
     try {
-      const { adminEmail, adminPassword, adminUsername, baseId, includeSampleData } =
-        JSON.parse(event.body || "{}");
+      const {
+        adminEmail,
+        adminPassword,
+        adminUsername,
+        baseId,
+        includeSampleData,
+      } = JSON.parse(event.body || "{}");
 
       if (!adminEmail || !adminPassword || !adminUsername || !baseId) {
         return {

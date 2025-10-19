@@ -74,7 +74,7 @@ export const Setup = (): JSX.Element => {
 
   const updateStep = (id: string, updates: Partial<SetupStep>) => {
     setSteps((prev) =>
-      prev.map((step) => (step.id === id ? { ...step, ...updates } : step))
+      prev.map((step) => (step.id === id ? { ...step, ...updates } : step)),
     );
   };
 
@@ -142,7 +142,8 @@ export const Setup = (): JSX.Element => {
 
       return true;
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Finalization failed";
+      const errorMsg =
+        error instanceof Error ? error.message : "Finalization failed";
       updateStep("finalize", { loading: false, error: errorMsg });
       toast.error(errorMsg);
       return false;
@@ -170,9 +171,7 @@ export const Setup = (): JSX.Element => {
           <h1 className="text-4xl font-bold text-white mb-2">
             BaseList Setup Wizard
           </h1>
-          <p className="text-slate-400">
-            Complete your initial configuration
-          </p>
+          <p className="text-slate-400">Complete your initial configuration</p>
         </div>
 
         <Card className="p-8 bg-slate-800 border-slate-700">
@@ -218,9 +217,7 @@ export const Setup = (): JSX.Element => {
                   className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
                   disabled={setupStarted}
                 />
-                <p className="text-xs text-slate-400 mt-1">
-                  Min 8 characters
-                </p>
+                <p className="text-xs text-slate-400 mt-1">Min 8 characters</p>
               </div>
 
               <div>

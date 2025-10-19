@@ -89,6 +89,7 @@ Netlify will automatically detect the push and start building your app.
 3. Watch the build progress
 
 **Build should complete in ~2-3 minutes.** If it fails:
+
 - Check **Build logs** for errors
 - Ensure environment variables are set correctly
 - Verify `netlify.toml` is in the root directory
@@ -121,67 +122,78 @@ The app is now ready to use! 🎉
 
 Your Netlify Functions now serve all API routes:
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/auth/register` | POST | Register new user |
-| `/api/auth/login` | POST | Login user |
-| `/api/setup/status` | GET | Check if setup is complete |
-| `/api/setup/initialize` | POST | Complete initial setup |
-| `/api/listings` | GET | List all listings |
-| `/api/listings` | POST | Create new listing |
-| `/api/listings/:id` | PUT | Update listing |
-| `/api/listings/:id` | DELETE | Delete listing |
-| `/api/users/:id` | GET | Get user profile |
-| `/api/users/profile/update` | POST | Update profile |
-| `/api/users/password/change` | POST | Change password |
-| `/api/users/account/delete` | POST | Delete account |
-| `/api/messages/thread/:id` | GET | Get messages in thread |
-| `/api/messages` | POST | Send message |
-| `/api/admin/users` | GET | List all users (admin) |
-| `/api/admin/reports` | GET | List all reports (admin) |
+| Endpoint                     | Method | Purpose                    |
+| ---------------------------- | ------ | -------------------------- |
+| `/api/auth/register`         | POST   | Register new user          |
+| `/api/auth/login`            | POST   | Login user                 |
+| `/api/setup/status`          | GET    | Check if setup is complete |
+| `/api/setup/initialize`      | POST   | Complete initial setup     |
+| `/api/listings`              | GET    | List all listings          |
+| `/api/listings`              | POST   | Create new listing         |
+| `/api/listings/:id`          | PUT    | Update listing             |
+| `/api/listings/:id`          | DELETE | Delete listing             |
+| `/api/users/:id`             | GET    | Get user profile           |
+| `/api/users/profile/update`  | POST   | Update profile             |
+| `/api/users/password/change` | POST   | Change password            |
+| `/api/users/account/delete`  | POST   | Delete account             |
+| `/api/messages/thread/:id`   | GET    | Get messages in thread     |
+| `/api/messages`              | POST   | Send message               |
+| `/api/admin/users`           | GET    | List all users (admin)     |
+| `/api/admin/reports`         | GET    | List all reports (admin)   |
 
 ## Troubleshooting
 
 ### "SUPABASE_URL not found" error
+
 → Check that environment variables are set in Netlify **Build & deploy → Environment**, not just in `.env`
 
 ### "Service Role Key invalid"
+
 → Copy the exact key from Supabase without extra spaces or quotes
 
 ### "Connection to database failed"
+
 → Verify the SQL migration ran successfully in Supabase **SQL Editor**
 
 ### "Setup already complete" error
+
 → Your app was already initialized. To reset, you can manually delete records in Supabase or contact support
 
 ### Build fails with "Command not found"
+
 → Check that Node.js version is 18+ in Netlify **Site settings → Build & deploy → Node version**
 
 ## Next Steps
 
 ### Enable Real-Time Updates (Optional)
+
 Add real-time subscriptions for live listings and messages:
+
 ```typescript
 const subscription = supabase
-  .from('listings')
-  .on('*', payload => {
+  .from("listings")
+  .on("*", (payload) => {
     // Handle real-time updates
   })
   .subscribe();
 ```
 
 ### Add Image Upload (Optional)
+
 Switch from URLs to Supabase Storage:
+
 ```typescript
 const { data } = await supabase.storage
-  .from('listings')
+  .from("listings")
   .upload(`${listingId}/${file.name}`, file);
 ```
 
 ### Set Up Error Monitoring
+
 [Connect Sentry](#open-mcp-popover) for production error tracking.
 
 ### Custom Domain
+
 Go to **Site settings → Domain management** and add your custom domain.
 
 ## Questions?

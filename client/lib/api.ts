@@ -2,11 +2,19 @@ import { apiRequest } from "./apiClient";
 
 // Auth endpoints
 export const auth = {
-  register: async (email: string, password: string, username: string, baseId: string) => {
-    return apiRequest<{ success: boolean; userId: string }>("/api/auth/register", {
-      method: "POST",
-      body: JSON.stringify({ email, password, username, baseId }),
-    });
+  register: async (
+    email: string,
+    password: string,
+    username: string,
+    baseId: string,
+  ) => {
+    return apiRequest<{ success: boolean; userId: string }>(
+      "/api/auth/register",
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password, username, baseId }),
+      },
+    );
   },
 
   login: async (email: string, password: string) => {
@@ -34,7 +42,13 @@ export const setup = {
     });
   },
 
-  initialize: async (adminEmail: string, adminPassword: string, adminUsername: string, baseId: string, includeSampleData?: boolean) => {
+  initialize: async (
+    adminEmail: string,
+    adminPassword: string,
+    adminUsername: string,
+    baseId: string,
+    includeSampleData?: boolean,
+  ) => {
     return apiRequest<{
       success: boolean;
       message: string;
@@ -135,9 +149,12 @@ export const users = {
   },
 
   deleteAccount: async () => {
-    return apiRequest<{ success: boolean; message: string }>("/api/users/account/delete", {
-      method: "POST",
-    });
+    return apiRequest<{ success: boolean; message: string }>(
+      "/api/users/account/delete",
+      {
+        method: "POST",
+      },
+    );
   },
 };
 

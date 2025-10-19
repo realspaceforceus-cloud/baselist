@@ -66,8 +66,16 @@ export const handler: Handler = async (event) => {
   // POST /api/listings - create new listing
   if (method === "POST" && path === "") {
     try {
-      const { title, price, isFree, category, description, imageUrls, baseId, sellerId } =
-        JSON.parse(event.body || "{}");
+      const {
+        title,
+        price,
+        isFree,
+        category,
+        description,
+        imageUrls,
+        baseId,
+        sellerId,
+      } = JSON.parse(event.body || "{}");
 
       if (!title || !category || !baseId || !sellerId) {
         return {
