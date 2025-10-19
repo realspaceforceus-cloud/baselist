@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useAuthDialog } from "@/context/AuthDialogContext";
-import { Footer } from "@/components/layout/Footer";
 import {
   EMAIL_PATTERN,
   PASSWORD_MIN_LENGTH,
