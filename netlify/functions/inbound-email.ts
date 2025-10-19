@@ -104,7 +104,41 @@ const handler: Handler = async (event) => {
 
     // Parse the incoming email payload
     if (typeof event.body === "string") {
-      payload = JSON.parse(event.body);
+      // Try to parse as JSON first, fall back to form-encoded
+      try {
+        payload = JSON.parse(event.body);
+      } catch {
+        // Parse as form-encoded data (SendGrid sends form data by default)
+        const params = new URLSearchParams(event.body);
+
+        // Parse JSON fields if they exist
+        const dkim: Record<string, { result: string }> = {};
+        const spf: { result: string } | undefined = undefined;
+
+        for (const [key, value] of params.entries()) {
+          if (key.startsWith("dkim")) {
+            try {
+              const parsed = JSON.parse(value);
+              Object.assign(dkim, parsed);
+            } catch {
+              // If parsing fails, skip
+            }
+          }
+        }
+
+        payload = {
+          from: params.get("from") || "",
+          to: params.get("to") || "",
+          subject: params.get("subject") || "",
+          text: params.get("text") || undefined,
+          html: params.get("html") || undefined,
+          headers: params.get("headers") ? JSON.parse(params.get("headers") || "{}") : undefined,
+          envelope: params.get("envelope") ? JSON.parse(params.get("envelope") || "{}") : undefined,
+          spf: params.get("spf") ? JSON.parse(params.get("spf") || "{}") : spf,
+          dkim: Object.keys(dkim).length > 0 ? dkim : undefined,
+          spam_report: params.get("spam_report") ? JSON.parse(params.get("spam_report") || "{}") : undefined,
+        };
+      }
     } else {
       payload = event.body;
     }
