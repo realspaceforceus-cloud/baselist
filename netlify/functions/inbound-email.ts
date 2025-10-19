@@ -185,23 +185,35 @@ const handler: Handler = async (event) => {
 
         console.log("[INBOUND EMAIL] Form data keys:", Object.keys(formData));
 
+        // Helper to safely parse JSON
+        const safeJsonParse = (str: string | undefined) => {
+          if (!str) return undefined;
+          try {
+            return JSON.parse(str);
+          } catch (e) {
+            console.log(`[INBOUND EMAIL] Failed to parse JSON: ${str.substring(0, 100)}`);
+            return undefined;
+          }
+        };
+
+        // Extract email from "Name" <email@domain.com> format
+        const extractEmail = (fromStr: string): string => {
+          const match = fromStr.match(/<([^>]+)>/);
+          if (match) return match[1];
+          return fromStr;
+        };
+
         payload = {
-          from: formData["from"] || "",
-          to: formData["to"] || "",
+          from: extractEmail(formData["from"] || ""),
+          to: extractEmail(formData["to"] || ""),
           subject: formData["subject"] || "",
           text: formData["text"] || undefined,
           html: formData["html"] || undefined,
-          headers: formData["headers"]
-            ? JSON.parse(formData["headers"])
-            : undefined,
-          envelope: formData["envelope"]
-            ? JSON.parse(formData["envelope"])
-            : undefined,
-          spf: formData["spf"] ? JSON.parse(formData["spf"]) : undefined,
-          dkim: formData["dkim"] ? JSON.parse(formData["dkim"]) : undefined,
-          spam_report: formData["spam_report"]
-            ? JSON.parse(formData["spam_report"])
-            : undefined,
+          headers: safeJsonParse(formData["headers"]),
+          envelope: safeJsonParse(formData["envelope"]),
+          spf: safeJsonParse(formData["SPF"] || formData["spf"]),
+          dkim: safeJsonParse(formData["dkim"]),
+          spam_report: safeJsonParse(formData["spam_report"]),
         };
       }
     } else {
