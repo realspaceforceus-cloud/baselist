@@ -17,12 +17,29 @@ interface SetupStep {
 }
 
 export const Setup = (): JSX.Element => {
+  const navigate = useNavigate();
   const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
   const [baseId] = useState("vance-afb"); // Default to Vance AFB
   const [includeSampleData, setIncludeSampleData] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false);
+
+  useEffect(() => {
+    // Check if setup is already complete and redirect
+    const checkSetup = async () => {
+      try {
+        const result = await setup.checkStatus();
+        if (result.setupComplete) {
+          navigate("/");
+        }
+      } catch (error) {
+        // If there's an error checking, stay on setup page
+      }
+    };
+
+    checkSetup();
+  }, [navigate]);
 
   const [steps, setSteps] = useState<SetupStep[]>([
     {
