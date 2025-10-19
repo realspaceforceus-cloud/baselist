@@ -388,7 +388,7 @@ const Landing = (): JSX.Element => {
 
   if (isJoinActive) {
     return (
-      <section ref={joinSectionRef} className="space-y-10 py-10 px-4 animate-fade-in">
+      <section ref={joinSectionRef} className="px-4 py-6 animate-fade-in">
           <div className="mx-auto w-full max-w-3xl space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
             <header className="flex flex-col gap-2 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
