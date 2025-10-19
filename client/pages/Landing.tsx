@@ -743,17 +743,13 @@ const Landing = (): JSX.Element => {
                       <span className="flex-shrink-0 font-semibold text-primary">
                         2
                       </span>
-                      <span>
-                        Put the code in the subject or body
-                      </span>
+                      <span>Put the code in the subject or body</span>
                     </li>
                     <li className="flex gap-3">
                       <span className="flex-shrink-0 font-semibold text-primary">
                         3
                       </span>
-                      <span>
-                        We'll verify immediately
-                      </span>
+                      <span>We'll verify immediately</span>
                     </li>
                   </ol>
                 </div>
