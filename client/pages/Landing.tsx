@@ -756,7 +756,9 @@ const Landing = (): JSX.Element => {
 
                 <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
                   <p className="text-xs text-blue-900">
-                    ⚠️ <strong>Important:</strong> Send from your DoW email account (your .mil email). Personal email accounts won't verify.
+                    ⚠️ <strong>Important:</strong> Send from your DoW email
+                    account (your .mil email). Personal email accounts won't
+                    verify.
                   </p>
                 </div>
               </div>
