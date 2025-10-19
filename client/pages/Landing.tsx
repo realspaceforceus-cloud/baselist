@@ -434,7 +434,7 @@ const Landing = (): JSX.Element => {
       </section>
 
       {isJoinActive ? (
-        <section ref={joinSectionRef} className="px-4">
+        <section ref={joinSectionRef} className={`px-4 animate-fade-in ${isJoinActive ? "" : "hidden"}`}>
           <div className="mx-auto w-full max-w-3xl space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
             <header className="flex flex-col gap-2 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
