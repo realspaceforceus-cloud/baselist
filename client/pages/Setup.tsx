@@ -63,11 +63,6 @@ export const Setup = (): JSX.Element => {
       return false;
     }
 
-    if (!baseId) {
-      toast.error("Please select a base/installation");
-      return false;
-    }
-
     return true;
   };
 
