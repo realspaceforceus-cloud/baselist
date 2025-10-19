@@ -720,11 +720,17 @@ const Landing = (): JSX.Element => {
                 <div className="space-y-3 rounded bg-background p-3">
                   <div className="space-y-2">
                     <p className="text-xs font-semibold text-muted-foreground">
-                      Your code:
+                      Your verification code:
                     </p>
-                    <code className="block rounded bg-muted px-3 py-2 font-mono text-lg font-bold text-foreground text-center">
+                    <code
+                      className="block rounded bg-muted px-4 py-4 font-[monospace] text-4xl font-bold text-foreground text-center tracking-[0.3em] select-all"
+                      style={{ fontFamily: "monospace", letterSpacing: "0.3em" }}
+                    >
                       {generatedCode}
                     </code>
+                    <p className="text-xs text-center text-muted-foreground">
+                      Copy this 5-character code (0-9, A-Z only)
+                    </p>
                   </div>
 
                   <ol className="space-y-2 text-sm text-muted-foreground">
