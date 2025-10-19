@@ -3,7 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, Edit2, Trash2, Plus, X, CheckCircle2 } from "lucide-react";
+import {
+  AlertCircle,
+  Edit2,
+  Trash2,
+  Plus,
+  X,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface EmailTemplate {
@@ -66,7 +73,12 @@ export const EmailTemplatesSection = (): JSX.Element => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.templateKey || !formData.subject || !formData.htmlContent) {
+    if (
+      !formData.name ||
+      !formData.templateKey ||
+      !formData.subject ||
+      !formData.htmlContent
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -102,7 +114,11 @@ export const EmailTemplatesSection = (): JSX.Element => {
       });
 
       if (response.ok) {
-        toast.success(editingId ? "Template updated successfully" : "Template created successfully");
+        toast.success(
+          editingId
+            ? "Template updated successfully"
+            : "Template created successfully",
+        );
         resetForm();
         loadTemplates();
       } else {
@@ -134,12 +150,15 @@ export const EmailTemplatesSection = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch(`/.netlify/functions/email-templates/${id}`, {
-        method: "DELETE",
-        headers: {
-          "user-id": "admin",
+      const response = await fetch(
+        `/.netlify/functions/email-templates/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "user-id": "admin",
+          },
         },
-      });
+      );
 
       if (response.ok) {
         toast.success("Template deleted successfully");
@@ -173,7 +192,8 @@ export const EmailTemplatesSection = (): JSX.Element => {
         <div>
           <h2 className="text-2xl font-bold">Email Templates</h2>
           <p className="text-sm text-gray-600 mt-1">
-            Manage email templates for notifications, verification codes, and newsletters
+            Manage email templates for notifications, verification codes, and
+            newsletters
           </p>
         </div>
         <Button onClick={() => setShowForm(!showForm)} className="gap-2">
@@ -199,10 +219,14 @@ export const EmailTemplatesSection = (): JSX.Element => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Template Name *</label>
+                <label className="block text-sm font-medium mb-2">
+                  Template Name *
+                </label>
                 <Input
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="e.g., Verification Code"
                   required
                 />
@@ -215,7 +239,10 @@ export const EmailTemplatesSection = (): JSX.Element => {
                 <Input
                   value={formData.templateKey}
                   onChange={(e) =>
-                    setFormData({ ...formData, templateKey: e.target.value.toLowerCase() })
+                    setFormData({
+                      ...formData,
+                      templateKey: e.target.value.toLowerCase(),
+                    })
                   }
                   placeholder="e.g., verify_email"
                   required
@@ -225,41 +252,62 @@ export const EmailTemplatesSection = (): JSX.Element => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Subject *</label>
+              <label className="block text-sm font-medium mb-2">
+                Subject *
+              </label>
               <Input
                 value={formData.subject}
-                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, subject: e.target.value })
+                }
                 placeholder="Email subject"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Description</label>
+              <label className="block text-sm font-medium mb-2">
+                Description
+              </label>
               <Input
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="What is this template for?"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Variables (comma-separated)</label>
+              <label className="block text-sm font-medium mb-2">
+                Variables (comma-separated)
+              </label>
               <Input
-                value={typeof formData.variables === "string" ? formData.variables : ""}
-                onChange={(e) => setFormData({ ...formData, variables: e.target.value })}
+                value={
+                  typeof formData.variables === "string"
+                    ? formData.variables
+                    : ""
+                }
+                onChange={(e) =>
+                  setFormData({ ...formData, variables: e.target.value })
+                }
                 placeholder="e.g., code, userName, expiresIn"
               />
               <p className="text-xs text-gray-600 mt-1">
-                Use these in your HTML as {"{"}"{"{"}variableName{"}"}{"}"} 
+                Use these in your HTML as {"{"}"{"{"}variableName{"}"}
+                {"}"}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">HTML Content *</label>
+              <label className="block text-sm font-medium mb-2">
+                HTML Content *
+              </label>
               <Textarea
                 value={formData.htmlContent}
-                onChange={(e) => setFormData({ ...formData, htmlContent: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, htmlContent: e.target.value })
+                }
                 placeholder="Enter HTML email content"
                 rows={10}
                 required
@@ -272,7 +320,9 @@ export const EmailTemplatesSection = (): JSX.Element => {
                 type="checkbox"
                 id="isActive"
                 checked={formData.isActive}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, isActive: e.target.checked })
+                }
                 className="rounded border-gray-300"
               />
               <label htmlFor="isActive" className="text-sm font-medium">
@@ -301,12 +351,17 @@ export const EmailTemplatesSection = (): JSX.Element => {
         <Card className="p-12 text-center border-dashed">
           <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600">No email templates yet</p>
-          <p className="text-sm text-gray-500 mt-2">Create your first template to get started</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Create your first template to get started
+          </p>
         </Card>
       ) : (
         <div className="grid gap-4">
           {templates.map((template) => (
-            <Card key={template.id} className="p-6 hover:border-blue-300 transition-colors">
+            <Card
+              key={template.id}
+              className="p-6 hover:border-blue-300 transition-colors"
+            >
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
@@ -322,17 +377,23 @@ export const EmailTemplatesSection = (): JSX.Element => {
                     )}
                   </div>
                   <p className="text-sm text-gray-600 mb-2">
-                    <strong>Key:</strong> <code className="bg-gray-100 px-2 py-1 rounded">{template.templateKey}</code>
+                    <strong>Key:</strong>{" "}
+                    <code className="bg-gray-100 px-2 py-1 rounded">
+                      {template.templateKey}
+                    </code>
                   </p>
                   <p className="text-sm text-gray-600 mb-2">
                     <strong>Subject:</strong> {template.subject}
                   </p>
                   {template.description && (
-                    <p className="text-sm text-gray-600 mb-2">{template.description}</p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {template.description}
+                    </p>
                   )}
                   {template.variables.length > 0 && (
                     <p className="text-sm text-gray-600">
-                      <strong>Variables:</strong> {template.variables.join(", ")}
+                      <strong>Variables:</strong>{" "}
+                      {template.variables.join(", ")}
                     </p>
                   )}
                 </div>

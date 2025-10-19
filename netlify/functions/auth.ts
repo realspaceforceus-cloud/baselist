@@ -30,7 +30,9 @@ const getEmailTemplate = async (templateKey: string) => {
       subject: row.subject,
       htmlContent: row.html_content,
       description: row.description,
-      variables: Array.isArray(row.variables) ? row.variables : JSON.parse(row.variables || "[]"),
+      variables: Array.isArray(row.variables)
+        ? row.variables
+        : JSON.parse(row.variables || "[]"),
       isActive: row.is_active,
     };
   } catch (error) {

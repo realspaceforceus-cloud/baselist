@@ -25,7 +25,9 @@ const mapRowToTemplate = (row: any): EmailTemplate => {
     subject: row.subject,
     htmlContent: row.html_content,
     description: row.description,
-    variables: Array.isArray(row.variables) ? row.variables : JSON.parse(row.variables || "[]"),
+    variables: Array.isArray(row.variables)
+      ? row.variables
+      : JSON.parse(row.variables || "[]"),
     isActive: row.is_active,
     createdBy: row.created_by,
     createdAt: row.created_at,
@@ -98,7 +100,8 @@ const handleCreateTemplate = async (event: any, userId: string) => {
       return {
         statusCode: 400,
         body: JSON.stringify({
-          error: "Missing required fields: name, templateKey, subject, htmlContent",
+          error:
+            "Missing required fields: name, templateKey, subject, htmlContent",
         }),
       };
     }

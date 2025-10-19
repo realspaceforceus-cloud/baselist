@@ -19,7 +19,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import { AdminSidebar, type AdminNavItem } from "@/components/admin/AdminSidebar";
+import {
+  AdminSidebar,
+  type AdminNavItem,
+} from "@/components/admin/AdminSidebar";
 import {
   BasesSection,
   DashboardSection,
@@ -69,7 +72,9 @@ const formatCurrency = (value: number): string =>
   }).format(value);
 
 const formatShortDate = (iso: string): string =>
-  new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(iso));
+  new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(
+    new Date(iso),
+  );
 
 const formatRelativeTime = (iso: string): string => {
   try {
@@ -200,13 +205,18 @@ const createBaseRows = (
   reports: AdminReportRecord[],
 ): AdminBaseRow[] => {
   return bases.map((base) => {
-    const membersOnBase = accounts.filter((account) => account.baseId === base.id);
+    const membersOnBase = accounts.filter(
+      (account) => account.baseId === base.id,
+    );
     const moderator =
-      membersOnBase.find((account) => account.role !== "member")?.username ?? "Unassigned";
+      membersOnBase.find((account) => account.role !== "member")?.username ??
+      "Unassigned";
     const activeListings = listings.filter(
       (listing) => listing.baseId === base.id && listing.status !== "sold",
     ).length;
-    const pendingReports = reports.filter((report) => report.base === base.name).length;
+    const pendingReports = reports.filter(
+      (report) => report.base === base.name,
+    ).length;
 
     return {
       id: base.id,
@@ -234,9 +244,11 @@ const createInitialReports = (
       reporter: "A1C Dorsey",
       targetType: "listing",
       targetId: "listing-forester",
-      targetLabel: listingById.get("listing-forester")?.title ?? "2018 Subaru Forester",
+      targetLabel:
+        listingById.get("listing-forester")?.title ?? "2018 Subaru Forester",
       base:
-        baseById.get(listingById.get("listing-forester")?.baseId ?? "") ?? "Joint Base Lewis-McChord",
+        baseById.get(listingById.get("listing-forester")?.baseId ?? "") ??
+        "Joint Base Lewis-McChord",
       time: "5m ago",
       attachmentUrl:
         "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2Fa47d79b9948a4a63a58584f0321bd702?format=webp&width=320",
@@ -257,8 +269,11 @@ const createInitialReports = (
       reporter: "SSgt Young",
       targetType: "listing",
       targetId: "listing-ps5",
-      targetLabel: listingById.get("listing-ps5")?.title ?? "PlayStation 5 Digital",
-      base: baseById.get(listingById.get("listing-ps5")?.baseId ?? "") ?? "Ramstein AB",
+      targetLabel:
+        listingById.get("listing-ps5")?.title ?? "PlayStation 5 Digital",
+      base:
+        baseById.get(listingById.get("listing-ps5")?.baseId ?? "") ??
+        "Ramstein AB",
       time: "42m ago",
       attachmentUrl:
         "https://cdn.builder.io/api/v1/image/assets%2F1286fd005baa4e368e0e4e8dfaf9c2e8%2Ff1c8bdbfd26d4a49a084c1d69cc9ef0f?format=webp&width=320",
@@ -297,7 +312,9 @@ const INITIAL_VERIFICATION_QUEUES: VerificationQueueSummary[] = [
   {
     id: "invite",
     label: "Invite Code",
-    count: INITIAL_VERIFICATION_DOCS.filter((doc) => doc.method === "Invite Code").length,
+    count: INITIAL_VERIFICATION_DOCS.filter(
+      (doc) => doc.method === "Invite Code",
+    ).length,
     description: "Moderator review required",
     icon: UsersIcon,
     toneClass: "text-primary",
@@ -305,7 +322,8 @@ const INITIAL_VERIFICATION_QUEUES: VerificationQueueSummary[] = [
   {
     id: "id",
     label: "ID Review",
-    count: INITIAL_VERIFICATION_DOCS.filter((doc) => doc.method === "ID Review").length,
+    count: INITIAL_VERIFICATION_DOCS.filter((doc) => doc.method === "ID Review")
+      .length,
     description: "Upload expires after action",
     icon: MessageSquareWarning,
     toneClass: "text-warning",
@@ -324,8 +342,12 @@ const createInitialFlaggedThreads = (
 
   const firstThread = messageThreads[0];
   const listing = listings.find((item) => item.id === firstThread.listingId);
-  const partnerId = firstThread.participants.find((participant) => participant !== SELLERS[1].id);
-  const excerpt = firstThread.messages[firstThread.messages.length - 1]?.body ?? "Check details.";
+  const partnerId = firstThread.participants.find(
+    (participant) => participant !== SELLERS[1].id,
+  );
+  const excerpt =
+    firstThread.messages[firstThread.messages.length - 1]?.body ??
+    "Check details.";
 
   return [
     {
@@ -359,12 +381,21 @@ const createMetricCards = (
   transactions: TransactionHistoryEntry[],
   manualVerificationBacklog: number,
 ): AdminMetricCard[] => {
-  const verifiedCount = accounts.filter((account) => account.isDowVerified).length;
-  const soldCount = listings.filter((listing) => listing.status === "sold").length;
+  const verifiedCount = accounts.filter(
+    (account) => account.isDowVerified,
+  ).length;
+  const soldCount = listings.filter(
+    (listing) => listing.status === "sold",
+  ).length;
   const activeCount = listings.length - soldCount;
-  const fulfillmentRate = transactions.length + soldCount === 0
-    ? 100
-    : Math.round(((transactions.length + soldCount) / (transactions.length + soldCount + manualVerificationBacklog)) * 100);
+  const fulfillmentRate =
+    transactions.length + soldCount === 0
+      ? 100
+      : Math.round(
+          ((transactions.length + soldCount) /
+            (transactions.length + soldCount + manualVerificationBacklog)) *
+            100,
+        );
 
   return [
     {
@@ -402,14 +433,24 @@ const createInitialRoles = (): AdminRole[] => [
   {
     name: "Admin",
     scope: "Global",
-    permissions: ["All bases", "Verification overrides", "Ban users", "Access metrics"],
+    permissions: [
+      "All bases",
+      "Verification overrides",
+      "Ban users",
+      "Access metrics",
+    ],
     icon: ShieldCheck,
     toneClass: "text-primary",
   },
   {
     name: "Moderator",
     scope: "Base",
-    permissions: ["Assigned base only", "Approve verification", "Resolve reports", "Hide listings"],
+    permissions: [
+      "Assigned base only",
+      "Approve verification",
+      "Resolve reports",
+      "Hide listings",
+    ],
     icon: UsersIcon,
     toneClass: "text-success",
   },
@@ -499,23 +540,33 @@ const AdminPanel = (): JSX.Element => {
   );
   const userDirectoryRef = useRef<Map<string, AdminUserDTO>>(new Map());
 
-  const [activeSection, setActiveSection] = useState<string>(availableSections[0]?.id ?? "dashboard");
+  const [activeSection, setActiveSection] = useState<string>(
+    availableSections[0]?.id ?? "dashboard",
+  );
 
   useEffect(() => {
     if (!availableSections.some((item) => item.id === activeSection)) {
       setActiveSection(availableSections[0]?.id ?? "dashboard");
     }
   }, [activeSection, availableSections]);
-  const [reports, setReports] = useState<AdminReportRecord[]>(() => createInitialReports(listings, bases));
+  const [reports, setReports] = useState<AdminReportRecord[]>(() =>
+    createInitialReports(listings, bases),
+  );
   const [reportNotes, setReportNotes] = useState<Record<string, string[]>>({});
-  const [verificationDocs, setVerificationDocs] = useState<VerificationDocument[]>(
-    INITIAL_VERIFICATION_DOCS,
-  );
-  const [verificationQueues, setVerificationQueues] = useState<VerificationQueueSummary[]>(() =>
-    INITIAL_VERIFICATION_QUEUES.map((queue) => ({ ...queue })),
-  );
-  const [flaggedThreads, setFlaggedThreads] = useState<AdminFlaggedThread[]>(() =>
-    createInitialFlaggedThreads(messageThreads, listings, bases, getMemberName),
+  const [verificationDocs, setVerificationDocs] = useState<
+    VerificationDocument[]
+  >(INITIAL_VERIFICATION_DOCS);
+  const [verificationQueues, setVerificationQueues] = useState<
+    VerificationQueueSummary[]
+  >(() => INITIAL_VERIFICATION_QUEUES.map((queue) => ({ ...queue })));
+  const [flaggedThreads, setFlaggedThreads] = useState<AdminFlaggedThread[]>(
+    () =>
+      createInitialFlaggedThreads(
+        messageThreads,
+        listings,
+        bases,
+        getMemberName,
+      ),
   );
   const [baseRows, setBaseRows] = useState<AdminBaseRow[]>(() =>
     createBaseRows(bases, accountList, listings, reports),
@@ -524,7 +575,12 @@ const AdminPanel = (): JSX.Element => {
     createListingRows(listings, bases, getMemberName),
   );
   const [metrics, setMetrics] = useState<AdminMetricCard[]>(() =>
-    createMetricCards(accountList, listings, transactions, verificationDocs.length),
+    createMetricCards(
+      accountList,
+      listings,
+      transactions,
+      verificationDocs.length,
+    ),
   );
 
   const sponsorRows = useMemo<AdminSponsorRow[]>(
@@ -544,13 +600,17 @@ const AdminPanel = (): JSX.Element => {
 
   const scopedAccounts = useMemo(
     () =>
-      isAdmin ? accountList : accountList.filter((account) => account.baseId === moderatorBaseId),
+      isAdmin
+        ? accountList
+        : accountList.filter((account) => account.baseId === moderatorBaseId),
     [accountList, isAdmin, moderatorBaseId],
   );
 
   const scopedListings = useMemo(
     () =>
-      isAdmin ? listings : listings.filter((listing) => listing.baseId === moderatorBaseId),
+      isAdmin
+        ? listings
+        : listings.filter((listing) => listing.baseId === moderatorBaseId),
     [isAdmin, listings, moderatorBaseId],
   );
 
@@ -571,12 +631,16 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const visibleBaseRows = useMemo(
-    () => (isAdmin ? baseRows : baseRows.filter((row) => row.id === moderatorBaseId)),
+    () =>
+      isAdmin ? baseRows : baseRows.filter((row) => row.id === moderatorBaseId),
     [baseRows, isAdmin, moderatorBaseId],
   );
 
   const visibleSponsorRows = useMemo(
-    () => (isAdmin ? sponsorRows : sponsorRows.filter((row) => row.baseId === moderatorBaseId)),
+    () =>
+      isAdmin
+        ? sponsorRows
+        : sponsorRows.filter((row) => row.baseId === moderatorBaseId),
     [isAdmin, moderatorBaseId, sponsorRows],
   );
 
@@ -585,7 +649,9 @@ const AdminPanel = (): JSX.Element => {
       isAdmin
         ? messageThreads
         : messageThreads.filter((thread) => {
-            const listing = listings.find((item) => item.id === thread.listingId);
+            const listing = listings.find(
+              (item) => item.id === thread.listingId,
+            );
             return listing?.baseId === moderatorBaseId;
           }),
     [isAdmin, listings, messageThreads, moderatorBaseId],
@@ -655,7 +721,9 @@ const AdminPanel = (): JSX.Element => {
           })),
         );
       } catch (error) {
-        toast.error("Unable to load members", { description: getApiErrorMessage(error) });
+        toast.error("Unable to load members", {
+          description: getApiErrorMessage(error),
+        });
       }
 
       try {
@@ -666,7 +734,10 @@ const AdminPanel = (): JSX.Element => {
         setMetrics((prev) =>
           prev.map((card) => {
             if (card.id === "verified") {
-              return { ...card, value: `${metricsResponse.snapshot.verifiedMembers}` };
+              return {
+                ...card,
+                value: `${metricsResponse.snapshot.verifiedMembers}`,
+              };
             }
             if (card.id === "listings") {
               return {
@@ -675,9 +746,10 @@ const AdminPanel = (): JSX.Element => {
               };
             }
             if (card.id === "reports") {
-              const resolvedRate = metricsResponse.snapshot.openReports === 0
-                ? "100%"
-                : `${Math.max(0, 100 - metricsResponse.snapshot.openReports)}%`;
+              const resolvedRate =
+                metricsResponse.snapshot.openReports === 0
+                  ? "100%"
+                  : `${Math.max(0, 100 - metricsResponse.snapshot.openReports)}%`;
               return { ...card, value: resolvedRate };
             }
             if (card.id === "verifications") {
@@ -690,7 +762,9 @@ const AdminPanel = (): JSX.Element => {
           }),
         );
       } catch (error) {
-        toast.error("Unable to load metrics", { description: getApiErrorMessage(error) });
+        toast.error("Unable to load metrics", {
+          description: getApiErrorMessage(error),
+        });
       }
 
       try {
@@ -708,7 +782,9 @@ const AdminPanel = (): JSX.Element => {
           })),
         );
       } catch (error) {
-        toast.error("Unable to load audit log", { description: getApiErrorMessage(error) });
+        toast.error("Unable to load audit log", {
+          description: getApiErrorMessage(error),
+        });
       }
     };
 
@@ -726,11 +802,12 @@ const AdminPanel = (): JSX.Element => {
 
       listings.forEach((listing) => {
         const existing = rowMap.get(listing.id);
-        const status: AdminListingStatus = existing?.status === "Flagged" || existing?.status === "Removed"
-          ? existing.status
-          : listing.status === "sold"
-          ? "Sold"
-          : "Active";
+        const status: AdminListingStatus =
+          existing?.status === "Flagged" || existing?.status === "Removed"
+            ? existing.status
+            : listing.status === "sold"
+              ? "Sold"
+              : "Active";
 
         const updated: AdminListingRow = {
           id: listing.id,
@@ -775,7 +852,14 @@ const AdminPanel = (): JSX.Element => {
   }, [bases, accountList, listings, reports]);
 
   useEffect(() => {
-    setMetrics(createMetricCards(accountList, listings, transactions, verificationDocs.length));
+    setMetrics(
+      createMetricCards(
+        accountList,
+        listings,
+        transactions,
+        verificationDocs.length,
+      ),
+    );
   }, [accountList, listings, transactions, verificationDocs.length]);
 
   useEffect(() => {
@@ -784,7 +868,8 @@ const AdminPanel = (): JSX.Element => {
         queue.id === "auto"
           ? {
               ...queue,
-              count: accountList.filter((account) => account.isDowVerified).length,
+              count: accountList.filter((account) => account.isDowVerified)
+                .length,
             }
           : queue,
       ),
@@ -848,7 +933,11 @@ const AdminPanel = (): JSX.Element => {
         completeDowVerification(userId);
         setUserOverrides((prev) => ({
           ...prev,
-          [userId]: { ...(prev[userId] ?? {}), verified: true, suspended: false },
+          [userId]: {
+            ...(prev[userId] ?? {}),
+            verified: true,
+            suspended: false,
+          },
         }));
         addNotice({
           userId,
@@ -872,7 +961,13 @@ const AdminPanel = (): JSX.Element => {
         toast.error("Unable to verify user", { description: message });
       }
     },
-    [addNotice, appendAuditEntry, completeDowVerification, getMemberName, updateQueueCount],
+    [
+      addNotice,
+      appendAuditEntry,
+      completeDowVerification,
+      getMemberName,
+      updateQueueCount,
+    ],
   );
 
   const handleSuspendUser = useCallback(
@@ -904,7 +999,9 @@ const AdminPanel = (): JSX.Element => {
           [userId]: { ...(prev[userId] ?? {}), suspended: false },
         }));
         appendAuditEntry(`Reinstated user ${getMemberName(userId)}`);
-        toast.success("Member reinstated", { description: getMemberName(userId) });
+        toast.success("Member reinstated", {
+          description: getMemberName(userId),
+        });
       } catch (error) {
         const message = getApiErrorMessage(error);
         toast.error("Unable to reinstate", { description: message });
@@ -989,7 +1086,9 @@ const AdminPanel = (): JSX.Element => {
       try {
         // In a real implementation, this would call an admin API endpoint
         // to reject the pending email change
-        appendAuditEntry(`Rejected pending email change for ${getMemberName(userId)}`);
+        appendAuditEntry(
+          `Rejected pending email change for ${getMemberName(userId)}`,
+        );
         toast.info("Email change rejected", {
           description: `${getMemberName(userId)} will need to try again.`,
         });
@@ -1023,7 +1122,8 @@ const AdminPanel = (): JSX.Element => {
             category: "report",
             severity: "danger",
             title: "Listing removed",
-            message: "Your listing was removed pending review. Reply to the moderation email if needed.",
+            message:
+              "Your listing was removed pending review. Reply to the moderation email if needed.",
           });
         }
         removeListing(listingId);
@@ -1037,19 +1137,31 @@ const AdminPanel = (): JSX.Element => {
         toast.error("Unable to remove listing", { description: message });
       }
     },
-    [addNotice, adjustListingReports, appendAuditEntry, listings, removeListing],
+    [
+      addNotice,
+      adjustListingReports,
+      appendAuditEntry,
+      listings,
+      removeListing,
+    ],
   );
 
   const handleRestoreListing = useCallback(
     async (listingId: string) => {
       const archived = archivedListingsRef.current[listingId];
       if (!archived) {
-        toast.error("Nothing to restore", { description: "Archived listing not found." });
+        toast.error("Nothing to restore", {
+          description: "Archived listing not found.",
+        });
         return;
       }
       try {
         await adminApi.restoreListing(listingId);
-        addListing({ ...archived, postedAt: new Date().toISOString(), status: "active" });
+        addListing({
+          ...archived,
+          postedAt: new Date().toISOString(),
+          status: "active",
+        });
         adjustListingReports(listingId, 0, "Active");
         appendAuditEntry(`Restored listing ${listingId}`);
         addNotice({
@@ -1075,11 +1187,13 @@ const AdminPanel = (): JSX.Element => {
           if (row.id !== listingId) {
             return row;
           }
-          const nextStatus: AdminListingStatus = row.status === "Flagged" ? "Active" : "Flagged";
+          const nextStatus: AdminListingStatus =
+            row.status === "Flagged" ? "Active" : "Flagged";
           return {
             ...row,
             status: nextStatus,
-            reports: nextStatus === "Flagged" ? Math.max(row.reports, 1) : row.reports,
+            reports:
+              nextStatus === "Flagged" ? Math.max(row.reports, 1) : row.reports,
           };
         }),
       );
@@ -1097,9 +1211,13 @@ const AdminPanel = (): JSX.Element => {
 
   const handleInspectMessages = useCallback(
     (listingId: string) => {
-      const thread = messageThreads.find((item) => item.listingId === listingId);
+      const thread = messageThreads.find(
+        (item) => item.listingId === listingId,
+      );
       if (!thread) {
-        toast.info("No thread yet", { description: "No messages linked to this listing." });
+        toast.info("No thread yet", {
+          description: "No messages linked to this listing.",
+        });
         return;
       }
       navigate(`/messages/${thread.id}`);
@@ -1129,15 +1247,21 @@ const AdminPanel = (): JSX.Element => {
         });
         if (report.targetType === "listing") {
           adjustListingReports(report.targetId, 1, "Flagged");
-          appendAuditEntry(`Approved report ${reportId} for listing ${report.targetId}`);
+          appendAuditEntry(
+            `Approved report ${reportId} for listing ${report.targetId}`,
+          );
         } else {
           handleIssueStrike(
             report.targetId,
             `Strike issued after approving report ${reportId} (${report.type})`,
           );
-          appendAuditEntry(`Approved report ${reportId} for user ${report.targetId}`);
+          appendAuditEntry(
+            `Approved report ${reportId} for user ${report.targetId}`,
+          );
         }
-        toast.success("Report approved", { description: `${report.type} • ${report.targetLabel}` });
+        toast.success("Report approved", {
+          description: `${report.type} • ${report.targetLabel}`,
+        });
       } catch (error) {
         const message = getApiErrorMessage(error);
         toast.error("Unable to approve report", { description: message });
@@ -1167,7 +1291,9 @@ const AdminPanel = (): JSX.Element => {
           return next;
         });
         appendAuditEntry(`Dismissed report ${reportId}`);
-        toast.info("Report dismissed", { description: `${report.type} • ${report.targetLabel}` });
+        toast.info("Report dismissed", {
+          description: `${report.type} • ${report.targetLabel}`,
+        });
       } catch (error) {
         const message = getApiErrorMessage(error);
         toast.error("Unable to dismiss report", { description: message });
@@ -1183,7 +1309,9 @@ const AdminPanel = (): JSX.Element => {
         window.open(report.attachmentUrl, "_blank", "noopener");
         appendAuditEntry(`Opened evidence for report ${reportId}`);
       } else {
-        toast.info("No attachment", { description: "This report did not include evidence." });
+        toast.info("No attachment", {
+          description: "This report did not include evidence.",
+        });
       }
     },
     [appendAuditEntry, reports],
@@ -1212,8 +1340,13 @@ const AdminPanel = (): JSX.Element => {
         return;
       }
       try {
-        await adminApi.adjudicateVerification(docId, { status: "approved", notes: "Approved by admin" });
-        setVerificationDocs((prev) => prev.filter((entry) => entry.id !== docId));
+        await adminApi.adjudicateVerification(docId, {
+          status: "approved",
+          notes: "Approved by admin",
+        });
+        setVerificationDocs((prev) =>
+          prev.filter((entry) => entry.id !== docId),
+        );
         await handleVerifyUser(doc.userId, doc.method);
         appendAuditEntry(`Approved verification for ${doc.name}`);
       } catch (error) {
@@ -1231,8 +1364,13 @@ const AdminPanel = (): JSX.Element => {
         return;
       }
       try {
-        await adminApi.adjudicateVerification(docId, { status: "denied", notes: "Denied by admin" });
-        setVerificationDocs((prev) => prev.filter((entry) => entry.id !== docId));
+        await adminApi.adjudicateVerification(docId, {
+          status: "denied",
+          notes: "Denied by admin",
+        });
+        setVerificationDocs((prev) =>
+          prev.filter((entry) => entry.id !== docId),
+        );
         const queueId = queueIdByMethod[doc.method];
         if (queueId) {
           updateQueueCount(queueId, -1);
@@ -1242,7 +1380,8 @@ const AdminPanel = (): JSX.Element => {
           category: "report",
           severity: "warning",
           title: "Verification denied",
-          message: "The information provided did not pass review. Please resubmit with clearer documentation.",
+          message:
+            "The information provided did not pass review. Please resubmit with clearer documentation.",
         });
         appendAuditEntry(`Denied verification for ${doc.name}`);
         toast.error("Verification denied", { description: doc.name });
@@ -1259,7 +1398,9 @@ const AdminPanel = (): JSX.Element => {
       try {
         await adminApi.getThreads();
       } catch (error) {
-        toast.error("Unable to refresh threads", { description: getApiErrorMessage(error) });
+        toast.error("Unable to refresh threads", {
+          description: getApiErrorMessage(error),
+        });
       }
       const thread = messageThreads.find((entry) => entry.id === threadId);
       if (thread) {
@@ -1270,7 +1411,8 @@ const AdminPanel = (): JSX.Element => {
               category: "report",
               severity: "warning",
               title: "Conduct warning",
-              message: "Please keep conversations on BaseList respectful and within platform payments.",
+              message:
+                "Please keep conversations on BaseList respectful and within platform payments.",
             });
           }
         });
@@ -1300,9 +1442,14 @@ const AdminPanel = (): JSX.Element => {
             status: "banned",
             reason: "Removed after review of flagged messages.",
           });
-          suspendMember(offendingUserId, "Removed after review of flagged messages.");
+          suspendMember(
+            offendingUserId,
+            "Removed after review of flagged messages.",
+          );
         } catch (error) {
-          toast.error("Unable to ban user", { description: getApiErrorMessage(error) });
+          toast.error("Unable to ban user", {
+            description: getApiErrorMessage(error),
+          });
         }
       }
       setFlaggedThreads((prev) => prev.filter((item) => item.id !== threadId));
@@ -1329,7 +1476,15 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleAddBase = useCallback(
-    async ({ name, region, timezone }: { name: string; region: string; timezone: string }) => {
+    async ({
+      name,
+      region,
+      timezone,
+    }: {
+      name: string;
+      region: string;
+      timezone: string;
+    }) => {
       const id = slugifyId(name);
       const abbreviation = abbreviateBaseName(name);
       const sanitizedTimezone = timezone.trim().toUpperCase() || "CT";
@@ -1366,7 +1521,10 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleEditBase = useCallback(
-    async (baseId: string, updates: { name?: string; region?: string; timezone?: string }) => {
+    async (
+      baseId: string,
+      updates: { name?: string; region?: string; timezone?: string },
+    ) => {
       if (!updates || Object.keys(updates).length === 0) {
         return;
       }
@@ -1399,10 +1557,16 @@ const AdminPanel = (): JSX.Element => {
         const detail = Object.entries(payload)
           .map(([key, value]) => `${key}: ${value}`)
           .join(", ");
-        appendAuditEntry(detail ? `Updated base ${baseId} (${detail})` : `Updated base ${baseId}`);
+        appendAuditEntry(
+          detail
+            ? `Updated base ${baseId} (${detail})`
+            : `Updated base ${baseId}`,
+        );
         toast.success("Base updated", { description: detail || baseId });
       } catch (error) {
-        toast.error("Unable to update base", { description: getApiErrorMessage(error) });
+        toast.error("Unable to update base", {
+          description: getApiErrorMessage(error),
+        });
       }
     },
     [appendAuditEntry],
@@ -1415,7 +1579,9 @@ const AdminPanel = (): JSX.Element => {
         return;
       }
       setBaseRows((prev) =>
-        prev.map((row) => (row.id === baseId ? { ...row, moderator: trimmed } : row)),
+        prev.map((row) =>
+          row.id === baseId ? { ...row, moderator: trimmed } : row,
+        ),
       );
       appendAuditEntry(`Assigned ${trimmed} as moderator for base ${baseId}`);
       toast.success("Moderator assigned", { description: trimmed });
@@ -1428,7 +1594,9 @@ const AdminPanel = (): JSX.Element => {
       try {
         await adminApi.updateBase(baseId, { region: "Archived" });
       } catch (error) {
-        toast.error("Unable to archive base", { description: getApiErrorMessage(error) });
+        toast.error("Unable to archive base", {
+          description: getApiErrorMessage(error),
+        });
       }
       setBaseRows((prev) => prev.filter((row) => row.id !== baseId));
       appendAuditEntry(`Archived base ${baseId}`);
@@ -1442,7 +1610,9 @@ const AdminPanel = (): JSX.Element => {
       try {
         await adminApi.getBases();
       } catch (error) {
-        toast.error("Unable to load bases", { description: getApiErrorMessage(error) });
+        toast.error("Unable to load bases", {
+          description: getApiErrorMessage(error),
+        });
       }
       appendAuditEntry(`Viewed stats for base ${baseId}`);
       toast.info("Base stats opened", { description: baseId });
@@ -1460,11 +1630,10 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const handleUpdateSponsor = useCallback(
-    (
-      placementId: string,
-      updates: Partial<Omit<SponsorPlacement, "id">>,
-    ) => {
-      const existing = sponsorPlacements.find((placement) => placement.id === placementId);
+    (placementId: string, updates: Partial<Omit<SponsorPlacement, "id">>) => {
+      const existing = sponsorPlacements.find(
+        (placement) => placement.id === placementId,
+      );
       updateSponsorPlacement(placementId, updates);
       const label = updates.label ?? existing?.label ?? placementId;
       toast.success("Sponsor updated", { description: label });
@@ -1474,9 +1643,13 @@ const AdminPanel = (): JSX.Element => {
 
   const handleRemoveSponsor = useCallback(
     (placementId: string) => {
-      const existing = sponsorPlacements.find((placement) => placement.id === placementId);
+      const existing = sponsorPlacements.find(
+        (placement) => placement.id === placementId,
+      );
       removeSponsorPlacement(placementId);
-      toast.info("Sponsor removed", { description: existing?.label ?? placementId });
+      toast.info("Sponsor removed", {
+        description: existing?.label ?? placementId,
+      });
     },
     [removeSponsorPlacement, sponsorPlacements],
   );
@@ -1494,7 +1667,9 @@ const AdminPanel = (): JSX.Element => {
         })),
       );
     } catch (error) {
-      toast.error("Unable to load audit log", { description: getApiErrorMessage(error) });
+      toast.error("Unable to load audit log", {
+        description: getApiErrorMessage(error),
+      });
     }
     appendAuditEntry("Reviewed security log");
     toast.info("Audit log opened", { description: "Latest actions loaded." });
@@ -1504,17 +1679,23 @@ const AdminPanel = (): JSX.Element => {
     try {
       await adminApi.getMetrics();
     } catch (error) {
-      toast.error("Unable to export metrics", { description: getApiErrorMessage(error) });
+      toast.error("Unable to export metrics", {
+        description: getApiErrorMessage(error),
+      });
     }
     appendAuditEntry("Exported metrics CSV");
-    toast.success("Export queued", { description: "CSV download will begin shortly." });
+    toast.success("Export queued", {
+      description: "CSV download will begin shortly.",
+    });
   }, [appendAuditEntry]);
 
   const handleClearAudit = useCallback(async () => {
     try {
       await adminApi.getAudit(10);
     } catch (error) {
-      toast.error("Unable to refresh audit", { description: getApiErrorMessage(error) });
+      toast.error("Unable to refresh audit", {
+        description: getApiErrorMessage(error),
+      });
     }
     setAuditEntries([]);
     toast.info("Audit log cleared");
@@ -1525,10 +1706,15 @@ const AdminPanel = (): JSX.Element => {
       const account = accountList.find((item) => item.id === seller.id);
       const overrides = userOverrides[seller.id] ?? {};
       const discipline = memberDiscipline[seller.id];
-      const sellerListings = scopedListings.filter((listing) => listing.sellerId === seller.id);
-      const threads = scopedMessageThreads.filter((thread) => thread.participants.includes(seller.id));
+      const sellerListings = scopedListings.filter(
+        (listing) => listing.sellerId === seller.id,
+      );
+      const threads = scopedMessageThreads.filter((thread) =>
+        thread.participants.includes(seller.id),
+      );
       const fallbackBaseId = bases[0]?.id;
-      const effectiveBaseId = account?.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
+      const effectiveBaseId =
+        account?.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
       if (!isAdmin && moderatorBaseId && effectiveBaseId !== moderatorBaseId) {
         return null;
       }
@@ -1548,7 +1734,8 @@ const AdminPanel = (): JSX.Element => {
         email: (account as any)?.email ?? "unknown@example.com",
         pendingEmail: (account as any)?.pendingEmail,
         base: getBaseName(bases, effectiveBaseId),
-        verified: overrides.verified ?? account?.isDowVerified ?? seller.verified,
+        verified:
+          overrides.verified ?? account?.isDowVerified ?? seller.verified,
         suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
         joined: formatShortDate(account?.createdAt ?? seller.memberSince),
         ratingLabel: average ? `${average.toFixed(1)} / ${count}` : "No rating",
@@ -1602,7 +1789,11 @@ const AdminPanel = (): JSX.Element => {
       .slice()
       .sort((a, b) => b.users - a.users)
       .slice(0, 5);
-    const chartData = sorted.map((row) => ({ id: row.id, label: row.name, value: row.users }));
+    const chartData = sorted.map((row) => ({
+      id: row.id,
+      label: row.name,
+      value: row.users,
+    }));
     return {
       chartData,
       chartMax: sorted[0]?.users ?? 0,
@@ -1623,11 +1814,12 @@ const AdminPanel = (): JSX.Element => {
     return "Healthy";
   }, [visibleFlaggedThreads.length, visibleReports.length]);
 
-  const queueHealthTone = queueHealthLabel === "Stable"
-    ? "text-verified"
-    : queueHealthLabel === "Healthy"
-    ? "text-success"
-    : "text-warning";
+  const queueHealthTone =
+    queueHealthLabel === "Stable"
+      ? "text-verified"
+      : queueHealthLabel === "Healthy"
+        ? "text-success"
+        : "text-warning";
 
   const dashboardCards = useMemo<DashboardCard[]>(
     () => [
@@ -1646,7 +1838,9 @@ const AdminPanel = (): JSX.Element => {
         value: `${visibleReports.length}`,
         meta: "Unresolved",
         icon: ShieldAlert,
-        toneClass: visibleReports.length ? "text-warning" : "text-muted-foreground",
+        toneClass: visibleReports.length
+          ? "text-warning"
+          : "text-muted-foreground",
         target: "reports",
       },
       {
@@ -1655,16 +1849,21 @@ const AdminPanel = (): JSX.Element => {
         value: `${activeListingCount} / ${flaggedListingCount}`,
         meta: "Active / Flagged",
         icon: PackageSearch,
-        toneClass: flaggedListingCount ? "text-warning" : "text-muted-foreground",
+        toneClass: flaggedListingCount
+          ? "text-warning"
+          : "text-muted-foreground",
         target: "listings",
       },
       {
         id: "users",
         label: "New Users",
-        value: `${scopedAccounts.filter(
-          (account) =>
-            new Date(account.createdAt).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000,
-        ).length}`,
+        value: `${
+          scopedAccounts.filter(
+            (account) =>
+              new Date(account.createdAt).getTime() >
+              Date.now() - 7 * 24 * 60 * 60 * 1000,
+          ).length
+        }`,
         meta: "This week",
         icon: Users2,
         toneClass: "text-success",
@@ -1711,7 +1910,9 @@ const AdminPanel = (): JSX.Element => {
   const unreadNoticeCount = useMemo(
     () =>
       notices.filter(
-        (notice) => !notice.read && (notice.userId === "all" || notice.userId === user.id),
+        (notice) =>
+          !notice.read &&
+          (notice.userId === "all" || notice.userId === user.id),
       ).length,
     [notices, user.id],
   );
@@ -1721,13 +1922,17 @@ const AdminPanel = (): JSX.Element => {
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="space-y-1.5">
-            <h1 className="text-3xl font-semibold text-foreground">BaseList Admin Panel</h1>
+            <h1 className="text-3xl font-semibold text-foreground">
+              BaseList Admin Panel
+            </h1>
             <p className="text-sm text-muted-foreground">
-              Simple, fast, auditable controls for every base. All actions are logged for 90 days.
+              Simple, fast, auditable controls for every base. All actions are
+              logged for 90 days.
             </p>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-primary">
-                {unreadNoticeCount} unread notice{unreadNoticeCount === 1 ? "" : "s"}
+                {unreadNoticeCount} unread notice
+                {unreadNoticeCount === 1 ? "" : "s"}
               </span>
               {unreadNoticeCount > 0 ? (
                 <button
@@ -1746,21 +1951,36 @@ const AdminPanel = (): JSX.Element => {
               <span className="inline-flex h-2 w-2 rounded-full bg-verified" />
               Role • {user.role?.toUpperCase?.() ?? "ADMIN"}
             </span>
-            <span className="text-muted-foreground/70">Listings sold: {soldListingCount}</span>
-            <span className="text-muted-foreground/70">Verified members: {analytics.verifiedMembers}</span>
+            <span className="text-muted-foreground/70">
+              Listings sold: {soldListingCount}
+            </span>
+            <span className="text-muted-foreground/70">
+              Verified members: {analytics.verifiedMembers}
+            </span>
           </div>
         </div>
       </header>
       <div className="grid gap-6 lg:grid-cols-[18rem,1fr]">
-        <AdminSidebar items={availableSections} activeId={activeSection} onSelect={setActiveSection} />
+        <AdminSidebar
+          items={availableSections}
+          activeId={activeSection}
+          onSelect={setActiveSection}
+        />
         <div className="space-y-8">
           {activeSection === "dashboard" ? (
             <>
-              <DashboardSection cards={dashboardCards} onNavigate={setActiveSection} />
+              <DashboardSection
+                cards={dashboardCards}
+                onNavigate={setActiveSection}
+              />
               <section className="space-y-3 rounded-3xl border border-border bg-background/80 p-5 shadow-soft">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-foreground">QA checklist</h2>
-                  <span className="text-xs text-muted-foreground">All priority flows verified</span>
+                  <h2 className="text-sm font-semibold text-foreground">
+                    QA checklist
+                  </h2>
+                  <span className="text-xs text-muted-foreground">
+                    All priority flows verified
+                  </span>
                 </div>
                 <ul className="space-y-2 text-xs text-muted-foreground">
                   {QA_CHECKLIST.map((item) => (
@@ -1769,8 +1989,12 @@ const AdminPanel = (): JSX.Element => {
                       className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-nav-border bg-card/80 px-4 py-2"
                     >
                       <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-foreground">{item.flow}</span>
-                        <span className="text-[11px] text-muted-foreground/80">{item.detail}</span>
+                        <span className="text-sm font-semibold text-foreground">
+                          {item.flow}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground/80">
+                          {item.detail}
+                        </span>
                       </div>
                       <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-success">
                         Verified
@@ -1857,9 +2081,14 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "roles" ? <RolesSection roles={roles} /> : null}
-          {activeSection === "email-templates" ? <EmailTemplatesSection /> : null}
+          {activeSection === "email-templates" ? (
+            <EmailTemplatesSection />
+          ) : null}
           {activeSection === "security" ? (
-            <SecuritySection auditEntries={auditEntries} onClearAudit={handleClearAudit} />
+            <SecuritySection
+              auditEntries={auditEntries}
+              onClearAudit={handleClearAudit}
+            />
           ) : null}
           {activeSection === "settings" ? <SettingsSection /> : null}
         </div>

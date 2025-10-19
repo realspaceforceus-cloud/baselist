@@ -8,7 +8,10 @@ export type { AdminListingRow, AdminListingStatus } from "./ListingsSection";
 export { ReportsSection } from "./ReportsSection";
 export type { AdminReportRecord, AdminReportTarget } from "./ReportsSection";
 export { VerificationSection } from "./VerificationSection";
-export type { VerificationQueueSummary, VerificationDocument } from "./VerificationSection";
+export type {
+  VerificationQueueSummary,
+  VerificationDocument,
+} from "./VerificationSection";
 export { BasesSection } from "./BasesSection";
 export type { AdminBaseRow } from "./BasesSection";
 export { SponsorsSection } from "./SponsorsSection";

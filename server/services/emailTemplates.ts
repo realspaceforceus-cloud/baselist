@@ -173,7 +173,9 @@ export const updateEmailTemplate = async (
   }
 };
 
-export const deleteEmailTemplate = async (templateId: string): Promise<boolean> => {
+export const deleteEmailTemplate = async (
+  templateId: string,
+): Promise<boolean> => {
   try {
     const result = await pool.query(
       "DELETE FROM email_templates WHERE id = $1",
@@ -195,7 +197,9 @@ const mapRowToTemplate = (row: any): EmailTemplate => {
     subject: row.subject,
     htmlContent: row.html_content,
     description: row.description,
-    variables: Array.isArray(row.variables) ? row.variables : JSON.parse(row.variables || "[]"),
+    variables: Array.isArray(row.variables)
+      ? row.variables
+      : JSON.parse(row.variables || "[]"),
     isActive: row.is_active,
     createdBy: row.created_by,
     createdAt: new Date(row.created_at),

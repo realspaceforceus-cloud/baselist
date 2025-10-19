@@ -5,6 +5,7 @@ This guide walks you through setting up email verification and templates for Bas
 ## Overview
 
 The app now has:
+
 1. **SendGrid Integration** - Real email sending in production
 2. **Email Template Management** - Admin panel to create/edit email templates
 3. **Database-driven Templates** - Store templates in your Neon database
@@ -22,7 +23,7 @@ The app now has:
 1. Log in to SendGrid dashboard
 2. Go to **Settings > API Keys**
 3. Click **Create API Key**
-4. Name it "BaseList" 
+4. Name it "BaseList"
 5. Select "Full Access"
 6. Copy the API key (you'll only see it once)
 
@@ -50,6 +51,7 @@ The app now has:
 ### For Local Development:
 
 Update your `.env` file (or `.env.local`):
+
 ```
 SENDGRID_API_KEY=your_api_key_here
 SENDGRID_FROM_EMAIL=noreply@baselist.mil
@@ -69,6 +71,7 @@ You need to create the email template tables in your Neon database.
 4. Run each migration file in order:
 
 **Migration 1: verification_codes table** (if not already created)
+
 ```sql
 -- From: supabase/migrations/002_add_verification_codes.sql
 CREATE TABLE verification_codes (
@@ -88,6 +91,7 @@ CREATE INDEX idx_verification_codes_expires_at ON verification_codes(expires_at)
 ```
 
 **Migration 2: email_templates table**
+
 ```sql
 -- From: supabase/migrations/003_add_email_templates.sql
 CREATE TABLE email_templates (
@@ -110,6 +114,7 @@ CREATE INDEX idx_email_templates_is_active ON email_templates(is_active);
 ```
 
 **Migration 3: Seed default template**
+
 ```sql
 -- From: supabase/migrations/004_seed_email_templates.sql
 INSERT INTO email_templates (
@@ -162,11 +167,13 @@ INSERT INTO email_templates (
 ### Troubleshooting:
 
 **Email not received?**
+
 - Check that `SENDGRID_API_KEY` and `SENDGRID_FROM_EMAIL` are set in Netlify
 - Verify your sender email is authenticated in SendGrid
 - Check Netlify function logs for errors
 
 **Email stuck in spam?**
+
 - Add your domain to SendGrid's authentication
 - Or use a custom domain email instead of noreply@
 
@@ -182,12 +189,14 @@ Once everything is set up:
 ## Available Email Template Variables
 
 ### Verification Code Template (`verify`)
+
 - `{{ code }}` - The 6-digit verification code
 - `{{ email }}` - The user's email address
 
 ### Adding More Templates
 
 You can create additional templates for:
+
 - Password reset
 - Newsletter notifications
 - Account updates
@@ -196,19 +205,23 @@ You can create additional templates for:
 ## Troubleshooting
 
 ### "SENDGRID_API_KEY is not set"
+
 - Add the environment variable to Netlify settings
 - Make sure to redeploy after adding it
 
 ### "Failed to send verification code email"
+
 - Check SendGrid API key is correct
 - Verify sender email is authenticated
 - Check network connectivity
 
 ### "Template not found"
+
 - Run the migration to create the `email_templates` table
 - Seed the default template
 
 ### Emails only logged in development
+
 - This is expected. In development (`NODE_ENV !== "production"`), emails are logged to console
 - In production, they're sent via SendGrid
 - To test in development with real emails, set `NODE_ENV=production` in your build
