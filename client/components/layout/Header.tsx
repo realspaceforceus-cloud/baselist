@@ -298,6 +298,16 @@ export const Header = (): JSX.Element => {
                   <p className="text-[0.65rem] text-muted-foreground">Switch</p>
                 </div>
               </button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="rounded-full p-2"
+                type="button"
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                title={isDarkMode ? "Light mode" : "Dark mode"}
+              >
+                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
             </div>
             <nav className="flex items-center justify-between gap-2 rounded-2xl border border-nav-border bg-nav/70 px-2 py-2 shadow-soft">
               {NAV_ITEMS.map(({ label, to, icon: Icon, end = false }) => (
