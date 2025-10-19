@@ -345,9 +345,9 @@ const handler: Handler = async (event) => {
         );
 
         await client.query(
-          `INSERT INTO email_verification_audit 
-           (user_id, verification_id, event_type, details, sender_email) 
-           VALUES ($1, $2, $3, $4, $5)`,
+          `INSERT INTO email_verification_audit
+           (id, user_id, verification_id, event_type, details, sender_email)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)`,
           [
             verification.user_id,
             verification.id,
