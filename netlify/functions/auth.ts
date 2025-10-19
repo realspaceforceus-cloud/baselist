@@ -66,8 +66,6 @@ const sendVerificationCode = async (
   }
 
   try {
-    sgMail.setApiKey(apiKey);
-
     let template = await getEmailTemplate("verify");
     let subject = "Verify your BaseList account";
     let htmlContent = `
@@ -95,14 +93,42 @@ const sendVerificationCode = async (
       });
     }
 
-    const msg = {
-      to: email,
-      from: fromEmail,
-      subject,
-      html: htmlContent,
-    };
+    // Send via SendGrid Web API
+    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        personalizations: [
+          {
+            to: [
+              {
+                email,
+              },
+            ],
+          },
+        ],
+        from: {
+          email: fromEmail,
+        },
+        subject,
+        content: [
+          {
+            type: "text/html",
+            value: htmlContent,
+          },
+        ],
+      }),
+    });
 
-    await sgMail.send(msg);
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(`SendGrid API error (${response.status}):`, error);
+      return false;
+    }
+
     console.log(`[EMAIL SENT] Verification code sent to ${email}`);
     return true;
   } catch (error) {
