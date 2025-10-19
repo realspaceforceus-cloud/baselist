@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import { supabase } from "./db";
+import { pool } from "./db";
 import { randomUUID } from "crypto";
 
 export const handler: Handler = async (event) => {
@@ -8,36 +8,33 @@ export const handler: Handler = async (event) => {
 
   // GET /api/messages/thread/:threadId
   if (method === "GET" && path.includes("/thread/")) {
+    const client = await pool.connect();
     try {
       const threadId = path.split("/thread/")[1];
 
-      const { data: messages, error } = await supabase
-        .from("messages")
-        .select("*")
-        .eq("thread_id", threadId)
-        .order("sent_at", { ascending: true });
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      const result = await client.query(
+        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+        [threadId],
+      );
 
       return {
         statusCode: 200,
-        body: JSON.stringify(messages),
+        body: JSON.stringify(result.rows),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
   // POST /api/messages - send message
   if (method === "POST" && path === "") {
+    const client = await pool.connect();
     try {
       const { threadId, authorId, body } = JSON.parse(event.body || "{}");
 
@@ -50,76 +47,62 @@ export const handler: Handler = async (event) => {
 
       const messageId = randomUUID();
 
-      const { data: message, error } = await supabase
-        .from("messages")
-        .insert({
-          id: messageId,
-          thread_id: threadId,
-          author_id: authorId,
-          body,
-          sent_at: new Date().toISOString(),
-          type: "text",
-        })
-        .select()
-        .single();
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      const result = await client.query(
+        `INSERT INTO messages (id, thread_id, author_id, body, sent_at, type)
+         VALUES ($1, $2, $3, $4, NOW(), $5)
+         RETURNING *`,
+        [messageId, threadId, authorId, body, "text"],
+      );
 
       // Update thread's updated_at timestamp
-      await supabase
-        .from("message_threads")
-        .update({ updated_at: new Date().toISOString() })
-        .eq("id", threadId);
+      await client.query("UPDATE message_threads SET updated_at = NOW() WHERE id = $1", [
+        threadId,
+      ]);
 
       return {
         statusCode: 201,
-        body: JSON.stringify(message),
+        body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
   // GET /api/messages/threads/:userId - get user's message threads
   if (method === "GET" && path.includes("/threads/")) {
+    const client = await pool.connect();
     try {
       const userId = path.split("/threads/")[1];
 
-      const { data: threads, error } = await supabase
-        .from("message_threads")
-        .select("*")
-        .contains("participants", [userId])
-        .order("updated_at", { ascending: false });
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      const result = await client.query(
+        "SELECT * FROM message_threads WHERE $1 = ANY(participants) ORDER BY updated_at DESC",
+        [userId],
+      );
 
       return {
         statusCode: 200,
-        body: JSON.stringify(threads),
+        body: JSON.stringify(result.rows),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
   // POST /api/messages/thread - create message thread
   if (method === "POST" && path === "/thread") {
+    const client = await pool.connect();
     try {
       const { listingId, participants } = JSON.parse(event.body || "{}");
 
@@ -132,35 +115,25 @@ export const handler: Handler = async (event) => {
 
       const threadId = randomUUID();
 
-      const { data: thread, error } = await supabase
-        .from("message_threads")
-        .insert({
-          id: threadId,
-          listing_id: listingId,
-          participants,
-          status: "active",
-          archived_by: [],
-          deleted_by: [],
-        })
-        .select()
-        .single();
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      const result = await client.query(
+        `INSERT INTO message_threads (id, listing_id, participants, status, archived_by, deleted_by)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING *`,
+        [threadId, listingId, participants, "active", "[]", "[]"],
+      );
 
       return {
         statusCode: 201,
-        body: JSON.stringify(thread),
+        body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
