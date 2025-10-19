@@ -27,6 +27,7 @@ import {
   BasesSection,
   DashboardSection,
   EmailTemplatesSection,
+  FamilyVerificationSection,
   ListingsSection,
   MessagingSection,
   MetricsSection,
