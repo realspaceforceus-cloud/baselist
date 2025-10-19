@@ -1,50 +1,43 @@
 import { Handler } from "@netlify/functions";
-import { supabase } from "./db";
+import { pool } from "./db";
 import { randomUUID } from "crypto";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/listings", "");
 
-  // GET /api/listings - list all active listings
+  // GET /api/listings
   if (method === "GET" && path === "") {
+    const client = await pool.connect();
     try {
-      const { data: listings, error } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("status", "active")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      const result = await client.query(
+        "SELECT * FROM listings WHERE status = $1 ORDER BY created_at DESC",
+        ["active"],
+      );
 
       return {
         statusCode: 200,
-        body: JSON.stringify(listings),
+        body: JSON.stringify(result.rows),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
   // GET /api/listings/:id
   if (method === "GET" && path.startsWith("/")) {
+    const client = await pool.connect();
     try {
       const id = path.slice(1);
-      const { data: listing, error } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const result = await client.query("SELECT * FROM listings WHERE id = $1", [id]);
 
-      if (error || !listing) {
+      if (result.rows.length === 0) {
         return {
           statusCode: 404,
           body: JSON.stringify({ error: "Listing not found" }),
@@ -53,29 +46,25 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify(listing),
+        body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
-  // POST /api/listings - create new listing
+  // POST /api/listings
   if (method === "POST" && path === "") {
+    const client = await pool.connect();
     try {
-      const {
-        title,
-        price,
-        isFree,
-        category,
-        description,
-        imageUrls,
-        baseId,
-        sellerId,
-      } = JSON.parse(event.body || "{}");
+      const { title, price, isFree, category, description, imageUrls, baseId, sellerId } =
+        JSON.parse(event.body || "{}");
 
       if (!title || !category || !baseId || !sellerId) {
         return {
@@ -86,97 +75,92 @@ export const handler: Handler = async (event) => {
 
       const listingId = randomUUID();
 
-      const { data: listing, error } = await supabase
-        .from("listings")
-        .insert({
-          id: listingId,
+      const result = await client.query(
+        `INSERT INTO listings (id, title, price, is_free, category, status, seller_id, base_id, description, image_urls)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         RETURNING *`,
+        [
+          listingId,
           title,
-          price: price || 0,
-          is_free: isFree || false,
+          price || 0,
+          isFree || false,
           category,
-          status: "active",
-          seller_id: sellerId,
-          base_id: baseId,
+          "active",
+          sellerId,
+          baseId,
           description,
-          image_urls: imageUrls || [],
-        })
-        .select()
-        .single();
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+          JSON.stringify(imageUrls || []),
+        ],
+      );
 
       return {
         statusCode: 201,
-        body: JSON.stringify(listing),
+        body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
-  // PUT /api/listings/:id - update listing
+  // PUT /api/listings/:id
   if (method === "PUT" && path.startsWith("/")) {
+    const client = await pool.connect();
     try {
       const id = path.slice(1);
       const updates = JSON.parse(event.body || "{}");
 
-      const { data: listing, error } = await supabase
-        .from("listings")
-        .update(updates)
-        .eq("id", id)
-        .select()
-        .single();
+      const setClauses = Object.keys(updates)
+        .map((key, index) => `${key} = $${index + 1}`)
+        .join(", ");
 
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      const values = [...Object.values(updates), id];
+
+      const result = await client.query(
+        `UPDATE listings SET ${setClauses}, updated_at = NOW() WHERE id = $${Object.keys(updates).length + 1} RETURNING *`,
+        values,
+      );
 
       return {
         statusCode: 200,
-        body: JSON.stringify(listing),
+        body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
   // DELETE /api/listings/:id
   if (method === "DELETE" && path.startsWith("/")) {
+    const client = await pool.connect();
     try {
       const id = path.slice(1);
 
-      const { error } = await supabase.from("listings").delete().eq("id", id);
-
-      if (error) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: error.message }),
-        };
-      }
+      await client.query("DELETE FROM listings WHERE id = $1", [id]);
 
       return {
         statusCode: 200,
         body: JSON.stringify({ success: true }),
       };
     } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        statusCode: 400,
+        body: JSON.stringify({ error: errorMsg }),
       };
+    } finally {
+      client.release();
     }
   }
 
