@@ -403,9 +403,9 @@ const handler: Handler = async (event) => {
 
       // Log successful verification
       await client.query(
-        `INSERT INTO email_verification_audit 
-         (user_id, verification_id, email, event_type, details, sender_email) 
-         VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO email_verification_audit
+         (id, user_id, verification_id, email, event_type, details, sender_email)
+         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)`,
         [
           verification.user_id,
           verification.id,
