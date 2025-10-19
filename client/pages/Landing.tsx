@@ -1,11 +1,11 @@
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
-  FormEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { AlertCircle, CheckCircle2, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
+  AlertCircle,
+  CheckCircle2,
+  MapPin,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,8 @@ const getDistanceInMiles = (
   const sinLat = Math.sin(dLat / 2);
   const sinLon = Math.sin(dLon / 2);
 
-  const aVal = sinLat * sinLat + sinLon * sinLon * Math.cos(lat1) * Math.cos(lat2);
+  const aVal =
+    sinLat * sinLat + sinLon * sinLon * Math.cos(lat1) * Math.cos(lat2);
   const c = 2 * Math.atan2(Math.sqrt(aVal), Math.sqrt(1 - aVal));
 
   return earthRadiusMiles * c;
@@ -66,10 +67,7 @@ const defaultAccountForm = {
 };
 
 const Landing = (): JSX.Element => {
-  const {
-    bases,
-    isAuthenticated,
-  } = useBaseList();
+  const { bases, isAuthenticated } = useBaseList();
   const { openSignIn } = useAuthDialog();
   const joinSectionRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +75,9 @@ const Landing = (): JSX.Element => {
   const [accountForm, setAccountForm] = useState(defaultAccountForm);
   const [accountError, setAccountError] = useState<string | null>(null);
   const [verificationCode, setVerificationCode] = useState("");
-  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
   const [pendingEmail, setPendingEmail] = useState<string>("");
@@ -311,7 +311,11 @@ const Landing = (): JSX.Element => {
           setLocationStatus("unavailable");
         }
       },
-      { enableHighAccuracy: false, maximumAge: 5 * 60 * 1000, timeout: 10 * 1000 },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 5 * 60 * 1000,
+        timeout: 10 * 1000,
+      },
     );
   }, [joinStage, locationStatus]);
 
@@ -573,7 +577,8 @@ const Landing = (): JSX.Element => {
                   )
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.
+                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works
+                    great.
                   </p>
                 )}
               </div>
@@ -591,9 +596,12 @@ const Landing = (): JSX.Element => {
                   disabled={isSubmitting}
                 />
                 <label htmlFor="rules" className="space-y-1">
-                  <span className="font-semibold text-foreground">I agree to the marketplace rules.</span>
+                  <span className="font-semibold text-foreground">
+                    I agree to the marketplace rules.
+                  </span>
                   <span className="block text-xs text-muted-foreground">
-                    No weapons, counterfeit, adult content, scams, or external payment demands.
+                    No weapons, counterfeit, adult content, scams, or external
+                    payment demands.
                   </span>
                 </label>
               </div>
@@ -629,7 +637,9 @@ const Landing = (): JSX.Element => {
                   type="text"
                   value={verificationCode}
                   onChange={(event) =>
-                    setVerificationCode(event.target.value.replace(/\D/g, "").slice(0, 6))
+                    setVerificationCode(
+                      event.target.value.replace(/\D/g, "").slice(0, 6),
+                    )
                   }
                   placeholder="000000"
                   maxLength={6}
@@ -639,7 +649,8 @@ const Landing = (): JSX.Element => {
                   autoFocus
                 />
                 <p className="text-xs text-muted-foreground">
-                  We sent a 6-digit code to <span className="font-semibold">{pendingEmail}</span>
+                  We sent a 6-digit code to{" "}
+                  <span className="font-semibold">{pendingEmail}</span>
                 </p>
               </div>
 
@@ -677,7 +688,8 @@ const Landing = (): JSX.Element => {
                   Account verified!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  You're all set. Sign in to start browsing, posting, and messaging on BaseList.
+                  You're all set. Sign in to start browsing, posting, and
+                  messaging on BaseList.
                 </p>
               </div>
 
@@ -703,7 +715,8 @@ const Landing = (): JSX.Element => {
             Verified classifieds for military bases.
           </h1>
           <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-            Built by an Active-Duty Airman for verified DoW members and families. Safe, local, and private—on base only.
+            Built by an Active-Duty Airman for verified DoW members and
+            families. Safe, local, and private—on base only.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-foreground/80">
             {ICON_STEPS.map(({ label, icon: Icon }) => (
@@ -718,7 +731,11 @@ const Landing = (): JSX.Element => {
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button size="lg" className="rounded-full px-8" onClick={handleStartJoin}>
+            <Button
+              size="lg"
+              className="rounded-full px-8"
+              onClick={handleStartJoin}
+            >
               Join Now
             </Button>
             <Button

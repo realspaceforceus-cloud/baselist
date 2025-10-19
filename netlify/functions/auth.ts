@@ -79,7 +79,8 @@ const handleSignup = async (event: any) => {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: "Username must be 3-20 characters using letters, numbers, or underscores",
+        error:
+          "Username must be 3-20 characters using letters, numbers, or underscores",
       }),
     };
   }
@@ -232,7 +233,9 @@ const handleVerifyCode = async (event: any) => {
     if (codeResult.rows.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "No verification code found for this email" }),
+        body: JSON.stringify({
+          error: "No verification code found for this email",
+        }),
       };
     }
 
