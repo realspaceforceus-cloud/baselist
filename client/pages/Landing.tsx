@@ -754,26 +754,11 @@ const Landing = (): JSX.Element => {
                   </ol>
                 </div>
 
-                <a
-                  href={`mailto:verify@trustypcs.com?subject=${encodeURIComponent(generatedCode)}&body=${encodeURIComponent(`Verification code: ${generatedCode}`)}`}
-                  className="inline-flex w-full justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                  Open Email Client
-                </a>
+                <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
+                  <p className="text-xs text-blue-900">
+                    ⚠️ <strong>Important:</strong> Send from your DoW email account (your .mil email). Personal email accounts won't verify.
+                  </p>
+                </div>
               </div>
 
               {verificationError ? (
