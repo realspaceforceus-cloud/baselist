@@ -313,15 +313,20 @@ export const BaseListProvider = ({
   const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
     ...ACCOUNT_SEED,
   ]);
-  // Synchronously read localStorage on initial render to restore session immediately
+  // Synchronously restore auth from real backend
   const [activeAccountId, setActiveAccountId] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        return localStorage.getItem("activeUserId");
-      } catch {
-        return null;
+    if (typeof window === "undefined") return null;
+
+    // Try to restore user from production auth service
+    try {
+      const user = authService.getStoredUser();
+      if (user) {
+        return user.id;
       }
+    } catch (error) {
+      console.error("Failed to restore auth:", error);
     }
+
     return null;
   });
   const [memberDiscipline, setMemberDiscipline] = useState<
