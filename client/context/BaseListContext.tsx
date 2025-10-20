@@ -372,11 +372,23 @@ export const BaseListProvider = ({
     const fetchBases = async () => {
       try {
         const response = await fetch("/.netlify/functions/bases");
-        if (response.ok) {
-          const basesData = await response.json();
-          if (Array.isArray(basesData) && basesData.length > 0) {
-            setBases(basesData);
-          }
+
+        if (!response.ok) {
+          console.error(`Failed to fetch bases: HTTP ${response.status}`);
+          return;
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Invalid content type:", contentType);
+          return;
+        }
+
+        const basesData = await response.json();
+        if (Array.isArray(basesData) && basesData.length > 0) {
+          setBases(basesData);
+        } else {
+          console.warn("No bases returned from API");
         }
       } catch (error) {
         console.error("Failed to fetch bases:", error);
