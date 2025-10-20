@@ -416,14 +416,14 @@ export const BaseListProvider = ({
       (account) => account.isDowVerified,
     ).length;
     const activeBases =
-      new Set(accounts.map((account) => account.baseId)).size || BASES.length;
+      new Set(accounts.map((account) => account.baseId)).size || bases.length;
     const completedTransactions = transactions.length;
     setAnalyticsCounters({
       verifiedMembers,
       activeBases,
       completedTransactions,
     });
-  }, [accounts, transactions]);
+  }, [accounts, transactions, bases]);
 
   const setCurrentBaseId = useCallback(
     (baseId: string) => {
