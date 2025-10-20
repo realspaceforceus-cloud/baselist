@@ -62,37 +62,17 @@ userRouter.post("/profile/avatar", authenticate, async (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
 
   try {
-    // Handle JSON body with avatarUrl
-    if (req.is("application/json")) {
-      const { avatarUrl } = req.body;
-      if (!avatarUrl || typeof avatarUrl !== "string") {
-        return res.status(400).json({ message: "Invalid avatar URL" });
-      }
-      const updated = updateUser(userId, (u) => ({ ...u, avatarUrl }));
-      return res.json({
-        success: true,
-        message: "Avatar updated",
-        avatarUrl: updated?.avatarUrl,
-      });
+    const { avatarUrl } = req.body;
+    if (!avatarUrl || typeof avatarUrl !== "string") {
+      return res.status(400).json({ message: "Invalid avatar URL" });
     }
 
-    // For file uploads, create a data URL
-    // In production, you would upload to a service like AWS S3, Cloudinary, or Firebase Storage
-    if (req.file && req.file.buffer) {
-      const base64Data = req.file.buffer.toString("base64");
-      const mimeType = req.file.mimetype || "image/png";
-      const avatarDataUrl = `data:${mimeType};base64,${base64Data}`;
-
-      const updated = updateUser(userId, (u) => ({ ...u, avatarUrl: avatarDataUrl }));
-      return res.json({
-        success: true,
-        message: "Avatar updated",
-        avatarUrl: updated?.avatarUrl,
-      });
-    }
-
-    // If no file or URL provided
-    return res.status(400).json({ message: "No avatar provided" });
+    const updated = updateUser(userId, (u) => ({ ...u, avatarUrl }));
+    return res.json({
+      success: true,
+      message: "Avatar updated",
+      avatarUrl: updated?.avatarUrl,
+    });
   } catch (error) {
     return res.status(500).json({
       message: error instanceof Error ? error.message : "Failed to upload avatar",
