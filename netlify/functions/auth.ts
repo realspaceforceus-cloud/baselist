@@ -759,7 +759,8 @@ export const handler: Handler = async (event) => {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
-        "Set-Cookie": "userId=; Path=/; SameSite=Lax; Secure; HttpOnly; Max-Age=0",
+        "Set-Cookie":
+          "userId=; Path=/; SameSite=Lax; Secure; HttpOnly; Max-Age=0",
       },
       body: JSON.stringify({ success: true, message: "Logged out" }),
     };

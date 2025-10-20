@@ -60,7 +60,7 @@ export const authService = {
     }
 
     const data: AuthResponse = await response.json();
-    
+
     // Store user info
     const user: AuthUser = {
       id: data.userId,

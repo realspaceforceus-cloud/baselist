@@ -14,7 +14,10 @@ export interface AuthResponse {
   user?: AuthUser;
 }
 
-export async function login(identifier: string, password: string): Promise<AuthUser> {
+export async function login(
+  identifier: string,
+  password: string,
+): Promise<AuthUser> {
   const res = await fetch("/.netlify/functions/auth/login", {
     method: "POST",
     credentials: "include", // Send/receive cookies
