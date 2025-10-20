@@ -257,6 +257,10 @@ export const Settings = (): JSX.Element => {
           }
 
           const data = await response.json();
+
+          // Update the user context with the new avatar URL
+          updateUserAvatar(dataUrl);
+
           toast.success("Avatar uploaded successfully");
 
           if (fileInputRef.current) {
