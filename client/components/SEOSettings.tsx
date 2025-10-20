@@ -30,9 +30,9 @@ export interface SEOConfig {
 
 // Default SEO configuration
 export const DEFAULT_SEO_CONFIG: SEOConfig = {
-  primary_tagline: "Military PCS Marketplace — Buy, Sell & Connect with Verified DoD Families",
+  primary_tagline: "Military PCS Marketplace — Buy, Sell & Connect with Verified DoW Families",
   secondary_tagline: "The Trusted Marketplace for Military PCS Moves",
-  homepage_meta_description: "TrustyPCS is the secure marketplace built for military members and DoD families. Buy, sell, and connect with verified users during your PCS relocation.",
+  homepage_meta_description: "TrustyPCS is the secure marketplace built for military members and DoW families. Buy, sell, and connect with verified users during your PCS relocation.",
   base_page_title_template: "{{base_name}} Military PCS Marketplace | Buy & Sell Locally | TrustyPCS",
   base_page_description_template: "Buy and sell locally at {{base_name}}. TrustyPCS connects verified DoD families for safe PCS relocation sales near {{base_name}}.",
   primary_keywords: "military PCS marketplace, PCS relocation sales, military base classifieds, military yard sale online, military moving sale, DoD family marketplace",
