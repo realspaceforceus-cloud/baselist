@@ -1216,9 +1216,11 @@ const AdminPanel = (): JSX.Element => {
 
   const handleViewListing = useCallback(
     (listingId: string) => {
-      navigate(`/listing/${listingId}`);
+      const listing = listings.find((item) => item.id === listingId);
+      const slug = listing ? generateSlug(listing.title, listing.id) : listingId;
+      navigate(`/listing/${slug}`);
     },
-    [navigate],
+    [navigate, listings],
   );
 
   const handleInspectMessages = useCallback(
