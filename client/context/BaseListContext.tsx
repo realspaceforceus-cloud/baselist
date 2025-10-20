@@ -434,17 +434,12 @@ export const BaseListProvider = ({
   useEffect(() => {
     const fetchMessageThreads = async () => {
       if (!authUser?.userId) {
-        return;
-      }
-
-      // On dev server, skip fetching and use empty message threads
-      if (import.meta.env.DEV) {
         setMessageThreads([]);
         return;
       }
 
       try {
-        const response = await fetch("/.netlify/functions/messages/threads", {
+        const response = await fetch(`/.netlify/functions/messages/threads/${authUser.userId}`, {
           credentials: "include",
         });
 
@@ -452,15 +447,19 @@ export const BaseListProvider = ({
           console.error(
             `Failed to fetch message threads: HTTP ${response.status}`,
           );
-          throw new Error(`HTTP ${response.status}`);
+          setMessageThreads([]);
+          return;
         }
 
         const threadsData = await response.json();
         if (Array.isArray(threadsData)) {
           setMessageThreads(threadsData);
+        } else {
+          setMessageThreads([]);
         }
       } catch (error) {
         console.error("Failed to fetch message threads from database:", error);
+        setMessageThreads([]);
       }
     };
 
