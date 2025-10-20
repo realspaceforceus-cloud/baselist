@@ -56,10 +56,10 @@ const ListingDetail = (): JSX.Element => {
     if (!actualListingId) return null;
     // Search by ID or ID prefix (for short slug support)
     return (
-      listings.find((item) =>
-        item.id === actualListingId || item.id.includes(actualListingId)
-      ) ||
-      fetchedListing
+      listings.find(
+        (item) =>
+          item.id === actualListingId || item.id.includes(actualListingId),
+      ) || fetchedListing
     );
   }, [listings, actualListingId, fetchedListing]);
 
@@ -80,7 +80,12 @@ const ListingDetail = (): JSX.Element => {
       return;
     }
 
-    if (listings.find((item) => item.id === actualListingId || item.id.includes(actualListingId))) {
+    if (
+      listings.find(
+        (item) =>
+          item.id === actualListingId || item.id.includes(actualListingId),
+      )
+    ) {
       setIsLoading(false);
       return;
     }
