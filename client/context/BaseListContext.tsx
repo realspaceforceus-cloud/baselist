@@ -835,9 +835,7 @@ export const BaseListProvider = ({
         );
       });
 
-      if (!account) {
-        throw new Error("We couldn’t find an account with those details.");
-      }
+
 
       // If not found locally, check backend
       if (!account) {
