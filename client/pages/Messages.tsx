@@ -319,7 +319,7 @@ const Messages = (): JSX.Element => {
     navigate(`/messages/${id}`);
   };
 
-  const handleComposerSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleComposerSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!activeSummary || !activeSummary.partnerId) {
       return;
