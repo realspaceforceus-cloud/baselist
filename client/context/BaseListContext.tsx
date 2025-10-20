@@ -1093,7 +1093,8 @@ export const BaseListProvider = ({
     [accounts, activeAccountId, setAccounts, setUser],
   );
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
+    await authSignOut();
     setActiveAccountId(null);
     setUser((prev) => ({
       ...prev,
@@ -1102,7 +1103,7 @@ export const BaseListProvider = ({
       verified: false,
     }));
     setCurrentBaseIdState(BASES[0]?.id ?? "ramstein-ab");
-  }, []);
+  }, [authSignOut]);
 
   const updateUserAvatar = useCallback(
     (avatarUrl: string) => {
