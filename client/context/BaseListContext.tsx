@@ -452,6 +452,11 @@ export const BaseListProvider = ({
         return user;
       }
 
+      // Guests cannot view other members' profiles
+      if (!isAuthenticated) {
+        return null;
+      }
+
       const accountMatch = accounts.find((account) => account.id === id);
       if (!accountMatch) {
         return null;
@@ -462,7 +467,7 @@ export const BaseListProvider = ({
         memberDiscipline[accountMatch.id],
       );
     },
-    [accounts, memberDiscipline, user],
+    [accounts, isAuthenticated, memberDiscipline, user],
   );
 
   const addNotice = useCallback(
