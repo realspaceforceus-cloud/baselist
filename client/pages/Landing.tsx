@@ -893,8 +893,7 @@ const Landing = (): JSX.Element => {
                   Account verified!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  You're all set. Sign in to start browsing, posting, and
-                  messaging on BaseList.
+                  You're all set. Start browsing, posting, and messaging on BaseList.
                 </p>
               </div>
 
@@ -902,8 +901,9 @@ const Landing = (): JSX.Element => {
                 className="w-full rounded-full"
                 size="lg"
                 onClick={handleFinishSignup}
+                disabled={isSubmitting}
               >
-                Sign In
+                {isSubmitting ? "Logging in..." : "Proceed to your account"}
               </Button>
             </div>
           ) : null}
