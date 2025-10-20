@@ -160,7 +160,9 @@ const Post = (): JSX.Element => {
     }
 
     try {
-      setIsSubmitting(true);
+      setSubmissionState("submitting");
+      setSubmissionError(null);
+
       const imageUrls = await Promise.all(
         photos.map((photo) => readFileAsDataUrl(photo.file)),
       );
@@ -197,24 +199,19 @@ const Post = (): JSX.Element => {
 
       // Update local state with the server version
       addListing(savedListing);
+      setSavedListingId(savedListing.id);
+      setSubmissionState("success");
       resetForm();
 
-      toast.success("Listed. Good luck with the sale!", {
-        description: `${listing.title} is live for ${currentBase.name}.`,
-        action: {
-          label: "View listing",
-          onClick: () => navigate(`/listing/${savedListing.id}`),
-        },
-      });
+      // Navigate after a brief delay to show the confirmation
+      setTimeout(() => {
+        navigate(`/listing/${savedListing.id}`);
+      }, 1500);
     } catch (error) {
-      toast.error("Unable to publish listing", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "Check your files and try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
+      const errorMessage =
+        error instanceof Error ? error.message : "Check your files and try again.";
+      setSubmissionError(errorMessage);
+      setSubmissionState("error");
     }
   };
 
