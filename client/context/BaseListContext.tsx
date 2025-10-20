@@ -514,11 +514,6 @@ export const BaseListProvider = ({
         return accountMatch.username;
       }
 
-      const sellerMatch = SELLERS.find((seller) => seller.id === id);
-      if (sellerMatch) {
-        return sellerMatch.name;
-      }
-
       return "member";
     },
     [accounts, user.id, user.name],
