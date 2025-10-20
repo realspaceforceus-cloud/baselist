@@ -1120,6 +1120,22 @@ export const BaseListProvider = ({
     setCurrentBaseIdState(CURRENT_USER.currentBaseId);
   }, []);
 
+  const updateUserAvatar = useCallback(
+    (avatarUrl: string) => {
+      if (!activeAccountId) {
+        return;
+      }
+      setAccounts((prev) =>
+        prev.map((account) =>
+          account.id === activeAccountId
+            ? { ...account, avatarUrl }
+            : account,
+        ),
+      );
+    },
+    [activeAccountId],
+  );
+
   const addListing = useCallback(
     (listing: Listing) => {
       if (!isAuthenticated) {
