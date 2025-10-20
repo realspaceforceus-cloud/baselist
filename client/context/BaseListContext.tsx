@@ -376,35 +376,8 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
-  // Silent re-auth on app startup - restore session from cookies
-  useEffect(() => {
-    const restoreSessionFromCookie = async () => {
-      try {
-        // Call /api/auth/me to check if user is authenticated via cookie
-        const response = await fetch("/api/auth/me", {
-          method: "GET",
-          credentials: "include", // Include cookies in request
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.authenticated && data.userId) {
-            // User is authenticated, set the active account
-            setActiveAccountId(data.userId);
-            // TODO: Update user state with the returned data
-          }
-        }
-      } catch (error) {
-        console.error("Failed to restore session from cookie:", error);
-      }
-    };
-
-    // Only restore session once on app startup
-    if (!activeAccountId) {
-      restoreSessionFromCookie();
-    }
-  }, []);
+  // Note: Silent re-auth is now handled by AuthProvider context
+  // No need to restore session here - AuthContext handles cookies on app load
 
   // Persist session to localStorage
   useEffect(() => {
