@@ -477,6 +477,7 @@ const sections: AdminNavItem[] = [
   { id: "metrics", label: "Metrics", icon: BarChart3 },
   { id: "roles", label: "Roles", icon: ShieldCheck },
   { id: "email-templates", label: "Email Templates", icon: MailCheck },
+  { id: "seo", label: "SEO & Branding", icon: Search },
   { id: "security", label: "Security", icon: LockKeyhole },
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
