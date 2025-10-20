@@ -90,8 +90,9 @@ export const SignInDialog = (): JSX.Element => {
     }
   };
 
-  const handleForgotSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleForgotSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSubmitting(true);
     setErrorMessage(null);
 
     const token = requestPasswordReset(forgotEmail);
