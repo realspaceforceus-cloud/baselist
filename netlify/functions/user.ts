@@ -53,13 +53,17 @@ export const handler: Handler = async (event) => {
     };
   }
 
-  const path = event.path.replace(/\/.netlify\/functions\/user|\/api\/user/g, "") || "";
+  const path =
+    event.path.replace(/\/.netlify\/functions\/user|\/api\/user/g, "") || "";
   let client;
 
   try {
     client = await pool.connect();
 
-    if (path === "/profile/update" || path === "/profile" && event.httpMethod === "POST") {
+    if (
+      path === "/profile/update" ||
+      (path === "/profile" && event.httpMethod === "POST")
+    ) {
       let body;
       try {
         body = JSON.parse(event.body || "{}");
@@ -88,7 +92,8 @@ export const handler: Handler = async (event) => {
           statusCode: 400,
           headers,
           body: JSON.stringify({
-            error: "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
+            error:
+              "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
           }),
         };
       }
@@ -96,7 +101,7 @@ export const handler: Handler = async (event) => {
       // Check if username is already taken (case-insensitive)
       const existingUser = await client.query(
         "SELECT id FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1",
-        [trimmedName]
+        [trimmedName],
       );
 
       if (existingUser.rows.length > 0) {

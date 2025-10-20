@@ -535,10 +535,9 @@ const handleResetPasswordComplete = async (event: any) => {
     ]);
 
     // Delete the reset token
-    await client.query(
-      `DELETE FROM refresh_tokens WHERE device_id = $1`,
-      [`reset-${token}`],
-    );
+    await client.query(`DELETE FROM refresh_tokens WHERE device_id = $1`, [
+      `reset-${token}`,
+    ]);
 
     return {
       statusCode: 200,

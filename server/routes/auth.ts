@@ -18,7 +18,11 @@ const loginSchema = z.object({
   identifier: z.string().trim().min(3),
   password: z.string().min(1),
   rememberDevice: z.boolean().optional(),
-  deviceId: z.string().trim().min(6).default(() => randomUUID()),
+  deviceId: z
+    .string()
+    .trim()
+    .min(6)
+    .default(() => randomUUID()),
 });
 
 const passwordResetSchema = z.object({
@@ -73,11 +77,12 @@ const createAuthRouter = () => {
       scope: ["read:admin", "write:admin"],
     });
 
-    const { rawToken: refreshToken, refreshTokenRecord } = await createRefreshToken(
-      user.id,
-      deviceId,
-      req.get("user-agent") ?? "unknown",
-    );
+    const { rawToken: refreshToken, refreshTokenRecord } =
+      await createRefreshToken(
+        user.id,
+        deviceId,
+        req.get("user-agent") ?? "unknown",
+      );
 
     const rememberUntil = rememberDevice
       ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -190,9 +195,13 @@ const createAuthRouter = () => {
     const { email } = parse.data;
     const emailLower = email.toLowerCase();
 
-    const user = store.getUsers().find((u) => u.email.toLowerCase() === emailLower);
+    const user = store
+      .getUsers()
+      .find((u) => u.email.toLowerCase() === emailLower);
     if (!user) {
-      return res.status(404).json({ error: "We couldn't find an account with that email." });
+      return res
+        .status(404)
+        .json({ error: "We couldn't find an account with that email." });
     }
 
     const token = `reset-${randomUUID()}`;
@@ -232,11 +241,15 @@ const createAuthRouter = () => {
 
     if (new Date(resetData.expiresAt) < new Date()) {
       resetMap?.delete(token);
-      return res.status(400).json({ error: "Reset link has expired. Request a new one." });
+      return res
+        .status(400)
+        .json({ error: "Reset link has expired. Request a new one." });
     }
 
     if (resetData.used) {
-      return res.status(400).json({ error: "Reset link has already been used." });
+      return res
+        .status(400)
+        .json({ error: "Reset link has already been used." });
     }
 
     const user = store.getUser(resetData.userId);
@@ -260,7 +273,8 @@ const createAuthRouter = () => {
 
     res.json({
       success: true,
-      message: "Password reset successfully. Please sign in with your new password.",
+      message:
+        "Password reset successfully. Please sign in with your new password.",
     });
   });
 

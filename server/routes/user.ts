@@ -28,7 +28,8 @@ userRouter.post("/profile/update", authenticate, (req, res) => {
 
   if (!USERNAME_PATTERN.test(trimmedName)) {
     return res.status(400).json({
-      message: "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
+      message:
+        "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
     });
   }
 
@@ -38,7 +39,10 @@ userRouter.post("/profile/update", authenticate, (req, res) => {
   if (trimmedName !== user.name) {
     const usernameExists = store
       .getUsers()
-      .some((u) => u.id !== userId && u.name.toLowerCase() === trimmedName.toLowerCase());
+      .some(
+        (u) =>
+          u.id !== userId && u.name.toLowerCase() === trimmedName.toLowerCase(),
+      );
 
     if (usernameExists) {
       return res.status(400).json({ message: "Username is already taken" });
@@ -75,7 +79,8 @@ userRouter.post("/profile/avatar", authenticate, async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: error instanceof Error ? error.message : "Failed to upload avatar",
+      message:
+        error instanceof Error ? error.message : "Failed to upload avatar",
     });
   }
 });

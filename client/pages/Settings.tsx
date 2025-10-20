@@ -63,7 +63,10 @@ export const Settings = (): JSX.Element => {
     notificationsEnabled: user.notificationsEnabled ?? true,
   });
 
-  const handleInputChange = (field: keyof FormState, value: string | boolean) => {
+  const handleInputChange = (
+    field: keyof FormState,
+    value: string | boolean,
+  ) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -104,7 +107,11 @@ export const Settings = (): JSX.Element => {
         email: user.email || "",
       }));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to request email change");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to request email change",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -151,7 +158,9 @@ export const Settings = (): JSX.Element => {
         confirmPassword: "",
       }));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to change password");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to change password",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -166,7 +175,9 @@ export const Settings = (): JSX.Element => {
     }
 
     if (!USERNAME_PATTERN.test(formState.username)) {
-      setUsernameError("Username must be 3-20 characters long and contain only letters, numbers, and underscores");
+      setUsernameError(
+        "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
+      );
       toast.error("Invalid username format");
       return;
     }
@@ -195,7 +206,8 @@ export const Settings = (): JSX.Element => {
         setFormState((prev) => ({ ...prev, username: data.name }));
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Failed to update username";
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to update username";
       toast.error(errorMsg);
       setUsernameError(errorMsg);
       setFormState((prev) => ({ ...prev, username: user.name || "" }));
@@ -204,7 +216,9 @@ export const Settings = (): JSX.Element => {
     }
   };
 
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -244,7 +258,9 @@ export const Settings = (): JSX.Element => {
             fileInputRef.current.value = "";
           }
         } catch (error) {
-          toast.error(error instanceof Error ? error.message : "Failed to upload avatar");
+          toast.error(
+            error instanceof Error ? error.message : "Failed to upload avatar",
+          );
         } finally {
           setIsUploadingAvatar(false);
         }
@@ -255,7 +271,9 @@ export const Settings = (): JSX.Element => {
       };
       reader.readAsDataURL(file);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to process avatar");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to process avatar",
+      );
       setIsUploadingAvatar(false);
     }
   };
@@ -281,13 +299,13 @@ export const Settings = (): JSX.Element => {
         notificationsEnabled: newState,
       }));
       toast.success(
-        newState
-          ? "Notifications enabled"
-          : "Notifications disabled",
+        newState ? "Notifications enabled" : "Notifications disabled",
       );
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update notifications",
+        error instanceof Error
+          ? error.message
+          : "Failed to update notifications",
       );
     } finally {
       setIsLoading(false);
@@ -310,7 +328,9 @@ export const Settings = (): JSX.Element => {
       signOut();
       navigate("/");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete account");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete account",
+      );
     } finally {
       setIsLoading(false);
       setShowDeleteConfirm(false);
@@ -330,17 +350,23 @@ export const Settings = (): JSX.Element => {
     <div className="space-y-6 pb-8">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage your account and preferences</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Manage your account and preferences
+        </p>
       </div>
 
       <div className="space-y-4">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
           <h2 className="text-lg font-semibold text-foreground">Profile</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Update your profile information</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Update your profile information
+          </p>
 
           <div className="mt-6 space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground">Profile Picture</label>
+              <label className="block text-sm font-semibold text-foreground">
+                Profile Picture
+              </label>
               <div className="mt-3 flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   {user.avatarUrl ? (
@@ -374,7 +400,9 @@ export const Settings = (): JSX.Element => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground">Username</label>
+              <label className="block text-sm font-semibold text-foreground">
+                Username
+              </label>
               <div className="mt-3 flex gap-2">
                 <div className="flex-1">
                   <Input
@@ -386,11 +414,13 @@ export const Settings = (): JSX.Element => {
                     placeholder="Your username"
                     className={cn(
                       "rounded-xl",
-                      usernameError && "border-destructive"
+                      usernameError && "border-destructive",
                     )}
                   />
                   {usernameError && (
-                    <p className="mt-2 text-xs text-destructive">{usernameError}</p>
+                    <p className="mt-2 text-xs text-destructive">
+                      {usernameError}
+                    </p>
                   )}
                   <p className="mt-1 text-xs text-muted-foreground">
                     3-20 characters, letters, numbers, and underscores only
@@ -398,7 +428,11 @@ export const Settings = (): JSX.Element => {
                 </div>
                 <Button
                   onClick={handleUsernameChange}
-                  disabled={isLoading || formState.username === user.name || !!usernameError}
+                  disabled={
+                    isLoading ||
+                    formState.username === user.name ||
+                    !!usernameError
+                  }
                   className="rounded-xl mt-auto"
                 >
                   <Save className="h-4 w-4" aria-hidden />
@@ -409,12 +443,18 @@ export const Settings = (): JSX.Element => {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold text-foreground">Account Security</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Update your email and password</p>
+          <h2 className="text-lg font-semibold text-foreground">
+            Account Security
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Update your email and password
+          </p>
 
           <div className="mt-6 space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground">Email Address</label>
+              <label className="block text-sm font-semibold text-foreground">
+                Email Address
+              </label>
               <div className="mt-2 flex items-center gap-2">
                 <span className="rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm text-foreground">
                   {user.email}
@@ -435,12 +475,16 @@ export const Settings = (): JSX.Element => {
                 />
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                ⚠️ Changing your email will remove your DoD verification until the new address is
-                verified.
+                ⚠️ Changing your email will remove your DoD verification until
+                the new address is verified.
               </p>
               <Button
                 onClick={handleEmailChange}
-                disabled={isLoading || formState.email === user.email || !formState.email}
+                disabled={
+                  isLoading ||
+                  formState.email === user.email ||
+                  !formState.email
+                }
                 className="mt-3 rounded-xl"
               >
                 Request email change
@@ -449,7 +493,9 @@ export const Settings = (): JSX.Element => {
 
             <div className="border-t border-border pt-4">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-foreground">Password</label>
+                <label className="text-sm font-semibold text-foreground">
+                  Password
+                </label>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -478,7 +524,9 @@ export const Settings = (): JSX.Element => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                        onClick={() =>
+                          setShowCurrentPassword(!showCurrentPassword)
+                        }
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       >
                         {showCurrentPassword ? (
@@ -498,7 +546,9 @@ export const Settings = (): JSX.Element => {
                       <Input
                         type={showNewPassword ? "text" : "password"}
                         value={formState.newPassword}
-                        onChange={(e) => handleInputChange("newPassword", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("newPassword", e.target.value)
+                        }
                         placeholder="Enter your new password"
                         className="rounded-xl pr-10"
                       />
@@ -532,7 +582,9 @@ export const Settings = (): JSX.Element => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       >
                         {showConfirmPassword ? (
@@ -558,12 +610,18 @@ export const Settings = (): JSX.Element => {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-          <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Control how you receive updates</p>
+          <h2 className="text-lg font-semibold text-foreground">
+            Notifications
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Control how you receive updates
+          </p>
 
           <div className="mt-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-foreground">Email notifications</p>
+              <p className="text-sm font-semibold text-foreground">
+                Email notifications
+              </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Receive updates about messages, offers, and account activity
               </p>
@@ -573,9 +631,7 @@ export const Settings = (): JSX.Element => {
               disabled={isLoading}
               className={cn(
                 "relative inline-flex h-8 w-14 items-center rounded-full transition",
-                formState.notificationsEnabled
-                  ? "bg-primary"
-                  : "bg-muted",
+                formState.notificationsEnabled ? "bg-primary" : "bg-muted",
               )}
             >
               <span
@@ -600,9 +656,12 @@ export const Settings = (): JSX.Element => {
           </p>
 
           <div className="mt-6">
-            <p className="text-sm text-foreground">Delete your account permanently</p>
+            <p className="text-sm text-foreground">
+              Delete your account permanently
+            </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Once you delete your account, there is no going back. Please be certain.
+              Once you delete your account, there is no going back. Please be
+              certain.
             </p>
             <Button
               variant="destructive"
@@ -634,8 +693,8 @@ export const Settings = (): JSX.Element => {
               Delete account?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. Your account, listings, and all associated data will
-              be permanently deleted.
+              This action cannot be undone. Your account, listings, and all
+              associated data will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="my-4 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
@@ -680,12 +739,14 @@ const EmailVerificationDialog = ({
         <DialogHeader>
           <DialogTitle>Confirm email change</DialogTitle>
           <DialogDescription>
-            Changing your email will remove your DoD verification until the new address is
-            verified.
+            Changing your email will remove your DoD verification until the new
+            address is verified.
           </DialogDescription>
         </DialogHeader>
         <div className="rounded-lg border border-warning/30 bg-warning/5 p-3">
-          <p className="text-sm font-semibold text-warning">What happens next:</p>
+          <p className="text-sm font-semibold text-warning">
+            What happens next:
+          </p>
           <ul className="mt-2 space-y-1 text-xs text-foreground">
             <li>• Your verification status will be temporarily removed</li>
             <li>• You won't be able to post or message until verified again</li>
@@ -694,10 +755,19 @@ const EmailVerificationDialog = ({
           </ul>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onCancel} disabled={isLoading} className="rounded-xl">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={isLoading}
+            className="rounded-xl"
+          >
             Cancel
           </Button>
-          <Button onClick={onConfirm} disabled={isLoading} className="rounded-xl">
+          <Button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="rounded-xl"
+          >
             {isLoading ? "Sending..." : "Yes, change my email"}
           </Button>
         </div>

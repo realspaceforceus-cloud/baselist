@@ -902,38 +902,35 @@ export const BaseListProvider = ({
     setPendingPasswordReset(null);
   }, []);
 
-  const requestPasswordReset = useCallback(
-    async (email: string) => {
-      try {
-        const response = await fetch("/api/auth/reset-password/request", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.trim() }),
-        });
+  const requestPasswordReset = useCallback(async (email: string) => {
+    try {
+      const response = await fetch("/api/auth/reset-password/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
 
-        if (!response.ok) {
-          const error = await response.json();
-          return null;
-        }
-
-        const data = await response.json();
-        if (data.token) {
-          setPendingPasswordReset({
-            token: data.token,
-            accountId: "",
-            expiresAt: data.expiresAt,
-          });
-          return data.token;
-        }
-
-        return null;
-      } catch (error) {
-        console.error("Password reset request failed:", error);
+      if (!response.ok) {
+        const error = await response.json();
         return null;
       }
-    },
-    [],
-  );
+
+      const data = await response.json();
+      if (data.token) {
+        setPendingPasswordReset({
+          token: data.token,
+          accountId: "",
+          expiresAt: data.expiresAt,
+        });
+        return data.token;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Password reset request failed:", error);
+      return null;
+    }
+  }, []);
 
   const completePasswordReset = useCallback(
     async (token: string, newPassword: string) => {
