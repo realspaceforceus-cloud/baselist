@@ -2,6 +2,22 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
 
+// Transform database row to Listing type
+const transformListing = (row: any) => ({
+  id: row.id,
+  title: row.title,
+  price: row.price,
+  isFree: row.is_free,
+  category: row.category,
+  status: row.status,
+  sellerId: row.seller_id,
+  baseId: row.base_id,
+  imageUrls: Array.isArray(row.image_urls) ? row.image_urls : [],
+  description: row.description,
+  promoted: row.promoted,
+  postedAt: row.created_at,
+});
+
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/listings", "");
