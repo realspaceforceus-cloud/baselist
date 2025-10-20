@@ -319,7 +319,12 @@ export const BaseListProvider = ({
     if (typeof window === "undefined") return null;
     try {
       const saved = localStorage.getItem("activeAccountId");
-      return saved ? saved : null;
+      if (saved) {
+        // Validate that the account exists in our seed data
+        const accountExists = ACCOUNT_SEED.some((account) => account.id === saved);
+        return accountExists ? saved : null;
+      }
+      return null;
     } catch {
       return null;
     }
