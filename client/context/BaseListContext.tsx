@@ -404,15 +404,17 @@ export const BaseListProvider = ({
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      if (activeAccountId) {
+      if (activeAccountId && currentAccount) {
         localStorage.setItem("activeAccountId", activeAccountId);
+        localStorage.setItem("activeAccount", JSON.stringify(currentAccount));
       } else {
         localStorage.removeItem("activeAccountId");
+        localStorage.removeItem("activeAccount");
       }
     } catch (error) {
       console.error("Failed to save session:", error);
     }
-  }, [activeAccountId]);
+  }, [activeAccountId, currentAccount]);
 
   // Fetch bases from the database on mount
   useEffect(() => {
