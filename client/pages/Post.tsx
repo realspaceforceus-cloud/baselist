@@ -215,6 +215,77 @@ const Post = (): JSX.Element => {
     }
   };
 
+  // Show loading transition screen during submission
+  if (submissionState === "submitting") {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col gap-1 text-center">
+            <h1 className="text-3xl font-bold text-foreground">
+              <span className="font-normal">trusty</span>
+              <span className="font-bold">PCS</span>
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Posting your item...
+            </p>
+          </div>
+          <div className="flex gap-1">
+            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" />
+            <div className="h-2 w-2 rounded-full bg-primary animate-bounce delay-100" />
+            <div className="h-2 w-2 rounded-full bg-primary animate-bounce delay-200" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show success transition screen after submission
+  if (submissionState === "success") {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col gap-3 text-center">
+            <h1 className="text-3xl font-bold text-foreground">
+              <span className="font-normal">trusty</span>
+              <span className="font-bold">PCS</span>
+            </h1>
+            <p className="text-lg font-semibold text-foreground">
+              Item posted!
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Redirecting to your listing...
+            </p>
+          </div>
+          <div className="flex gap-1">
+            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" />
+            <div className="h-2 w-2 rounded-full bg-primary animate-bounce delay-100" />
+            <div className="h-2 w-2 rounded-full bg-primary animate-bounce delay-200" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (submissionState === "error") {
+    return (
+      <section className="space-y-8">
+        <div className="rounded-3xl border border-destructive/30 bg-destructive/5 p-6 text-center">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
+            Unable to post item
+          </h2>
+          <p className="text-muted-foreground mb-4">{submissionError}</p>
+          <Button
+            onClick={() => setSubmissionState("idle")}
+            className="rounded-full px-6"
+          >
+            Try again
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="space-y-8">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between md:gap-6 md:p-8">
