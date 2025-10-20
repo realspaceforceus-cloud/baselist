@@ -539,6 +539,67 @@ const handleResendCode = async (event: any) => {
   }
 };
 
+// POST /api/auth/login - Backend login validation
+const handleLogin = async (event: any) => {
+  const { email, password } = JSON.parse(event.body || "{}");
+
+  if (!email || !password) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Email and password required" }),
+    };
+  }
+
+  const client = await pool.connect();
+
+  try {
+    const trimmedEmail = email.trim().toLowerCase();
+
+    // Find user by email
+    const userResult = await client.query(
+      "SELECT id, email, dow_verified_at FROM users WHERE email = $1",
+      [trimmedEmail],
+    );
+
+    if (userResult.rows.length === 0) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ error: "Invalid email or password" }),
+      };
+    }
+
+    const user = userResult.rows[0];
+
+    // Check if email is verified
+    if (!user.dow_verified_at) {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({
+          error: "Confirm your DoW email from the link we sent before signing in.",
+        }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        userId: user.id,
+        email: user.email,
+        verified: true,
+      }),
+    };
+  } catch (error) {
+    console.error("Login error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Failed to process login" }),
+    };
+  } finally {
+    client.release();
+  }
+};
+
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path =
