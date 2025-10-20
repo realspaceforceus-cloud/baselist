@@ -756,7 +756,10 @@ const Landing = (): JSX.Element => {
                         size="sm"
                         onClick={() => {
                           navigator.clipboard.writeText(generatedCode);
-                          toast.success("Code copied to clipboard!");
+                          toast.dismiss("copy-code");
+                          toast.success("Code copied!", {
+                            id: "copy-code",
+                          });
                         }}
                         className="gap-2"
                       >
