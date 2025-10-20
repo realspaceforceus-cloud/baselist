@@ -328,7 +328,7 @@ const Landing = (): JSX.Element => {
   };
 
   const handleFinishSignup = () => {
-    if (!pendingUserId || !pendingEmail) {
+    if (!pendingUserId || !pendingEmail || !pendingPassword) {
       return;
     }
 
@@ -337,21 +337,34 @@ const Landing = (): JSX.Element => {
       setVerificationCheckInterval(null);
     }
 
-    setJoinStage("hidden");
-    setPendingUserId(null);
-    setPendingEmail("");
-    setAccountForm(defaultAccountForm);
-    setVerificationCode("");
-    setVerificationError(null);
-    setGeneratedCode("");
-    setIsVerificationPending(false);
-    setTimeRemaining(1800);
+    try {
+      // Auto-login with the email and password from signup
+      signInWithPassword(pendingEmail, pendingPassword);
 
-    toast.success("Welcome to BaseList!", {
-      description: "You can now post listings and message other members.",
-    });
+      setJoinStage("hidden");
+      setPendingUserId(null);
+      setPendingEmail("");
+      setPendingPassword("");
+      setAccountForm(defaultAccountForm);
+      setVerificationCode("");
+      setVerificationError(null);
+      setGeneratedCode("");
+      setIsVerificationPending(false);
+      setTimeRemaining(1800);
 
-    window.location.href = "/";
+      toast.success("Welcome to BaseList!", {
+        description: "You can now post listings and message other members.",
+      });
+
+      navigate("/");
+    } catch (error) {
+      console.error("Auto-login failed:", error);
+      toast.error("Sign in failed", {
+        description:
+          "Please sign in manually with your email and password.",
+      });
+      navigate("/");
+    }
   };
 
   // Cleanup on component unmount
