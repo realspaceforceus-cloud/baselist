@@ -262,7 +262,7 @@ export const Header = (): JSX.Element => {
         <header className="sticky top-0 z-50 border-b border-nav-border bg-background/95 backdrop-blur-lg">
           <div className="mx-auto w-full max-w-6xl px-4 py-3 md:py-5">
             <div className="flex flex-col gap-3 md:gap-4">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <SheetTrigger asChild>
                     <button
@@ -300,18 +300,18 @@ export const Header = (): JSX.Element => {
                 <button
                   type="button"
                   onClick={() => setIsBaseSwitchOpen(true)}
-                  className="flex w-32 items-center justify-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5 text-left hover:bg-primary/10 transition hover:border-primary/40"
+                  className="flex flex-1 max-w-sm items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3 text-left transition hover:border-primary/40 hover:bg-muted/50"
                 >
                   <MapPin
                     className="h-5 w-5 text-primary flex-shrink-0"
                     aria-hidden
                   />
-                  <div className="flex flex-col gap-0.5">
+                  <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-foreground truncate">
                       {currentBase.name}
                     </p>
-                    <p className="text-[0.7rem] text-muted-foreground text-center">
-                      Switch
+                    <p className="text-[0.65rem] text-muted-foreground">
+                      Switch base
                     </p>
                   </div>
                 </button>
