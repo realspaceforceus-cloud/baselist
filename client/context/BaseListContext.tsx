@@ -11,11 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import {
-  LISTINGS as LISTING_SEED,
-  MESSAGE_THREADS as MESSAGE_THREAD_SEED,
   SPONSOR_PLACEMENTS,
   BASES,
-  SELLERS,
 } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
 import { useAuth } from "@/context/AuthContext";
