@@ -25,7 +25,7 @@ import type { UserProfile } from "@/types";
 
 const ListingDetail = (): JSX.Element => {
   const navigate = useNavigate();
-  const { listingId } = useParams<{ listingId: string }>();
+  const { listingSlug } = useParams<{ listingSlug: string }>();
   const {
     listings,
     bases,
@@ -38,26 +38,53 @@ const ListingDetail = (): JSX.Element => {
   const [fetchedListing, setFetchedListing] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Extract actual ID from slug (slug format: "title-slug-12345678")
+  const actualListingId = useMemo(() => {
+    if (!listingSlug) return null;
+
+    // Check if it's a UUID (old format) or slug (new format)
+    if (listingSlug.includes('-') && listingSlug.split('-').length > 1) {
+      // It's a slug, extract the ID
+      return extractIdFromSlug(listingSlug);
+    }
+
+    // It's already an ID
+    return listingSlug;
+  }, [listingSlug]);
+
   const listing = useMemo(
-    () => listings.find((item) => item.id === listingId) || fetchedListing,
-    [listings, listingId, fetchedListing],
+    () => {
+      if (!actualListingId) return null;
+      return listings.find((item) => item.id.startsWith(actualListingId)) || fetchedListing;
+    },
+    [listings, actualListingId, fetchedListing],
   );
+
+  // Redirect to slug URL if listing is found
+  useEffect(() => {
+    if (listing && listingSlug && !listingSlug.includes('-')) {
+      const slug = generateSlug(listing.title, listing.id);
+      if (slug !== listingSlug) {
+        navigate(`/listing/${slug}`, { replace: true });
+      }
+    }
+  }, [listing, listingSlug, navigate]);
 
   // Fetch listing from backend if not in local context
   useEffect(() => {
-    if (listings.find((item) => item.id === listingId)) {
+    if (!actualListingId) {
       setIsLoading(false);
       return;
     }
 
-    if (!listingId) {
+    if (listings.find((item) => item.id.startsWith(actualListingId))) {
       setIsLoading(false);
       return;
     }
 
     const fetchListing = async () => {
       try {
-        const response = await fetch(`/.netlify/functions/listings/${listingId}`, {
+        const response = await fetch(`/.netlify/functions/listings/${actualListingId}`, {
           credentials: "include",
         });
         if (response.ok) {
@@ -72,7 +99,7 @@ const ListingDetail = (): JSX.Element => {
     };
 
     fetchListing();
-  }, [listingId, listings]);
+  }, [actualListingId, listings]);
 
   // Fetch seller info from backend
   useEffect(() => {
