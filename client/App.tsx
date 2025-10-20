@@ -39,7 +39,7 @@ const AppContent = (): JSX.Element => {
       <Route element={<AppShell />}>
         {/* Public pages - accessible to all */}
         <Route index element={<Home />} />
-        <Route path="listing/:listingId" element={<ListingDetail />} />
+        <Route path="listing/:listingSlug" element={<ListingDetail />} />
         <Route path="faq" element={<FAQ />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
