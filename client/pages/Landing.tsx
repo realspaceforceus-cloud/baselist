@@ -195,6 +195,7 @@ const Landing = (): JSX.Element => {
       // Reset verification polling flag for new signup
       verificationPollingStartedRef.current = false;
       countdownStartedRef.current = false;
+      confettiFiredRef.current = false;
       setHasShownSuccessNotification(false);
 
       // First, create the account
