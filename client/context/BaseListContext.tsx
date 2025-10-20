@@ -765,7 +765,7 @@ export const BaseListProvider = ({
   );
 
   const signInWithPassword = useCallback(
-    (identifier: string, password: string, options?: SignInOptions) => {
+    async (identifier: string, password: string, options?: SignInOptions) => {
       const normalized = identifier.trim().toLowerCase();
       const account = accounts.find((candidate) => {
         return (
