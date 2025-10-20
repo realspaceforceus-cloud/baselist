@@ -10,6 +10,7 @@ import {
   Megaphone,
   MessageSquareWarning,
   PackageSearch,
+  Search,
   Settings as SettingsIcon,
   ShieldAlert,
   ShieldCheck,
