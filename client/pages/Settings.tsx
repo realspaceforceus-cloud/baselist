@@ -239,12 +239,11 @@ export const Settings = (): JSX.Element => {
         try {
           const dataUrl = e.target?.result as string;
 
-          const token = localStorage.getItem("authToken");
           const response = await fetch("/api/user/profile/avatar", {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              ...(token && { Authorization: `Bearer ${token}` }),
             },
             body: JSON.stringify({
               avatarUrl: dataUrl,
