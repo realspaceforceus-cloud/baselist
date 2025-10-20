@@ -95,16 +95,32 @@ export const SignInDialog = (): JSX.Element => {
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const token = requestPasswordReset(forgotEmail);
-    if (!token) {
-      setErrorMessage("We couldn’t find an account with that email.");
-      return;
-    }
+    try {
+      const response = await fetch("/.netlify/functions/auth/reset-password/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail.trim() }),
+      });
 
-    toast.success("Reset link sent", {
-      description: "Check your email. The link expires in 15 minutes.",
-    });
-    openReset(token, forgotEmail);
+      if (!response.ok) {
+        const data = await response.json();
+        setErrorMessage(data.error || "Failed to send reset email");
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast.success("Reset link sent", {
+        description: "Check your email for the password reset link. It expires in 15 minutes.",
+      });
+      setView("signIn");
+      setForgotEmail("");
+      setIsSubmitting(false);
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "Failed to send reset email"
+      );
+      setIsSubmitting(false);
+    }
   };
 
   const handleResetSubmit = (event: React.FormEvent<HTMLFormElement>) => {
