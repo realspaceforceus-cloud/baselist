@@ -265,11 +265,17 @@ const Landing = (): JSX.Element => {
       const data = await response.json();
 
       if (data.status === "verified") {
+        // Only process once - if we've already shown the success notification, don't do it again
+        if (hasShownSuccessNotification) {
+          return;
+        }
+
         setIsVerificationPending(false);
         if (verificationCheckInterval) {
           clearInterval(verificationCheckInterval);
           setVerificationCheckInterval(null);
         }
+
         const userId = data.userId || pendingUserId;
         setPendingUserId(userId);
 
@@ -282,25 +288,24 @@ const Landing = (): JSX.Element => {
           }
         }
 
+        // Mark success notification as shown BEFORE updating state
+        setHasShownSuccessNotification(true);
+
+        // Fire confetti
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+
+        toast.success("🎉 Congratulations!", {
+          description:
+            "Your email has been verified! You're all set to use BaseList.",
+        });
+
+        // Only set these once
         setJoinStage("success");
         setProceedCountdown(5); // Start 5-second countdown
-
-        // Show success notification and confetti only once
-        if (!hasShownSuccessNotification) {
-          setHasShownSuccessNotification(true);
-
-          // Fire confetti
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-          });
-
-          toast.success("🎉 Congratulations!", {
-            description:
-              "Your email has been verified! You're all set to use BaseList.",
-          });
-        }
       } else if (data.status === "expired") {
         setIsVerificationPending(false);
         setVerificationError(
