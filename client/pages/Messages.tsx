@@ -43,6 +43,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useBaseList } from "@/context/BaseListContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
 import type { Listing, Message, MessageThread, UserProfile } from "@/types";
 
