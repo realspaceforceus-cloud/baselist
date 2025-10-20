@@ -323,7 +323,7 @@ const Landing = (): JSX.Element => {
     }
   };
 
-  const handleFinishSignup = () => {
+  const handleFinishSignup = async () => {
     if (!pendingUserId || !pendingEmail) {
       return;
     }
@@ -333,21 +333,46 @@ const Landing = (): JSX.Element => {
       setVerificationCheckInterval(null);
     }
 
-    setJoinStage("hidden");
-    setPendingUserId(null);
-    setPendingEmail("");
-    setAccountForm(defaultAccountForm);
-    setVerificationCode("");
-    setVerificationError(null);
-    setGeneratedCode("");
-    setIsVerificationPending(false);
-    setTimeRemaining(1800);
+    setIsSubmitting(true);
 
-    toast.success("Welcome to BaseList!", {
-      description: "You can now post listings and message other members.",
-    });
+    try {
+      // Auto-login with the email and password from signup
+      const loginResponse = await fetch("/.netlify/functions/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          password: trimmedPassword,
+        }),
+      });
 
-    window.location.href = "/";
+      if (loginResponse.ok) {
+        const loginData = await loginResponse.json();
+        // Store auth token if the API returns one
+        if (loginData.token) {
+          localStorage.setItem("authToken", loginData.token);
+        }
+      }
+    } catch (error) {
+      console.error("Auto-login failed:", error);
+    } finally {
+      setIsSubmitting(false);
+      setJoinStage("hidden");
+      setPendingUserId(null);
+      setPendingEmail("");
+      setAccountForm(defaultAccountForm);
+      setVerificationCode("");
+      setVerificationError(null);
+      setGeneratedCode("");
+      setIsVerificationPending(false);
+      setTimeRemaining(1800);
+
+      toast.success("Welcome to BaseList!", {
+        description: "You can now post listings and message other members.",
+      });
+
+      window.location.href = "/";
+    }
   };
 
   // Cleanup on component unmount
