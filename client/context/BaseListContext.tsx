@@ -376,7 +376,6 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
-
   // Restore session on mount
   useEffect(() => {
     const restoreSession = async () => {
