@@ -399,12 +399,6 @@ export const BaseListProvider = ({
   // Fetch listings from the database
   useEffect(() => {
     const fetchListings = async () => {
-      // On dev server, skip fetching and use empty listings
-      if (import.meta.env.DEV) {
-        setListings([]);
-        return;
-      }
-
       try {
         const response = await fetch("/.netlify/functions/listings", {
           credentials: "include",
@@ -412,7 +406,8 @@ export const BaseListProvider = ({
 
         if (!response.ok) {
           console.error(`Failed to fetch listings: HTTP ${response.status}`);
-          throw new Error(`HTTP ${response.status}`);
+          setListings([]);
+          return;
         }
 
         const listingsData = await response.json();
@@ -423,9 +418,13 @@ export const BaseListProvider = ({
                 new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
             ),
           );
+        } else {
+          console.error("Listings response is not an array:", listingsData);
+          setListings([]);
         }
       } catch (error) {
         console.error("Failed to fetch listings from database:", error);
+        setListings([]);
       }
     };
     fetchListings();
