@@ -446,7 +446,7 @@ const Post = (): JSX.Element => {
               Category
             </label>
             <Select
-              value={category || undefined}
+              value={category}
               onValueChange={(value) => setCategory(value as ListingCategory)}
             >
               <SelectTrigger
