@@ -177,7 +177,7 @@ const Post = (): JSX.Element => {
       };
 
       // Save listing to backend
-      const response = await fetch("/.netlify/functions/listings", {
+      const response = await fetch("/api/listings", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
