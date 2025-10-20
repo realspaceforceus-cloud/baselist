@@ -90,6 +90,7 @@ const Landing = (): JSX.Element => {
   const [timeRemaining, setTimeRemaining] = useState(1800); // 30 minutes
   const [hasShownSuccessNotification, setHasShownSuccessNotification] =
     useState(false);
+  const [pendingPassword, setPendingPassword] = useState<string>("");
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
