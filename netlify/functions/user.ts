@@ -123,7 +123,7 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const { avatarUrl } = body;
+      const { avatarUrl, userId } = body;
 
       if (!avatarUrl || typeof avatarUrl !== "string") {
         return {
@@ -133,31 +133,17 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      // Get user ID from cookies or authentication header
-      const cookies = event.headers.cookie
-        ?.split(";")
-        .reduce(
-          (acc, cookie) => {
-            const [key, value] = cookie.split("=");
-            acc[key.trim()] = decodeURIComponent(value || "");
-            return acc;
-          },
-          {} as Record<string, string>,
-        ) || {};
-
-      const userId = cookies.user_id;
-
-      if (!userId) {
+      if (!userId || typeof userId !== "string") {
         return {
-          statusCode: 401,
+          statusCode: 400,
           headers,
-          body: JSON.stringify({ error: "Not authenticated" }),
+          body: JSON.stringify({ error: "User ID required" }),
         };
       }
 
       // Update avatar_url in the database
       try {
-        await client.query("UPDATE accounts SET avatar_url = $1 WHERE id = $2", [
+        await client.query("UPDATE users SET avatar_url = $1 WHERE id = $2", [
           avatarUrl,
           userId,
         ]);
@@ -167,7 +153,7 @@ export const handler: Handler = async (event) => {
           headers,
           body: JSON.stringify({
             success: true,
-            message: "Avatar updated",
+            message: "Avatar uploaded successfully",
             avatarUrl,
           }),
         };
