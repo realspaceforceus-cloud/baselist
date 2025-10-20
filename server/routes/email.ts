@@ -83,7 +83,7 @@ router.post("/", async (req: Request, res: Response) => {
       const baseNameTrimmed = baseName.trim();
 
       console.log(
-        `[EMAIL] Base request received from ${userEmail} for ${baseNameTrimmed}`
+        `[EMAIL] Base request received from ${userEmail} for ${baseNameTrimmed}`,
       );
 
       // Send email to user confirming receipt
@@ -116,13 +116,13 @@ router.post("/", async (req: Request, res: Response) => {
       const userEmailSent = await sendEmail(
         userEmail,
         "Base Request Received - BaseList",
-        userConfirmationHtml
+        userConfirmationHtml,
       );
 
       const adminEmailSent = await sendEmail(
         ADMIN_EMAIL,
         `New Base Request: ${baseNameTrimmed}`,
-        adminHtml
+        adminHtml,
       );
 
       if (userEmailSent || adminEmailSent) {
@@ -139,8 +139,7 @@ router.post("/", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[EMAIL] Error processing request:", error);
     return res.status(500).json({
-      error:
-        error instanceof Error ? error.message : "Internal server error",
+      error: error instanceof Error ? error.message : "Internal server error",
     });
   }
 });
