@@ -423,6 +423,143 @@ const handleLogin = async (event: any) => {
   }
 };
 
+const handleResetPasswordRequest = async (event: any) => {
+  const { email } = JSON.parse(event.body || "{}");
+
+  if (!email) {
+    return {
+      statusCode: 400,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Email required" }),
+    };
+  }
+
+  const trimmedEmail = email.trim().toLowerCase();
+  const client = await pool.connect();
+
+  try {
+    const userResult = await client.query(
+      "SELECT id, email FROM users WHERE LOWER(email) = $1",
+      [trimmedEmail],
+    );
+
+    if (userResult.rows.length === 0) {
+      return {
+        statusCode: 404,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: "We couldn't find an account with that email.",
+        }),
+      };
+    }
+
+    const token = `reset-${randomUUID()}`;
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    // Store reset token (in production, use a database table)
+    // For now, we'll store in memory with expiration
+    const resetTokenId = randomUUID();
+    await client.query(
+      `INSERT INTO refresh_tokens (id, user_id, device_id, token_hash, created_at, expires_at, last_used_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        resetTokenId,
+        userResult.rows[0].id,
+        `reset-${token}`,
+        token,
+        new Date(),
+        expiresAt,
+        new Date(),
+      ],
+    );
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        success: true,
+        token,
+        expiresAt: expiresAt.toISOString(),
+        message: "Password reset link sent",
+      }),
+    };
+  } catch (error) {
+    console.error("Reset password request error:", error);
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Failed to process reset request" }),
+    };
+  } finally {
+    client.release();
+  }
+};
+
+const handleResetPasswordComplete = async (event: any) => {
+  const { token, newPassword } = JSON.parse(event.body || "{}");
+
+  if (!token || !newPassword) {
+    return {
+      statusCode: 400,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Token and password required" }),
+    };
+  }
+
+  const client = await pool.connect();
+
+  try {
+    // Check if token exists and is still valid
+    const tokenResult = await client.query(
+      `SELECT user_id, expires_at FROM refresh_tokens WHERE device_id = $1 AND expires_at > NOW()`,
+      [`reset-${token}`],
+    );
+
+    if (tokenResult.rows.length === 0) {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: "Invalid or expired reset token",
+        }),
+      };
+    }
+
+    const userId = tokenResult.rows[0].user_id;
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
+      passwordHash,
+      userId,
+    ]);
+
+    // Delete the reset token
+    await client.query(
+      `DELETE FROM refresh_tokens WHERE device_id = $1`,
+      [`reset-${token}`],
+    );
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        success: true,
+        message: "Password reset successfully",
+      }),
+    };
+  } catch (error) {
+    console.error("Reset password complete error:", error);
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Failed to reset password" }),
+    };
+  } finally {
+    client.release();
+  }
+};
+
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path =
@@ -446,8 +583,17 @@ export const handler: Handler = async (event) => {
     return handleResendCode(event);
   }
 
+  if (method === "POST" && path === "/reset-password/request") {
+    return handleResetPasswordRequest(event);
+  }
+
+  if (method === "POST" && path === "/reset-password/complete") {
+    return handleResetPasswordComplete(event);
+  }
+
   return {
     statusCode: 404,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ error: "Not found" }),
   };
 };
