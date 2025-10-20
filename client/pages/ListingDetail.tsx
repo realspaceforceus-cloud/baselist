@@ -214,7 +214,7 @@ const ListingDetail = (): JSX.Element => {
   const handleOpenComposer = useCallback(() => {
     setMessageBody(defaultMessage);
     setComposerOpen(true);
-  }, [defaultMessage]);
+  }, []);
 
   const handleSendMessage = useCallback(() => {
     const trimmed = messageBody.trim();
