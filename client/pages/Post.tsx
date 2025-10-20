@@ -32,15 +32,6 @@ type SubmissionState = "idle" | "submitting" | "success" | "error";
 
 const MAX_PHOTOS = 6;
 
-const readFileAsDataUrl = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Unable to read file"));
-    reader.readAsDataURL(file);
-  });
-};
-
 const Post = (): JSX.Element => {
   const navigate = useNavigate();
   const { currentBase, currentBaseId, user, addListing } = useBaseList();
