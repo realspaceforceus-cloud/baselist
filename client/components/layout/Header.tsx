@@ -263,11 +263,12 @@ export const Header = (): JSX.Element => {
           <div className="mx-auto w-full max-w-6xl px-4 py-3 md:py-5">
             <div className="flex flex-col gap-3 md:gap-4">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-semibold tracking-tight text-foreground">
+                    <span className="font-normal">trusty</span>
+                    <span className="font-bold">PCS</span>
+                  </span>
                   <div className="flex flex-col gap-0">
-                    <span className="text-lg font-semibold text-foreground">
-                      {settings.website_name || "TrustyPCS"}
-                    </span>
                     <span className="text-[0.65rem] text-muted-foreground">
                       {settings.website_description ||
                         "Buy, Sell & Connect with Verified DoW Families"}
