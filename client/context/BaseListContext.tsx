@@ -2113,11 +2113,11 @@ export const BaseListProvider = ({
 
   const currentBase = useMemo<Base>(() => {
     return (
-      BASES.find((base) => base.id === currentBaseId) ??
-      BASES.find((base) => base.id === CURRENT_USER.currentBaseId) ??
-      BASES[0]
+      bases.find((base) => base.id === currentBaseId) ??
+      bases.find((base) => base.id === CURRENT_USER.currentBaseId) ??
+      bases[0]
     );
-  }, [currentBaseId]);
+  }, [currentBaseId, bases]);
 
   const contextValue = useMemo<BaseListContextValue>(
     () => ({
