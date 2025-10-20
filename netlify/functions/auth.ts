@@ -754,6 +754,17 @@ export const handler: Handler = async (event) => {
     return handleMe(event);
   }
 
+  if (method === "POST" && path === "/logout") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Set-Cookie": "userId=; Path=/; SameSite=Lax; Secure; HttpOnly; Max-Age=0",
+      },
+      body: JSON.stringify({ success: true, message: "Logged out" }),
+    };
+  }
+
   return {
     statusCode: 404,
     headers: { "Content-Type": "application/json" },
