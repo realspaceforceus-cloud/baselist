@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { SELLERS } from "@/data/mock";
 import { useBaseList } from "@/context/BaseListContext";
+import { useEffect } from "react";
+import type { UserProfile } from "@/types";
 
 const ListingDetail = (): JSX.Element => {
   const navigate = useNavigate();
@@ -21,15 +22,36 @@ const ListingDetail = (): JSX.Element => {
     setCurrentBaseId,
   } = useBaseList();
 
+  const [seller, setSeller] = useState<UserProfile | null>(null);
+
   const listing = useMemo(
     () => listings.find((item) => item.id === listingId),
     [listings, listingId],
   );
 
-  const seller = useMemo(
-    () => SELLERS.find((item) => item.id === listing?.sellerId),
-    [listing?.sellerId],
-  );
+  // Fetch seller info from backend
+  useEffect(() => {
+    if (!listing?.sellerId) {
+      setSeller(null);
+      return;
+    }
+
+    const fetchSeller = async () => {
+      try {
+        const response = await fetch(`/.netlify/functions/users/${listing.sellerId}`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const sellerData = await response.json();
+          setSeller(sellerData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch seller:", error);
+      }
+    };
+
+    fetchSeller();
+  }, [listing?.sellerId]);
 
   const listingBase = useMemo(
     () => bases.find((base) => base.id === listing?.baseId),
