@@ -35,22 +35,86 @@ const AppContent = (): JSX.Element => {
     <Routes>
       {/* Main app routes */}
       <Route element={<AppShell />}>
+        {/* Public pages - accessible to all */}
         <Route index element={<Home />} />
-        <Route path="post" element={<Post />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="messages/:threadId" element={<Messages />} />
-        <Route path="my-listings" element={<MyListings />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="profile/:memberId" element={<Profile />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="moderation" element={<Moderation />} />
-        <Route path="admin" element={<AdminPanel />} />
         <Route path="listing/:listingId" element={<ListingDetail />} />
         <Route path="faq" element={<FAQ />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
         <Route path="guidelines" element={<Guidelines />} />
         <Route path="contact" element={<Contact />} />
+        <Route
+          path="profile/:memberId"
+          element={<Profile />}
+        />
+
+        {/* Protected pages - require authentication */}
+        <Route
+          path="post"
+          element={
+            <ProtectedRoute>
+              <Post />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="messages/:threadId"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="my-listings"
+          element={
+            <ProtectedRoute>
+              <MyListings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin pages - require authentication + admin role */}
+        <Route
+          path="moderation"
+          element={
+            <ProtectedRoute requireAdmin>
+              <Moderation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route path="*" element={<NotFound />} />
