@@ -461,8 +461,15 @@ const handleLogin = async (event: any) => {
       };
     }
 
+    // Set HTTP-only session cookie (secure + same-site)
+    const sessionCookie = `userId=${user.id}; Path=/; SameSite=Lax; Secure; HttpOnly`;
+
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Set-Cookie": sessionCookie,
+      },
       body: JSON.stringify({
         success: true,
         userId: user.id,
