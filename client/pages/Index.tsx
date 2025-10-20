@@ -130,7 +130,7 @@ const Index = (): JSX.Element => {
   return (
     <section className="space-y-8">
       {showVerificationBanner ? (
-        <div className="rounded-3xl border border-warning/40 bg-warning/10 p-4 text-sm text-warning-foreground shadow-soft">
+        <div className="rounded-3xl border border-blue-300 bg-blue-50 p-4 text-sm dark:border-blue-700 dark:bg-blue-950 shadow-soft">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
               <p className="font-semibold text-foreground">
@@ -143,7 +143,7 @@ const Index = (): JSX.Element => {
             <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
-                className="rounded-full px-4 py-1 text-xs font-semibold"
+                className="rounded-full px-4 py-1 text-xs font-semibold text-foreground hover:bg-primary hover:text-white"
                 type="button"
                 onClick={() => beginVerification("email")}
               >
@@ -151,7 +151,7 @@ const Index = (): JSX.Element => {
               </Button>
               <Button
                 variant="outline"
-                className="rounded-full px-4 py-1 text-xs font-semibold"
+                className="rounded-full px-4 py-1 text-xs font-semibold text-foreground hover:bg-primary hover:text-white"
                 type="button"
                 onClick={() => beginVerification("invite")}
               >
@@ -159,7 +159,7 @@ const Index = (): JSX.Element => {
               </Button>
               <Button
                 variant="outline"
-                className="rounded-full px-4 py-1 text-xs font-semibold"
+                className="rounded-full px-4 py-1 text-xs font-semibold text-foreground hover:bg-primary hover:text-white"
                 type="button"
                 onClick={() => beginVerification("manual")}
               >
