@@ -18,7 +18,7 @@ export async function login(
   identifier: string,
   password: string,
 ): Promise<AuthUser> {
-  const res = await fetch("/.netlify/functions/auth/login", {
+  const res = await fetch("/api/auth/login", {
     method: "POST",
     credentials: "include", // Send/receive cookies
     headers: { "Content-Type": "application/json" },
