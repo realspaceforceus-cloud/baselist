@@ -255,58 +255,6 @@ const ListingDetail = (): JSX.Element => {
     addSuffix: true,
   });
 
-  const sellerFirstName = seller?.name?.split(" ")[0] ?? "there";
-  const defaultMessage = useMemo(
-    () => `Hi ${sellerFirstName}, is this still available?`,
-    [sellerFirstName],
-  );
-
-  const sellerLastActive = seller?.lastActiveAt
-    ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
-      ? "Active today ✅"
-      : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
-          addSuffix: true,
-        })} 🕓`
-    : undefined;
-
-  const handleOpenComposer = useCallback(() => {
-    setMessageBody(defaultMessage);
-    setComposerOpen(true);
-  }, [defaultMessage]);
-
-  const handleSendMessage = useCallback(() => {
-    const trimmed = messageBody.trim();
-    if (!trimmed) {
-      return;
-    }
-
-    const thread = sendMessageToSeller(listing.id, listing.sellerId, trimmed);
-
-    toast.success("Message sent", {
-      description: `Chatting with ${seller?.name ?? "the seller"} is ready to go.`,
-    });
-
-    setComposerOpen(false);
-    setMessageBody("");
-    navigate(`/messages/${thread.id}`);
-  }, [
-    listing.id,
-    listing.sellerId,
-    messageBody,
-    navigate,
-    sendMessageToSeller,
-    seller?.name,
-  ]);
-
-  const handleViewSellerListings = useCallback(() => {
-    if (!seller) {
-      return;
-    }
-    setCurrentBaseId(listing.baseId);
-    setSearchQuery(seller.name);
-    navigate("/");
-  }, [navigate, seller, setCurrentBaseId, setSearchQuery, listing.baseId]);
-
   return (
     <section className="space-y-6">
       <Button
