@@ -439,9 +439,12 @@ export const BaseListProvider = ({
       }
 
       try {
-        const response = await fetch(`/.netlify/functions/messages/threads/${authUser.userId}`, {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/.netlify/functions/messages/threads/${authUser.userId}`,
+          {
+            credentials: "include",
+          },
+        );
 
         if (!response.ok) {
           console.error(
