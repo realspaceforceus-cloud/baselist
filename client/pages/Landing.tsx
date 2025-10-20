@@ -103,6 +103,7 @@ const Landing = (): JSX.Element => {
   const [pendingBaseId, setPendingBaseId] = useState<string>("");
   const [proceedCountdown, setProceedCountdown] = useState(0);
   const countdownStartedRef = useRef(false);
+  const verificationPollingStartedRef = useRef(false);
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
