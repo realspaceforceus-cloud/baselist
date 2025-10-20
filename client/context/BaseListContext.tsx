@@ -2108,16 +2108,13 @@ export const BaseListProvider = ({
       const partnerId = thread.participants.find(
         (participant) => participant !== user.id,
       );
-      const partner = partnerId
-        ? SELLERS.find((candidate) => candidate.id === partnerId)
-        : undefined;
 
       const preview =
         message.body.length > 120
           ? `${message.body.slice(0, 117)}...`
           : message.body;
 
-      toast(`${partner?.name ?? "New message"} replied`, {
+      toast("New message", {
         description: listing ? `${listing.title}: ${preview}` : preview,
         action: {
           label: "Open",
