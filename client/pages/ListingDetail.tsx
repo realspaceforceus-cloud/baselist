@@ -54,8 +54,11 @@ const ListingDetail = (): JSX.Element => {
 
   const listing = useMemo(() => {
     if (!actualListingId) return null;
+    // Search by ID or ID prefix (for short slug support)
     return (
-      listings.find((item) => item.id === actualListingId) ||
+      listings.find((item) =>
+        item.id === actualListingId || item.id.includes(actualListingId)
+      ) ||
       fetchedListing
     );
   }, [listings, actualListingId, fetchedListing]);
