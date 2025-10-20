@@ -293,6 +293,7 @@ export const BaseListProvider = ({
     completedTransactions: 0,
   });
   const navigate = useNavigate();
+  const knownMessageIdsRef = useRef<Set<string>>(new Set());
 
   const isAuthenticated = authUser !== null;
   const currentAccount = useMemo(
