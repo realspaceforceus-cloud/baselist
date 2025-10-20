@@ -80,9 +80,9 @@ const handleRequestVerification = async (event: any) => {
     const userId = userResult.rows[0].id;
     console.log("[VERIFY REQUEST] Found user ID:", userId);
 
-    // Generate code in format: VER-XXXXX (5 uppercase alphanumeric characters)
+    // Generate code: 5 uppercase alphanumeric characters (excluding ambiguous: O, I, L, 1)
     const generateCode = (): string => {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // Excluded: O, I, L, 1
       let code = "";
       for (let i = 0; i < 5; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
