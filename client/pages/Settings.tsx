@@ -40,7 +40,8 @@ interface EmailVerificationDialogState {
 }
 
 export const Settings = (): JSX.Element => {
-  const { user, signOut } = useBaseList();
+  const baseListContext = useBaseList();
+  const { user, signOut } = baseListContext;
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +54,7 @@ export const Settings = (): JSX.Element => {
   const [usernameError, setUsernameError] = useState("");
   const [emailVerificationDialog, setEmailVerificationDialog] =
     useState<EmailVerificationDialogState>({ isOpen: false, newEmail: "" });
+  const [displayUser, setDisplayUser] = useState(user);
 
   const [formState, setFormState] = useState<FormState>({
     username: user.name || "",
