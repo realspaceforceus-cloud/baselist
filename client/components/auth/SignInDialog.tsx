@@ -171,45 +171,90 @@ export const SignInDialog = (): JSX.Element => {
     </form>
   );
 
-  const renderForgot = () => (
-    <form onSubmit={handleForgotSubmit} className="space-y-5">
-      <div className="space-y-2">
-        <label
-          htmlFor="forgot-email"
-          className="text-sm font-semibold text-foreground"
-        >
-          Email address
-        </label>
-        <Input
-          id="forgot-email"
-          type="email"
-          value={forgotEmail}
-          onChange={(event) => setForgotEmail(event.target.value)}
-          placeholder="Enter the email on your account"
-          className="h-11 rounded-full"
-          required
-        />
-        <p className="text-xs text-muted-foreground">
-          We’ll send a single-use link that expires in 15 minutes.
-        </p>
-      </div>
-      {errorMessage ? (
-        <p className="text-sm font-semibold text-destructive">{errorMessage}</p>
-      ) : null}
-      <DialogFooter className="flex flex-col gap-3">
-        <Button type="submit" className="w-full rounded-full">
-          Send reset link
-        </Button>
-        <button
-          type="button"
-          className="text-sm font-semibold text-primary hover:underline"
-          onClick={() => setView("signIn")}
-        >
-          Back to sign in
-        </button>
-      </DialogFooter>
-    </form>
-  );
+  const renderForgot = () => {
+    if (forgotSent) {
+      return (
+        <div className="space-y-4">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+            <p className="text-sm font-semibold text-green-900">
+              ✓ Reset link sent to {forgotEmail}
+            </p>
+            <p className="text-xs text-green-800 mt-2">
+              Check your email for the password reset link. It expires in 24 hours.
+            </p>
+          </div>
+          
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <p className="text-xs font-semibold text-amber-900 mb-2">
+              ⚠️ Important: Email Delivery Delay
+            </p>
+            <p className="text-xs text-amber-800">
+              DoW email servers may filter our emails. Your reset link may take up to 25 hours to arrive. 
+              Please be patient and check your spam/junk folder if you don't see it right away.
+            </p>
+          </div>
+
+          <DialogFooter className="flex flex-col gap-3">
+            <button
+              type="button"
+              className="text-sm font-semibold text-primary hover:underline"
+              onClick={() => {
+                setView("signIn");
+                setForgotSent(false);
+              }}
+            >
+              Back to sign in
+            </button>
+          </DialogFooter>
+        </div>
+      );
+    }
+
+    return (
+      <form onSubmit={handleForgotSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label
+            htmlFor="forgot-email"
+            className="text-sm font-semibold text-foreground"
+          >
+            Email address
+          </label>
+          <Input
+            id="forgot-email"
+            type="email"
+            value={forgotEmail}
+            onChange={(event) => setForgotEmail(event.target.value)}
+            placeholder="Enter the email on your account"
+            className="h-11 rounded-full"
+            required
+          />
+          <p className="text-xs text-muted-foreground">
+            We'll send a single-use link that expires in 24 hours.
+          </p>
+        </div>
+        <div className="bg-muted/50 border border-muted rounded-lg p-3">
+          <p className="text-xs text-muted-foreground">
+            <strong>Important:</strong> DoW email servers may filter our emails. Your reset link may take up to 25 hours to arrive. Check your spam folder.
+          </p>
+        </div>
+        {errorMessage ? (
+          <p className="text-sm font-semibold text-destructive">{errorMessage}</p>
+        ) : null}
+        <DialogFooter className="flex flex-col gap-3">
+          <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Send reset link"}
+          </Button>
+          <button
+            type="button"
+            className="text-sm font-semibold text-primary hover:underline"
+            onClick={() => setView("signIn")}
+          >
+            Back to sign in
+          </button>
+        </DialogFooter>
+      </form>
+    );
+  };
 
   const renderBody = () => {
     switch (state.view) {
