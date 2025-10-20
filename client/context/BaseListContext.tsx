@@ -2121,7 +2121,7 @@ export const BaseListProvider = ({
 
   const contextValue = useMemo<BaseListContextValue>(
     () => ({
-      bases: BASES,
+      bases,
       currentBaseId,
       currentBase,
       setCurrentBaseId,
