@@ -76,7 +76,9 @@ const handleBaseRequest = async (event: any) => {
     const userEmail = email.trim().toLowerCase();
     const baseNameTrimmed = baseName.trim();
 
-    console.log(`[EMAIL] Base request received from ${userEmail} for ${baseNameTrimmed}`);
+    console.log(
+      `[EMAIL] Base request received from ${userEmail} for ${baseNameTrimmed}`,
+    );
 
     // Send email to user confirming receipt
     const userConfirmationHtml = `

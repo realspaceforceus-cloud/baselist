@@ -1090,13 +1090,13 @@ const Landing = (): JSX.Element => {
                     } else {
                       const errorData = await response.json();
                       toast.error(
-                        errorData.error || "Failed to send request. Try again."
+                        errorData.error || "Failed to send request. Try again.",
                       );
                     }
                   } catch (error) {
                     console.error("Base request error:", error);
                     toast.error(
-                      "Failed to send request. Please try again later."
+                      "Failed to send request. Please try again later.",
                     );
                   }
                 }}
