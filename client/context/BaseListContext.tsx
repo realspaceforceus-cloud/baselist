@@ -379,19 +379,8 @@ export const BaseListProvider = ({
   // Note: Silent re-auth is now handled by AuthProvider context
   // No need to restore session here - AuthContext handles cookies on app load
 
-  // Persist session to localStorage
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      if (activeAccountId) {
-        localStorage.setItem("activeUserId", activeAccountId);
-      } else {
-        localStorage.removeItem("activeUserId");
-      }
-    } catch (error) {
-      console.error("Failed to save session:", error);
-    }
-  }, [activeAccountId]);
+  // Note: Session persistence is now handled by cookies (managed by AuthProvider)
+  // No localStorage used for auth state - it's all cookie-based
 
   // Fetch bases from the database on mount
   useEffect(() => {
