@@ -34,11 +34,44 @@ const ListingDetail = (): JSX.Element => {
   } = useBaseList();
 
   const [seller, setSeller] = useState<UserProfile | null>(null);
+  const [fetchedListing, setFetchedListing] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const listing = useMemo(
-    () => listings.find((item) => item.id === listingId),
-    [listings, listingId],
+    () => listings.find((item) => item.id === listingId) || fetchedListing,
+    [listings, listingId, fetchedListing],
   );
+
+  // Fetch listing from backend if not in local context
+  useEffect(() => {
+    if (listings.find((item) => item.id === listingId)) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (!listingId) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchListing = async () => {
+      try {
+        const response = await fetch(`/.netlify/functions/listings/${listingId}`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setFetchedListing(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch listing:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchListing();
+  }, [listingId, listings]);
 
   // Fetch seller info from backend
   useEffect(() => {
