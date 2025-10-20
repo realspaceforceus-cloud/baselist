@@ -345,8 +345,9 @@ const createInitialFlaggedThreads = (
 
   const firstThread = messageThreads[0];
   const listing = listings.find((item) => item.id === firstThread.listingId);
+  // Get the other participant (not the current user)
   const partnerId = firstThread.participants.find(
-    (participant) => participant !== SELLERS[1].id,
+    (participant) => participant !== user.id,
   );
   const excerpt =
     firstThread.messages[firstThread.messages.length - 1]?.body ??
