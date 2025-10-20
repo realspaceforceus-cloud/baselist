@@ -31,9 +31,11 @@ export const handler: Handler = async (event) => {
         ["active"],
       );
 
+      const transformedListings = result.rows.map(transformListing);
+
       return {
         statusCode: 200,
-        body: JSON.stringify(result.rows),
+        body: JSON.stringify(transformedListings),
       };
     } catch (err) {
       const errorMsg =
