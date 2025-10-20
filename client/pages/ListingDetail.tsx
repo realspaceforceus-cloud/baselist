@@ -196,12 +196,10 @@ const ListingDetail = (): JSX.Element => {
   });
 
   const sellerFirstName = seller?.name?.split(" ")[0] ?? "there";
-  const defaultMessage = `Hi ${sellerFirstName}, is this still available?`;
-
-  // Update message body when default message changes
-  useEffect(() => {
-    setMessageBody(defaultMessage);
-  }, [defaultMessage]);
+  const defaultMessage = useMemo(
+    () => `Hi ${sellerFirstName}, is this still available?`,
+    [sellerFirstName],
+  );
 
   const sellerLastActive = seller?.lastActiveAt
     ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
