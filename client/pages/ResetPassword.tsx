@@ -78,9 +78,15 @@ const ResetPassword = (): JSX.Element => {
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-border bg-card p-8 shadow-sm">
             <h1 className="text-2xl font-bold text-foreground mb-4">Invalid Reset Link</h1>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-muted-foreground mb-4">
               This password reset link is invalid or has expired.
             </p>
+            <div className="bg-muted/50 border border-muted rounded-lg p-4 mb-6">
+              <p className="text-sm text-muted-foreground">
+                <strong>Note:</strong> DoW email servers may delay email delivery up to 25 hours.
+                If you didn't receive your reset email, check your spam/junk folder or request a new reset link.
+              </p>
+            </div>
             <Button
               onClick={() => navigate("/")}
               className="w-full rounded-full"
