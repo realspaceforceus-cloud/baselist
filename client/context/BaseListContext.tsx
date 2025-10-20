@@ -354,6 +354,12 @@ export const BaseListProvider = ({
   // Fetch bases from the database on mount
   useEffect(() => {
     const fetchBases = async () => {
+      // On dev server, skip fetching and use mock data
+      if (import.meta.env.DEV) {
+        setBases(BASES);
+        return;
+      }
+
       try {
         const response = await fetch("/.netlify/functions/bases");
 
@@ -387,10 +393,6 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch bases from database:", error);
-        // On dev server, use mock bases as fallback
-        if (import.meta.env.DEV) {
-          setBases(BASES);
-        }
         // Don't throw - app should continue loading even if bases fetch fails
       }
     };
@@ -400,6 +402,12 @@ export const BaseListProvider = ({
   // Fetch listings from the database
   useEffect(() => {
     const fetchListings = async () => {
+      // On dev server, skip fetching and use empty listings
+      if (import.meta.env.DEV) {
+        setListings([]);
+        return;
+      }
+
       try {
         const response = await fetch("/.netlify/functions/listings", {
           credentials: "include",
@@ -418,10 +426,6 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch listings from database:", error);
-        // On dev server, use empty listings as fallback (no mock data for this)
-        if (import.meta.env.DEV) {
-          setListings([]);
-        }
       }
     };
     fetchListings();
@@ -431,6 +435,12 @@ export const BaseListProvider = ({
   useEffect(() => {
     const fetchMessageThreads = async () => {
       if (!authUser?.userId) {
+        return;
+      }
+
+      // On dev server, skip fetching and use empty message threads
+      if (import.meta.env.DEV) {
+        setMessageThreads([]);
         return;
       }
 
@@ -450,10 +460,6 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch message threads from database:", error);
-        // On dev server, use empty message threads as fallback
-        if (import.meta.env.DEV) {
-          setMessageThreads([]);
-        }
       }
     };
 
