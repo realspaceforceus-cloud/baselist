@@ -293,8 +293,8 @@ export const Header = (): JSX.Element => {
                     </p>
                   </div>
                 </button>
-                <div className="flex items-center gap-3">
-                  <div className="hidden sm:flex flex-col items-end gap-0.5">
+                <div className="flex items-center gap-1 md:gap-3 flex-shrink-0">
+                  <div className="hidden md:flex flex-col items-end gap-0.5">
                     <p className="text-sm font-semibold text-foreground">
                       Welcome {user.name || "User"}!
                     </p>
@@ -302,36 +302,36 @@ export const Header = (): JSX.Element => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="rounded-full p-2"
+                    className="rounded-full p-1.5 md:p-2"
                     type="button"
                     onClick={() => setIsDarkMode(!isDarkMode)}
                     title={isDarkMode ? "Light mode" : "Dark mode"}
                   >
                     {isDarkMode ? (
-                      <Sun className="h-4 w-4" />
+                      <Sun className="h-3.5 md:h-4 w-3.5 md:w-4" />
                     ) : (
-                      <Moon className="h-4 w-4" />
+                      <Moon className="h-3.5 md:h-4 w-3.5 md:w-4" />
                     )}
                   </Button>
                   <SheetTrigger asChild>
                     <button
                       type="button"
-                      className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      className="relative flex h-9 md:h-11 w-9 md:w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                     >
-                      <Avatar className="h-9 w-9">
+                      <Avatar className="h-7 md:h-9 w-7 md:w-9">
                         {user.avatarUrl ? (
                           <AvatarImage
                             src={user.avatarUrl}
                             alt={`${user.name} avatar`}
                           />
                         ) : (
-                          <AvatarFallback className="text-sm font-semibold uppercase tracking-wide text-foreground">
+                          <AvatarFallback className="text-xs md:text-sm font-semibold uppercase tracking-wide text-foreground">
                             {avatarInitials}
                           </AvatarFallback>
                         )}
                       </Avatar>
-                      <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-background shadow-sm">
-                        <Menu className="h-3 w-3" aria-hidden />
+                      <span className="absolute -bottom-1 -right-1 flex h-3 md:h-4 w-3 md:w-4 items-center justify-center rounded-full bg-primary text-background shadow-sm">
+                        <Menu className="h-2 md:h-3 w-2 md:w-3" aria-hidden />
                       </span>
                       <span className="sr-only">Open menu</span>
                     </button>
