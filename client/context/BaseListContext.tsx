@@ -394,31 +394,6 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
-  // Restore session on mount
-  useEffect(() => {
-    try {
-      if (typeof window === "undefined") {
-        setIsRestoringSession(false);
-        return;
-      }
-
-      const savedUserId = localStorage.getItem("activeUserId");
-      if (savedUserId) {
-        // Try to restore the session by finding the account locally
-        const account = accounts.find((a) => a.id === savedUserId);
-        if (account) {
-          setActiveAccountId(savedUserId);
-        } else {
-          // Account doesn't exist, clear the saved session
-          localStorage.removeItem("activeUserId");
-        }
-      }
-    } catch (error) {
-      console.error("Failed to restore session:", error);
-    } finally {
-      setIsRestoringSession(false);
-    }
-  }, []);
 
   // Persist session to localStorage
   useEffect(() => {
