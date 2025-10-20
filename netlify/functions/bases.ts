@@ -7,23 +7,27 @@ export const handler: Handler = async (event) => {
 
   // GET /api/bases - get all bases
   if (method === "GET" && path === "") {
-    const client = await pool.connect();
+    let client;
     try {
-      const result = await client.query("SELECT * FROM bases");
+      client = await pool.connect();
+      const result = await client.query("SELECT * FROM bases ORDER BY name ASC");
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.rows),
       };
     } catch (err) {
+      console.error("Error fetching bases:", err);
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
       return {
-        statusCode: 400,
+        statusCode: 500,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
-      client.release();
+      if (client) client.release();
     }
   }
 
