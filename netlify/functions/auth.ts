@@ -539,7 +539,8 @@ const handleResetPasswordRequest = async (event: any) => {
       <p><a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
       <p>Or copy and paste this link in your browser:</p>
       <p>${resetLink}</p>
-      <p style="color: #666; font-size: 12px;">This link expires in 15 minutes.</p>
+      <p style="color: #666; font-size: 12px;">This link expires in 24 hours.</p>
+      <p style="color: #666; font-size: 12px;"><strong>Note:</strong> DoW email servers may filter our emails. Your password reset email may take up to 25 hours to arrive. Please check your spam/junk folder if you don't see it right away.</p>
       <p style="color: #666; font-size: 12px;">If you didn't request this, you can ignore this email.</p>
     `;
 
