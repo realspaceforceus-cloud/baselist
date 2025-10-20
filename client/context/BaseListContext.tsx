@@ -828,7 +828,8 @@ export const BaseListProvider = ({
   const signInWithPassword = useCallback(
     async (identifier: string, password: string, options?: SignInOptions) => {
       const normalized = identifier.trim().toLowerCase();
-      let account = accounts.find((candidate) => {
+      const accountsAtTimeOfCall = accounts;
+      let account = accountsAtTimeOfCall.find((candidate) => {
         return (
           candidate.username.toLowerCase() === normalized ||
           candidate.email.toLowerCase() === normalized
