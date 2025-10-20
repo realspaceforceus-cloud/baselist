@@ -273,7 +273,7 @@ const Landing = (): JSX.Element => {
   const checkVerificationStatus = async () => {
     try {
       const response = await fetch(
-        `/.netlify/functions/verify-status/status?email=${encodeURIComponent(pendingEmail)}`,
+        `/api/verify/status?email=${encodeURIComponent(pendingEmail)}`,
       );
 
       if (!response.ok) {
