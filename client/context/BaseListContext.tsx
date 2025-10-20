@@ -377,6 +377,36 @@ export const BaseListProvider = ({
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
 
+  // Restore session on mount
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        if (typeof window === "undefined") {
+          setIsRestoringSession(false);
+          return;
+        }
+
+        const savedUserId = localStorage.getItem("activeUserId");
+        if (!savedUserId) {
+          setIsRestoringSession(false);
+          return;
+        }
+
+        // Try to restore the session by finding the account locally
+        const account = accounts.find((a) => a.id === savedUserId);
+        if (account) {
+          setActiveAccountId(savedUserId);
+        }
+      } catch (error) {
+        console.error("Failed to restore session:", error);
+      } finally {
+        setIsRestoringSession(false);
+      }
+    };
+
+    restoreSession();
+  }, [accounts]);
+
   // Fetch bases from the database on mount
   useEffect(() => {
     const fetchBases = async () => {
