@@ -2026,14 +2026,6 @@ export const BaseListProvider = ({
       return totalsMap.get(id)!;
     };
 
-    SELLERS.forEach((seller) => {
-      if (seller.rating && seller.ratingCount) {
-        const entry = ensureTotals(seller.id);
-        entry.sellerTotal += seller.rating * seller.ratingCount;
-        entry.sellerCount += seller.ratingCount;
-      }
-    });
-
     transactions.forEach((transaction) => {
       if (typeof transaction.buyerRatingAboutSeller === "number") {
         const sellerTotals = ensureTotals(transaction.sellerId);
