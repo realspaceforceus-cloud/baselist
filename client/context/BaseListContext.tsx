@@ -314,7 +314,16 @@ export const BaseListProvider = ({
   const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
     ...ACCOUNT_SEED,
   ]);
-  const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
+  const [activeAccountId, setActiveAccountId] = useState<string | null>(() => {
+    // Restore session from localStorage on mount
+    if (typeof window === "undefined") return null;
+    try {
+      const saved = localStorage.getItem("activeAccountId");
+      return saved ? saved : null;
+    } catch {
+      return null;
+    }
+  });
   const [memberDiscipline, setMemberDiscipline] = useState<
     Record<string, MemberDisciplineRecord>
   >(() => ({ ...INITIAL_DISCIPLINE }));
