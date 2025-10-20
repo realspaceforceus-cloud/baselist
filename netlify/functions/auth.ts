@@ -538,13 +538,15 @@ const handleMe = async (event: any) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         authenticated: true,
-        userId: user.id,
-        username: user.username,
-        email: user.email,
-        baseId: user.baseId,
-        avatarUrl: user.avatarUrl,
-        role: user.role,
-        verified: !!user.dowVerifiedAt,
+        user: {
+          userId: user.id,
+          username: user.username,
+          email: user.email,
+          baseId: user.baseId,
+          avatarUrl: user.avatarUrl,
+          role: user.role,
+          verified: !!user.dowVerifiedAt,
+        },
       }),
     };
   } catch (error) {
