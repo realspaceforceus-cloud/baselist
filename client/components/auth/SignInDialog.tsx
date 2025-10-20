@@ -12,15 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { PASSWORD_MIN_LENGTH } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
-import { useBaseList } from "@/context/BaseListContext";
+import { useAuth } from "@/context/AuthContext";
 
+const PASSWORD_MIN_LENGTH = 12;
 const formatPasswordHint = () => `Use ${PASSWORD_MIN_LENGTH}+ characters.`;
 
 export const SignInDialog = (): JSX.Element => {
   const { state, close, setView, openForgot } = useAuthDialog();
-  const { signInWithPassword } = useBaseList();
+  const { signIn } = useAuth();
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
