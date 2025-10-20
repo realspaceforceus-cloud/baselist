@@ -375,6 +375,45 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
+  // Restore session from cookies on app load
+  useEffect(() => {
+    const restoreSessionFromCookies = async () => {
+      try {
+        const response = await fetch("/api/auth/me", {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // This endpoint will eventually return user data if authenticated
+          // For now, we'll just use localStorage as fallback
+          const savedUserId = localStorage.getItem("activeUserId");
+          if (savedUserId) {
+            const account = accounts.find((a) => a.id === savedUserId);
+            if (account) {
+              setActiveAccountId(savedUserId);
+            } else {
+              localStorage.removeItem("activeUserId");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to restore session from cookies:", error);
+        // Fallback to localStorage
+        const savedUserId = localStorage.getItem("activeUserId");
+        if (savedUserId) {
+          const account = accounts.find((a) => a.id === savedUserId);
+          if (account) {
+            setActiveAccountId(savedUserId);
+          }
+        }
+      }
+    };
+
+    restoreSessionFromCookies();
+  }, [accounts]);
+
   // Persist session to localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
