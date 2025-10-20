@@ -25,6 +25,7 @@ const Profile = (): JSX.Element => {
     listings,
     isModerator,
     transactions,
+    isAuthenticated,
     getUserRatingSummary,
     getMemberName,
     getMemberProfile,
@@ -33,6 +34,22 @@ const Profile = (): JSX.Element => {
   } = useBaseList();
 
   const { memberId } = useParams<{ memberId?: string }>();
+
+  // Show a message if guest tries to view their own profile without memberId
+  const isViewingOwnProfile = !memberId || memberId === currentUser.id;
+  if (!isAuthenticated && isViewingOwnProfile) {
+    return (
+      <section className="space-y-6">
+        <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-card">
+          <h1 className="text-3xl font-semibold text-foreground mb-3">View Your Profile</h1>
+          <p className="text-muted-foreground mb-6">Sign in to view your profile and complete your member journey.</p>
+          <Link to="/" className="text-primary hover:underline font-semibold">
+            Sign in to continue
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   const profileUser = useMemo(() => {
     if (!memberId || memberId === currentUser.id) {
