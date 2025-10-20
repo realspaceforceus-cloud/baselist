@@ -261,14 +261,14 @@ export const Header = (): JSX.Element => {
       <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
         <header className="sticky top-0 z-50 border-b border-nav-border bg-background/95 backdrop-blur-lg">
           <div className="mx-auto w-full max-w-6xl px-4 py-3 md:py-5">
-            <div className="flex flex-col gap-3 md:gap-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl font-semibold tracking-tight text-foreground">
+            <div className="flex flex-col gap-2 md:gap-4">
+              <div className="flex items-center justify-between gap-2 md:gap-4">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-lg md:text-2xl font-semibold tracking-tight text-foreground flex-shrink-0">
                     <span className="font-normal">trusty</span>
                     <span className="font-bold">PCS</span>
                   </span>
-                  <div className="flex flex-col gap-0">
+                  <div className="hidden md:flex flex-col gap-0">
                     <span className="text-[0.65rem] text-muted-foreground">
                       {settings.website_description ||
                         "Buy, Sell & Connect with Verified DoW Families"}
@@ -278,17 +278,17 @@ export const Header = (): JSX.Element => {
                 <button
                   type="button"
                   onClick={() => setIsBaseSwitchOpen(true)}
-                  className="flex flex-1 max-w-sm items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3 text-left transition hover:border-primary/40 hover:bg-muted/50"
+                  className="hidden sm:flex flex-1 max-w-sm items-center gap-2 rounded-2xl border border-border bg-card px-3 md:px-4 py-2 md:py-3 text-left transition hover:border-primary/40 hover:bg-muted/50 flex-shrink-0"
                 >
                   <MapPin
-                    className="h-5 w-5 text-primary flex-shrink-0"
+                    className="h-4 md:h-5 w-4 md:w-5 text-primary flex-shrink-0"
                     aria-hidden
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-foreground truncate">
+                    <p className="font-semibold text-xs md:text-sm text-foreground truncate">
                       {currentBase.name}
                     </p>
-                    <p className="text-[0.65rem] text-muted-foreground">
+                    <p className="text-[0.6rem] md:text-[0.65rem] text-muted-foreground hidden md:block">
                       Switch base
                     </p>
                   </div>
