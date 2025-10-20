@@ -52,11 +52,7 @@ export const SignInDialog = (): JSX.Element => {
     setErrorMessage(null);
 
     try {
-      await Promise.resolve(
-        signInWithPassword(identifier, password, {
-          rememberDevice,
-        }),
-      );
+      await signIn(identifier, password);
       close();
     } catch (error) {
       setErrorMessage(
