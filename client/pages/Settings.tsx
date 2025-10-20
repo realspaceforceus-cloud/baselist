@@ -404,7 +404,10 @@ export const Settings = (): JSX.Element => {
                 Username
               </label>
               <p className="mt-1 text-xs text-muted-foreground mb-3">
-                Current username: <span className="font-semibold text-foreground">{user.name}</span>
+                Current username:{" "}
+                <span className="font-semibold text-foreground">
+                  {user.name}
+                </span>
               </p>
               <div className="mt-3 flex gap-2">
                 <div className="flex-1">

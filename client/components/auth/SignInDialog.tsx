@@ -180,17 +180,19 @@ export const SignInDialog = (): JSX.Element => {
               ✓ Reset link sent to {forgotEmail}
             </p>
             <p className="text-xs text-green-800 mt-2">
-              Check your email for the password reset link. It expires in 24 hours.
+              Check your email for the password reset link. It expires in 24
+              hours.
             </p>
           </div>
-          
+
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
             <p className="text-xs font-semibold text-amber-900 mb-2">
               ⚠️ Important: Email Delivery Delay
             </p>
             <p className="text-xs text-amber-800">
-              DoW email servers may filter our emails. Your reset link may take up to 25 hours to arrive. 
-              Please be patient and check your spam/junk folder if you don't see it right away.
+              DoW email servers may filter our emails. Your reset link may take
+              up to 25 hours to arrive. Please be patient and check your
+              spam/junk folder if you don't see it right away.
             </p>
           </div>
 
@@ -234,14 +236,22 @@ export const SignInDialog = (): JSX.Element => {
         </div>
         <div className="bg-muted/50 border border-muted rounded-lg p-3">
           <p className="text-xs text-muted-foreground">
-            <strong>Important:</strong> DoW email servers may filter our emails. Your reset link may take up to 25 hours to arrive. Check your spam folder.
+            <strong>Important:</strong> DoW email servers may filter our emails.
+            Your reset link may take up to 25 hours to arrive. Check your spam
+            folder.
           </p>
         </div>
         {errorMessage ? (
-          <p className="text-sm font-semibold text-destructive">{errorMessage}</p>
+          <p className="text-sm font-semibold text-destructive">
+            {errorMessage}
+          </p>
         ) : null}
         <DialogFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full rounded-full"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Sending..." : "Send reset link"}
           </Button>
           <button
