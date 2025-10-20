@@ -215,67 +215,10 @@ export const SignInDialog = (): JSX.Element => {
     </form>
   );
 
-  const renderReset = () => (
-    <form onSubmit={handleResetSubmit} className="space-y-5">
-      <div className="space-y-2">
-        <label
-          htmlFor="new-password"
-          className="text-sm font-semibold text-foreground"
-        >
-          New password
-        </label>
-        <Input
-          id="new-password"
-          type="password"
-          value={newPassword}
-          onChange={(event) => setNewPassword(event.target.value)}
-          placeholder="Create a new password"
-          className="h-11 rounded-full"
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <label
-          htmlFor="confirm-password"
-          className="text-sm font-semibold text-foreground"
-        >
-          Confirm password
-        </label>
-        <Input
-          id="confirm-password"
-          type="password"
-          value={confirmPassword}
-          onChange={(event) => setConfirmPassword(event.target.value)}
-          placeholder="Re-enter your password"
-          className="h-11 rounded-full"
-          required
-        />
-        <p className="text-xs text-muted-foreground">{formatPasswordHint()}</p>
-      </div>
-      {errorMessage ? (
-        <p className="text-sm font-semibold text-destructive">{errorMessage}</p>
-      ) : null}
-      <DialogFooter className="flex flex-col gap-3">
-        <Button type="submit" className="w-full rounded-full">
-          Reset password
-        </Button>
-        <button
-          type="button"
-          className="text-sm font-semibold text-primary hover:underline"
-          onClick={() => setView("signIn")}
-        >
-          Back to sign in
-        </button>
-      </DialogFooter>
-    </form>
-  );
-
   const renderBody = () => {
     switch (state.view) {
       case "forgot":
         return renderForgot();
-      case "reset":
-        return renderReset();
       default:
         return renderSignIn();
     }
