@@ -636,7 +636,7 @@ const Messages = (): JSX.Element => {
                 size="sm"
                 className="rounded-full px-3 py-1 text-xs"
               >
-                <Link to={`/listing/${activeSummary.listing.id}`}>
+                <Link to={`/listing/${generateSlug(activeSummary.listing.title, activeSummary.listing.id)}`}>
                   View item
                 </Link>
               </Button>
