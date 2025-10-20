@@ -186,8 +186,14 @@ export const Settings = (): JSX.Element => {
         throw new Error(error.message || "Failed to update username");
       }
 
+      const data = await response.json();
       toast.success("Username updated successfully");
       setUsernameError("");
+
+      // Update form state with new username
+      if (data.name) {
+        setFormState((prev) => ({ ...prev, username: data.name }));
+      }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : "Failed to update username";
       toast.error(errorMsg);
