@@ -321,7 +321,9 @@ export const BaseListProvider = ({
       const saved = localStorage.getItem("activeAccountId");
       if (saved) {
         // Validate that the account exists in our seed data
-        const accountExists = ACCOUNT_SEED.some((account) => account.id === saved);
+        const accountExists = ACCOUNT_SEED.some(
+          (account) => account.id === saved,
+        );
         return accountExists ? saved : null;
       }
       return null;
