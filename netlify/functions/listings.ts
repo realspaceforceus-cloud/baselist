@@ -54,10 +54,20 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const id = path.slice(1);
-      const result = await client.query(
+
+      // First try exact match
+      let result = await client.query(
         "SELECT * FROM listings WHERE id = $1",
         [id],
       );
+
+      // If not found and id looks like a UUID prefix (8 chars), try prefix match
+      if (result.rows.length === 0 && /^[a-f0-9-]{8}$/.test(id)) {
+        result = await client.query(
+          "SELECT * FROM listings WHERE id LIKE $1 LIMIT 1",
+          [`${id}%`],
+        );
+      }
 
       if (result.rows.length === 0) {
         return {
