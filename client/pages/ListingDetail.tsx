@@ -55,7 +55,7 @@ const ListingDetail = (): JSX.Element => {
   const listing = useMemo(() => {
     if (!actualListingId) return null;
     return (
-      listings.find((item) => item.id.startsWith(actualListingId)) ||
+      listings.find((item) => item.id === actualListingId) ||
       fetchedListing
     );
   }, [listings, actualListingId, fetchedListing]);
