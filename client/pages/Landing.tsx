@@ -1043,6 +1043,100 @@ const Landing = (): JSX.Element => {
             </div>
           ) : null}
         </div>
+
+        {showExpansionForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-card md:p-8">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-foreground">
+                  Request your base
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowExpansionForm(false);
+                    setExpansionEmail("");
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  ✕
+                </button>
+              </div>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!expansionEmail.trim()) {
+                    toast.error("Please enter a base name");
+                    return;
+                  }
+                  try {
+                    const response = await fetch(
+                      "/.netlify/functions/email",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          type: "base_request",
+                          baseName: expansionEmail,
+                          email: accountForm.email || "unknown",
+                        }),
+                      },
+                    );
+
+                    if (response.ok) {
+                      toast.success("Base request sent!", {
+                        description:
+                          "Admins will review and add your base soon.",
+                      });
+                      setShowExpansionForm(false);
+                      setExpansionEmail("");
+                    } else {
+                      toast.error("Failed to send request. Try again.");
+                    }
+                  } catch (error) {
+                    toast.error("Failed to send request. Try again.");
+                  }
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="text-sm font-semibold text-foreground">
+                    Base name
+                  </label>
+                  <Input
+                    value={expansionEmail}
+                    onChange={(e) => setExpansionEmail(e.target.value)}
+                    placeholder="e.g., Joint Base San Antonio"
+                    className="mt-2 h-11 rounded-full"
+                    required
+                  />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Tell us the name of your military base. We'll add it shortly.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    type="submit"
+                    className="flex-1 rounded-full"
+                  >
+                    Send request
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="flex-1 rounded-full"
+                    onClick={() => {
+                      setShowExpansionForm(false);
+                      setExpansionEmail("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </section>
     );
   }
