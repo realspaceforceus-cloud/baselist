@@ -42,6 +42,7 @@ export const SignInDialog = (): JSX.Element => {
       setForgotEmail("");
       setRememberDevice(false);
       setErrorMessage(null);
+      setForgotSent(false);
     }
   }, [state.isOpen]);
 
