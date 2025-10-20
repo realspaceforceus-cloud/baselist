@@ -40,7 +40,7 @@ interface EmailVerificationDialogState {
 }
 
 export const Settings = (): JSX.Element => {
-  const { user, signOut } = useBaseList();
+  const { user, signOut, updateUserAvatar } = useBaseList();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
