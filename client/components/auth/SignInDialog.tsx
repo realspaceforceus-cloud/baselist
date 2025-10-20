@@ -39,25 +39,10 @@ export const SignInDialog = (): JSX.Element => {
       setIdentifier("");
       setPassword("");
       setForgotEmail("");
-      setNewPassword("");
-      setConfirmPassword("");
       setRememberDevice(false);
       setErrorMessage(null);
     }
   }, [state.isOpen]);
-
-  const pendingResetToken = useMemo(() => {
-    if (!state.resetToken) {
-      return null;
-    }
-    if (
-      !pendingPasswordReset ||
-      pendingPasswordReset.token !== state.resetToken
-    ) {
-      return null;
-    }
-    return pendingPasswordReset.token;
-  }, [pendingPasswordReset, state.resetToken]);
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
