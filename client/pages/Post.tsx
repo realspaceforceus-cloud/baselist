@@ -206,7 +206,9 @@ const Post = (): JSX.Element => {
     } catch (error) {
       toast.error("Unable to publish listing", {
         description:
-          error instanceof Error ? error.message : "Check your files and try again.",
+          error instanceof Error
+            ? error.message
+            : "Check your files and try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -221,12 +223,16 @@ const Post = (): JSX.Element => {
             Post a listing in 30 seconds.
           </h1>
           <p className="max-w-2xl text-base text-muted-foreground">
-            Upload photos, add the essentials, and your post appears instantly for verified members at {currentBase.name}.
+            Upload photos, add the essentials, and your post appears instantly
+            for verified members at {currentBase.name}.
           </p>
         </div>
         <div className="mt-4 flex items-center gap-3 rounded-3xl border border-dashed border-nav-border bg-background/70 px-5 py-4 text-sm text-muted-foreground md:mt-0">
           <ShieldCheck className="h-5 w-5 text-verified" aria-hidden />
-          <span>Listings are auto-tagged to {currentBase.name}. Switch bases anytime from the header.</span>
+          <span>
+            Listings are auto-tagged to {currentBase.name}. Switch bases anytime
+            from the header.
+          </span>
         </div>
       </header>
 
@@ -288,7 +294,9 @@ const Post = (): JSX.Element => {
               >
                 <ImagePlus className="h-6 w-6" aria-hidden />
                 Add photo
-                <span className="text-xs text-muted-foreground">{remainingPhotoSlots} slots left</span>
+                <span className="text-xs text-muted-foreground">
+                  {remainingPhotoSlots} slots left
+                </span>
               </button>
             ) : null}
           </div>
@@ -299,7 +307,10 @@ const Post = (): JSX.Element => {
 
         <section className="grid gap-6 md:grid-cols-2">
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-foreground" htmlFor="title">
+            <label
+              className="text-sm font-semibold text-foreground"
+              htmlFor="title"
+            >
               Title
             </label>
             <Input
@@ -317,7 +328,10 @@ const Post = (): JSX.Element => {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-foreground" htmlFor="price">
+              <label
+                className="text-sm font-semibold text-foreground"
+                htmlFor="price"
+              >
                 Price
               </label>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -356,14 +370,20 @@ const Post = (): JSX.Element => {
 
         <section className="grid gap-6 md:grid-cols-2">
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-foreground" htmlFor="category">
+            <label
+              className="text-sm font-semibold text-foreground"
+              htmlFor="category"
+            >
               Category
             </label>
             <Select
               value={category || undefined}
               onValueChange={(value) => setCategory(value as ListingCategory)}
             >
-              <SelectTrigger id="category" className="h-12 rounded-2xl text-base">
+              <SelectTrigger
+                id="category"
+                className="h-12 rounded-2xl text-base"
+              >
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
@@ -380,7 +400,10 @@ const Post = (): JSX.Element => {
           </div>
 
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-foreground" htmlFor="description">
+            <label
+              className="text-sm font-semibold text-foreground"
+              htmlFor="description"
+            >
               Description
             </label>
             <Textarea
@@ -400,7 +423,9 @@ const Post = (): JSX.Element => {
 
         <footer className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-6 shadow-card md:flex-row md:items-center md:justify-between">
           <div className="text-sm text-muted-foreground">
-            Posting as <span className="font-semibold text-foreground">{user.name}</span> • Base: {currentBase.name}
+            Posting as{" "}
+            <span className="font-semibold text-foreground">{user.name}</span> •
+            Base: {currentBase.name}
           </div>
           <Button
             type="submit"

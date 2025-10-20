@@ -10,10 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import {
-  SPONSOR_PLACEMENTS,
-  BASES,
-} from "@/data/mock";
+import { SPONSOR_PLACEMENTS, BASES } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
 import { useAuth } from "@/context/AuthContext";
 import type {
@@ -420,9 +417,12 @@ export const BaseListProvider = ({
 
         const listingsData = await response.json();
         if (Array.isArray(listingsData)) {
-          setListings(listingsData.sort(
-            (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
-          ));
+          setListings(
+            listingsData.sort(
+              (a, b) =>
+                new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
+            ),
+          );
         }
       } catch (error) {
         console.error("Failed to fetch listings from database:", error);
@@ -450,7 +450,9 @@ export const BaseListProvider = ({
         });
 
         if (!response.ok) {
-          console.error(`Failed to fetch message threads: HTTP ${response.status}`);
+          console.error(
+            `Failed to fetch message threads: HTTP ${response.status}`,
+          );
           throw new Error(`HTTP ${response.status}`);
         }
 
@@ -1720,9 +1722,12 @@ export const BaseListProvider = ({
     );
   }, []);
 
-
   const sendMessageToSeller = useCallback(
-    async (listingId: string, sellerId: string, messageBody: string): Promise<MessageThread> => {
+    async (
+      listingId: string,
+      sellerId: string,
+      messageBody: string,
+    ): Promise<MessageThread> => {
       if (!isAuthenticated) {
         throw new Error("Sign in to send messages.");
       }
@@ -1758,7 +1763,9 @@ export const BaseListProvider = ({
 
         // Update local state with the thread from backend
         setMessageThreads((prev) => {
-          const existingIndex = prev.findIndex((t) => t.id === threadFromBackend.id);
+          const existingIndex = prev.findIndex(
+            (t) => t.id === threadFromBackend.id,
+          );
           if (existingIndex !== -1) {
             // Update existing thread
             const remaining = prev.filter((_, i) => i !== existingIndex);
@@ -1770,7 +1777,9 @@ export const BaseListProvider = ({
 
         return threadFromBackend;
       } catch (error) {
-        throw error instanceof Error ? error : new Error("Failed to send message");
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to send message");
       }
     },
     [isAuthenticated, isDowVerified],
@@ -2142,7 +2151,6 @@ export const BaseListProvider = ({
       });
     });
   }, [isAuthenticated, listings, messageThreads, navigate, user.id]);
-
 
   const currentBase = useMemo<Base>(() => {
     return bases.find((base) => base.id === currentBaseId) ?? bases[0];

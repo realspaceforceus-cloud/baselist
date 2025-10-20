@@ -63,11 +63,7 @@ const Index = (): JSX.Element => {
         return true;
       }
 
-      const haystack = [
-        listing.title,
-        listing.description,
-        listing.category,
-      ]
+      const haystack = [listing.title, listing.description, listing.category]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();

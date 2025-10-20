@@ -121,19 +121,25 @@ const Messages = (): JSX.Element => {
         }
 
         const listing = listings.find((item) => item.id === thread.listingId);
-        const partnerId = thread.participants.find((participant) => participant !== user.id);
+        const partnerId = thread.participants.find(
+          (participant) => participant !== user.id,
+        );
         // Seller will be fetched from backend - not using mock data
         const seller = undefined;
         const partnerName = partnerId ? getMemberName(partnerId) : "Member";
 
-        const lastMessage = thread.messages[thread.messages.length - 1] ?? undefined;
+        const lastMessage =
+          thread.messages[thread.messages.length - 1] ?? undefined;
         const lastUpdated = lastMessage
-          ? formatDistanceToNow(new Date(lastMessage.sentAt), { addSuffix: true })
+          ? formatDistanceToNow(new Date(lastMessage.sentAt), {
+              addSuffix: true,
+            })
           : "Just now";
         const lastReadTimestamp = thread.lastReadAt?.[user.id];
         const unread = lastMessage
           ? !lastReadTimestamp ||
-            new Date(lastReadTimestamp).getTime() < new Date(lastMessage.sentAt).getTime()
+            new Date(lastReadTimestamp).getTime() <
+              new Date(lastMessage.sentAt).getTime()
           : false;
         const defaultComposerMessage = seller
           ? `Hi ${seller.name.split(" ")[0]}, is this still available?`
@@ -144,8 +150,8 @@ const Messages = (): JSX.Element => {
         const userStatus: ThreadSummaryStatus = isArchived
           ? "archived"
           : isCompleted
-          ? "completed"
-          : "active";
+            ? "completed"
+            : "active";
 
         const transaction = thread.transaction;
         const awaitingUserConfirmation = Boolean(
@@ -197,18 +203,25 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    const exists = threadSummaries.some((summary) => summary.thread.id === threadId);
+    const exists = threadSummaries.some(
+      (summary) => summary.thread.id === threadId,
+    );
     if (!threadId) {
       if (!isMobile) {
-        navigate(`/messages/${threadSummaries[0].thread.id}`, { replace: true });
+        navigate(`/messages/${threadSummaries[0].thread.id}`, {
+          replace: true,
+        });
       }
       return;
     }
 
     if (!exists) {
-      navigate(isMobile ? "/messages" : `/messages/${threadSummaries[0].thread.id}`, {
-        replace: true,
-      });
+      navigate(
+        isMobile ? "/messages" : `/messages/${threadSummaries[0].thread.id}`,
+        {
+          replace: true,
+        },
+      );
     }
   }, [navigate, threadId, threadSummaries, isMobile]);
 
@@ -229,7 +242,8 @@ const Messages = (): JSX.Element => {
     const query = searchTerm.trim().toLowerCase();
 
     return threadSummaries.filter((summary) => {
-      const matchesFilter = threadFilter === "all" || summary.userStatus === threadFilter;
+      const matchesFilter =
+        threadFilter === "all" || summary.userStatus === threadFilter;
       if (!matchesFilter) {
         return false;
       }
@@ -245,8 +259,7 @@ const Messages = (): JSX.Element => {
 
   const activeSummary = useMemo(
     () =>
-      threadSummaries.find((summary) => summary.thread.id === threadId) ??
-      null,
+      threadSummaries.find((summary) => summary.thread.id === threadId) ?? null,
     [threadSummaries, threadId],
   );
 
@@ -255,20 +268,22 @@ const Messages = (): JSX.Element => {
   const activeDefaultComposerMessage =
     activeSummary?.defaultComposerMessage ?? "Hi, is this still available?";
   const activeTransaction = activeSummary?.transaction ?? null;
-  const awaitingUserConfirmation = activeSummary?.awaitingUserConfirmation ?? false;
+  const awaitingUserConfirmation =
+    activeSummary?.awaitingUserConfirmation ?? false;
   const userMarkedComplete = activeSummary?.userMarkedComplete ?? false;
   const canSubmitRating = activeSummary?.canSubmitRating ?? false;
   const userRatingValue = activeTransaction?.ratingByUser?.[user.id];
   const completedAtLabel = activeTransaction?.completedAt
-    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(
-        new Date(activeTransaction.completedAt),
-      )
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+      }).format(new Date(activeTransaction.completedAt))
     : null;
   const canMarkComplete = Boolean(
     activeSummary &&
       (!activeTransaction ||
         (activeTransaction.status !== "completed" &&
-         activeTransaction.status !== "pending_complete")) &&
+          activeTransaction.status !== "pending_complete")) &&
       !userMarkedComplete,
   );
   const isDisputed = activeTransaction?.status === "disputed";
@@ -303,7 +318,6 @@ const Messages = (): JSX.Element => {
   useEffect(() => {
     setHoveredRating(null);
   }, [activeThreadId]);
-
 
   useEffect(() => {
     if (!activeThreadId) {
@@ -343,7 +357,9 @@ const Messages = (): JSX.Element => {
     } catch (error) {
       toast.error("Unable to send message", {
         description:
-          error instanceof Error ? error.message : "Verify your account to continue.",
+          error instanceof Error
+            ? error.message
+            : "Verify your account to continue.",
       });
     }
   };
@@ -377,7 +393,8 @@ const Messages = (): JSX.Element => {
       confirmTransactionCompletion(activeSummary.thread.id, user.id);
     } catch (error) {
       toast.error("Unable to confirm", {
-        description: error instanceof Error ? error.message : "Try again in a moment.",
+        description:
+          error instanceof Error ? error.message : "Try again in a moment.",
       });
     }
   };
@@ -392,7 +409,8 @@ const Messages = (): JSX.Element => {
       setDisputeReason("");
     } catch (error) {
       toast.error("Unable to raise dispute", {
-        description: error instanceof Error ? error.message : "Try again in a moment.",
+        description:
+          error instanceof Error ? error.message : "Try again in a moment.",
       });
     }
   };
@@ -406,7 +424,8 @@ const Messages = (): JSX.Element => {
       setHoveredRating(null);
     } catch (error) {
       toast.error("Unable to record rating", {
-        description: error instanceof Error ? error.message : "Try again in a moment.",
+        description:
+          error instanceof Error ? error.message : "Try again in a moment.",
       });
     }
   };
@@ -494,23 +513,35 @@ const Messages = (): JSX.Element => {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <MessageSquare className="h-full w-full p-1.5 text-muted-foreground" aria-hidden />
+                      <MessageSquare
+                        className="h-full w-full p-1.5 text-muted-foreground"
+                        aria-hidden
+                      />
                     )}
                     {summary.unread && (
-                      <span className="absolute -right-1 -top-1 inline-flex h-3 w-3 rounded-full bg-primary shadow-sm" aria-label="Unread message" />
+                      <span
+                        className="absolute -right-1 -top-1 inline-flex h-3 w-3 rounded-full bg-primary shadow-sm"
+                        aria-label="Unread message"
+                      />
                     )}
                   </div>
                   <div className="flex flex-1 min-w-0 flex-col gap-0">
-                    <p className={cn(
-                      "truncate text-xs",
-                      summary.unread ? "font-bold text-foreground" : "font-medium text-foreground"
-                    )}>
+                    <p
+                      className={cn(
+                        "truncate text-xs",
+                        summary.unread
+                          ? "font-bold text-foreground"
+                          : "font-medium text-foreground",
+                      )}
+                    >
                       {summary.listing?.title ?? "Listing removed"}
                     </p>
                     <p className="line-clamp-1 text-xs text-muted-foreground">
                       {summary.lastMessage?.body ?? "No messages yet"}
                     </p>
-                    <p className="text-[0.65rem] text-muted-foreground/60">{summary.lastUpdated}</p>
+                    <p className="text-[0.65rem] text-muted-foreground/60">
+                      {summary.lastUpdated}
+                    </p>
                   </div>
                 </button>
               </li>
@@ -555,7 +586,10 @@ const Messages = (): JSX.Element => {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <MessageSquare className="h-full w-full p-2 text-muted-foreground" aria-hidden />
+                  <MessageSquare
+                    className="h-full w-full p-2 text-muted-foreground"
+                    aria-hidden
+                  />
                 )}
               </div>
               <div className="space-y-1">
@@ -595,8 +629,15 @@ const Messages = (): JSX.Element => {
               </div>
             </div>
             {activeSummary.listing ? (
-              <Button asChild variant="outline" size="sm" className="rounded-full px-3 py-1 text-xs">
-                <Link to={`/listing/${activeSummary.listing.id}`}>View item</Link>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="rounded-full px-3 py-1 text-xs"
+              >
+                <Link to={`/listing/${activeSummary.listing.id}`}>
+                  View item
+                </Link>
               </Button>
             ) : null}
           </div>
@@ -663,7 +704,8 @@ const Messages = (): JSX.Element => {
               <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800 shadow-inner">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <p className="font-semibold">
-                    The other party marked this transaction as complete. Confirm if you received or completed the deal.
+                    The other party marked this transaction as complete. Confirm
+                    if you received or completed the deal.
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -690,7 +732,9 @@ const Messages = (): JSX.Element => {
             ) : userMarkedComplete ? (
               <div className="rounded-3xl border border-blue-200 bg-blue-50 p-4 text-xs text-blue-800 shadow-inner">
                 <p className="font-semibold">
-                  You marked this transaction as complete. Waiting for the other party to confirm. Transaction will auto-complete in 72 hours if undisputed.
+                  You marked this transaction as complete. Waiting for the other
+                  party to confirm. Transaction will auto-complete in 72 hours
+                  if undisputed.
                 </p>
               </div>
             ) : null}
@@ -711,9 +755,13 @@ const Messages = (): JSX.Element => {
                 <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 shadow-inner">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="font-semibold">
-                      You rated {activeSummary.partnerName} {userRatingValue} out of 5.
+                      You rated {activeSummary.partnerName} {userRatingValue}{" "}
+                      out of 5.
                     </p>
-                    <span className="inline-flex items-center gap-0.5" aria-hidden>
+                    <span
+                      className="inline-flex items-center gap-0.5"
+                      aria-hidden
+                    >
                       {ratingOptions.map((value) => (
                         <Star
                           key={value}
@@ -737,7 +785,9 @@ const Messages = (): JSX.Element => {
                     <div className="flex items-center gap-1">
                       {ratingOptions.map((value) => {
                         const highlighted =
-                          hoveredRating !== null ? value <= hoveredRating : false;
+                          hoveredRating !== null
+                            ? value <= hoveredRating
+                            : false;
                         return (
                           <button
                             key={value}
@@ -773,16 +823,21 @@ const Messages = (): JSX.Element => {
             ) : (
               <>
                 {activeSummary.thread.messages.map((message) => {
-                  const timestamp = formatDistanceToNow(new Date(message.sentAt), {
-                    addSuffix: true,
-                  });
+                  const timestamp = formatDistanceToNow(
+                    new Date(message.sentAt),
+                    {
+                      addSuffix: true,
+                    },
+                  );
 
                   if (message.type === "system") {
                     return (
                       <div key={message.id} className="flex justify-center">
                         <div className="max-w-[80%] rounded-2xl bg-primary/10 px-3 py-2 text-xs font-medium text-primary shadow-inner">
                           <p>{message.body}</p>
-                          <span className="mt-2 block text-[0.65rem] text-primary/60">{timestamp}</span>
+                          <span className="mt-2 block text-[0.65rem] text-primary/60">
+                            {timestamp}
+                          </span>
                         </div>
                       </div>
                     );
@@ -791,11 +846,19 @@ const Messages = (): JSX.Element => {
                   const isOwn = message.authorId === user.id;
 
                   return (
-                    <div key={message.id} className={cn("flex", isOwn ? "justify-end" : "justify-start")}>
+                    <div
+                      key={message.id}
+                      className={cn(
+                        "flex",
+                        isOwn ? "justify-end" : "justify-start",
+                      )}
+                    >
                       <div
                         className={cn(
                           "max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm",
-                          isOwn ? "bg-foreground/10 text-foreground" : "bg-muted text-foreground",
+                          isOwn
+                            ? "bg-foreground/10 text-foreground"
+                            : "bg-muted text-foreground",
                         )}
                       >
                         <p>{message.body}</p>
@@ -811,7 +874,10 @@ const Messages = (): JSX.Element => {
             )}
           </div>
 
-          <form onSubmit={handleComposerSubmit} className="border-t border-border px-6 py-4">
+          <form
+            onSubmit={handleComposerSubmit}
+            className="border-t border-border px-6 py-4"
+          >
             <div className="flex flex-col gap-3 md:flex-row md:items-center">
               <Input
                 value={composerMessage}
@@ -826,7 +892,9 @@ const Messages = (): JSX.Element => {
                   size="sm"
                   className="rounded-full px-4 text-xs font-semibold"
                   onClick={handleQuickOffer}
-                  disabled={!activeSummary?.listing || activeSummary.listing.isFree}
+                  disabled={
+                    !activeSummary?.listing || activeSummary.listing.isFree
+                  }
                 >
                   {activeSummary?.listing && !activeSummary.listing.isFree
                     ? `Offer ${new Intl.NumberFormat("en-US", {
@@ -847,7 +915,7 @@ const Messages = (): JSX.Element => {
                   >
                     Mark complete
                   </Button>
-              ) : null}
+                ) : null}
                 {!awaitingUserConfirmation && !isDisputed ? (
                   <Button
                     type="button"
@@ -879,7 +947,9 @@ const Messages = (): JSX.Element => {
     </section>
   );
 
-  const mobileShowingConversation = Boolean(isMobile && threadId && activeSummary);
+  const mobileShowingConversation = Boolean(
+    isMobile && threadId && activeSummary,
+  );
 
   return (
     <section className="space-y-6">
@@ -898,7 +968,11 @@ const Messages = (): JSX.Element => {
           </Button>
         </div>
       ) : isMobile ? (
-        mobileShowingConversation ? conversationPanel : threadListPanel
+        mobileShowingConversation ? (
+          conversationPanel
+        ) : (
+          threadListPanel
+        )
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_1fr] h-[calc(100vh-250px)]">
           {threadListPanel}
@@ -911,7 +985,8 @@ const Messages = (): JSX.Element => {
           <AlertDialogTitle>Dispute Transaction</AlertDialogTitle>
           <AlertDialogDescription className="space-y-3">
             <p>
-              You're about to dispute this transaction. Moderators will review your case.
+              You're about to dispute this transaction. Moderators will review
+              your case.
             </p>
             <label className="block space-y-2">
               <span className="text-sm font-medium text-foreground">

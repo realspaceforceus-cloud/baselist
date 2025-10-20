@@ -1727,14 +1727,20 @@ const AdminPanel = (): JSX.Element => {
         const fallbackBaseId = bases[0]?.id;
         const effectiveBaseId =
           account.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
-        if (!isAdmin && moderatorBaseId && effectiveBaseId !== moderatorBaseId) {
+        if (
+          !isAdmin &&
+          moderatorBaseId &&
+          effectiveBaseId !== moderatorBaseId
+        ) {
           return null;
         }
         const reportCount = visibleReports.filter((report) => {
           if (report.targetType === "user") {
             return report.targetId === account.id;
           }
-          return sellerListings.some((listing) => listing.id === report.targetId);
+          return sellerListings.some(
+            (listing) => listing.id === report.targetId,
+          );
         }).length;
         const rating = getUserRatingSummary(account.id);
         const average = rating.overallAverage ?? null;
@@ -1749,7 +1755,9 @@ const AdminPanel = (): JSX.Element => {
           verified: overrides.verified ?? account.isDowVerified,
           suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
           joined: formatShortDate(account.createdAt),
-          ratingLabel: average ? `${average.toFixed(1)} / ${count}` : "No rating",
+          ratingLabel: average
+            ? `${average.toFixed(1)} / ${count}`
+            : "No rating",
           reports: reportCount,
           listings: sellerListings.length,
           messages: threads.length,

@@ -1,11 +1,23 @@
-import { ArrowLeft, Bookmark, Flag, MessageCircle, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  Bookmark,
+  Flag,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
 import type { UserProfile } from "@/types";
@@ -37,9 +49,12 @@ const ListingDetail = (): JSX.Element => {
 
     const fetchSeller = async () => {
       try {
-        const response = await fetch(`/.netlify/functions/users/${listing.sellerId}`, {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/.netlify/functions/users/${listing.sellerId}`,
+          {
+            credentials: "include",
+          },
+        );
         if (response.ok) {
           const sellerData = await response.json();
           setSeller(sellerData);
@@ -75,13 +90,14 @@ const ListingDetail = (): JSX.Element => {
     );
   }
 
-  const formattedPrice = listing.isFree || listing.price === 0
-    ? "Free"
-    : new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        maximumFractionDigits: 0,
-      }).format(listing.price);
+  const formattedPrice =
+    listing.isFree || listing.price === 0
+      ? "Free"
+      : new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0,
+        }).format(listing.price);
 
   const listedRelative = formatDistanceToNow(new Date(listing.postedAt), {
     addSuffix: true,
@@ -161,7 +177,8 @@ const ListingDetail = (): JSX.Element => {
             />
           </div>
           <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
-            Swipeable gallery, additional photos, and status chips will render here once the detail page is fully built.
+            Swipeable gallery, additional photos, and status chips will render
+            here once the detail page is fully built.
           </div>
         </div>
 
@@ -213,17 +230,25 @@ const ListingDetail = (): JSX.Element => {
                   ) : null}
                   <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
                 </button>
-                <p className="text-xs text-muted-foreground">Verified DoW Member</p>
                 <p className="text-xs text-muted-foreground">
-                  Member since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
+                  Verified DoW Member
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Member since{" "}
+                  {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
                 </p>
                 {sellerLastActive ? (
-                  <p className="text-xs text-muted-foreground">{sellerLastActive}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {sellerLastActive}
+                  </p>
                 ) : null}
               </div>
             </div>
             <div className="mt-4 space-y-2">
-              <Button className="w-full rounded-full" onClick={handleOpenComposer}>
+              <Button
+                className="w-full rounded-full"
+                onClick={handleOpenComposer}
+              >
                 <MessageCircle className="h-4 w-4" aria-hidden />
                 Message seller
               </Button>
