@@ -300,17 +300,17 @@ export const Header = (): JSX.Element => {
                 <button
                   type="button"
                   onClick={() => setIsBaseSwitchOpen(true)}
-                  className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-2 py-1.5 text-left text-xs hover:bg-muted/50 transition"
+                  className="flex w-32 items-center justify-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5 text-left hover:bg-primary/10 transition hover:border-primary/40"
                 >
                   <MapPin
-                    className="h-4 w-4 text-muted-foreground flex-shrink-0"
+                    className="h-5 w-5 text-primary flex-shrink-0"
                     aria-hidden
                   />
-                  <div className="flex flex-col gap-0">
-                    <p className="font-semibold text-foreground truncate">
+                  <div className="flex flex-col gap-0.5">
+                    <p className="font-semibold text-sm text-foreground truncate">
                       {currentBase.name}
                     </p>
-                    <p className="text-[0.65rem] text-muted-foreground">
+                    <p className="text-[0.7rem] text-muted-foreground text-center">
                       Switch
                     </p>
                   </div>
