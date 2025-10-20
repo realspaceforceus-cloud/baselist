@@ -384,6 +384,20 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
+  // Persist session to localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (activeAccountId) {
+        localStorage.setItem("activeAccountId", activeAccountId);
+      } else {
+        localStorage.removeItem("activeAccountId");
+      }
+    } catch (error) {
+      console.error("Failed to save session:", error);
+    }
+  }, [activeAccountId]);
+
   // Fetch bases from the database on mount
   useEffect(() => {
     const fetchBases = async () => {
