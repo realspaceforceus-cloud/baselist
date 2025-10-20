@@ -21,7 +21,7 @@ import { useBaseList } from "@/context/BaseListContext";
 import { USERNAME_PATTERN } from "@/context/BaseListContext";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Eye, EyeOff, Save, Trash2, Upload } from "lucide-react";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
