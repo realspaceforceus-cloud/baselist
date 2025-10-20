@@ -199,8 +199,9 @@ const Post = (): JSX.Element => {
       resetForm();
 
       // Navigate after a brief delay to show the confirmation
+      const slug = generateSlug(savedListing.title, savedListing.id);
       setTimeout(() => {
-        navigate(`/listing/${savedListing.id}`);
+        navigate(`/listing/${slug}`);
       }, 1500);
     } catch (error) {
       const errorMessage =
