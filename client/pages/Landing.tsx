@@ -406,6 +406,25 @@ const Landing = (): JSX.Element => {
     }
   };
 
+  // Countdown timer for proceed button
+  useEffect(() => {
+    if (proceedCountdown <= 0) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setProceedCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [proceedCountdown]);
+
   // Cleanup on component unmount
   useEffect(() => {
     return () => {
