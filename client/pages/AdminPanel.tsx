@@ -56,6 +56,7 @@ import {
 import { useBaseList } from "@/context/BaseListContext";
 import { useSettings } from "@/context/SettingsContext";
 import { adminApi } from "@/lib/adminApi";
+import { generateSlug } from "@/lib/slugUtils";
 import type { AdminUserDTO } from "@shared/api";
 import { formatDistanceToNow } from "date-fns";
 import type {
