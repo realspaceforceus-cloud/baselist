@@ -906,7 +906,7 @@ export const BaseListProvider = ({
         // This handles newly created accounts that may have been verified via email
         try {
           const verifyCheckResponse = await fetch(
-            `/.netlify/functions/verify-status/status?email=${encodeURIComponent(account.email)}`,
+            `/api/verify/status?email=${encodeURIComponent(account.email)}`,
           );
 
           if (verifyCheckResponse.ok) {
