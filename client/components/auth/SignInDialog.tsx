@@ -19,13 +19,8 @@ import { useBaseList } from "@/context/BaseListContext";
 const formatPasswordHint = () => `Use ${PASSWORD_MIN_LENGTH}+ characters.`;
 
 export const SignInDialog = (): JSX.Element => {
-  const { state, close, setView, openForgot, openReset } = useAuthDialog();
-  const {
-    signInWithPassword,
-    requestPasswordReset,
-    completePasswordReset,
-    pendingPasswordReset,
-  } = useBaseList();
+  const { state, close, setView, openForgot } = useAuthDialog();
+  const { signInWithPassword } = useBaseList();
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
