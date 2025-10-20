@@ -16,7 +16,6 @@ import {
   SPONSOR_PLACEMENTS,
 } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
-import { authService, type AuthUser } from "@/lib/authService";
 import type {
   AccountNotice,
   AccountNoticeCategory,
