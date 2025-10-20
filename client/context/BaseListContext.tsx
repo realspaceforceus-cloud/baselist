@@ -313,22 +313,9 @@ export const BaseListProvider = ({
   const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
     ...ACCOUNT_SEED,
   ]);
-  // Synchronously restore auth from real backend
-  const [activeAccountId, setActiveAccountId] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-
-    // Try to restore user from production auth service
-    try {
-      const user = authService.getStoredUser();
-      if (user) {
-        return user.id;
-      }
-    } catch (error) {
-      console.error("Failed to restore auth:", error);
-    }
-
-    return null;
-  });
+  // Auth is now handled by AuthProvider context
+  // activeAccountId is no longer used - auth state comes from cookies
+  const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
   const [memberDiscipline, setMemberDiscipline] = useState<
     Record<string, MemberDisciplineRecord>
   >(() => ({ ...INITIAL_DISCIPLINE }));
