@@ -305,11 +305,6 @@ const Landing = (): JSX.Element => {
           origin: { y: 0.6 },
         });
 
-        toast.success("🎉 Congratulations!", {
-          description:
-            "Your email has been verified! You're all set to use BaseList.",
-        });
-
         // Only set these once
         setJoinStage("success");
         setProceedCountdown(5); // Start 5-second countdown
