@@ -45,7 +45,7 @@ export async function login(
 
 export async function fetchMe(): Promise<AuthResponse> {
   try {
-    const res = await fetch("/.netlify/functions/auth/me", {
+    const res = await fetch("/api/auth/me", {
       method: "GET",
       credentials: "include", // Include cookies
       headers: { "Content-Type": "application/json" },
