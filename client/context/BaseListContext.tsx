@@ -372,16 +372,18 @@ export const BaseListProvider = ({
   useEffect(() => {
     const fetchBases = async () => {
       try {
-        const response = await fetch("/.netlify/functions/bases");
+        const response = await fetch("/api/bases");
 
         if (!response.ok) {
-          console.error(`Failed to fetch bases: HTTP ${response.status}`);
+          const text = await response.text();
+          console.error(`Failed to fetch bases: HTTP ${response.status}`, text.substring(0, 200));
           throw new Error(`HTTP ${response.status}`);
         }
 
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          console.error("Invalid content type:", contentType);
+          const text = await response.text();
+          console.error("Invalid content type:", contentType, "Response:", text.substring(0, 200));
           throw new Error("Invalid content type");
         }
 
@@ -389,7 +391,7 @@ export const BaseListProvider = ({
         if (Array.isArray(basesData) && basesData.length > 0) {
           setBases(basesData);
         } else {
-          console.warn("No bases returned from API");
+          console.warn("No bases returned from API:", basesData);
           throw new Error("No bases returned from API");
         }
       } catch (error) {
