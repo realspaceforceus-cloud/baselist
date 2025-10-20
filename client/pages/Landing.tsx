@@ -102,6 +102,7 @@ const Landing = (): JSX.Element => {
   const [pendingUsername, setPendingUsername] = useState<string>("");
   const [pendingBaseId, setPendingBaseId] = useState<string>("");
   const [proceedCountdown, setProceedCountdown] = useState(0);
+  const [isProceedingToAccount, setIsProceedingToAccount] = useState(false);
   const countdownStartedRef = useRef(false);
   const verificationPollingStartedRef = useRef(false);
   const confettiFiredRef = useRef(false);
