@@ -293,7 +293,12 @@ export const Header = (): JSX.Element => {
                     </p>
                   </div>
                 </button>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="hidden sm:flex flex-col items-end gap-0.5">
+                    <p className="text-sm font-semibold text-foreground">
+                      Welcome {user.name || "User"}!
+                    </p>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
