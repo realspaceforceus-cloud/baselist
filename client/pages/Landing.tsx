@@ -376,6 +376,9 @@ const Landing = (): JSX.Element => {
         pendingBaseId,
       );
 
+      // Mark the account as verified since they've completed email verification
+      completeDowVerification(pendingUserId);
+
       // Auto-login with the email and password from signup
       await signInWithPassword(pendingEmail, pendingPassword);
 
