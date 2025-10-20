@@ -307,9 +307,9 @@ const handleResendCode = async (event: any) => {
 
     const userId = userResult.rows[0].id;
 
-    // Generate new code
+    // Generate new code: 5 uppercase alphanumeric characters (excluding ambiguous: O, I, L, 1)
     const generateCode = (): string => {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // Excluded: O, I, L, 1
       let code = "";
       for (let i = 0; i < 5; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
