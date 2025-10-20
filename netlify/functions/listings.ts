@@ -126,7 +126,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
-        body: JSON.stringify(result.rows[0]),
+        body: JSON.stringify(transformListing(result.rows[0])),
       };
     } catch (err) {
       const errorMsg =
