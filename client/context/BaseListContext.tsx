@@ -146,75 +146,13 @@ const toUsername = (name: string, fallback: string) => {
   return base.length >= 3 ? base : fallback;
 };
 
-const buildSeedAccounts = (): BaseListAccount[] => {
-  return SELLERS.map((seller, index) => {
-    const username = toUsername(seller.name, `member_${index + 1}`);
-    // Use hardcoded base IDs - these will be replaced when bases are loaded from database
-    const baseIds = [
-      "ramstein-ab",
-      "lakenheath-ab",
-      "nellis-afb",
-      "kadena-ab",
-      "misawa-ab",
-    ];
-    const baseId = baseIds[index % baseIds.length];
-    const createdAt = new Date(
-      Date.now() - (index + 3) * 24 * 60 * 60 * 1000,
-    ).toISOString();
-    const lastLoginAt = new Date(
-      Date.now() - (index + 1) * 60 * 60 * 1000,
-    ).toISOString();
+// Note: Mock seed accounts removed - auth now comes from production auth system via AuthContext
+const ACCOUNT_SEED: BaseListAccount[] = [];
 
-    return {
-      id: seller.id,
-      username,
-      email: `${username}@us.af.mil`,
-      password: "Password!2024",
-      isDowVerified: seller.verified,
-      baseId,
-      createdAt,
-      lastLoginAt,
-      rememberDeviceUntil: undefined,
-      avatarUrl: seller.avatarUrl ?? buildAvatarUrl(seller.name),
-      verificationToken: seller.verified
-        ? null
-        : `verify-${crypto.randomUUID()}`,
-      verificationRequestedAt: seller.verified ? null : createdAt,
-      role: seller.id === CURRENT_USER.id ? CURRENT_USER.role : "member",
-    } satisfies BaseListAccount;
-  });
-};
+const INITIAL_DISCIPLINE: Record<string, MemberDisciplineRecord> = {};
 
-const INITIAL_DISCIPLINE: Record<string, MemberDisciplineRecord> = {
-  "seller-taylor": { strikes: 1, reason: "Report: incomplete delivery" },
-  "seller-lena": { strikes: 2, reason: "Report: pricing dispute" },
-};
-
-const INITIAL_NOTICES: AccountNotice[] = [
-  {
-    id: `notice-${crypto.randomUUID()}`,
-    userId: CURRENT_USER.id,
-    category: "payout",
-    severity: "success",
-    title: "Payout sent",
-    message: "$420.00 from your dining set sale was deposited.",
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    read: false,
-  },
-  {
-    id: `notice-${crypto.randomUUID()}`,
-    userId: CURRENT_USER.id,
-    category: "report",
-    severity: "info",
-    title: "Report resolved",
-    message:
-      "Buyer feedback for thread MSG-9022 was reviewed and closed with no action.",
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    read: true,
-  },
-];
-
-const ACCOUNT_SEED = buildSeedAccounts();
+// Note: Initial notices removed - will be fetched from backend in production
+const INITIAL_NOTICES: AccountNotice[] = [];
 
 type BaseListContextValue = {
   bases: Base[];
