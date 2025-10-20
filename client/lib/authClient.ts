@@ -64,7 +64,7 @@ export async function fetchMe(): Promise<AuthResponse> {
 
 export async function logout(): Promise<void> {
   try {
-    await fetch("/.netlify/functions/auth/logout", {
+    await fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
