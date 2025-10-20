@@ -2243,6 +2243,7 @@ export const BaseListProvider = ({
       beginVerification,
       completeDowVerification,
       signOut,
+      updateUserAvatar,
       listings,
       addListing,
       markListingSold,
