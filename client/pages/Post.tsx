@@ -502,9 +502,9 @@ const Post = (): JSX.Element => {
             type="submit"
             size="lg"
             className="rounded-full px-8"
-            disabled={isSubmitting}
+            disabled={submissionState !== "idle"}
           >
-            {isSubmitting ? "Posting…" : "Post"}
+            {submissionState === "submitting" ? "Posting…" : "Post"}
           </Button>
         </footer>
       </form>
