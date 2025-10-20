@@ -229,10 +229,9 @@ const ListingDetail = (): JSX.Element => {
     });
 
     setComposerOpen(false);
-    setMessageBody(defaultMessage);
+    setMessageBody("");
     navigate(`/messages/${thread.id}`);
   }, [
-    defaultMessage,
     listing.id,
     listing.sellerId,
     messageBody,
