@@ -6,19 +6,10 @@ import { ListingCard } from "@/components/listings/ListingCard";
 import { SponsorTile } from "@/components/listings/SponsorTile";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
-import { SELLERS, LISTING_CATEGORIES } from "@/data/mock";
-import type { ListingFilter, Seller } from "@/types";
+import { LISTING_CATEGORIES } from "@/data/mock";
+import type { ListingFilter } from "@/types";
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
-
-const buildSellerMap = (): Record<string, Seller> => {
-  return SELLERS.reduce<Record<string, Seller>>((accumulator, seller) => {
-    accumulator[seller.id] = seller;
-    return accumulator;
-  }, {});
-};
-
-const sellerMap = buildSellerMap();
 
 const Index = (): JSX.Element => {
   const {
