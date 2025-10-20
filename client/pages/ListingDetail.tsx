@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
+import { extractIdFromSlug, generateSlug } from "@/lib/slugUtils";
 import type { UserProfile } from "@/types";
 
 const ListingDetail = (): JSX.Element => {
