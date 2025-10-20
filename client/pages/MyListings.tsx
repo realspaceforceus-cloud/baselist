@@ -43,7 +43,9 @@ export const MyListings = (): JSX.Element => {
     confirmTransactionCompletion,
   } = useBaseList();
 
-  const [expandedListingId, setExpandedListingId] = useState<string | null>(null);
+  const [expandedListingId, setExpandedListingId] = useState<string | null>(
+    null,
+  );
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [acceptOfferDialog, setAcceptOfferDialog] = useState<{
     listingId: string;
@@ -86,7 +88,9 @@ export const MyListings = (): JSX.Element => {
   };
 
   const handleRejectOffer = (threadId: string) => {
-    toast.info("Offer rejected", { description: "The buyer has been notified." });
+    toast.info("Offer rejected", {
+      description: "The buyer has been notified.",
+    });
   };
 
   const handleDeleteListing = (listingId: string) => {
@@ -168,7 +172,9 @@ export const MyListings = (): JSX.Element => {
                             : `$${listing.price.toLocaleString()}`}
                         </p>
                       </div>
-                      <span className={cn("text-xs font-semibold", status.color)}>
+                      <span
+                        className={cn("text-xs font-semibold", status.color)}
+                      >
                         {status.label}
                       </span>
                     </div>
@@ -180,7 +186,9 @@ export const MyListings = (): JSX.Element => {
                         className="rounded-lg h-8 text-xs"
                         asChild
                       >
-                        <Link to={`/listing/${generateSlug(listing.title, listing.id)}`}>
+                        <Link
+                          to={`/listing/${generateSlug(listing.title, listing.id)}`}
+                        >
                           <Eye className="h-3.5 w-3.5" />
                           View
                         </Link>
@@ -213,9 +221,7 @@ export const MyListings = (): JSX.Element => {
                           size="sm"
                           className="rounded-lg h-8 text-xs"
                           onClick={() =>
-                            setExpandedListingId(
-                              isExpanded ? null : listing.id,
-                            )
+                            setExpandedListingId(isExpanded ? null : listing.id)
                           }
                         >
                           <MessageSquare className="h-3.5 w-3.5" />
@@ -309,7 +315,8 @@ export const MyListings = (): JSX.Element => {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete listing?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The listing will be permanently removed.
+              This action cannot be undone. The listing will be permanently
+              removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-2">
@@ -334,8 +341,8 @@ export const MyListings = (): JSX.Element => {
           <AlertDialogHeader>
             <AlertDialogTitle>Accept this offer?</AlertDialogTitle>
             <AlertDialogDescription>
-              Once accepted, the listing will be marked as pending sale. The buyer
-              will need to confirm to complete the transaction.
+              Once accepted, the listing will be marked as pending sale. The
+              buyer will need to confirm to complete the transaction.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-2">

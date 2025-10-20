@@ -43,7 +43,7 @@ const ListingDetail = (): JSX.Element => {
     if (!listingSlug) return null;
 
     // Check if it's a UUID (old format) or slug (new format)
-    if (listingSlug.includes('-') && listingSlug.split('-').length > 1) {
+    if (listingSlug.includes("-") && listingSlug.split("-").length > 1) {
       // It's a slug, extract the ID
       return extractIdFromSlug(listingSlug);
     }
@@ -52,17 +52,17 @@ const ListingDetail = (): JSX.Element => {
     return listingSlug;
   }, [listingSlug]);
 
-  const listing = useMemo(
-    () => {
-      if (!actualListingId) return null;
-      return listings.find((item) => item.id.startsWith(actualListingId)) || fetchedListing;
-    },
-    [listings, actualListingId, fetchedListing],
-  );
+  const listing = useMemo(() => {
+    if (!actualListingId) return null;
+    return (
+      listings.find((item) => item.id.startsWith(actualListingId)) ||
+      fetchedListing
+    );
+  }, [listings, actualListingId, fetchedListing]);
 
   // Redirect to slug URL if listing is found
   useEffect(() => {
-    if (listing && listingSlug && !listingSlug.includes('-')) {
+    if (listing && listingSlug && !listingSlug.includes("-")) {
       const slug = generateSlug(listing.title, listing.id);
       if (slug !== listingSlug) {
         navigate(`/listing/${slug}`, { replace: true });
@@ -84,9 +84,12 @@ const ListingDetail = (): JSX.Element => {
 
     const fetchListing = async () => {
       try {
-        const response = await fetch(`/.netlify/functions/listings/${actualListingId}`, {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/.netlify/functions/listings/${actualListingId}`,
+          {
+            credentials: "include",
+          },
+        );
         if (response.ok) {
           const data = await response.json();
           setFetchedListing(data);

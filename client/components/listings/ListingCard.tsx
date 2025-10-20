@@ -24,7 +24,10 @@ const formatPrice = (price: number, isFree: boolean): string => {
   }).format(price);
 };
 
-export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element => {
+export const ListingCard = ({
+  listing,
+  seller,
+}: ListingCardProps): JSX.Element => {
   const timeAgo = formatDistanceToNow(new Date(listing.postedAt), {
     addSuffix: true,
   });
@@ -104,13 +107,16 @@ export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element 
                   userId={seller.id}
                   size="sm"
                   initialAverage={seller.rating ?? null}
-                  initialCount={seller.ratingCount ?? seller.completedSales ?? 0}
+                  initialCount={
+                    seller.ratingCount ?? seller.completedSales ?? 0
+                  }
                   label={`${seller.name} rating`}
                 />
               ) : null}
             </span>
             <span className="text-xs text-muted-foreground">
-              Member since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
+              Member since{" "}
+              {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
             </span>
           </div>
         </div>

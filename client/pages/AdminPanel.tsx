@@ -1217,7 +1217,9 @@ const AdminPanel = (): JSX.Element => {
   const handleViewListing = useCallback(
     (listingId: string) => {
       const listing = listings.find((item) => item.id === listingId);
-      const slug = listing ? generateSlug(listing.title, listing.id) : listingId;
+      const slug = listing
+        ? generateSlug(listing.title, listing.id)
+        : listingId;
       navigate(`/listing/${slug}`);
     },
     [navigate, listings],
