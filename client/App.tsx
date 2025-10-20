@@ -126,16 +126,18 @@ const App = (): JSX.Element => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <BrowserRouter>
-        <AuthDialogProvider>
-          <SettingsProvider>
-            <BaseListProvider>
-              <AppContent />
-              <SignInDialog />
-              <Toaster />
-              <Sonner />
-            </BaseListProvider>
-          </SettingsProvider>
-        </AuthDialogProvider>
+        <AuthProvider>
+          <AuthDialogProvider>
+            <SettingsProvider>
+              <BaseListProvider>
+                <AppContent />
+                <SignInDialog />
+                <Toaster />
+                <Sonner />
+              </BaseListProvider>
+            </SettingsProvider>
+          </AuthDialogProvider>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
