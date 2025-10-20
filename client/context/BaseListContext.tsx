@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import {
-  BASES,
   CURRENT_USER,
   LISTINGS as LISTING_SEED,
   MESSAGE_THREADS as MESSAGE_THREAD_SEED,
