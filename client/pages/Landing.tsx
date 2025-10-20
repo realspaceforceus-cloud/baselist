@@ -348,7 +348,7 @@ const Landing = (): JSX.Element => {
     }
   };
 
-  const handleFinishSignup = () => {
+  const handleFinishSignup = async () => {
     if (
       !pendingUserId ||
       !pendingEmail ||
@@ -375,7 +375,7 @@ const Landing = (): JSX.Element => {
       );
 
       // Auto-login with the email and password from signup
-      signInWithPassword(pendingEmail, pendingPassword);
+      await signInWithPassword(pendingEmail, pendingPassword);
 
       setJoinStage("hidden");
       setPendingUserId(null);
