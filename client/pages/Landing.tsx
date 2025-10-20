@@ -197,6 +197,7 @@ const Landing = (): JSX.Element => {
       verificationPollingStartedRef.current = false;
       countdownStartedRef.current = false;
       confettiFiredRef.current = false;
+      verificationCompleteRef.current = false;
       setHasShownSuccessNotification(false);
 
       // First, create the account
