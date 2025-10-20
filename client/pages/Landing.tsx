@@ -440,9 +440,7 @@ const Landing = (): JSX.Element => {
       navigate("/");
     } catch (error) {
       console.error("Auto-login failed:", error);
-      toast.error("Sign in failed", {
-        description: "Please sign in manually with your email and password.",
-      });
+      // Just navigate without error toast - silent navigation to login
       navigate("/");
     }
   };
