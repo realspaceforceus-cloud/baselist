@@ -1713,49 +1713,49 @@ const AdminPanel = (): JSX.Element => {
   }, []);
 
   const userRecords = useMemo<AdminUserRecord[]>(() => {
-    return SELLERS.map((seller) => {
-      const account = accountList.find((item) => item.id === seller.id);
-      const overrides = userOverrides[seller.id] ?? {};
-      const discipline = memberDiscipline[seller.id];
-      const sellerListings = scopedListings.filter(
-        (listing) => listing.sellerId === seller.id,
-      );
-      const threads = scopedMessageThreads.filter((thread) =>
-        thread.participants.includes(seller.id),
-      );
-      const fallbackBaseId = bases[0]?.id;
-      const effectiveBaseId =
-        account?.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
-      if (!isAdmin && moderatorBaseId && effectiveBaseId !== moderatorBaseId) {
-        return null;
-      }
-      const reportCount = visibleReports.filter((report) => {
-        if (report.targetType === "user") {
-          return report.targetId === seller.id;
+    // Use accountList (real database data) instead of mock SELLERS
+    return accountList
+      .map((account) => {
+        const overrides = userOverrides[account.id] ?? {};
+        const discipline = memberDiscipline[account.id];
+        const sellerListings = scopedListings.filter(
+          (listing) => listing.sellerId === account.id,
+        );
+        const threads = scopedMessageThreads.filter((thread) =>
+          thread.participants.includes(account.id),
+        );
+        const fallbackBaseId = bases[0]?.id;
+        const effectiveBaseId =
+          account.baseId ?? sellerListings[0]?.baseId ?? fallbackBaseId;
+        if (!isAdmin && moderatorBaseId && effectiveBaseId !== moderatorBaseId) {
+          return null;
         }
-        return sellerListings.some((listing) => listing.id === report.targetId);
-      }).length;
-      const rating = getUserRatingSummary(seller.id);
-      const average = rating.overallAverage ?? seller.rating ?? null;
-      const count = rating.overallCount || seller.ratingCount || 0;
+        const reportCount = visibleReports.filter((report) => {
+          if (report.targetType === "user") {
+            return report.targetId === account.id;
+          }
+          return sellerListings.some((listing) => listing.id === report.targetId);
+        }).length;
+        const rating = getUserRatingSummary(account.id);
+        const average = rating.overallAverage ?? null;
+        const count = rating.overallCount || 0;
 
-      return {
-        id: seller.id,
-        name: seller.name,
-        email: (account as any)?.email ?? "unknown@example.com",
-        pendingEmail: (account as any)?.pendingEmail,
-        base: getBaseName(bases, effectiveBaseId),
-        verified:
-          overrides.verified ?? account?.isDowVerified ?? seller.verified,
-        suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
-        joined: formatShortDate(account?.createdAt ?? seller.memberSince),
-        ratingLabel: average ? `${average.toFixed(1)} / ${count}` : "No rating",
-        reports: reportCount,
-        listings: sellerListings.length,
-        messages: threads.length,
-        strikes: discipline?.strikes ?? 0,
-      } as AdminUserRecord | null;
-    })
+        return {
+          id: account.id,
+          name: account.username,
+          email: (account as any)?.email ?? "unknown@example.com",
+          pendingEmail: (account as any)?.pendingEmail,
+          base: getBaseName(bases, effectiveBaseId),
+          verified: overrides.verified ?? account.isDowVerified,
+          suspended: overrides.suspended ?? Boolean(discipline?.suspendedAt),
+          joined: formatShortDate(account.createdAt),
+          ratingLabel: average ? `${average.toFixed(1)} / ${count}` : "No rating",
+          reports: reportCount,
+          listings: sellerListings.length,
+          messages: threads.length,
+          strikes: discipline?.strikes ?? 0,
+        } as AdminUserRecord | null;
+      })
       .filter((record): record is AdminUserRecord => record !== null)
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [
