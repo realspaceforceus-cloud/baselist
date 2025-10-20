@@ -176,14 +176,31 @@ const Post = (): JSX.Element => {
         description: description.trim(),
       };
 
-      addListing(listing);
+      // Save listing to backend
+      const response = await fetch("/.netlify/functions/listings", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(listing),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error || "Failed to save listing");
+      }
+
+      // Get the saved listing from backend response
+      const savedListing = await response.json();
+
+      // Update local state with the server version
+      addListing(savedListing);
       resetForm();
 
       toast.success("Listed. Good luck with the sale!", {
         description: `${listing.title} is live for ${currentBase.name}.`,
         action: {
           label: "View listing",
-          onClick: () => navigate(`/listing/${listing.id}`),
+          onClick: () => navigate(`/listing/${savedListing.id}`),
         },
       });
     } catch (error) {
