@@ -145,10 +145,11 @@ export const SignInDialog = (): JSX.Element => {
           htmlFor="sign-in-identifier"
           className="text-sm font-semibold text-foreground"
         >
-          Email or username
+          Email address
         </label>
         <Input
           id="sign-in-identifier"
+          type="email"
           value={identifier}
           onChange={(event) => setIdentifier(event.target.value)}
           placeholder="name@yourunit.mil"
