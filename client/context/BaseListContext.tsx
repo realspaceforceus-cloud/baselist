@@ -2149,10 +2149,7 @@ export const BaseListProvider = ({
   }, []);
 
   const currentBase = useMemo<Base>(() => {
-    return (
-      bases.find((base) => base.id === currentBaseId) ??
-      bases[0]
-    );
+    return bases.find((base) => base.id === currentBaseId) ?? bases[0];
   }, [currentBaseId, bases]);
 
   const contextValue = useMemo<BaseListContextValue>(
