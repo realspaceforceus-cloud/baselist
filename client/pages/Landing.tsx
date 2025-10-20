@@ -784,7 +784,7 @@ const Landing = (): JSX.Element => {
                       </Button>
                     </div>
                     <p className="text-xs text-center text-muted-foreground">
-                      Copy this 5-character code (0-9, A-Z only)
+                      Copy this 5-character code. Uses only: <span className="font-mono font-semibold">A-Z, 2-9</span> (no O, I, L, or 1)
                     </p>
                   </div>
 
