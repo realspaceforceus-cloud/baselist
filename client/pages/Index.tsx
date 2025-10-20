@@ -189,7 +189,6 @@ const Index = (): JSX.Element => {
             <ListingCard
               key={listing.id}
               listing={listing}
-              seller={sellerMap[listing.sellerId]}
             />
           ))}
         </div>
