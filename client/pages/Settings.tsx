@@ -158,8 +158,16 @@ export const Settings = (): JSX.Element => {
   };
 
   const handleUsernameChange = async () => {
+    setUsernameError("");
+
     if (!formState.username || formState.username === user.name) {
       toast.error("Please enter a different username");
+      return;
+    }
+
+    if (!USERNAME_PATTERN.test(formState.username)) {
+      setUsernameError("Username must be 3-20 characters long and contain only letters, numbers, and underscores");
+      toast.error("Invalid username format");
       return;
     }
 
@@ -174,15 +182,61 @@ export const Settings = (): JSX.Element => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update username");
+        const error = await response.json();
+        throw new Error(error.message || "Failed to update username");
       }
 
       toast.success("Username updated successfully");
+      setUsernameError("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update username");
+      const errorMsg = error instanceof Error ? error.message : "Failed to update username";
+      toast.error(errorMsg);
+      setUsernameError(errorMsg);
       setFormState((prev) => ({ ...prev, username: user.name || "" }));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be less than 5MB");
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      const response = await fetch("/api/user/profile/avatar", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to upload avatar");
+      }
+
+      const data = await response.json();
+      toast.success("Avatar updated successfully");
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload avatar");
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
