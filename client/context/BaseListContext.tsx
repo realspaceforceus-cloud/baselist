@@ -335,7 +335,9 @@ export const BaseListProvider = ({
     if (typeof window === "undefined") return null;
     try {
       const saved = localStorage.getItem("activeAccountId");
-      return saved && typeof saved === "string" && saved.length > 0 ? saved : null;
+      return saved && typeof saved === "string" && saved.length > 0
+        ? saved
+        : null;
     } catch {
       return null;
     }
