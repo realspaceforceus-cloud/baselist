@@ -2,7 +2,6 @@ import { Handler } from "@netlify/functions";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@baselist.mil";
 
-// Simple email sending using environment setup
 const sendEmail = async (
   to: string,
   subject: string,
@@ -17,7 +16,7 @@ const sendEmail = async (
       console.log(`[EMAIL] To: ${to}`);
       console.log(`[EMAIL] Subject: ${subject}`);
       console.log(`[EMAIL] HTML: ${html.substring(0, 200)}...`);
-      return true; // Return true for graceful degradation
+      return true;
     }
 
     const requestBody = {
@@ -61,8 +60,8 @@ const sendEmail = async (
   }
 };
 
-const handleBaseRequest = async (event: any) => {
-  const { baseName, email } = JSON.parse(event.body || "{}");
+const handleBaseRequest = async (body: any) => {
+  const { baseName, email } = body;
 
   if (!baseName || !email) {
     return {
@@ -80,7 +79,6 @@ const handleBaseRequest = async (event: any) => {
       `[EMAIL] Base request received from ${userEmail} for ${baseNameTrimmed}`,
     );
 
-    // Send email to user confirming receipt
     const userConfirmationHtml = `
       <html>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -94,7 +92,6 @@ const handleBaseRequest = async (event: any) => {
       </html>
     `;
 
-    // Send email to admins about the request
     const adminHtml = `
       <html>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -106,7 +103,6 @@ const handleBaseRequest = async (event: any) => {
       </html>
     `;
 
-    // Send both emails
     const userEmailSent = await sendEmail(
       userEmail,
       "Base Request Received - BaseList",
@@ -148,33 +144,62 @@ const handleBaseRequest = async (event: any) => {
 };
 
 export const handler: Handler = async (event) => {
-  const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/email", "") || "";
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
 
-  console.log("[EMAIL] Request received:", {
-    method,
-    path,
-    url: event.rawUrl,
-  });
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers,
+      body: "",
+    };
+  }
 
-  if (method === "POST" && (!path || path === "" || path === "/")) {
-    const body = JSON.parse(event.body || "{}");
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: "Method not allowed" }),
+    };
+  }
+
+  try {
+    let body;
+    try {
+      body = JSON.parse(event.body || "{}");
+    } catch {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: "Invalid JSON" }),
+      };
+    }
+
     const type = body.type;
 
     if (type === "base_request") {
-      return handleBaseRequest(event);
+      return handleBaseRequest(body);
     }
 
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({ error: "Unknown email type" }),
     };
+  } catch (error) {
+    console.error("[EMAIL] Unexpected error:", error);
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        error: error instanceof Error ? error.message : "Internal server error",
+      }),
+    };
   }
-
-  return {
-    statusCode: 404,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ error: "Not found" }),
-  };
 };
