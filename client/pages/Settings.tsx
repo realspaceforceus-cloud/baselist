@@ -402,10 +402,10 @@ export const Settings = (): JSX.Element => {
             <div>
               <label className="block text-sm font-semibold text-foreground">
                 Username
-                <span className="font-normal text-muted-foreground ml-2">
-                  (Current: {user.name})
-                </span>
               </label>
+              <p className="mt-1 text-xs text-muted-foreground mb-3">
+                Current username: <span className="font-semibold text-foreground">{user.name}</span>
+              </p>
               <div className="mt-3 flex gap-2">
                 <div className="flex-1">
                   <Input
@@ -414,7 +414,7 @@ export const Settings = (): JSX.Element => {
                       handleInputChange("username", e.target.value);
                       setUsernameError("");
                     }}
-                    placeholder={user.name || "Your new username"}
+                    placeholder="Enter new username"
                     className={cn(
                       "rounded-xl",
                       usernameError && "border-destructive",
