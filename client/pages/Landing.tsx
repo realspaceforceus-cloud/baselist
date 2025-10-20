@@ -70,12 +70,8 @@ const defaultAccountForm = {
 };
 
 const Landing = (): JSX.Element => {
-  const {
-    bases,
-    isAuthenticated,
-    signInWithPassword,
-    registerNewAccount,
-  } = useBaseList();
+  const { bases, isAuthenticated, signInWithPassword, registerNewAccount } =
+    useBaseList();
   const { openSignIn } = useAuthDialog();
   const navigate = useNavigate();
   const joinSectionRef = useRef<HTMLDivElement>(null);
@@ -337,7 +333,13 @@ const Landing = (): JSX.Element => {
   };
 
   const handleFinishSignup = () => {
-    if (!pendingUserId || !pendingEmail || !pendingPassword || !pendingUsername || !pendingBaseId) {
+    if (
+      !pendingUserId ||
+      !pendingEmail ||
+      !pendingPassword ||
+      !pendingUsername ||
+      !pendingBaseId
+    ) {
       return;
     }
 
@@ -804,7 +806,9 @@ const Landing = (): JSX.Element => {
                       </Button>
                     </div>
                     <p className="text-xs text-center text-muted-foreground">
-                      Copy this 5-character code. Uses only: <span className="font-mono font-semibold">A-Z, 2-9</span> (no O, I, L, or 1)
+                      Copy this 5-character code. Uses only:{" "}
+                      <span className="font-mono font-semibold">A-Z, 2-9</span>{" "}
+                      (no O, I, L, or 1)
                     </p>
                   </div>
 
