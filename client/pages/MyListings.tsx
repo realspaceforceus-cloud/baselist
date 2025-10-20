@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useBaseList } from "@/context/BaseListContext";
+import { generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
 import type { Listing, MessageThread } from "@/types";
 
