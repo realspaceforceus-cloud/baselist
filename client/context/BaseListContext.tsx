@@ -846,20 +846,22 @@ export const BaseListProvider = ({
           if (!res.ok)
             throw new Error((await res.json()).error || "Login failed");
           const data = await res.json();
+          const username = data.username || (normalized.includes("@") ? "" : normalized);
+          const email = data.email || (normalized.includes("@") ? normalized : "");
           const newAccount: BaseListAccount = {
             id: data.userId,
-            username: normalized.includes("@") ? "" : normalized,
-            email: normalized.includes("@") ? normalized : "",
+            username,
+            email,
             password,
             isDowVerified: data.verified ?? true,
-            baseId: "",
+            baseId: data.baseId || "",
             createdAt: new Date().toISOString(),
             lastLoginAt: new Date().toISOString(),
             rememberDeviceUntil: undefined,
-            avatarUrl: buildAvatarUrl(normalized),
+            avatarUrl: data.avatarUrl || buildAvatarUrl(username || normalized),
             verificationToken: null,
             verificationRequestedAt: null,
-            role: "member",
+            role: data.role || "member",
           };
           setAccounts((prev) => [newAccount, ...prev]);
           account = newAccount;
