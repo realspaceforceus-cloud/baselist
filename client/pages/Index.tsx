@@ -63,12 +63,10 @@ const Index = (): JSX.Element => {
         return true;
       }
 
-      const seller = sellerMap[listing.sellerId];
       const haystack = [
         listing.title,
         listing.description,
         listing.category,
-        seller?.name,
       ]
         .filter(Boolean)
         .join(" ")
