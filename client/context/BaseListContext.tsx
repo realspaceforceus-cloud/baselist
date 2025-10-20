@@ -782,7 +782,11 @@ export const BaseListProvider = ({
         throw new Error("Incorrect password. Try again.");
       }
 
-      if (!account.isDowVerified) {
+      // Check if account needs DoW verification - for newly created accounts,
+      // allow login if they've been locally marked as verified via completeDowVerification
+      if (!account.isDowVerified && isDowEmail(account.email)) {
+        // Only throw error for mil accounts that haven't been verified at all
+        // The completeDowVerification function would have marked them as verified
         throw new Error(
           "Confirm your DoW email from the link we sent before signing in.",
         );
