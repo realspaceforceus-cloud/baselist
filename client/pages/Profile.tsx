@@ -41,8 +41,12 @@ const Profile = (): JSX.Element => {
     return (
       <section className="space-y-6">
         <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-card">
-          <h1 className="text-3xl font-semibold text-foreground mb-3">View Your Profile</h1>
-          <p className="text-muted-foreground mb-6">Sign in to view your profile and complete your member journey.</p>
+          <h1 className="text-3xl font-semibold text-foreground mb-3">
+            View Your Profile
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Sign in to view your profile and complete your member journey.
+          </p>
           <Link to="/" className="text-primary hover:underline font-semibold">
             Sign in to continue
           </Link>
@@ -65,8 +69,13 @@ const Profile = (): JSX.Element => {
     return (
       <section className="space-y-6">
         <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-card">
-          <h1 className="text-3xl font-semibold text-foreground mb-3">Member Not Found</h1>
-          <p className="text-muted-foreground mb-6">This member's profile is not available or you need to sign in to view it.</p>
+          <h1 className="text-3xl font-semibold text-foreground mb-3">
+            Member Not Found
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            This member's profile is not available or you need to sign in to
+            view it.
+          </p>
           <Link to="/" className="text-primary hover:underline font-semibold">
             Return to home
           </Link>
@@ -79,7 +88,9 @@ const Profile = (): JSX.Element => {
     if (viewingOwnProfile) {
       return currentBase;
     }
-    return bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase;
+    return (
+      bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase
+    );
   }, [bases, currentBase, profileUser.currentBaseId, viewingOwnProfile]);
 
   const profileFirstName = useMemo(() => {
@@ -93,16 +104,27 @@ const Profile = (): JSX.Element => {
     [profileUser.memberSince],
   );
 
-  const myListings = listings.filter((listing) => listing.sellerId === profileUser.id);
-  const activeListings = myListings.filter((listing) => listing.status === "active");
-  const soldListings = myListings.filter((listing) => listing.status === "sold");
+  const myListings = listings.filter(
+    (listing) => listing.sellerId === profileUser.id,
+  );
+  const activeListings = myListings.filter(
+    (listing) => listing.status === "active",
+  );
+  const soldListings = myListings.filter(
+    (listing) => listing.status === "sold",
+  );
 
-  const purchases = transactions.filter((entry) => entry.buyerId === profileUser.id);
-  const sales = transactions.filter((entry) => entry.sellerId === profileUser.id);
+  const purchases = transactions.filter(
+    (entry) => entry.buyerId === profileUser.id,
+  );
+  const sales = transactions.filter(
+    (entry) => entry.sellerId === profileUser.id,
+  );
   const totalTransactions = purchases.length + sales.length;
   const profileRatingSummary = getUserRatingSummary(profileUser.id);
   const profileRatingFallbackAverage = profileUser.rating ?? null;
-  const profileRatingFallbackCount = profileUser.ratingCount ?? profileUser.completedSales ?? 0;
+  const profileRatingFallbackCount =
+    profileUser.ratingCount ?? profileUser.completedSales ?? 0;
 
   const userNotices = useMemo(
     () =>
@@ -114,7 +136,9 @@ const Profile = (): JSX.Element => {
                 notice.category !== "payout",
             )
             .sort(
-              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
             )
         : [],
     [notices, profileUser.id, viewingOwnProfile],
@@ -150,7 +174,10 @@ const Profile = (): JSX.Element => {
     }
 
     return (
-      <span className="inline-flex items-center gap-0.5" aria-label={`${score} star rating`}>
+      <span
+        className="inline-flex items-center gap-0.5"
+        aria-label={`${score} star rating`}
+      >
         {ratingGlyphs.map((value) => (
           <StarIcon
             key={value}
@@ -190,9 +217,13 @@ const Profile = (): JSX.Element => {
               : `$${entry.price.toLocaleString("en-US")}`;
           const completedLabel = formatTransactionDate(entry.completedAt);
           const givenRating =
-            role === "buyer" ? entry.buyerRatingAboutSeller : entry.sellerRatingAboutBuyer;
+            role === "buyer"
+              ? entry.buyerRatingAboutSeller
+              : entry.sellerRatingAboutBuyer;
           const receivedRating =
-            role === "buyer" ? entry.sellerRatingAboutBuyer : entry.buyerRatingAboutSeller;
+            role === "buyer"
+              ? entry.sellerRatingAboutBuyer
+              : entry.buyerRatingAboutSeller;
 
           return (
             <li key={`${entry.threadId}-${role}`}>
@@ -233,14 +264,18 @@ const Profile = (): JSX.Element => {
                         ) : (
                           partnerName
                         )}
-                        {partnerId ? <RatingBadge userId={partnerId} size="sm" /> : null}
+                        {partnerId ? (
+                          <RatingBadge userId={partnerId} size="sm" />
+                        ) : null}
                       </span>
                     </div>
                   </div>
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <p className="flex items-center gap-2">
                       <span className="font-semibold text-foreground">
-                        {viewingOwnProfile ? "You rated" : `${profileFirstName} rated`}
+                        {viewingOwnProfile
+                          ? "You rated"
+                          : `${profileFirstName} rated`}
                       </span>
                       {renderStars(givenRating)}
                     </p>
@@ -272,12 +307,18 @@ const Profile = (): JSX.Element => {
             <BadgeCheck className="h-7 w-7" aria-hidden />
           </span>
           <div className="space-y-1">
-            <h1 className="text-3xl font-semibold text-foreground">{profileUser.name}</h1>
+            <h1 className="text-3xl font-semibold text-foreground">
+              {profileUser.name}
+            </h1>
             <p className="text-sm text-muted-foreground">
-              {profileUser.verificationStatus} • Member since {profileMemberSinceYear}
+              {profileUser.verificationStatus} • Member since{" "}
+              {profileMemberSinceYear}
             </p>
             <p className="text-sm text-muted-foreground">
-              Current base: <span className="font-semibold text-foreground">{profileBase.name}</span>
+              Current base:{" "}
+              <span className="font-semibold text-foreground">
+                {profileBase.name}
+              </span>
             </p>
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <RatingBadge
@@ -296,7 +337,8 @@ const Profile = (): JSX.Element => {
                 label={`${profileUser.name} rating`}
               />
               <span>
-                {totalTransactions} transaction{totalTransactions === 1 ? "" : "s"}
+                {totalTransactions} transaction
+                {totalTransactions === 1 ? "" : "s"}
               </span>
             </div>
           </div>
@@ -308,7 +350,9 @@ const Profile = (): JSX.Element => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                {viewingOwnProfile ? "My listings" : `${profileFirstName}'s listings`}
+                {viewingOwnProfile
+                  ? "My listings"
+                  : `${profileFirstName}'s listings`}
               </h2>
               <p className="text-sm text-muted-foreground">
                 Track active and sold posts in one place.
@@ -318,16 +362,29 @@ const Profile = (): JSX.Element => {
           </div>
           <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
             <div className="rounded-2xl border border-nav-border bg-card p-4 text-center">
-              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Active</dt>
-              <dd className="text-2xl font-semibold text-foreground">{activeListings.length}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                Active
+              </dt>
+              <dd className="text-2xl font-semibold text-foreground">
+                {activeListings.length}
+              </dd>
             </div>
             <div className="rounded-2xl border border-nav-border bg-card p-4 text-center">
-              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Sold</dt>
-              <dd className="text-2xl font-semibold text-foreground">{soldListings.length}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                Sold
+              </dt>
+              <dd className="text-2xl font-semibold text-foreground">
+                {soldListings.length}
+              </dd>
             </div>
           </dl>
           {viewingOwnProfile && (
-            <Button asChild variant="outline" className="mt-4 rounded-xl w-full" size="sm">
+            <Button
+              asChild
+              variant="outline"
+              className="mt-4 rounded-xl w-full"
+              size="sm"
+            >
               <Link to="/my-listings">Manage listings</Link>
             </Button>
           )}
@@ -336,10 +393,13 @@ const Profile = (): JSX.Element => {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Stars className="h-4 w-4 text-primary" aria-hidden />
-              {viewingOwnProfile ? "Saved items & alerts" : `${profileFirstName}'s highlights`}
+              {viewingOwnProfile
+                ? "Saved items & alerts"
+                : `${profileFirstName}'s highlights`}
             </div>
             <p>
-              Saved listings, base-wide alerts, and invite controls will appear here as the product expands.
+              Saved listings, base-wide alerts, and invite controls will appear
+              here as the product expands.
             </p>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -356,7 +416,9 @@ const Profile = (): JSX.Element => {
             </span>
             <div className="space-y-1">
               <h2 className="text-lg font-semibold text-foreground">
-                {viewingOwnProfile ? "My transactions" : `${profileFirstName}'s transactions`}
+                {viewingOwnProfile
+                  ? "My transactions"
+                  : `${profileFirstName}'s transactions`}
               </h2>
               <p className="text-sm text-muted-foreground">
                 Purchases and sales history, all in one place.
@@ -381,13 +443,19 @@ const Profile = (): JSX.Element => {
         </div>
         <Tabs defaultValue={defaultTransactionTab} className="mt-4">
           <TabsList className="grid w-full max-w-xs grid-cols-2 rounded-full bg-muted/60 p-1">
-            <TabsTrigger value="purchases" className="rounded-full text-xs font-semibold">
+            <TabsTrigger
+              value="purchases"
+              className="rounded-full text-xs font-semibold"
+            >
               <span className="inline-flex items-center gap-1">
                 <ShoppingBag className="h-3.5 w-3.5" aria-hidden />
                 Purchases ({purchases.length})
               </span>
             </TabsTrigger>
-            <TabsTrigger value="sales" className="rounded-full text-xs font-semibold">
+            <TabsTrigger
+              value="sales"
+              className="rounded-full text-xs font-semibold"
+            >
               <span className="inline-flex items-center gap-1">
                 <Tag className="h-3.5 w-3.5" aria-hidden />
                 Sales ({sales.length})
@@ -407,7 +475,9 @@ const Profile = (): JSX.Element => {
         <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Account notices</h2>
+              <h2 className="text-lg font-semibold text-foreground">
+                Account notices
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Audit trail of reports and strikes on your account.
               </p>
@@ -437,7 +507,9 @@ const Profile = (): JSX.Element => {
                       {formatNoticeDate(notice.createdAt)}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{notice.message}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {notice.message}
+                  </p>
                   {!notice.read ? (
                     <button
                       type="button"
@@ -461,9 +533,12 @@ const Profile = (): JSX.Element => {
               <ShieldCheck className="h-5 w-5" aria-hidden />
             </span>
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-foreground">Moderation tools</h2>
+              <h2 className="text-lg font-semibold text-foreground">
+                Moderation tools
+              </h2>
               <p className="text-sm text-muted-foreground">
-                Review reports, manage verification requests, and configure base access lists.
+                Review reports, manage verification requests, and configure base
+                access lists.
               </p>
             </div>
           </div>

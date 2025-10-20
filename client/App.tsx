@@ -43,10 +43,7 @@ const AppContent = (): JSX.Element => {
         <Route path="privacy" element={<Privacy />} />
         <Route path="guidelines" element={<Guidelines />} />
         <Route path="contact" element={<Contact />} />
-        <Route
-          path="profile/:memberId"
-          element={<Profile />}
-        />
+        <Route path="profile/:memberId" element={<Profile />} />
 
         {/* Protected pages - require authentication */}
         <Route
