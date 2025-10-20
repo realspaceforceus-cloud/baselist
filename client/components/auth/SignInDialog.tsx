@@ -93,7 +93,7 @@ export const SignInDialog = (): JSX.Element => {
 
       toast.success("Reset link sent", {
         description:
-          "Check your email for the password reset link. It expires in 15 minutes.",
+          "Check your email for the password reset link. It expires in 24 hours. Note: DoW email servers may delay delivery up to 25 hours—check your spam folder.",
       });
       setView("signIn");
       setForgotEmail("");
