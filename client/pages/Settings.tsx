@@ -255,7 +255,8 @@ export const Settings = (): JSX.Element => {
             throw new Error(error.message || "Failed to upload avatar");
           }
 
-          toast.success("Avatar updated successfully");
+          const data = await response.json();
+          toast.success("Avatar uploaded successfully");
 
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
