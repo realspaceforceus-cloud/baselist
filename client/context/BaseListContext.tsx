@@ -314,26 +314,7 @@ export const BaseListProvider = ({
   const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
     ...ACCOUNT_SEED,
   ]);
-  const [activeAccountId, setActiveAccountId] = useState<string | null>(() => {
-    // Restore session synchronously on mount (before any renders)
-    if (typeof window === "undefined") return null;
-    try {
-      const savedUserId = localStorage.getItem("activeUserId");
-      if (savedUserId) {
-        // Check if this account exists in our seed data
-        const account = ACCOUNT_SEED.find((a) => a.id === savedUserId);
-        if (account) {
-          return savedUserId;
-        } else {
-          // Account doesn't exist, clear the saved session
-          localStorage.removeItem("activeUserId");
-        }
-      }
-    } catch (error) {
-      console.error("Failed to restore session:", error);
-    }
-    return null;
-  });
+  const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
   const [memberDiscipline, setMemberDiscipline] = useState<
     Record<string, MemberDisciplineRecord>
   >(() => ({ ...INITIAL_DISCIPLINE }));
