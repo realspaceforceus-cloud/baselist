@@ -45,7 +45,7 @@ const ResetPassword = (): JSX.Element => {
 
     try {
       const response = await fetch(
-        "/.netlify/functions/auth/reset-password/complete",
+        "/api/auth/reset-password/complete",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
