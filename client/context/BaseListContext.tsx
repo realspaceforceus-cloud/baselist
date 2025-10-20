@@ -346,7 +346,7 @@ export const BaseListProvider = ({
   const [analyticsCounters, setAnalyticsCounters] = useState({
     verifiedMembers: ACCOUNT_SEED.filter((account) => account.isDowVerified)
       .length,
-    activeBases: BASES.length,
+    activeBases: 0,
     completedTransactions: 0,
   });
   const navigate = useNavigate();
