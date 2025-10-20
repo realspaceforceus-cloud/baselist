@@ -247,6 +247,7 @@ export const Settings = (): JSX.Element => {
             },
             body: JSON.stringify({
               avatarUrl: dataUrl,
+              userId: user.id,
             }),
           });
 
