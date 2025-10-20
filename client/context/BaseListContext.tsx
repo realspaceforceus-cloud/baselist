@@ -260,18 +260,21 @@ export const BaseListProvider = ({
   const [notices, setNotices] = useState<AccountNotice[]>(() => [
     ...INITIAL_NOTICES,
   ]);
-  const [user, setUser] = useState<UserProfile>(() => {
-    const initialAccount = ACCOUNT_SEED.find(
-      (account) => account.id === CURRENT_USER.id,
-    );
-    if (initialAccount) {
-      return buildUserProfileFromAccount(
-        initialAccount,
-        INITIAL_DISCIPLINE[initialAccount.id],
-      );
-    }
-    return CURRENT_USER;
-  });
+  const [user, setUser] = useState<UserProfile>(() => ({
+    id: "",
+    name: "User",
+    verified: false,
+    memberSince: new Date().toISOString(),
+    avatarUrl: buildAvatarUrl("User"),
+    rating: undefined,
+    completedSales: undefined,
+    lastActiveAt: new Date().toISOString(),
+    currentBaseId: BASES[0]?.id ?? "ramstein-ab",
+    verificationStatus: "Pending verification",
+    role: "member",
+    status: "active",
+    strikes: 0,
+  }));
   const [pendingPasswordReset, setPendingPasswordReset] =
     useState<PasswordResetRequest | null>(null);
   const [listings, setListings] = useState<Listing[]>(() => {
@@ -996,7 +999,7 @@ export const BaseListProvider = ({
       }
 
       if (method === "invite") {
-        toast.info("Enter your invite code from the Profile → Verify screen.");
+        toast.info("Enter your invite code from the Profile ��� Verify screen.");
         return;
       }
 
