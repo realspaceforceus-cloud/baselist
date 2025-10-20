@@ -397,7 +397,7 @@ export const BaseListProvider = ({
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch("/api/listings", {
+        const response = await fetch("/.netlify/functions/listings", {
           credentials: "include",
         });
 
@@ -427,7 +427,7 @@ export const BaseListProvider = ({
       }
 
       try {
-        const response = await fetch("/api/messages/threads", {
+        const response = await fetch("/.netlify/functions/messages/threads", {
           credentials: "include",
         });
 
@@ -862,7 +862,7 @@ export const BaseListProvider = ({
       // If not found locally, check backend
       if (!account) {
         try {
-          const res = await fetch("/api/auth/login", {
+          const res = await fetch("/.netlify/functions/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: normalized, password }),
@@ -906,7 +906,7 @@ export const BaseListProvider = ({
         // This handles newly created accounts that may have been verified via email
         try {
           const verifyCheckResponse = await fetch(
-            `/api/verify/status?email=${encodeURIComponent(account.email)}`,
+            `/.netlify/functions/verify-status/status?email=${encodeURIComponent(account.email)}`,
           );
 
           if (verifyCheckResponse.ok) {
@@ -1719,7 +1719,7 @@ export const BaseListProvider = ({
 
       try {
         // Call backend to create or update thread and add message
-        const response = await fetch("/api/messages", {
+        const response = await fetch("/.netlify/functions/messages", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },

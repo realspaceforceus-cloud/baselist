@@ -74,7 +74,7 @@ export const SignInDialog = (): JSX.Element => {
 
     try {
       const response = await fetch(
-        "/api/auth/reset-password/request",
+        "/.netlify/functions/auth/reset-password/request",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

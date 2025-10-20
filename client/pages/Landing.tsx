@@ -208,7 +208,7 @@ const Landing = (): JSX.Element => {
       setHasShownSuccessNotification(false);
 
       // First, create the account
-      const signupResponse = await fetch("/api/auth/signup", {
+      const signupResponse = await fetch("/.netlify/functions/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -235,7 +235,7 @@ const Landing = (): JSX.Element => {
 
       // Then request a verification code for inbound verification
       const verifyResponse = await fetch(
-        "/api/verify/request",
+        "/.netlify/functions/verify-status/request",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -273,7 +273,7 @@ const Landing = (): JSX.Element => {
   const checkVerificationStatus = async () => {
     try {
       const response = await fetch(
-        `/api/verify/status?email=${encodeURIComponent(pendingEmail)}`,
+        `/.netlify/functions/verify-status/status?email=${encodeURIComponent(pendingEmail)}`,
       );
 
       if (!response.ok) {
@@ -374,7 +374,7 @@ const Landing = (): JSX.Element => {
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch("/api/verify/resend", {
+      const response = await fetch("/.netlify/functions/verify-status/resend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: pendingEmail }),
