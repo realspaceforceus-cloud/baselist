@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
-import { useEffect } from "react";
 import type { UserProfile } from "@/types";
 
 const ListingDetail = (): JSX.Element => {
