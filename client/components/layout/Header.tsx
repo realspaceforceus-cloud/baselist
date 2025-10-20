@@ -264,29 +264,6 @@ export const Header = (): JSX.Element => {
             <div className="flex flex-col gap-3 md:gap-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <SheetTrigger asChild>
-                    <button
-                      type="button"
-                      className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    >
-                      <Avatar className="h-9 w-9">
-                        {user.avatarUrl ? (
-                          <AvatarImage
-                            src={user.avatarUrl}
-                            alt={`${user.name} avatar`}
-                          />
-                        ) : (
-                          <AvatarFallback className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                            {avatarInitials}
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                      <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-background shadow-sm">
-                        <Menu className="h-3 w-3" aria-hidden />
-                      </span>
-                      <span className="sr-only">Open menu</span>
-                    </button>
-                  </SheetTrigger>
                   <div className="flex flex-col gap-0">
                     <span className="text-lg font-semibold text-foreground">
                       {settings.website_name || "BaseList"}
@@ -315,20 +292,45 @@ export const Header = (): JSX.Element => {
                     </p>
                   </div>
                 </button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-full p-2"
-                  type="button"
-                  onClick={() => setIsDarkMode(!isDarkMode)}
-                  title={isDarkMode ? "Light mode" : "Dark mode"}
-                >
-                  {isDarkMode ? (
-                    <Sun className="h-4 w-4" />
-                  ) : (
-                    <Moon className="h-4 w-4" />
-                  )}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="rounded-full p-2"
+                    type="button"
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    title={isDarkMode ? "Light mode" : "Dark mode"}
+                  >
+                    {isDarkMode ? (
+                      <Sun className="h-4 w-4" />
+                    ) : (
+                      <Moon className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <SheetTrigger asChild>
+                    <button
+                      type="button"
+                      className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    >
+                      <Avatar className="h-9 w-9">
+                        {user.avatarUrl ? (
+                          <AvatarImage
+                            src={user.avatarUrl}
+                            alt={`${user.name} avatar`}
+                          />
+                        ) : (
+                          <AvatarFallback className="text-sm font-semibold uppercase tracking-wide text-foreground">
+                            {avatarInitials}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-background shadow-sm">
+                        <Menu className="h-3 w-3" aria-hidden />
+                      </span>
+                      <span className="sr-only">Open menu</span>
+                    </button>
+                  </SheetTrigger>
+                </div>
               </div>
               <nav className="flex items-center justify-between gap-2 rounded-2xl border border-nav-border bg-nav/70 px-2 py-2 shadow-soft">
                 {NAV_ITEMS.map(({ label, to, icon: Icon, end = false }) => (
