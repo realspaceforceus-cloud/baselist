@@ -106,6 +106,7 @@ const Landing = (): JSX.Element => {
   const verificationPollingStartedRef = useRef(false);
   const confettiFiredRef = useRef(false);
   const verificationCompleteRef = useRef(false);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
