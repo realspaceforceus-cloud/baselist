@@ -191,6 +191,11 @@ const Landing = (): JSX.Element => {
     setIsSubmitting(true);
 
     try {
+      // Reset verification polling flag for new signup
+      verificationPollingStartedRef.current = false;
+      countdownStartedRef.current = false;
+      setHasShownSuccessNotification(false);
+
       // First, create the account
       const signupResponse = await fetch("/.netlify/functions/auth/signup", {
         method: "POST",
