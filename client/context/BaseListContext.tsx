@@ -323,15 +323,21 @@ export const BaseListProvider = ({
   // Sync user state with AuthContext
   useEffect(() => {
     if (authUser) {
-      setUser((prev) => ({
-        ...prev,
+      setUser({
         id: authUser.userId,
         name: authUser.username,
         verified: authUser.verified,
+        memberSince: new Date().toISOString(),
         avatarUrl: authUser.avatarUrl,
+        rating: undefined,
+        completedSales: undefined,
+        lastActiveAt: new Date().toISOString(),
         currentBaseId: authUser.baseId,
+        verificationStatus: authUser.verified ? "Verified" : "Pending verification",
         role: authUser.role,
-      }));
+        status: "active",
+        strikes: 0,
+      });
       setActiveAccountId(authUser.userId);
     } else {
       setActiveAccountId(null);
