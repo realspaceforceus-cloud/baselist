@@ -26,8 +26,6 @@ export const SignInDialog = (): JSX.Element => {
   const [password, setPassword] = useState("");
   const [rememberDevice, setRememberDevice] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
