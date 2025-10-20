@@ -646,6 +646,39 @@ export const BaseListProvider = ({
     [accounts],
   );
 
+  const registerNewAccount = useCallback(
+    (
+      id: string,
+      username: string,
+      email: string,
+      password: string,
+      baseId: string,
+    ) => {
+      const trimmedUsername = username.trim();
+      const trimmedEmail = email.trim().toLowerCase();
+
+      const isDow = isDowEmail(trimmedEmail);
+      const newAccount: BaseListAccount = {
+        id,
+        username: trimmedUsername,
+        email: trimmedEmail,
+        password,
+        isDowVerified: false,
+        baseId,
+        createdAt: new Date().toISOString(),
+        avatarUrl: buildAvatarUrl(trimmedUsername),
+        verificationToken: isDow ? `verify-${crypto.randomUUID()}` : null,
+        verificationRequestedAt: isDow ? new Date().toISOString() : null,
+        rememberDeviceUntil: undefined,
+        role: "member",
+      };
+
+      setAccounts((prev) => [newAccount, ...prev]);
+      return newAccount;
+    },
+    [],
+  );
+
   const createAccount = useCallback(
     ({ username, email, password, baseId }: CreateAccountPayload) => {
       const trimmedUsername = username.trim();
@@ -678,27 +711,15 @@ export const BaseListProvider = ({
 
       ensureUniqueAccount(trimmedUsername, trimmedEmail);
 
-      const isDow = isDowEmail(trimmedEmail);
-      const newAccount: BaseListAccount = {
-        id: `acct-${crypto.randomUUID()}`,
-        username: trimmedUsername,
-        email: trimmedEmail,
-        password: trimmedPassword,
-        isDowVerified: false,
+      return registerNewAccount(
+        `acct-${crypto.randomUUID()}`,
+        username,
+        email,
+        password,
         baseId,
-        createdAt: new Date().toISOString(),
-        avatarUrl: buildAvatarUrl(trimmedUsername),
-        verificationToken: isDow ? `verify-${crypto.randomUUID()}` : null,
-        verificationRequestedAt: isDow ? new Date().toISOString() : null,
-        rememberDeviceUntil: undefined,
-        role: "member",
-      };
-
-      setAccounts((prev) => [newAccount, ...prev]);
-
-      return newAccount;
+      );
     },
-    [ensureUniqueAccount],
+    [ensureUniqueAccount, registerNewAccount],
   );
 
   const activateAccount = useCallback(
