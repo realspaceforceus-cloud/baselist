@@ -298,7 +298,7 @@ export const BaseListProvider = ({
 }: {
   children: React.ReactNode;
 }): JSX.Element => {
-  const [bases, setBases] = useState<Base[]>(() => BASES);
+  const [bases, setBases] = useState<Base[]>([]);
   const [currentBaseId, setCurrentBaseIdState] = useState<string>(
     CURRENT_USER.currentBaseId,
   );
