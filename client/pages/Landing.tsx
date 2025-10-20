@@ -868,7 +868,8 @@ const Landing = (): JSX.Element => {
                   Account verified!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  You're all set. Start browsing, posting, and messaging on BaseList.
+                  You're all set. Start browsing, posting, and messaging on
+                  BaseList.
                 </p>
               </div>
 
