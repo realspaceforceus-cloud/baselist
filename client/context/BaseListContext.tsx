@@ -439,7 +439,7 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch bases from database:", error);
-        throw error;
+        // Don't throw - app should continue loading even if bases fetch fails
       }
     };
     fetchBases();
