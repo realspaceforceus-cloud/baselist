@@ -308,24 +308,9 @@ const handleSignup = async (event: any) => {
       ],
     );
 
-    // Generate and store verification code
-    const code = generateVerificationCode();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    const codeId = randomUUID();
-    await client.query(
-      `INSERT INTO verification_codes (id, email, code, expires_at)
-       VALUES ($1, $2, $3, $4)
-       ON CONFLICT (email) DO UPDATE SET code = $3, expires_at = $4, verified_at = NULL, attempts = 0`,
-      [codeId, trimmedEmail, code, expiresAt],
-    );
-
-    // Send verification code email
-    const emailSent = await sendVerificationCode(trimmedEmail, code);
-
-    if (!emailSent) {
-      console.warn(`Failed to send verification code to ${trimmedEmail}`);
-    }
+    // Don't generate or send verification code here
+    // Users verify by sending an email to verify@yourdomain.com with their code in the subject
+    // See inbound-email.ts for the inbound verification handler
 
     return {
       statusCode: 201,
@@ -334,7 +319,7 @@ const handleSignup = async (event: any) => {
         username: trimmedUsername,
         email: trimmedEmail,
         baseId,
-        message: "Account created. Verification code sent to email.",
+        message: "Account created. Send an email to verify@yourdomain.com with your verification code in the subject to complete signup.",
       }),
     };
   } catch (error) {
