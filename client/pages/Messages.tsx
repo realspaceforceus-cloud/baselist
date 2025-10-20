@@ -42,10 +42,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { useBaseList } from "@/context/BaseListContext";
-import { SELLERS } from "@/data/mock";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import type { Listing, Message, MessageThread } from "@/types";
+import type { Listing, Message, MessageThread, UserProfile } from "@/types";
 
 const ratingOptions = [1, 2, 3, 4, 5];
 
