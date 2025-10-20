@@ -37,6 +37,8 @@ const ListingDetail = (): JSX.Element => {
   const [seller, setSeller] = useState<UserProfile | null>(null);
   const [fetchedListing, setFetchedListing] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isComposerOpen, setComposerOpen] = useState(false);
+  const [messageBody, setMessageBody] = useState("");
 
   // Extract actual ID from slug (slug format: "title-slug-12345678")
   const actualListingId = useMemo(() => {
