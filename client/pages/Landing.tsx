@@ -104,6 +104,7 @@ const Landing = (): JSX.Element => {
   const [proceedCountdown, setProceedCountdown] = useState(0);
   const countdownStartedRef = useRef(false);
   const verificationPollingStartedRef = useRef(false);
+  const confettiFiredRef = useRef(false);
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
