@@ -55,6 +55,7 @@ export function createServer() {
   app.use("/api/auth", authRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/user", userRouter);
+  app.use("/api/email", emailRouter);
 
   return app;
 }
