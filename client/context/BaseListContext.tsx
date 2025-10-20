@@ -828,7 +828,7 @@ export const BaseListProvider = ({
           : "You’re signed in. We’ll keep you active for this session.",
       });
     },
-    [accounts, activateAccount],
+    [accounts, activateAccount, setAccounts],
   );
 
   const cancelPasswordReset = useCallback(() => {
