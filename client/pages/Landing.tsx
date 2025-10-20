@@ -992,9 +992,9 @@ const Landing = (): JSX.Element => {
                 className="w-full rounded-full"
                 size="lg"
                 onClick={handleFinishSignup}
-                disabled={isSubmitting || proceedCountdown > 0}
+                disabled={isProceedingToAccount || proceedCountdown > 0}
               >
-                {isSubmitting
+                {isProceedingToAccount
                   ? "Logging in..."
                   : proceedCountdown > 0
                     ? `Please wait... (${proceedCountdown}s)`
