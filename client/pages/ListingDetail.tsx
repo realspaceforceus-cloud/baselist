@@ -80,7 +80,7 @@ const ListingDetail = (): JSX.Element => {
       return;
     }
 
-    if (listings.find((item) => item.id === actualListingId)) {
+    if (listings.find((item) => item.id === actualListingId || item.id.includes(actualListingId))) {
       setIsLoading(false);
       return;
     }
