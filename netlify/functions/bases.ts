@@ -47,16 +47,18 @@ export const handler: Handler = async (event) => {
   }
 
   // GET /api/bases/:id - get specific base
-  if (method === "GET" && path.startsWith("/")) {
+  if (method === "GET" && path && path !== "/") {
     let client;
     try {
+      console.log("[BASES] Fetching specific base:", path);
       client = await pool.connect();
-      const id = path.slice(1);
+      const id = path.startsWith("/") ? path.slice(1) : path;
       const result = await client.query("SELECT * FROM bases WHERE id = $1", [
         id,
       ]);
 
       if (result.rows.length === 0) {
+        console.log("[BASES] Base not found:", id);
         return {
           statusCode: 404,
           headers: { "Content-Type": "application/json" },
@@ -64,13 +66,14 @@ export const handler: Handler = async (event) => {
         };
       }
 
+      console.log("[BASES] Base found:", id);
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
-      console.error("Error fetching base:", err);
+      console.error("[BASES] Error fetching base:", err);
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
       return {
@@ -79,10 +82,14 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
-      if (client) client.release();
+      if (client) {
+        console.log("[BASES] Releasing database connection");
+        client.release();
+      }
     }
   }
 
+  console.log("[BASES] No matching route for:", method, path);
   return {
     statusCode: 404,
     headers: { "Content-Type": "application/json" },
