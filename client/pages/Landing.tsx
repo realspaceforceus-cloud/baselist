@@ -316,7 +316,23 @@ const Landing = (): JSX.Element => {
 
         // Only set these once
         setJoinStage("success");
-        setProceedCountdown(5); // Start 5-second countdown
+
+        // Start countdown with independent timer
+        if (countdownTimerRef.current) {
+          clearInterval(countdownTimerRef.current);
+        }
+        let count = 5;
+        setProceedCountdown(5);
+        countdownTimerRef.current = setInterval(() => {
+          count--;
+          setProceedCountdown(count);
+          if (count <= 0) {
+            if (countdownTimerRef.current) {
+              clearInterval(countdownTimerRef.current);
+              countdownTimerRef.current = null;
+            }
+          }
+        }, 1000);
       } else if (data.status === "expired") {
         setIsVerificationPending(false);
         setVerificationError(
