@@ -252,6 +252,7 @@ type BaseListContextValue = {
   beginVerification: (method: "email" | "invite" | "manual") => void;
   completeDowVerification: (accountId: string) => void;
   signOut: () => void;
+  updateUserAvatar: (avatarUrl: string) => void;
   listings: Listing[];
   addListing: (listing: Listing) => void;
   markListingSold: (listingId: string) => void;
