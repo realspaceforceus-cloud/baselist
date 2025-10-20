@@ -151,7 +151,13 @@ const buildSeedAccounts = (): BaseListAccount[] => {
   return SELLERS.map((seller, index) => {
     const username = toUsername(seller.name, `member_${index + 1}`);
     // Use hardcoded base IDs - these will be replaced when bases are loaded from database
-    const baseIds = ["ramstein-ab", "lakenheath-ab", "nellis-afb", "kadena-ab", "misawa-ab"];
+    const baseIds = [
+      "ramstein-ab",
+      "lakenheath-ab",
+      "nellis-afb",
+      "kadena-ab",
+      "misawa-ab",
+    ];
     const baseId = baseIds[index % baseIds.length];
     const createdAt = new Date(
       Date.now() - (index + 3) * 24 * 60 * 60 * 1000,
@@ -376,14 +382,22 @@ export const BaseListProvider = ({
 
         if (!response.ok) {
           const text = await response.text();
-          console.error(`Failed to fetch bases: HTTP ${response.status}`, text.substring(0, 200));
+          console.error(
+            `Failed to fetch bases: HTTP ${response.status}`,
+            text.substring(0, 200),
+          );
           throw new Error(`HTTP ${response.status}`);
         }
 
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           const text = await response.text();
-          console.error("Invalid content type:", contentType, "Response:", text.substring(0, 200));
+          console.error(
+            "Invalid content type:",
+            contentType,
+            "Response:",
+            text.substring(0, 200),
+          );
           throw new Error("Invalid content type");
         }
 

@@ -9,7 +9,10 @@ export const handler: Handler = async (event) => {
   });
 
   const method = event.httpMethod;
-  const path = event.path.replace(/\/.netlify\/functions\/bases|\/api\/bases/, "");
+  const path = event.path.replace(
+    /\/.netlify\/functions\/bases|\/api\/bases/,
+    "",
+  );
 
   console.log("[BASES] Normalized path:", path);
 
@@ -21,8 +24,14 @@ export const handler: Handler = async (event) => {
       client = await pool.connect();
       console.log("[BASES] Connected to database, querying bases...");
 
-      const result = await client.query("SELECT * FROM bases ORDER BY name ASC");
-      console.log("[BASES] Query successful, returning", result.rows.length, "bases");
+      const result = await client.query(
+        "SELECT * FROM bases ORDER BY name ASC",
+      );
+      console.log(
+        "[BASES] Query successful, returning",
+        result.rows.length,
+        "bases",
+      );
 
       return {
         statusCode: 200,
@@ -36,7 +45,10 @@ export const handler: Handler = async (event) => {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: errorMsg, timestamp: new Date().toISOString() }),
+        body: JSON.stringify({
+          error: errorMsg,
+          timestamp: new Date().toISOString(),
+        }),
       };
     } finally {
       if (client) {
