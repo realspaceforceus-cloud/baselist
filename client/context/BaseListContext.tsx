@@ -394,7 +394,6 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
-
   // Persist session to localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
