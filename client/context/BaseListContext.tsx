@@ -335,23 +335,21 @@ export const BaseListProvider = ({
       setActiveAccountId(authUser.userId);
     } else {
       setActiveAccountId(null);
-      setUser(
-        {
-          id: "",
-          name: "User",
-          verified: false,
-          memberSince: new Date().toISOString(),
-          avatarUrl: buildAvatarUrl("User"),
-          rating: undefined,
-          completedSales: undefined,
-          lastActiveAt: new Date().toISOString(),
-          currentBaseId: BASES[0]?.id ?? "ramstein-ab",
-          verificationStatus: "Pending verification",
-          role: "member",
-          status: "active",
-          strikes: 0,
-        }
-      );
+      setUser({
+        id: "",
+        name: "User",
+        verified: false,
+        memberSince: new Date().toISOString(),
+        avatarUrl: buildAvatarUrl("User"),
+        rating: undefined,
+        completedSales: undefined,
+        lastActiveAt: new Date().toISOString(),
+        currentBaseId: BASES[0]?.id ?? "ramstein-ab",
+        verificationStatus: "Pending verification",
+        role: "member",
+        status: "active",
+        strikes: 0,
+      });
     }
   }, [authUser]);
 
