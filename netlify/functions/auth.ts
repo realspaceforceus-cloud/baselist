@@ -453,11 +453,10 @@ const handleResetPasswordRequest = async (event: any) => {
       };
     }
 
-    const token = `reset-${randomUUID()}`;
+    const token = randomUUID();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Store reset token (in production, use a database table)
-    // For now, we'll store in memory with expiration
+    // Store reset token in database
     const resetTokenId = randomUUID();
     await client.query(
       `INSERT INTO refresh_tokens (id, user_id, device_id, token_hash, created_at, expires_at, last_used_at)
@@ -473,6 +472,25 @@ const handleResetPasswordRequest = async (event: any) => {
       ],
     );
 
+    // Send password reset email
+    const resetLink = `${process.env.SITE_URL || "https://trustypcs.com"}/reset-password?token=${encodeURIComponent(token)}`;
+    const emailHtml = `
+      <h2>Password Reset Request</h2>
+      <p>We received a request to reset your TrustyPCS password. Click the link below to set a new password:</p>
+      <p><a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
+      <p>Or copy and paste this link in your browser:</p>
+      <p>${resetLink}</p>
+      <p style="color: #666; font-size: 12px;">This link expires in 15 minutes.</p>
+      <p style="color: #666; font-size: 12px;">If you didn't request this, you can ignore this email.</p>
+    `;
+
+    const sendEmailResult = await sendEmail(trimmedEmail, "Reset Your TrustyPCS Password", emailHtml);
+
+    if (!sendEmailResult) {
+      console.error("Failed to send password reset email");
+      // Still return success as the token is stored, email might be configured later
+    }
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
@@ -480,7 +498,7 @@ const handleResetPasswordRequest = async (event: any) => {
         success: true,
         token,
         expiresAt: expiresAt.toISOString(),
-        message: "Password reset link sent",
+        message: "Password reset link sent to your email",
       }),
     };
   } catch (error) {
