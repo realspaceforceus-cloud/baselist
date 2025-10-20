@@ -335,7 +335,7 @@ const Messages = (): JSX.Element => {
     }
 
     try {
-      const updatedThread = sendMessageToSeller(
+      const updatedThread = await sendMessageToSeller(
         activeSummary.thread.listingId,
         activeSummary.partnerId,
         trimmed,
