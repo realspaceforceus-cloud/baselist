@@ -53,6 +53,7 @@ import {
   type VerificationQueueSummary,
 } from "@/components/admin/sections";
 import { useBaseList } from "@/context/BaseListContext";
+import { useSettings } from "@/context/SettingsContext";
 import { SELLERS } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
 import type { AdminUserDTO } from "@shared/api";
@@ -1071,7 +1072,7 @@ const AdminPanel = (): JSX.Element => {
           `Approved pending email change for ${getMemberName(userId)}: ${newEmail}`,
         );
         toast.success("Email change approved", {
-          description: `${getMemberName(userId)} ��� ${newEmail}`,
+          description: `${getMemberName(userId)} → ${newEmail}`,
         });
         addNotice({
           userId,
