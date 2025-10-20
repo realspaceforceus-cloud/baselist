@@ -45,6 +45,7 @@ const AppContent = (): JSX.Element => {
         <Route path="guidelines" element={<Guidelines />} />
         <Route path="contact" element={<Contact />} />
         <Route path="profile/:memberId" element={<Profile />} />
+        <Route path="reset-password" element={<ResetPassword />} />
 
         {/* Protected pages - require authentication */}
         <Route
