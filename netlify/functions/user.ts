@@ -133,15 +133,54 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          message: "Avatar updated",
+      // Get user ID from cookies or authentication header
+      const cookies = event.headers.cookie
+        ?.split(";")
+        .reduce(
+          (acc, cookie) => {
+            const [key, value] = cookie.split("=");
+            acc[key.trim()] = decodeURIComponent(value || "");
+            return acc;
+          },
+          {} as Record<string, string>,
+        ) || {};
+
+      const userId = cookies.user_id;
+
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ error: "Not authenticated" }),
+        };
+      }
+
+      // Update avatar_url in the database
+      try {
+        await client.query("UPDATE accounts SET avatar_url = $1 WHERE id = $2", [
           avatarUrl,
-        }),
-      };
+          userId,
+        ]);
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            message: "Avatar updated",
+            avatarUrl,
+          }),
+        };
+      } catch (dbError) {
+        console.error("[USER] Database update error:", dbError);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({
+            error: "Failed to update avatar in database",
+          }),
+        };
+      }
     }
 
     return {
