@@ -782,14 +782,43 @@ export const BaseListProvider = ({
         throw new Error("Incorrect password. Try again.");
       }
 
-      // Check if account needs DoW verification - for newly created accounts,
-      // allow login if they've been locally marked as verified via completeDowVerification
-      if (!account.isDowVerified && isDowEmail(account.email)) {
-        // Only throw error for mil accounts that haven't been verified at all
-        // The completeDowVerification function would have marked them as verified
-        throw new Error(
-          "Confirm your DoW email from the link we sent before signing in.",
-        );
+      // For DoW emails, check verification status against backend
+      if (isDowEmail(account.email) && !account.isDowVerified) {
+        // If account wasn't marked as verified locally, check backend verification status
+        // This handles newly created accounts that may have been verified via email
+        try {
+          const verifyCheckResponse = await fetch(
+            `/.netlify/functions/verify-status/status?email=${encodeURIComponent(account.email)}`,
+          );
+
+          if (verifyCheckResponse.ok) {
+            const verifyData = await verifyCheckResponse.json();
+            if (verifyData.status !== "verified") {
+              throw new Error(
+                "Confirm your DoW email from the link we sent before signing in.",
+              );
+            }
+            // Backend confirms verification - mark as verified locally
+            setAccounts((prev) =>
+              prev.map((item) =>
+                item.id === account.id
+                  ? { ...item, isDowVerified: true }
+                  : item,
+              ),
+            );
+          } else {
+            throw new Error(
+              "Confirm your DoW email from the link we sent before signing in.",
+            );
+          }
+        } catch (error) {
+          if (error instanceof Error && error.message.includes("Confirm your DoW email")) {
+            throw error;
+          }
+          throw new Error(
+            "Confirm your DoW email from the link we sent before signing in.",
+          );
+        }
       }
 
       activateAccount(account.id, options);
