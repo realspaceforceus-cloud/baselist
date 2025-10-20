@@ -323,14 +323,20 @@ const Landing = (): JSX.Element => {
     event.preventDefault();
     setVerificationError(null);
 
+    // Only start polling once
+    if (verificationPollingStartedRef.current) {
+      return;
+    }
+    verificationPollingStartedRef.current = true;
+
     setIsVerificationPending(true);
+
+    // Check immediately
+    checkVerificationStatus();
 
     // Start polling for verification status
     const interval = setInterval(checkVerificationStatus, 2000); // Check every 2 seconds
     setVerificationCheckInterval(interval);
-
-    // Check immediately
-    checkVerificationStatus();
   };
 
   const handleResendCode = async () => {
