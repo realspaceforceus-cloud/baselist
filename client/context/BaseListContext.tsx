@@ -355,7 +355,7 @@ export const BaseListProvider = ({
   useEffect(() => {
     const fetchBases = async () => {
       try {
-        const response = await fetch("/api/bases");
+        const response = await fetch("/.netlify/functions/bases");
 
         if (!response.ok) {
           const text = await response.text();
@@ -387,6 +387,10 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch bases from database:", error);
+        // On dev server, use mock bases as fallback
+        if (import.meta.env.DEV) {
+          setBases(BASES);
+        }
         // Don't throw - app should continue loading even if bases fetch fails
       }
     };
@@ -403,7 +407,7 @@ export const BaseListProvider = ({
 
         if (!response.ok) {
           console.error(`Failed to fetch listings: HTTP ${response.status}`);
-          return;
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const listingsData = await response.json();
@@ -414,6 +418,10 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch listings from database:", error);
+        // On dev server, use empty listings as fallback (no mock data for this)
+        if (import.meta.env.DEV) {
+          setListings([]);
+        }
       }
     };
     fetchListings();
@@ -433,7 +441,7 @@ export const BaseListProvider = ({
 
         if (!response.ok) {
           console.error(`Failed to fetch message threads: HTTP ${response.status}`);
-          return;
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const threadsData = await response.json();
@@ -442,6 +450,10 @@ export const BaseListProvider = ({
         }
       } catch (error) {
         console.error("Failed to fetch message threads from database:", error);
+        // On dev server, use empty message threads as fallback
+        if (import.meta.env.DEV) {
+          setMessageThreads([]);
+        }
       }
     };
 
