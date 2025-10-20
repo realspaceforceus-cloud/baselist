@@ -245,7 +245,7 @@ export const BaseListProvider = ({
 }: {
   children: React.ReactNode;
 }): JSX.Element => {
-  const { user: authUser } = useAuth();
+  const { user: authUser, signOut: authSignOut } = useAuth();
   const [bases, setBases] = useState<Base[]>([]);
   const [currentBaseId, setCurrentBaseIdState] = useState<string>(
     BASES[0]?.id ?? "ramstein-ab",
