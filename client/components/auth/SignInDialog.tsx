@@ -106,43 +106,6 @@ export const SignInDialog = (): JSX.Element => {
     }
   };
 
-  const handleResetSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrorMessage(null);
-
-    if (!pendingResetToken) {
-      setErrorMessage("Reset link expired. Request a new one.");
-      return;
-    }
-
-    if (newPassword.trim().length < PASSWORD_MIN_LENGTH) {
-      setErrorMessage(formatPasswordHint());
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setErrorMessage("Passwords must match.");
-      return;
-    }
-
-    try {
-      completePasswordReset(pendingResetToken, newPassword);
-      toast.success("Password updated", {
-        description: "Sign in with your new password.",
-      });
-      setView("signIn");
-      setIdentifier(state.resetEmail ?? "");
-      setPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Unable to reset password. Try again.",
-      );
-    }
-  };
 
   const renderSignIn = () => (
     <form onSubmit={handleSignIn} className="space-y-5">
