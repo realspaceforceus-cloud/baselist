@@ -318,7 +318,7 @@ export const BaseListProvider = ({
     () => accounts.find((account) => account.id === authUser?.userId) ?? null,
     [accounts, authUser?.userId],
   );
-  const isDowVerified = currentAccount?.isDowVerified ?? false;
+  const isDowVerified = authUser?.verified ?? false;
 
   // Sync user state with AuthContext
   useEffect(() => {
