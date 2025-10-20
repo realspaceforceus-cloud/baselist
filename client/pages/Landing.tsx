@@ -424,9 +424,11 @@ const Landing = (): JSX.Element => {
       );
 
       // Mark the account as verified since they've completed email verification
+      // This happens synchronously - account is now in context and marked verified
       completeDowVerification(pendingUserId);
 
       // Auto-login with the email and password from signup
+      // The account is now in context and verified, so this should find it properly
       await signInWithPassword(pendingEmail, pendingPassword);
 
       setJoinStage("hidden");
