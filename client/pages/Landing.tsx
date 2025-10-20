@@ -880,10 +880,15 @@ const Landing = (): JSX.Element => {
                       <span className="flex-shrink-0 font-semibold text-primary">
                         2
                       </span>
-                      <span>
-                        Put the code in the subject line and leave the body
-                        blank
-                      </span>
+                      <div className="space-y-1">
+                        <span>
+                          Put the code in the subject line and leave the body
+                          blank
+                        </span>
+                        <span className="text-xs text-yellow-600 font-semibold block">
+                          ⚠️ The code is case sensitive
+                        </span>
+                      </div>
                     </li>
                     <li className="flex gap-3">
                       <span className="flex-shrink-0 font-semibold text-primary">
