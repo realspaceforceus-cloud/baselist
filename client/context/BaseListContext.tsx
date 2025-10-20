@@ -280,11 +280,7 @@ export const BaseListProvider = ({
   }));
   const [pendingPasswordReset, setPendingPasswordReset] =
     useState<PasswordResetRequest | null>(null);
-  const [listings, setListings] = useState<Listing[]>(() => {
-    return [...LISTING_SEED].sort(
-      (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
-    );
-  });
+  const [listings, setListings] = useState<Listing[]>([]);
   const [sponsorPlacements, setSponsorPlacements] = useState<
     SponsorPlacement[]
   >(() => [...SPONSOR_PLACEMENTS]);
