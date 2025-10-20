@@ -269,7 +269,18 @@ const Landing = (): JSX.Element => {
           clearInterval(verificationCheckInterval);
           setVerificationCheckInterval(null);
         }
-        setPendingUserId(data.userId || pendingUserId);
+        const userId = data.userId || pendingUserId;
+        setPendingUserId(userId);
+
+        // Mark the account as verified in the local context
+        if (userId) {
+          try {
+            completeDowVerification(userId);
+          } catch (error) {
+            console.error("Failed to mark account as verified:", error);
+          }
+        }
+
         setJoinStage("success");
 
         // Show success notification and confetti only once
