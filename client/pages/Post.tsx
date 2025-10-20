@@ -155,8 +155,9 @@ const Post = (): JSX.Element => {
       setSubmissionState("submitting");
       setSubmissionError(null);
 
+      // Upload images to Cloudinary
       const imageUrls = await Promise.all(
-        photos.map((photo) => readFileAsDataUrl(photo.file)),
+        photos.map((photo) => uploadImageToCloudinary(photo.file)),
       );
 
       const listing: Listing = {
