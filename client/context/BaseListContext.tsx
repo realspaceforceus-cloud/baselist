@@ -334,7 +334,9 @@ export const BaseListProvider = ({
         completedSales: undefined,
         lastActiveAt: new Date().toISOString(),
         currentBaseId: authUser.baseId,
-        verificationStatus: authUser.verified ? "Verified" : "Pending verification",
+        verificationStatus: authUser.verified
+          ? "Verified"
+          : "Pending verification",
         role: authUser.role,
         status: "active",
         strikes: 0,
