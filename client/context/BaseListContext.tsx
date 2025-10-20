@@ -367,6 +367,25 @@ export const BaseListProvider = ({
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
 
+  // Fetch bases from the database on mount
+  useEffect(() => {
+    const fetchBases = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/bases");
+        if (response.ok) {
+          const basesData = await response.json();
+          if (Array.isArray(basesData) && basesData.length > 0) {
+            setBases(basesData);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch bases:", error);
+        // Keep using mock data if fetch fails
+      }
+    };
+    fetchBases();
+  }, []);
+
   useEffect(() => {
     if (currentAccount) {
       setUser(
