@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import { store } from "../data/store";
+import { pool } from "./db";
 
 export const handler: Handler = async (event) => {
   const headers = {
@@ -9,7 +9,6 @@ export const handler: Handler = async (event) => {
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 
-  // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -18,12 +17,15 @@ export const handler: Handler = async (event) => {
     };
   }
 
+  let client;
   try {
+    client = await pool.connect();
+
     if (event.httpMethod === "GET") {
-      const settings = store.getSettings();
+      const result = await client.query("SELECT key_name, value FROM settings ORDER BY key_name ASC");
       const settingsObj: Record<string, string> = {};
-      settings.forEach((setting: any) => {
-        settingsObj[setting.keyName] = setting.value;
+      result.rows.forEach((row: any) => {
+        settingsObj[row.key_name] = row.value;
       });
 
       return {
@@ -76,8 +78,12 @@ export const handler: Handler = async (event) => {
           };
         }
 
-        store.updateSetting(key, String(value));
-        updatedSettings[key] = String(value);
+        const stringValue = String(value);
+        await client.query(
+          "INSERT INTO settings (key_name, value) VALUES ($1, $2) ON CONFLICT (key_name) DO UPDATE SET value = $2, updated_at = NOW()",
+          [key, stringValue]
+        );
+        updatedSettings[key] = stringValue;
       }
 
       return {
@@ -108,5 +114,9 @@ export const handler: Handler = async (event) => {
         error: error instanceof Error ? error.message : "Internal server error",
       }),
     };
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 };
