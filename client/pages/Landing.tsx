@@ -235,7 +235,7 @@ const Landing = (): JSX.Element => {
 
       // Then request a verification code for inbound verification
       const verifyResponse = await fetch(
-        "/.netlify/functions/verify-status/request",
+        "/api/verify/request",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
