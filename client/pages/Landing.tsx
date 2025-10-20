@@ -1070,7 +1070,7 @@ const Landing = (): JSX.Element => {
                     return;
                   }
                   try {
-                    const response = await fetch("/.netlify/functions/email", {
+                    const response = await fetch("/api/email", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
@@ -1088,10 +1088,16 @@ const Landing = (): JSX.Element => {
                       setShowExpansionForm(false);
                       setExpansionEmail("");
                     } else {
-                      toast.error("Failed to send request. Try again.");
+                      const errorData = await response.json();
+                      toast.error(
+                        errorData.error || "Failed to send request. Try again."
+                      );
                     }
                   } catch (error) {
-                    toast.error("Failed to send request. Try again.");
+                    console.error("Base request error:", error);
+                    toast.error(
+                      "Failed to send request. Please try again later."
+                    );
                   }
                 }}
                 className="space-y-4"
