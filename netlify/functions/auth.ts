@@ -611,6 +611,10 @@ export const handler: Handler = async (event) => {
     return handleSignup(event);
   }
 
+  if (method === "POST" && path === "/login") {
+    return handleLogin(event);
+  }
+
   if (method === "POST" && path === "/verify-code") {
     return handleVerifyCode(event);
   }
