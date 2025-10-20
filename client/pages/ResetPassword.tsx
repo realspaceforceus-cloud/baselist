@@ -18,7 +18,9 @@ const ResetPassword = (): JSX.Element => {
 
   useEffect(() => {
     if (!token) {
-      setErrorMessage("Invalid or expired reset link. Please request a new one.");
+      setErrorMessage(
+        "Invalid or expired reset link. Please request a new one.",
+      );
     }
   }, [token]);
 
@@ -28,7 +30,9 @@ const ResetPassword = (): JSX.Element => {
     setIsSubmitting(true);
 
     if (newPassword.trim().length < PASSWORD_MIN_LENGTH) {
-      setErrorMessage(`Password must be at least ${PASSWORD_MIN_LENGTH} characters.`);
+      setErrorMessage(
+        `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`,
+      );
       setIsSubmitting(false);
       return;
     }
@@ -40,14 +44,17 @@ const ResetPassword = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch("/.netlify/functions/auth/reset-password/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          newPassword,
-        }),
-      });
+      const response = await fetch(
+        "/.netlify/functions/auth/reset-password/complete",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token,
+            newPassword,
+          }),
+        },
+      );
 
       if (!response.ok) {
         const data = await response.json();
@@ -66,7 +73,7 @@ const ResetPassword = (): JSX.Element => {
       }, 2000);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Failed to reset password"
+        error instanceof Error ? error.message : "Failed to reset password",
       );
       setIsSubmitting(false);
     }
@@ -77,14 +84,17 @@ const ResetPassword = (): JSX.Element => {
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-border bg-card p-8 shadow-sm">
-            <h1 className="text-2xl font-bold text-foreground mb-4">Invalid Reset Link</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              Invalid Reset Link
+            </h1>
             <p className="text-muted-foreground mb-4">
               This password reset link is invalid or has expired.
             </p>
             <div className="bg-muted/50 border border-muted rounded-lg p-4 mb-6">
               <p className="text-sm text-muted-foreground">
-                <strong>Note:</strong> DoW email servers may delay email delivery up to 25 hours.
-                If you didn't receive your reset email, check your spam/junk folder or request a new reset link.
+                <strong>Note:</strong> DoW email servers may delay email
+                delivery up to 25 hours. If you didn't receive your reset email,
+                check your spam/junk folder or request a new reset link.
               </p>
             </div>
             <Button
@@ -104,9 +114,12 @@ const ResetPassword = (): JSX.Element => {
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           <div className="rounded-lg border border-border bg-card p-8 shadow-sm">
-            <h1 className="text-2xl font-bold text-foreground mb-4">Password Reset Successful</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              Password Reset Successful
+            </h1>
             <p className="text-muted-foreground mb-6">
-              Your password has been reset successfully. Redirecting you to sign in...
+              Your password has been reset successfully. Redirecting you to sign
+              in...
             </p>
           </div>
         </div>
@@ -118,7 +131,9 @@ const ResetPassword = (): JSX.Element => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="rounded-lg border border-border bg-card p-8 shadow-sm">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Set New Password</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Set New Password
+          </h1>
           <p className="text-muted-foreground mb-6">
             Create a new password to regain access to your account.
           </p>
@@ -164,7 +179,9 @@ const ResetPassword = (): JSX.Element => {
             </div>
 
             {errorMessage && (
-              <p className="text-sm font-semibold text-destructive">{errorMessage}</p>
+              <p className="text-sm font-semibold text-destructive">
+                {errorMessage}
+              </p>
             )}
 
             <Button

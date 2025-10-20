@@ -106,7 +106,6 @@ export const SignInDialog = (): JSX.Element => {
     }
   };
 
-
   const renderSignIn = () => (
     <form onSubmit={handleSignIn} className="space-y-5">
       <div className="space-y-2">
@@ -232,9 +231,7 @@ export const SignInDialog = (): JSX.Element => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {state.view === "signIn"
-              ? "Welcome back"
-              : "Reset your password"}
+            {state.view === "signIn" ? "Welcome back" : "Reset your password"}
           </DialogTitle>
           <DialogDescription>
             {state.view === "signIn"
