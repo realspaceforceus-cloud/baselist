@@ -497,6 +497,7 @@ const queueIdByMethod: Record<string, VerificationQueueSummary["id"]> = {
 
 const AdminPanel = (): JSX.Element => {
   const navigate = useNavigate();
+  const { settings, refreshSettings } = useSettings();
   const {
     bases,
     listings,
