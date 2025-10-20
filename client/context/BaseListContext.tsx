@@ -2321,6 +2321,7 @@ export const BaseListProvider = ({
       setCurrentBaseId,
       signInWithPassword,
       signOut,
+      updateUserAvatar,
       submitTransactionRating,
       suspendMember,
       transactions,
