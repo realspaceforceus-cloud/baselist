@@ -60,13 +60,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       setError(errorMsg);
       // Use defaults on error
       setSettings({
-        website_name: "BaseList",
-        website_description: "Buy, sell, and connect—DoD verified.",
-        support_email: "support@yourdomain.com",
-        admin_email: "admin@yourdomain.com",
-        mailing_address: "123 Main Street, Anytown, ST 12345",
-        phone_number: "+1 (123) 456-7890",
-        footer_copyright: `© ${new Date().getFullYear()} BaseList. All rights reserved.`,
+        website_name: "TrustyPCS",
+        website_description: "Military PCS Marketplace - Buy, Sell & Connect with DoD Families",
+        support_email: "support@trustypcs.com",
+        admin_email: "admin@trustypcs.com",
+        mailing_address: "123 Military Lane, Fort Base, ST 12345",
+        phone_number: "+1 (555) PCS-SELL",
+        footer_copyright: `© ${new Date().getFullYear()} TrustyPCS. All rights reserved.`,
         footer_show_links: "true",
       });
     } finally {
