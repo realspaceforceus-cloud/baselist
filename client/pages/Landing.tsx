@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { SEOHead } from "@/components/SEOHead";
 import { useAuthDialog } from "@/context/AuthDialogContext";
 import {
   EMAIL_PATTERN,
