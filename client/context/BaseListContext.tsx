@@ -375,13 +375,13 @@ export const BaseListProvider = ({
 
         if (!response.ok) {
           console.error(`Failed to fetch bases: HTTP ${response.status}`);
-          return;
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           console.error("Invalid content type:", contentType);
-          return;
+          throw new Error("Invalid content type");
         }
 
         const basesData = await response.json();
@@ -389,10 +389,11 @@ export const BaseListProvider = ({
           setBases(basesData);
         } else {
           console.warn("No bases returned from API");
+          throw new Error("No bases returned from API");
         }
       } catch (error) {
-        console.error("Failed to fetch bases:", error);
-        // Keep using mock data if fetch fails
+        console.error("Failed to fetch bases from database:", error);
+        throw error;
       }
     };
     fetchBases();
