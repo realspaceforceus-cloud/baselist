@@ -283,6 +283,7 @@ const Landing = (): JSX.Element => {
         }
 
         setJoinStage("success");
+        setProceedCountdown(5); // Start 5-second countdown
 
         // Show success notification and confetti only once
         if (!hasShownSuccessNotification) {
