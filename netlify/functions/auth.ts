@@ -485,6 +485,34 @@ const handleLogin = async (event: any) => {
   }
 };
 
+const handleMe = async (event: any) => {
+  // GET /api/auth/me - Check if user is authenticated via cookie
+  // This is called on app load to restore session from cookies
+  const client = await pool.connect();
+
+  try {
+    // In a real setup with proper auth middleware, you'd extract user from req.user
+    // For now, we return unauthenticated since we're not using cookies yet
+    // This will be updated once we implement proper cookie-based auth
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        authenticated: false,
+      }),
+    };
+  } catch (error) {
+    console.error("Auth check error:", error);
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Failed to check auth status" }),
+    };
+  } finally {
+    client.release();
+  }
+};
+
 const handleResetPasswordRequest = async (event: any) => {
   const { email } = JSON.parse(event.body || "{}");
 
