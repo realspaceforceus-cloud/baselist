@@ -8,6 +8,7 @@ import { BaseListProvider } from "@/context/BaseListContext";
 import { AuthDialogProvider } from "@/context/AuthDialogContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { SignInDialog } from "@/components/auth/SignInDialog";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ListingDetail from "./pages/ListingDetail";
 import Messages from "./pages/Messages";
 import Moderation from "./pages/Moderation";
