@@ -1719,7 +1719,7 @@ export const BaseListProvider = ({
 
       try {
         // Call backend to create or update thread and add message
-        const response = await fetch("/.netlify/functions/messages", {
+        const response = await fetch("/api/messages", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
