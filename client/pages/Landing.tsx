@@ -70,7 +70,12 @@ const defaultAccountForm = {
 };
 
 const Landing = (): JSX.Element => {
-  const { bases, isAuthenticated, signInWithPassword } = useBaseList();
+  const {
+    bases,
+    isAuthenticated,
+    signInWithPassword,
+    registerNewAccount,
+  } = useBaseList();
   const { openSignIn } = useAuthDialog();
   const navigate = useNavigate();
   const joinSectionRef = useRef<HTMLDivElement>(null);
