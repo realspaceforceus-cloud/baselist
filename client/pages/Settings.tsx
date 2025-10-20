@@ -214,28 +214,42 @@ export const Settings = (): JSX.Element => {
 
     setIsUploadingAvatar(true);
     try {
-      const formData = new FormData();
-      formData.append("avatar", file);
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const dataUrl = e.target?.result as string;
 
-      const response = await fetch("/api/user/profile/avatar", {
-        method: "POST",
-        body: formData,
-      });
+          const response = await fetch("/api/user/profile/avatar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              avatarUrl: dataUrl,
+            }),
+          });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to upload avatar");
-      }
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || "Failed to upload avatar");
+          }
 
-      const data = await response.json();
-      toast.success("Avatar updated successfully");
+          toast.success("Avatar updated successfully");
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : "Failed to upload avatar");
+        } finally {
+          setIsUploadingAvatar(false);
+        }
+      };
+      reader.onerror = () => {
+        toast.error("Failed to read file");
+        setIsUploadingAvatar(false);
+      };
+      reader.readAsDataURL(file);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to upload avatar");
-    } finally {
+      toast.error(error instanceof Error ? error.message : "Failed to process avatar");
       setIsUploadingAvatar(false);
     }
   };
