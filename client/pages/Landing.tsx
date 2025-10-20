@@ -293,22 +293,14 @@ const Landing = (): JSX.Element => {
         const userId = data.userId || pendingUserId;
         setPendingUserId(userId);
 
-        // Register the account in the local context if not already registered
-        if (userId && pendingUsername && pendingBaseId) {
+        // Mark the account as verified - account should already be in context by now
+        // But ensure it's there in case verification happens quickly
+        if (userId) {
           try {
-            // Check if account already exists in context
-            // If not, register it so completeDowVerification can find it
-            registerNewAccount(
-              userId,
-              pendingUsername,
-              pendingEmail,
-              pendingPassword,
-              pendingBaseId,
-            );
-            // Now mark it as verified
             completeDowVerification(userId);
           } catch (error) {
             console.error("Failed to mark account as verified:", error);
+            // Account not found in context yet, that's OK - it will be registered in handleFinishSignup
           }
         }
 
