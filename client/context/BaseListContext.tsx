@@ -2150,7 +2150,6 @@ export const BaseListProvider = ({
   const currentBase = useMemo<Base>(() => {
     return (
       bases.find((base) => base.id === currentBaseId) ??
-      bases.find((base) => base.id === CURRENT_USER.currentBaseId) ??
       bases[0]
     );
   }, [currentBaseId, bases]);
