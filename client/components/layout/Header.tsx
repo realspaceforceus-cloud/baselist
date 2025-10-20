@@ -266,7 +266,7 @@ export const Header = (): JSX.Element => {
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col gap-0">
                     <span className="text-lg font-semibold text-foreground">
-                      {settings.website_name || "BaseList"}
+                      {settings.website_name || "TrustyPCS"}
                     </span>
                     <span className="text-[0.65rem] text-muted-foreground">
                       {settings.website_description ||
