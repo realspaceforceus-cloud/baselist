@@ -22,7 +22,9 @@ export const handler: Handler = async (event) => {
     client = await pool.connect();
 
     if (event.httpMethod === "GET") {
-      const result = await client.query("SELECT key_name, value FROM settings ORDER BY key_name ASC");
+      const result = await client.query(
+        "SELECT key_name, value FROM settings ORDER BY key_name ASC",
+      );
       const settingsObj: Record<string, string> = {};
       result.rows.forEach((row: any) => {
         settingsObj[row.key_name] = row.value;
@@ -81,7 +83,7 @@ export const handler: Handler = async (event) => {
         const stringValue = String(value);
         await client.query(
           "INSERT INTO settings (key_name, value) VALUES ($1, $2) ON CONFLICT (key_name) DO UPDATE SET value = $2, updated_at = NOW()",
-          [key, stringValue]
+          [key, stringValue],
         );
         updatedSettings[key] = stringValue;
       }
