@@ -498,14 +498,53 @@ const handleMe = async (event: any) => {
   const client = await pool.connect();
 
   try {
-    // In a real setup with proper auth middleware, you'd extract user from req.user
-    // For now, we return unauthenticated since we're not using cookies yet
-    // This will be updated once we implement proper cookie-based auth
+    // Extract userId from cookies
+    const cookies = event.headers.cookie || "";
+    const userIdMatch = cookies.match(/userId=([^;]+)/);
+    const userId = userIdMatch ? userIdMatch[1] : null;
+
+    if (!userId) {
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          authenticated: false,
+        }),
+      };
+    }
+
+    // Fetch user from database
+    const userResult = await client.query(
+      `SELECT id, username, email, base_id as "baseId", avatar_url as "avatarUrl", role, dow_verified_at as "dowVerifiedAt"
+       FROM users
+       WHERE id = $1`,
+      [userId],
+    );
+
+    if (userResult.rows.length === 0) {
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          authenticated: false,
+        }),
+      };
+    }
+
+    const user = userResult.rows[0];
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        authenticated: false,
+        authenticated: true,
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+        baseId: user.baseId,
+        avatarUrl: user.avatarUrl,
+        role: user.role,
+        verified: !!user.dowVerifiedAt,
       }),
     };
   } catch (error) {
