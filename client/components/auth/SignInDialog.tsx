@@ -234,16 +234,12 @@ export const SignInDialog = (): JSX.Element => {
           <DialogTitle>
             {state.view === "signIn"
               ? "Welcome back"
-              : state.view === "forgot"
-                ? "Reset your password"
-                : "Set a new password"}
+              : "Reset your password"}
           </DialogTitle>
           <DialogDescription>
             {state.view === "signIn"
               ? "Enter your credentials. We can remember this device for 30 days."
-              : state.view === "forgot"
-                ? "We never store your password. Reset links expire quickly for security."
-                : "Create a new password to regain access."}
+              : "We never store your password. Reset links expire quickly for security."}
           </DialogDescription>
         </DialogHeader>
         {renderBody()}
