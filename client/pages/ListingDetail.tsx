@@ -37,7 +37,7 @@ const ListingDetail = (): JSX.Element => {
 
     const fetchSeller = async () => {
       try {
-        const response = await fetch(`/.netlify/functions/users/${listing.sellerId}`, {
+        const response = await fetch(`/api/user/${listing.sellerId}`, {
           credentials: "include",
         });
         if (response.ok) {
