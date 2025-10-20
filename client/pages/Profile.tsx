@@ -55,10 +55,25 @@ const Profile = (): JSX.Element => {
     if (!memberId || memberId === currentUser.id) {
       return currentUser;
     }
-    return getMemberProfile(memberId) ?? currentUser;
+    return getMemberProfile(memberId) ?? null;
   }, [currentUser, getMemberProfile, memberId]);
 
   const viewingOwnProfile = !memberId || memberId === currentUser.id;
+
+  // Show error if profile not found (e.g., guest trying to view another member)
+  if (profileUser === null) {
+    return (
+      <section className="space-y-6">
+        <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-card">
+          <h1 className="text-3xl font-semibold text-foreground mb-3">Member Not Found</h1>
+          <p className="text-muted-foreground mb-6">This member's profile is not available or you need to sign in to view it.</p>
+          <Link to="/" className="text-primary hover:underline font-semibold">
+            Return to home
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   const profileBase = useMemo(() => {
     if (viewingOwnProfile) {
