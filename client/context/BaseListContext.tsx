@@ -313,12 +313,47 @@ export const BaseListProvider = ({
     Map<string, ReturnType<typeof setTimeout>>
   >(new Map());
 
-  const isAuthenticated = activeAccountId !== null;
+  const isAuthenticated = authUser !== null;
   const currentAccount = useMemo(
-    () => accounts.find((account) => account.id === activeAccountId) ?? null,
-    [accounts, activeAccountId],
+    () => accounts.find((account) => account.id === authUser?.userId) ?? null,
+    [accounts, authUser?.userId],
   );
   const isDowVerified = currentAccount?.isDowVerified ?? false;
+
+  // Sync user state with AuthContext
+  useEffect(() => {
+    if (authUser) {
+      setUser((prev) => ({
+        ...prev,
+        id: authUser.userId,
+        name: authUser.username,
+        verified: authUser.verified,
+        avatarUrl: authUser.avatarUrl,
+        currentBaseId: authUser.baseId,
+        role: authUser.role,
+      }));
+      setActiveAccountId(authUser.userId);
+    } else {
+      setActiveAccountId(null);
+      setUser(
+        {
+          id: "",
+          name: "User",
+          verified: false,
+          memberSince: new Date().toISOString(),
+          avatarUrl: buildAvatarUrl("User"),
+          rating: undefined,
+          completedSales: undefined,
+          lastActiveAt: new Date().toISOString(),
+          currentBaseId: BASES[0]?.id ?? "ramstein-ab",
+          verificationStatus: "Pending verification",
+          role: "member",
+          status: "active",
+          strikes: 0,
+        }
+      );
+    }
+  }, [authUser]);
 
   // Note: Silent re-auth is now handled by AuthProvider context
   // No need to restore session here - AuthContext handles cookies on app load
