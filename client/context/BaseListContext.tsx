@@ -1060,10 +1060,12 @@ export const BaseListProvider = ({
   const signOut = useCallback(() => {
     setActiveAccountId(null);
     setUser((prev) => ({
-      ...CURRENT_USER,
-      currentBaseId: prev.currentBaseId,
+      ...prev,
+      id: "",
+      name: "User",
+      verified: false,
     }));
-    setCurrentBaseIdState(CURRENT_USER.currentBaseId);
+    setCurrentBaseIdState(BASES[0]?.id ?? "ramstein-ab");
   }, []);
 
   const updateUserAvatar = useCallback(
