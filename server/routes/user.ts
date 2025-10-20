@@ -5,6 +5,8 @@ import { store } from "../data/store";
 
 export const userRouter = Router();
 
+const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
+
 function updateUser(userId: string, updater: (u: any) => any) {
   const user = store.getUser(userId);
   if (!user) return null;
@@ -22,15 +24,75 @@ userRouter.post("/profile/update", authenticate, (req, res) => {
     return res.status(400).json({ message: "Invalid username" });
   }
 
+  const trimmedName = name.trim();
+
+  if (!USERNAME_PATTERN.test(trimmedName)) {
+    return res.status(400).json({
+      message: "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
+    });
+  }
+
   const user = store.getUser(userId);
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  const updated = updateUser(userId, (u) => ({ ...u, name: name.trim() }));
+  if (trimmedName !== user.name) {
+    const usernameExists = store
+      .getUsers()
+      .some((u) => u.id !== userId && u.name.toLowerCase() === trimmedName.toLowerCase());
+
+    if (usernameExists) {
+      return res.status(400).json({ message: "Username is already taken" });
+    }
+  }
+
+  const updated = updateUser(userId, (u) => ({ ...u, name: trimmedName }));
   return res.json({
     success: true,
     message: "Profile updated",
     name: updated?.name,
   });
+});
+
+userRouter.post("/profile/avatar", authenticate, async (req, res) => {
+  const userId = req.user?.id;
+
+  if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+  const user = store.getUser(userId);
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  try {
+    // For development, we'll accept base64 or file uploads
+    // In a real app, you'd upload to a cloud storage service like S3
+    if (req.is("application/json")) {
+      const { avatarUrl } = req.body;
+      if (!avatarUrl || typeof avatarUrl !== "string") {
+        return res.status(400).json({ message: "Invalid avatar URL" });
+      }
+      const updated = updateUser(userId, (u) => ({ ...u, avatarUrl }));
+      return res.json({
+        success: true,
+        message: "Avatar updated",
+        avatarUrl: updated?.avatarUrl,
+      });
+    } else {
+      // For file uploads, we'll generate a data URL or placeholder
+      // In production, upload to cloud storage
+      const fileData = Buffer.from("placeholder-avatar-data").toString("base64");
+      const avatarDataUrl = `data:image/png;base64,${fileData}`;
+
+      const updated = updateUser(userId, (u) => ({ ...u, avatarUrl: avatarDataUrl }));
+      return res.json({
+        success: true,
+        message: "Avatar updated",
+        avatarUrl: updated?.avatarUrl,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: error instanceof Error ? error.message : "Failed to upload avatar",
+    });
+  }
 });
 
 userRouter.post("/email/request-change", authenticate, (req, res) => {
