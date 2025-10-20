@@ -729,8 +729,8 @@ export const BaseListProvider = ({
   );
 
   const activateAccount = useCallback(
-    (accountId: string, options?: SignInOptions) => {
-      const existing = accounts.find((item) => item.id === accountId);
+    (accountId: string, options?: SignInOptions, overrideAccount?: BaseListAccount) => {
+      const existing = overrideAccount || accounts.find((item) => item.id === accountId);
       if (!existing) {
         throw new Error("Account no longer exists.");
       }
@@ -767,7 +767,7 @@ export const BaseListProvider = ({
         ),
       );
     },
-    [accounts],
+    [accounts, memberDiscipline],
   );
 
   const signInWithPassword = useCallback(
