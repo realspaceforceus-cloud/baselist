@@ -902,35 +902,41 @@ export const BaseListProvider = ({
     setPendingPasswordReset(null);
   }, []);
 
-  // Remove signInWithPassword that used mock data - we'll use API instead below
-
   const requestPasswordReset = useCallback(
-    (email: string) => {
-      const normalized = email.trim().toLowerCase();
-      const account = accounts.find(
-        (candidate) => candidate.email.toLowerCase() === normalized,
-      );
+    async (email: string) => {
+      try {
+        const response = await fetch("/api/auth/reset-password/request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim() }),
+        });
 
-      if (!account) {
+        if (!response.ok) {
+          const error = await response.json();
+          return null;
+        }
+
+        const data = await response.json();
+        if (data.token) {
+          setPendingPasswordReset({
+            token: data.token,
+            accountId: "",
+            expiresAt: data.expiresAt,
+          });
+          return data.token;
+        }
+
+        return null;
+      } catch (error) {
+        console.error("Password reset request failed:", error);
         return null;
       }
-
-      const token = `reset-${crypto.randomUUID()}`;
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
-
-      setPendingPasswordReset({
-        token,
-        accountId: account.id,
-        expiresAt,
-      });
-
-      return token;
     },
-    [accounts],
+    [],
   );
 
   const completePasswordReset = useCallback(
-    (token: string, newPassword: string) => {
+    async (token: string, newPassword: string) => {
       if (!pendingPasswordReset || pendingPasswordReset.token !== token) {
         throw new Error("Reset link has expired or is invalid.");
       }
@@ -945,22 +951,30 @@ export const BaseListProvider = ({
         throw new Error("Reset link has expired. Request a new one.");
       }
 
-      setAccounts((prev) =>
-        prev.map((account) =>
-          account.id === pendingPasswordReset.accountId
-            ? {
-                ...account,
-                password: newPassword,
-                rememberDeviceUntil: undefined,
-              }
-            : account,
-        ),
-      );
+      try {
+        const response = await fetch("/api/auth/reset-password/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token,
+            newPassword,
+          }),
+        });
 
-      setPendingPasswordReset(null);
-      toast.success("Password updated", {
-        description: "Use your new password to sign in.",
-      });
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to reset password");
+        }
+
+        setPendingPasswordReset(null);
+        toast.success("Password updated", {
+          description: "Use your new password to sign in.",
+        });
+      } catch (error) {
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to reset password");
+      }
     },
     [pendingPasswordReset],
   );
