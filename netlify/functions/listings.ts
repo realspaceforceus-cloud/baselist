@@ -102,7 +102,7 @@ export const handler: Handler = async (event) => {
           sellerId,
           baseId,
           description,
-          JSON.stringify(imageUrls || []),
+          imageUrls || [],
         ],
       );
 
