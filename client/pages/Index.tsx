@@ -44,7 +44,8 @@ const Index = (): JSX.Element => {
   }, [activeFilter, currentBaseId, searchQuery]);
 
   const sponsorPlacement = useMemo(
-    () => sponsorPlacements.find((placement) => placement.baseId === currentBaseId),
+    () =>
+      sponsorPlacements.find((placement) => placement.baseId === currentBaseId),
     [currentBaseId, sponsorPlacements],
   );
 
@@ -137,7 +138,8 @@ const Index = (): JSX.Element => {
                 Verify DoW access to post and message.
               </p>
               <p className="text-xs text-muted-foreground">
-                Use your .mil email, an invite code, or a quick manual check to unlock posting and DMs.
+                Use your .mil email, an invite code, or a quick manual check to
+                unlock posting and DMs.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -183,7 +185,9 @@ const Index = (): JSX.Element => {
                 <span className="px-1">•</span>
                 <span>
                   Matching “
-                  <span className="font-medium text-foreground">{searchQuery}</span>
+                  <span className="font-medium text-foreground">
+                    {searchQuery}
+                  </span>
                   ”
                 </span>
               </>

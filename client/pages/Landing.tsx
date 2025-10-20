@@ -959,7 +959,11 @@ const Landing = (): JSX.Element => {
                 onClick={handleFinishSignup}
                 disabled={isSubmitting || proceedCountdown > 0}
               >
-                {isSubmitting ? "Logging in..." : proceedCountdown > 0 ? `Please wait... (${proceedCountdown}s)` : "Proceed to your account"}
+                {isSubmitting
+                  ? "Logging in..."
+                  : proceedCountdown > 0
+                    ? `Please wait... (${proceedCountdown}s)`
+                    : "Proceed to your account"}
               </Button>
             </div>
           ) : null}

@@ -335,7 +335,9 @@ export const BaseListProvider = ({
     SponsorPlacement[]
   >(() => [...SPONSOR_PLACEMENTS]);
   // Only show mock messages for unauthenticated users
-  const [messageThreads, setMessageThreads] = useState<MessageThread[]>(() => []);
+  const [messageThreads, setMessageThreads] = useState<MessageThread[]>(
+    () => [],
+  );
   const [transactions, setTransactions] = useState<TransactionHistoryEntry[]>(
     [],
   );
