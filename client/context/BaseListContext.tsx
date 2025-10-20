@@ -793,19 +793,22 @@ export const BaseListProvider = ({
 
           if (verifyCheckResponse.ok) {
             const verifyData = await verifyCheckResponse.json();
-            if (verifyData.status !== "verified") {
+            if (verifyData.status === "verified") {
+              // Backend confirms verification - mark as verified locally
+              setAccounts((prev) =>
+                prev.map((item) =>
+                  item.id === account.id
+                    ? { ...item, isDowVerified: true }
+                    : item,
+                ),
+              );
+              // Update account object for this sign-in flow
+              account = { ...account, isDowVerified: true };
+            } else {
               throw new Error(
                 "Confirm your DoW email from the link we sent before signing in.",
               );
             }
-            // Backend confirms verification - mark as verified locally
-            setAccounts((prev) =>
-              prev.map((item) =>
-                item.id === account.id
-                  ? { ...item, isDowVerified: true }
-                  : item,
-              ),
-            );
           } else {
             throw new Error(
               "Confirm your DoW email from the link we sent before signing in.",
