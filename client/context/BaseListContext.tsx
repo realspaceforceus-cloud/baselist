@@ -2124,14 +2124,6 @@ export const BaseListProvider = ({
     });
   }, [isAuthenticated, listings, messageThreads, navigate, user.id]);
 
-  useEffect(() => {
-    return () => {
-      simulatedReplyTimers.current.forEach((timer) => {
-        clearTimeout(timer);
-      });
-      simulatedReplyTimers.current.clear();
-    };
-  }, []);
 
   const currentBase = useMemo<Base>(() => {
     return bases.find((base) => base.id === currentBaseId) ?? bases[0];
