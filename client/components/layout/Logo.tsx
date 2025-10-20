@@ -8,7 +8,7 @@ export const Logo = (): JSX.Element => {
       aria-label="TrustyPCS home"
     >
       <span className="text-2xl font-semibold tracking-tight text-foreground">
-        <span className="font-normal">Trusty</span>
+        <span className="font-normal">trusty</span>
         <span className="font-bold">PCS</span>
       </span>
     </Link>
