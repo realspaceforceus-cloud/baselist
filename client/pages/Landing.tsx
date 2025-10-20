@@ -796,6 +796,42 @@ const Landing = (): JSX.Element => {
                 )}
               </div>
 
+              <div className="space-y-2">
+                <label
+                  htmlFor="signup-base"
+                  className="text-sm font-semibold text-foreground"
+                >
+                  Select your base
+                </label>
+                <select
+                  id="signup-base"
+                  value={selectedBaseId}
+                  onChange={(event) => setSelectedBaseId(event.target.value)}
+                  className="h-11 w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground placeholder-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-50"
+                  required
+                  disabled={isSubmitting}
+                >
+                  <option value="">Choose your base...</option>
+                  {bases.map((base) => (
+                    <option key={base.id} value={base.id}>
+                      {base.name} ({base.abbreviation})
+                    </option>
+                  ))}
+                </select>
+                {!selectedBaseId ? (
+                  <p className="text-xs text-muted-foreground">
+                    Select the military base where you're stationed.
+                  </p>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => setShowExpansionForm(true)}
+                  className="text-xs font-semibold text-primary hover:underline"
+                >
+                  My base isn't listed → Request your base
+                </button>
+              </div>
+
               <div className="flex items-start gap-3 rounded-2xl border border-border bg-background/80 p-4 text-sm text-muted-foreground">
                 <Checkbox
                   id="rules"
