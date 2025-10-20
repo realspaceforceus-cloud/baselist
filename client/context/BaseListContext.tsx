@@ -397,7 +397,7 @@ export const BaseListProvider = ({
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch("/.netlify/functions/listings", {
+        const response = await fetch("/api/listings", {
           credentials: "include",
         });
 
