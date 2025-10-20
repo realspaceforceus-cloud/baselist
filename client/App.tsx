@@ -7,6 +7,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { BaseListProvider } from "@/context/BaseListContext";
 import { AuthDialogProvider } from "@/context/AuthDialogContext";
 import { SettingsProvider } from "@/context/SettingsContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { SignInDialog } from "@/components/auth/SignInDialog";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ListingDetail from "./pages/ListingDetail";
