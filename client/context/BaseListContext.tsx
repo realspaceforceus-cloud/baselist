@@ -835,8 +835,6 @@ export const BaseListProvider = ({
         );
       });
 
-
-
       // If not found locally, check backend
       if (!account) {
         try {
@@ -845,7 +843,8 @@ export const BaseListProvider = ({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: normalized, password }),
           });
-          if (!res.ok) throw new Error((await res.json()).error || "Login failed");
+          if (!res.ok)
+            throw new Error((await res.json()).error || "Login failed");
           const data = await res.json();
           const newAccount: BaseListAccount = {
             id: data.userId,
