@@ -180,7 +180,7 @@ export const MyListings = (): JSX.Element => {
                         className="rounded-lg h-8 text-xs"
                         asChild
                       >
-                        <Link to={`/listing/${listing.id}`}>
+                        <Link to={`/listing/${generateSlug(listing.title, listing.id)}`}>
                           <Eye className="h-3.5 w-3.5" />
                           View
                         </Link>
