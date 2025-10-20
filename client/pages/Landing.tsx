@@ -1159,7 +1159,15 @@ const Landing = (): JSX.Element => {
         <section className="px-4">
           <div className="mx-auto flex max-w-4xl flex-col items-center gap-5 text-center">
             <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-              {seoConfig.primary_tagline}
+              {seoConfig.primary_tagline.includes('—') ? (
+                <>
+                  {seoConfig.primary_tagline.split('—')[0].trim()}
+                  <br />
+                  {seoConfig.primary_tagline.split('—')[1].trim()}
+                </>
+              ) : (
+                seoConfig.primary_tagline
+              )}
             </h1>
             <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
               {seoConfig.secondary_tagline}
