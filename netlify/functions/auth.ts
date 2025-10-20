@@ -437,7 +437,7 @@ const handleLogin = async (event: any) => {
 
     // Find user by email
     const userResult = await client.query(
-      "SELECT id, email, dow_verified_at FROM users WHERE email = $1",
+      "SELECT id, username, email, base_id, avatar_url, role, dow_verified_at FROM users WHERE email = $1",
       [trimmedEmail],
     );
 
@@ -466,7 +466,11 @@ const handleLogin = async (event: any) => {
       body: JSON.stringify({
         success: true,
         userId: user.id,
+        username: user.username,
         email: user.email,
+        baseId: user.base_id,
+        avatarUrl: user.avatar_url,
+        role: user.role,
         verified: true,
       }),
     };
