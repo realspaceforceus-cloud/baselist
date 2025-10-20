@@ -427,7 +427,7 @@ export const BaseListProvider = ({
       }
 
       try {
-        const response = await fetch("/.netlify/functions/messages/threads", {
+        const response = await fetch("/api/messages/threads", {
           credentials: "include",
         });
 
