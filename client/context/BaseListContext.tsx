@@ -1151,9 +1151,7 @@ export const BaseListProvider = ({
       }
       setAccounts((prev) =>
         prev.map((account) =>
-          account.id === activeAccountId
-            ? { ...account, avatarUrl }
-            : account,
+          account.id === activeAccountId ? { ...account, avatarUrl } : account,
         ),
       );
     },
