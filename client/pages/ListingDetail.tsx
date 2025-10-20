@@ -77,7 +77,7 @@ const ListingDetail = (): JSX.Element => {
       return;
     }
 
-    if (listings.find((item) => item.id.startsWith(actualListingId))) {
+    if (listings.find((item) => item.id === actualListingId)) {
       setIsLoading(false);
       return;
     }
