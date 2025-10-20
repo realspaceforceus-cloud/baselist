@@ -531,7 +531,8 @@ const handleResetPasswordRequest = async (event: any) => {
     );
 
     // Send password reset email
-    const resetLink = `${process.env.SITE_URL || "https://trustypcs.com"}/reset-password?token=${encodeURIComponent(token)}`;
+    const siteUrl = process.env.SITE_URL || "https://trustypcs.com";
+    const resetLink = `${siteUrl}/reset-password?token=${encodeURIComponent(token)}`;
     const emailHtml = `
       <h2>Password Reset Request</h2>
       <p>We received a request to reset your TrustyPCS password. Click the link below to set a new password:</p>
