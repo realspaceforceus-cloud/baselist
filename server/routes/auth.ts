@@ -16,9 +16,18 @@ import { loginLimiter } from "../security/rateLimits";
 
 const loginSchema = z.object({
   identifier: z.string().trim().min(3),
-  password: z.string().min(8),
+  password: z.string().min(1),
   rememberDevice: z.boolean().optional(),
   deviceId: z.string().trim().min(6).default(() => randomUUID()),
+});
+
+const passwordResetSchema = z.object({
+  email: z.string().email().trim(),
+});
+
+const completeResetSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(8),
 });
 
 const refreshSchema = z.object({
