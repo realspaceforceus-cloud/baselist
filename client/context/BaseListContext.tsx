@@ -839,7 +839,39 @@ export const BaseListProvider = ({
         throw new Error("We couldn’t find an account with those details.");
       }
 
-      if (account.password !== password) {
+      // If not found locally, check backend
+      if (!account) {
+        try {
+          const res = await fetch("/.netlify/functions/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: normalized, password }),
+          });
+          if (!res.ok) throw new Error((await res.json()).error || "Login failed");
+          const data = await res.json();
+          const newAccount: BaseListAccount = {
+            id: data.userId,
+            username: normalized.includes("@") ? "" : normalized,
+            email: normalized.includes("@") ? normalized : "",
+            password,
+            isDowVerified: data.verified ?? true,
+            baseId: "",
+            createdAt: new Date().toISOString(),
+            lastLoginAt: new Date().toISOString(),
+            rememberDeviceUntil: undefined,
+            avatarUrl: buildAvatarUrl(normalized),
+            verificationToken: null,
+            verificationRequestedAt: null,
+            role: "member",
+          };
+          setAccounts((prev) => [newAccount, ...prev]);
+          account = newAccount;
+        } catch (e) {
+          throw e instanceof Error ? e : new Error("Login failed");
+        }
+      }
+
+      if (!account || account.password !== password) {
         throw new Error("Incorrect password. Try again.");
       }
 
