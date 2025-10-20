@@ -795,8 +795,7 @@ const Landing = (): JSX.Element => {
                   )
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    Use {PASSWORD_MIN_LENGTH}+ characters. A simple phrase works
-                    great.
+                    Use {PASSWORD_MIN_LENGTH}+ characters.
                   </p>
                 )}
               </div>
