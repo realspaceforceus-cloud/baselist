@@ -18,6 +18,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Silent re-auth on app startup - restore session from cookies
   useEffect(() => {
     const restoreSession = async () => {
+      // On dev server, skip session restore (Netlify endpoints don't exist)
+      if (import.meta.env.DEV) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetchMe();
         if (response.authenticated && response.user) {
