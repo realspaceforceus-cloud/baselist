@@ -105,6 +105,24 @@ const ListingDetail = (): JSX.Element => {
     [bases, listing?.baseId],
   );
 
+  if (isLoading) {
+    return (
+      <section className="space-y-4">
+        <Button
+          variant="ghost"
+          className="-ml-2 w-fit gap-2 rounded-full px-3"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden />
+          Back
+        </Button>
+        <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
+          Loading listing...
+        </div>
+      </section>
+    );
+  }
+
   if (!listing) {
     return (
       <section className="space-y-4">
