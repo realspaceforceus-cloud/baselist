@@ -1759,7 +1759,7 @@ export const BaseListProvider = ({
   );
 
   const sendMessageToSeller = useCallback(
-    (listingId: string, sellerId: string, messageBody: string) => {
+    async (listingId: string, sellerId: string, messageBody: string): Promise<MessageThread> => {
       if (!isAuthenticated) {
         throw new Error("Sign in to send messages.");
       }
@@ -1772,88 +1772,45 @@ export const BaseListProvider = ({
         throw new Error("Message body cannot be empty");
       }
 
-      const normalizedMessage = trimmedMessage.toLowerCase();
-      const shouldInitiateTransaction =
-        normalizedMessage === "offer accepted" ||
-        normalizedMessage === "mark sold";
+      try {
+        // Call backend to create or update thread and add message
+        const response = await fetch("/.netlify/functions/messages", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            listingId,
+            recipientId: sellerId,
+            body: trimmedMessage,
+          }),
+        });
 
-      const timestamp = new Date().toISOString();
-      const newMessage: Message = {
-        id: `msg-${crypto.randomUUID()}`,
-        authorId: user.id,
-        body: trimmedMessage,
-        sentAt: timestamp,
-        type: "text",
-      };
-
-      let targetThread: MessageThread | undefined;
-      let shouldScheduleReply = false;
-
-      setMessageThreads((prev) => {
-        const existingIndex = prev.findIndex(
-          (thread) =>
-            thread.listingId === listingId &&
-            thread.participants.includes(user.id) &&
-            thread.participants.includes(sellerId),
-        );
-
-        if (existingIndex !== -1) {
-          const existingThread = prev[existingIndex];
-          const updatedThread: MessageThread = {
-            ...existingThread,
-            messages: [...existingThread.messages, newMessage],
-            lastReadAt: {
-              ...existingThread.lastReadAt,
-              [user.id]: timestamp,
-            },
-            archivedBy:
-              existingThread.archivedBy?.filter((id) => id !== user.id) ?? [],
-            deletedBy:
-              existingThread.deletedBy?.filter((id) => id !== user.id) ?? [],
-          };
-
-          targetThread = updatedThread;
-
-          const remaining = prev.filter((_, index) => index !== existingIndex);
-          return [updatedThread, ...remaining];
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err?.error || "Failed to send message");
         }
 
-        const freshThread: MessageThread = {
-          id: `thread-${crypto.randomUUID()}`,
-          listingId,
-          participants: [user.id, sellerId],
-          messages: [newMessage],
-          lastReadAt: {
-            [user.id]: timestamp,
-          },
-          status: "active",
-          archivedBy: [],
-          deletedBy: [],
-        };
+        const result = await response.json();
+        const threadFromBackend = result.thread as MessageThread;
 
-        targetThread = freshThread;
-        shouldScheduleReply = true;
+        // Update local state with the thread from backend
+        setMessageThreads((prev) => {
+          const existingIndex = prev.findIndex((t) => t.id === threadFromBackend.id);
+          if (existingIndex !== -1) {
+            // Update existing thread
+            const remaining = prev.filter((_, i) => i !== existingIndex);
+            return [threadFromBackend, ...remaining];
+          }
+          // Add new thread
+          return [threadFromBackend, ...prev];
+        });
 
-        return [freshThread, ...prev];
-      });
-
-      if (shouldInitiateTransaction && targetThread) {
-        initiateTransaction(targetThread.id, user.id);
+        return threadFromBackend;
+      } catch (error) {
+        throw error instanceof Error ? error : new Error("Failed to send message");
       }
-
-      if (shouldScheduleReply && targetThread) {
-        scheduleSimulatedReply(targetThread, sellerId);
-      }
-
-      return targetThread!;
     },
-    [
-      initiateTransaction,
-      isAuthenticated,
-      isDowVerified,
-      scheduleSimulatedReply,
-      user.id,
-    ],
+    [isAuthenticated, isDowVerified],
   );
 
   const submitTransactionRating = useCallback(
