@@ -833,7 +833,7 @@ export const BaseListProvider = ({
         }
       }
 
-      activateAccount(account.id, options);
+      activateAccount(account.id, options, account);
       toast.success("Welcome back", {
         description: options?.rememberDevice
           ? "You’re signed in. We’ll remember this device for 30 days."
