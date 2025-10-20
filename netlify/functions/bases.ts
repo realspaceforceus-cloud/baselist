@@ -33,8 +33,9 @@ export const handler: Handler = async (event) => {
 
   // GET /api/bases/:id - get specific base
   if (method === "GET" && path.startsWith("/")) {
-    const client = await pool.connect();
+    let client;
     try {
+      client = await pool.connect();
       const id = path.slice(1);
       const result = await client.query("SELECT * FROM bases WHERE id = $1", [
         id,
@@ -43,28 +44,33 @@ export const handler: Handler = async (event) => {
       if (result.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Base not found" }),
         };
       }
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.rows[0]),
       };
     } catch (err) {
+      console.error("Error fetching base:", err);
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 500,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
-      client.release();
+      if (client) client.release();
     }
   }
 
   return {
     statusCode: 404,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ error: "Not found" }),
   };
 };
