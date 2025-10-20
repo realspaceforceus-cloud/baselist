@@ -55,7 +55,6 @@ import {
 } from "@/components/admin/sections";
 import { useBaseList } from "@/context/BaseListContext";
 import { useSettings } from "@/context/SettingsContext";
-import { SELLERS } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
 import type { AdminUserDTO } from "@shared/api";
 import { formatDistanceToNow } from "date-fns";
