@@ -791,7 +791,7 @@ export const BaseListProvider = ({
       activateAccount(account.id, options);
       toast.success("Welcome back", {
         description: options?.rememberDevice
-          ? "You’re signed in. We’ll remember this device for 30 days."
+          ? "You’re signed in. We��ll remember this device for 30 days."
           : "You’re signed in. We’ll keep you active for this session.",
       });
     },
@@ -2073,6 +2073,7 @@ export const BaseListProvider = ({
       reinstateMember,
       issueStrike,
       createAccount,
+      registerNewAccount,
       activateAccount,
       signInWithPassword,
       requestPasswordReset,
