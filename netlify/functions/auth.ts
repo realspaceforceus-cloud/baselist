@@ -3,6 +3,63 @@ import { pool } from "./db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 
+const sendEmail = async (
+  to: string,
+  subject: string,
+  html: string,
+): Promise<boolean> => {
+  try {
+    const apiKey = process.env.SENDGRID_API_KEY;
+    const fromEmail = process.env.SENDGRID_FROM_EMAIL || "noreply@trustypcs.com";
+
+    if (!apiKey) {
+      console.log("[EMAIL] SendGrid API key not configured - logging instead");
+      console.log(`[EMAIL] To: ${to}`);
+      console.log(`[EMAIL] Subject: ${subject}`);
+      return true;
+    }
+
+    const requestBody = {
+      personalizations: [
+        {
+          to: [{ email: to }],
+        },
+      ],
+      from: {
+        email: fromEmail,
+      },
+      subject,
+      content: [
+        {
+          type: "text/html",
+          value: html,
+        },
+      ],
+    };
+
+    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(`[EMAIL] SendGrid error (${response.status}):`, error);
+      return false;
+    }
+
+    console.log(`[EMAIL] Email sent successfully to ${to}`);
+    return true;
+  } catch (error) {
+    console.error("[EMAIL] Error sending email:", error);
+    return false;
+  }
+};
+
 const ALLOWED_DOW_DOMAINS = [
   ".mil",
   ".defense.gov",
