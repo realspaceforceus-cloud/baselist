@@ -13,7 +13,7 @@ export const Footer = (): JSX.Element => {
   const { settings } = useSettings();
 
   const showFooterLinks = settings.footer_show_links !== "false";
-  const copyrightText = settings.footer_copyright || "© 2025 BaseList. All rights reserved.";
+  const copyrightText = settings.footer_copyright || "© 2025 TrustyPCS. All rights reserved.";
   const mailingAddress = settings.mailing_address;
   const supportEmail = settings.support_email;
 
