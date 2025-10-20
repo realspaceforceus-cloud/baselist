@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { useBaseList } from "@/context/BaseListContext";
+import { useAuth } from "@/context/AuthContext";
+import { SplashScreen } from "@/components/SplashScreen";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -11,15 +12,20 @@ export const ProtectedRoute = ({
   children,
   requireAdmin = false,
 }: ProtectedRouteProps): JSX.Element => {
-  const { isAuthenticated, isModerator } = useBaseList();
+  const { loading, user } = useAuth();
 
-  // If not authenticated, redirect to home (landing page will be shown)
-  if (!isAuthenticated) {
+  // Show splash screen while authenticating
+  if (loading) {
+    return <SplashScreen />;
+  }
+
+  // If not authenticated, redirect to home
+  if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // If admin is required but user is not a moderator, redirect to home
-  if (requireAdmin && !isModerator) {
+  // If admin is required but user is not admin, redirect to home
+  if (requireAdmin && user.role !== "admin") {
     return <Navigate to="/" replace />;
   }
 
