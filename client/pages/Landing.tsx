@@ -400,6 +400,12 @@ const Landing = (): JSX.Element => {
       return;
     }
 
+    if (isProceedingToAccount) {
+      return; // Prevent double-clicks
+    }
+
+    setIsProceedingToAccount(true);
+
     if (verificationCheckInterval) {
       clearInterval(verificationCheckInterval);
       setVerificationCheckInterval(null);
@@ -434,14 +440,10 @@ const Landing = (): JSX.Element => {
       setIsVerificationPending(false);
       setTimeRemaining(1800);
 
-      toast.success("Welcome to BaseList!", {
-        description: "You can now post listings and message other members.",
-      });
-
       navigate("/");
     } catch (error) {
       console.error("Auto-login failed:", error);
-      // Just navigate without error toast - silent navigation to login
+      setIsProceedingToAccount(false); // Allow retry
       navigate("/");
     }
   };
