@@ -14,6 +14,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
+import { uploadImageToCloudinary } from "@/lib/cloudinaryClient";
 import { LISTING_CATEGORIES } from "@/data/mock";
 import type { Listing, ListingCategory } from "@/types";
 
