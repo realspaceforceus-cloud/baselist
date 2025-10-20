@@ -155,7 +155,8 @@ const handleSignup = async (event: any) => {
         username: trimmedUsername,
         email: trimmedEmail,
         baseId,
-        message: "Account created. Send an email to verify@yourdomain.com with your verification code in the subject to complete signup.",
+        message:
+          "Account created. Send an email to verify@yourdomain.com with your verification code in the subject to complete signup.",
       }),
     };
   } catch (error) {

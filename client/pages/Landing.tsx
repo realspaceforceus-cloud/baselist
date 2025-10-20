@@ -1070,18 +1070,15 @@ const Landing = (): JSX.Element => {
                     return;
                   }
                   try {
-                    const response = await fetch(
-                      "/.netlify/functions/email",
-                      {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          type: "base_request",
-                          baseName: expansionEmail,
-                          email: accountForm.email || "unknown",
-                        }),
-                      },
-                    );
+                    const response = await fetch("/.netlify/functions/email", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        type: "base_request",
+                        baseName: expansionEmail,
+                        email: accountForm.email || "unknown",
+                      }),
+                    });
 
                     if (response.ok) {
                       toast.success("Base request sent!", {
@@ -1111,14 +1108,12 @@ const Landing = (): JSX.Element => {
                     required
                   />
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Tell us the name of your military base. We'll add it shortly.
+                    Tell us the name of your military base. We'll add it
+                    shortly.
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <Button
-                    type="submit"
-                    className="flex-1 rounded-full"
-                  >
+                  <Button type="submit" className="flex-1 rounded-full">
                     Send request
                   </Button>
                   <Button
