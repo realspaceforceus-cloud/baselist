@@ -81,6 +81,8 @@ const Landing = (): JSX.Element => {
     completeDowVerification,
   } = useBaseList();
   const { openSignIn } = useAuthDialog();
+  const { settings } = useSettings();
+  const seoConfig = getSEOConfig(settings as Record<string, string>);
   const navigate = useNavigate();
   const joinSectionRef = useRef<HTMLDivElement>(null);
 
