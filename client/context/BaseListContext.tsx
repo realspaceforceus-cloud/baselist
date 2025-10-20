@@ -846,8 +846,10 @@ export const BaseListProvider = ({
           if (!res.ok)
             throw new Error((await res.json()).error || "Login failed");
           const data = await res.json();
-          const username = data.username || (normalized.includes("@") ? "" : normalized);
-          const email = data.email || (normalized.includes("@") ? normalized : "");
+          const username =
+            data.username || (normalized.includes("@") ? "" : normalized);
+          const email =
+            data.email || (normalized.includes("@") ? normalized : "");
           const newAccount: BaseListAccount = {
             id: data.userId,
             username,
