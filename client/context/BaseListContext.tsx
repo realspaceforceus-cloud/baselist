@@ -407,6 +407,32 @@ export const BaseListProvider = ({
     fetchBases();
   }, []);
 
+  // Fetch listings from the database
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/listings", {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          console.error(`Failed to fetch listings: HTTP ${response.status}`);
+          return;
+        }
+
+        const listingsData = await response.json();
+        if (Array.isArray(listingsData)) {
+          setListings(listingsData.sort(
+            (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
+          ));
+        }
+      } catch (error) {
+        console.error("Failed to fetch listings from database:", error);
+      }
+    };
+    fetchListings();
+  }, []);
+
   useEffect(() => {
     if (currentAccount) {
       setUser(
