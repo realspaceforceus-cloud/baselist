@@ -56,10 +56,9 @@ export const handler: Handler = async (event) => {
       const id = path.slice(1);
 
       // First try exact match
-      let result = await client.query(
-        "SELECT * FROM listings WHERE id = $1",
-        [id],
-      );
+      let result = await client.query("SELECT * FROM listings WHERE id = $1", [
+        id,
+      ]);
 
       // If not found and id looks like a UUID prefix (8 chars), try prefix match
       if (result.rows.length === 0 && /^[a-f0-9-]{8}$/.test(id)) {
