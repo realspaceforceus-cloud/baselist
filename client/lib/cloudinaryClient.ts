@@ -1,12 +1,28 @@
 const CLOUDINARY_CLOUD_NAME = "dc4qnchym";
-const CLOUDINARY_UPLOAD_PRESET = "trustypcs";
+const CLOUDINARY_API_KEY = "765912238265989";
 
 export const uploadImageToCloudinary = async (file: File): Promise<string> => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
   try {
+    // Get signature from backend
+    const sigResponse = await fetch("/.netlify/functions/cloudinary-signature", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!sigResponse.ok) {
+      throw new Error("Failed to get upload signature");
+    }
+
+    const { timestamp, signature } = await sigResponse.json();
+
+    // Prepare form data for signed upload
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("api_key", CLOUDINARY_API_KEY);
+    formData.append("timestamp", String(timestamp));
+    formData.append("signature", signature);
+
+    // Upload to Cloudinary using signed upload
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
