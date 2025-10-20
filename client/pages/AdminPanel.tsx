@@ -35,6 +35,7 @@ import {
   RolesSection,
   SecuritySection,
   SettingsSection,
+  SEOSection,
   SponsorsSection,
   UsersSection,
   VerificationSection,
@@ -1070,7 +1071,7 @@ const AdminPanel = (): JSX.Element => {
           `Approved pending email change for ${getMemberName(userId)}: ${newEmail}`,
         );
         toast.success("Email change approved", {
-          description: `${getMemberName(userId)} → ${newEmail}`,
+          description: `${getMemberName(userId)} ��� ${newEmail}`,
         });
         addNotice({
           userId,
