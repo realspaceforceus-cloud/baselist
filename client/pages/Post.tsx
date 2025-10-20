@@ -43,7 +43,8 @@ const Post = (): JSX.Element => {
   const [category, setCategory] = useState<ListingCategory | "">("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [submissionState, setSubmissionState] = useState<SubmissionState>("idle");
+  const [submissionState, setSubmissionState] =
+    useState<SubmissionState>("idle");
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [savedListingId, setSavedListingId] = useState<string | null>(null);
 
@@ -202,7 +203,9 @@ const Post = (): JSX.Element => {
       }, 1500);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Check your files and try again.";
+        error instanceof Error
+          ? error.message
+          : "Check your files and try again.";
       setSubmissionError(errorMessage);
       setSubmissionState("error");
     }

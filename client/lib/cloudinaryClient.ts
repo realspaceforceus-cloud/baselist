@@ -4,10 +4,13 @@ const CLOUDINARY_API_KEY = "765912238265989";
 export const uploadImageToCloudinary = async (file: File): Promise<string> => {
   try {
     // Get signature from backend
-    const sigResponse = await fetch("/.netlify/functions/cloudinary-signature", {
-      method: "POST",
-      credentials: "include",
-    });
+    const sigResponse = await fetch(
+      "/.netlify/functions/cloudinary-signature",
+      {
+        method: "POST",
+        credentials: "include",
+      },
+    );
 
     if (!sigResponse.ok) {
       throw new Error("Failed to get upload signature");
@@ -28,19 +31,21 @@ export const uploadImageToCloudinary = async (file: File): Promise<string> => {
       {
         method: "POST",
         body: formData,
-      }
+      },
     );
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error?.message || "Failed to upload image to Cloudinary");
+      throw new Error(
+        error.error?.message || "Failed to upload image to Cloudinary",
+      );
     }
 
     const data = await response.json();
     return data.secure_url;
   } catch (error) {
     throw new Error(
-      error instanceof Error ? error.message : "Failed to upload image"
+      error instanceof Error ? error.message : "Failed to upload image",
     );
   }
 };
