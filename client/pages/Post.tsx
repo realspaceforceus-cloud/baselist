@@ -27,6 +27,8 @@ type FieldErrorKey = "photos" | "title" | "price" | "category" | "description";
 
 type FieldErrors = Partial<Record<FieldErrorKey, string>>;
 
+type SubmissionState = "idle" | "submitting" | "success" | "error";
+
 const MAX_PHOTOS = 6;
 
 const readFileAsDataUrl = (file: File): Promise<string> => {
