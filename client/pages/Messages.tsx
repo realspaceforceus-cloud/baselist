@@ -61,7 +61,7 @@ type ThreadSummaryStatus = "active" | "completed" | "archived";
 interface ThreadSummary {
   thread: MessageThread;
   listing: Listing | undefined;
-  seller: (typeof SELLERS)[number] | undefined;
+  seller: UserProfile | undefined;
   partnerId: string | undefined;
   partnerName: string;
   lastMessage: Message | undefined;
