@@ -102,6 +102,7 @@ const Landing = (): JSX.Element => {
   const [pendingUsername, setPendingUsername] = useState<string>("");
   const [pendingBaseId, setPendingBaseId] = useState<string>("");
   const [proceedCountdown, setProceedCountdown] = useState(0);
+  const countdownStartedRef = useRef(false);
 
   const trimmedUsername = accountForm.username.trim();
   const normalizedEmail = accountForm.email.trim().toLowerCase();
