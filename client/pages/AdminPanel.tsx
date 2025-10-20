@@ -2103,6 +2103,25 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "settings" ? <SettingsSection /> : null}
+          {activeSection === "seo" ? (
+            <SEOSection
+              seoSettings={settings as Record<string, string>}
+              onSave={async (data) => {
+                const response = await fetch("/api/settings", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                  const error = await response.json();
+                  throw new Error(error.error || "Failed to save SEO settings");
+                }
+
+                await refreshSettings();
+              }}
+            />
+          ) : null}
         </div>
       </div>
     </div>
