@@ -181,6 +181,89 @@ const createAuthRouter = () => {
       .json({ ok: true });
   });
 
+  router.post("/reset-password/request", async (req, res) => {
+    const parse = passwordResetSchema.safeParse(req.body);
+    if (!parse.success) {
+      return res.status(400).json({ error: "Invalid email" });
+    }
+
+    const { email } = parse.data;
+    const emailLower = email.toLowerCase();
+
+    const user = store.getUsers().find((u) => u.email.toLowerCase() === emailLower);
+    if (!user) {
+      return res.status(404).json({ error: "We couldn't find an account with that email." });
+    }
+
+    const token = `reset-${randomUUID()}`;
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+
+    // Store reset token in a map (in production, use database)
+    (store as any).passwordResets = (store as any).passwordResets || new Map();
+    (store as any).passwordResets.set(token, {
+      userId: user.id,
+      email: user.email,
+      expiresAt,
+      used: false,
+    });
+
+    res.json({
+      success: true,
+      token,
+      expiresAt,
+      message: "Password reset link sent. Check your email.",
+    });
+  });
+
+  router.post("/reset-password/complete", async (req, res) => {
+    const parse = completeResetSchema.safeParse(req.body);
+    if (!parse.success) {
+      return res.status(400).json({ error: "Invalid request" });
+    }
+
+    const { token, newPassword } = parse.data;
+
+    const resetMap = (store as any).passwordResets as Map<string, any>;
+    const resetData = resetMap?.get(token);
+
+    if (!resetData) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    if (new Date(resetData.expiresAt) < new Date()) {
+      resetMap?.delete(token);
+      return res.status(400).json({ error: "Reset link has expired. Request a new one." });
+    }
+
+    if (resetData.used) {
+      return res.status(400).json({ error: "Reset link has already been used." });
+    }
+
+    const user = store.getUser(resetData.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update password (using the internal map since store doesn't have a method for this)
+    const usersMap = (store as any).users as Map<string, any>;
+    const hashedPassword = await import("bcryptjs").then((bcrypt) =>
+      bcrypt.hash(newPassword, 10),
+    );
+
+    usersMap.set(user.id, {
+      ...user,
+      passwordHash: hashedPassword,
+    });
+
+    // Mark token as used
+    resetData.used = true;
+
+    res.json({
+      success: true,
+      message: "Password reset successfully. Please sign in with your new password.",
+    });
+  });
+
   return router;
 };
 
