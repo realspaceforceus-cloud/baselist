@@ -17,7 +17,7 @@ import { useAuthDialog } from "@/context/AuthDialogContext";
 import { useBaseList } from "@/context/BaseListContext";
 
 const formatPasswordHint = () =>
-  `Use ${PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.`;
+  `Use ${PASSWORD_MIN_LENGTH}+ characters.`;
 
 export const SignInDialog = (): JSX.Element => {
   const { state, close, setView, openForgot, openReset } = useAuthDialog();
