@@ -270,7 +270,7 @@ export const Header = (): JSX.Element => {
                     </span>
                     <span className="text-[0.65rem] text-muted-foreground">
                       {settings.website_description ||
-                        "Buy, sell, and connect—DoD verified."}
+                        "Buy, Sell & Connect with Verified DoW Families"}
                     </span>
                   </div>
                 </div>
