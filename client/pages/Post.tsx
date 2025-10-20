@@ -51,7 +51,9 @@ const Post = (): JSX.Element => {
   const [category, setCategory] = useState<ListingCategory | "">("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionState, setSubmissionState] = useState<SubmissionState>("idle");
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [savedListingId, setSavedListingId] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
