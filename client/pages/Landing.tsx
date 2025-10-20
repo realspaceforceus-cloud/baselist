@@ -208,7 +208,7 @@ const Landing = (): JSX.Element => {
       setHasShownSuccessNotification(false);
 
       // First, create the account
-      const signupResponse = await fetch("/.netlify/functions/auth/signup", {
+      const signupResponse = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
