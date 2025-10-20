@@ -331,25 +331,55 @@ export const Settings = (): JSX.Element => {
                     </AvatarFallback>
                   )}
                 </Avatar>
-                <Button variant="outline" className="rounded-xl">
-                  Change photo
-                </Button>
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    className="hidden"
+                    disabled={isUploadingAvatar}
+                  />
+                  <Button
+                    variant="outline"
+                    className="rounded-xl"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingAvatar}
+                  >
+                    <Upload className="h-4 w-4 mr-2" aria-hidden />
+                    {isUploadingAvatar ? "Uploading..." : "Change photo"}
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-foreground">Username</label>
               <div className="mt-3 flex gap-2">
-                <Input
-                  value={formState.username}
-                  onChange={(e) => handleInputChange("username", e.target.value)}
-                  placeholder="Your username"
-                  className="flex-1"
-                />
+                <div className="flex-1">
+                  <Input
+                    value={formState.username}
+                    onChange={(e) => {
+                      handleInputChange("username", e.target.value);
+                      setUsernameError("");
+                    }}
+                    placeholder="Your username"
+                    className={cn(
+                      "rounded-xl",
+                      usernameError && "border-destructive"
+                    )}
+                  />
+                  {usernameError && (
+                    <p className="mt-2 text-xs text-destructive">{usernameError}</p>
+                  )}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    3-20 characters, letters, numbers, and underscores only
+                  </p>
+                </div>
                 <Button
                   onClick={handleUsernameChange}
-                  disabled={isLoading || formState.username === user.name}
-                  className="rounded-xl"
+                  disabled={isLoading || formState.username === user.name || !!usernameError}
+                  className="rounded-xl mt-auto"
                 >
                   <Save className="h-4 w-4" aria-hidden />
                 </Button>
