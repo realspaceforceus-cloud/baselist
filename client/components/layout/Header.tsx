@@ -379,8 +379,8 @@ export const Header = (): JSX.Element => {
           </div>
         </header>
         <SheetContent
-          side="left"
-          className="flex h-full w-full flex-col gap-6 bg-background p-6"
+          side="right"
+          className="flex h-full w-full max-w-sm flex-col gap-6 bg-background p-6"
         >
           <SheetHeader className="items-start text-left">
             <div className="flex items-center gap-3">
