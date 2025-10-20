@@ -326,6 +326,7 @@ export const BaseListProvider = ({
       setUser({
         id: authUser.userId,
         name: authUser.username,
+        email: authUser.email,
         verified: authUser.verified,
         memberSince: new Date().toISOString(),
         avatarUrl: authUser.avatarUrl,
@@ -344,6 +345,7 @@ export const BaseListProvider = ({
       setUser({
         id: "",
         name: "User",
+        email: "",
         verified: false,
         memberSince: new Date().toISOString(),
         avatarUrl: buildAvatarUrl("User"),
