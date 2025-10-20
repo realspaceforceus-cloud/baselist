@@ -150,7 +150,9 @@ const toUsername = (name: string, fallback: string) => {
 const buildSeedAccounts = (): BaseListAccount[] => {
   return SELLERS.map((seller, index) => {
     const username = toUsername(seller.name, `member_${index + 1}`);
-    const base = BASES[index % BASES.length];
+    // Use hardcoded base IDs - these will be replaced when bases are loaded from database
+    const baseIds = ["ramstein-ab", "lakenheath-ab", "nellis-afb", "kadena-ab", "misawa-ab"];
+    const baseId = baseIds[index % baseIds.length];
     const createdAt = new Date(
       Date.now() - (index + 3) * 24 * 60 * 60 * 1000,
     ).toISOString();
@@ -164,7 +166,7 @@ const buildSeedAccounts = (): BaseListAccount[] => {
       email: `${username}@us.af.mil`,
       password: "Password!2024",
       isDowVerified: seller.verified,
-      baseId: base.id,
+      baseId,
       createdAt,
       lastLoginAt,
       rememberDeviceUntil: undefined,
