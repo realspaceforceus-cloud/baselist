@@ -299,12 +299,15 @@ const Landing = (): JSX.Element => {
         // Mark success notification as shown BEFORE updating state
         setHasShownSuccessNotification(true);
 
-        // Fire confetti
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
+        // Fire confetti only once
+        if (!confettiFiredRef.current) {
+          confettiFiredRef.current = true;
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        }
 
         // Only set these once
         setJoinStage("success");
