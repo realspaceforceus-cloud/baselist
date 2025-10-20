@@ -28,6 +28,7 @@ export const SignInDialog = (): JSX.Element => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
 
   useEffect(() => {
     setErrorMessage(null);
