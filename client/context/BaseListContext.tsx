@@ -296,16 +296,6 @@ export const BaseListProvider = ({
     completedTransactions: 0,
   });
   const navigate = useNavigate();
-  const knownMessageIdsRef = useRef<Set<string>>(
-    new Set(
-      MESSAGE_THREAD_SEED.flatMap((thread) =>
-        thread.messages.map((message) => message.id),
-      ),
-    ),
-  );
-  const simulatedReplyTimers = useRef<
-    Map<string, ReturnType<typeof setTimeout>>
-  >(new Map());
 
   const isAuthenticated = authUser !== null;
   const currentAccount = useMemo(
