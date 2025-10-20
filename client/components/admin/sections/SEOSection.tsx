@@ -34,7 +34,8 @@ export const SEOSection = ({
     secondary_tagline: seoSettings.secondary_tagline || "",
     homepage_meta_description: seoSettings.homepage_meta_description || "",
     base_page_title_template: seoSettings.base_page_title_template || "",
-    base_page_description_template: seoSettings.base_page_description_template || "",
+    base_page_description_template:
+      seoSettings.base_page_description_template || "",
     primary_keywords: seoSettings.primary_keywords || "",
     local_keywords: seoSettings.local_keywords || "",
     trust_keywords: seoSettings.trust_keywords || "",
@@ -84,15 +85,20 @@ export const SEOSection = ({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">SEO Configuration</h2>
+        <h2 className="text-lg font-semibold text-foreground">
+          SEO Configuration
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage your site's SEO taglines, meta descriptions, and keywords. These
-          settings affect how your site appears in search results.
+          Manage your site's SEO taglines, meta descriptions, and keywords.
+          These settings affect how your site appears in search results.
         </p>
       </div>
 
       {Object.entries(groupedFields).map(([category, fields]) => (
-        <div key={category} className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <div
+          key={category}
+          className="rounded-2xl border border-border bg-card p-6 shadow-soft"
+        >
           <h3 className="mb-4 font-semibold text-foreground">{category}</h3>
           <div className="space-y-4">
             {fields.map((field) => (
@@ -136,7 +142,11 @@ export const SEOSection = ({
             <p className="font-semibold">💡 Tips for SEO Success</p>
             <ul className="mt-2 space-y-1 list-disc pl-4">
               <li>
-                Use <code className="bg-white/50 px-1 rounded">{{base_name}}</code> placeholder for dynamic base-specific pages
+                Use{" "}
+                <code className="bg-white/50 px-1 rounded">
+                  {{ base_name }}
+                </code>{" "}
+                placeholder for dynamic base-specific pages
               </li>
               <li>Keep meta descriptions under 160 characters</li>
               <li>

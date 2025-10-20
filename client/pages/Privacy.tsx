@@ -18,9 +18,9 @@ const Privacy = (): JSX.Element => {
             Effective Date: January 1, 2025
           </p>
           <p className="mt-4 text-sm text-muted-foreground">
-            TrustyPCS is a DoD-verified military PCS marketplace built by Active-Duty service
-            members to give military families and service members a safe, private place to buy
-            and sell on base.
+            TrustyPCS is a DoD-verified military PCS marketplace built by
+            Active-Duty service members to give military families and service
+            members a safe, private place to buy and sell on base.
           </p>
         </header>
 
@@ -34,7 +34,8 @@ const Privacy = (): JSX.Element => {
             <li>Optional ratings you leave after transactions</li>
           </ul>
           <p className="text-sm text-muted-foreground">
-            We do not collect rank, unit, full name, military ID number, or payment data.
+            We do not collect rank, unit, full name, military ID number, or
+            payment data.
           </p>
         </div>
 
@@ -43,9 +44,10 @@ const Privacy = (): JSX.Element => {
             How We Use Your Information
           </h2>
           <p className="text-sm text-muted-foreground">
-            Your information is used to operate your TrustyPCS account, verify DoD affiliation,
-            prevent fraud, and maintain a safe military marketplace community. We never sell or
-            share your personal data with third parties.
+            Your information is used to operate your TrustyPCS account, verify
+            DoD affiliation, prevent fraud, and maintain a safe military
+            marketplace community. We never sell or share your personal data
+            with third parties.
           </p>
         </div>
 
@@ -67,7 +69,9 @@ const Privacy = (): JSX.Element => {
         </div>
 
         <div className="space-y-3 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
-          <h2 className="text-xl font-semibold text-foreground">Your Choices</h2>
+          <h2 className="text-xl font-semibold text-foreground">
+            Your Choices
+          </h2>
           <p className="text-sm text-muted-foreground">
             You can delete your TrustyPCS account at any time from Profile →
             Settings. Removing an account permanently deletes your listings,

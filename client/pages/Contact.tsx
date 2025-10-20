@@ -56,8 +56,8 @@ const Contact = (): JSX.Element => {
             </span>
           </p>
           <p>
-            For general questions, partnership requests, or media inquiries about
-            our military PCS marketplace.
+            For general questions, partnership requests, or media inquiries
+            about our military PCS marketplace.
           </p>
         </div>
 

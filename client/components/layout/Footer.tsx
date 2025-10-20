@@ -13,7 +13,8 @@ export const Footer = (): JSX.Element => {
   const { settings } = useSettings();
 
   const showFooterLinks = settings.footer_show_links !== "false";
-  const copyrightText = settings.footer_copyright || "© 2025 TrustyPCS. All rights reserved.";
+  const copyrightText =
+    settings.footer_copyright || "© 2025 TrustyPCS. All rights reserved.";
   const mailingAddress = settings.mailing_address;
   const supportEmail = settings.support_email;
 
@@ -24,18 +25,21 @@ export const Footer = (): JSX.Element => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           {/* Left: Copyright and Links */}
           <nav className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <span className="font-semibold text-foreground">{copyrightText}</span>
-            {showFooterLinks && footerLinks.map((link) => (
-              <span key={link.to} className="flex items-center gap-2">
-                <span aria-hidden>·</span>
-                <Link
-                  to={link.to}
-                  className="font-semibold text-muted-foreground transition hover:text-primary"
-                >
-                  {link.label}
-                </Link>
-              </span>
-            ))}
+            <span className="font-semibold text-foreground">
+              {copyrightText}
+            </span>
+            {showFooterLinks &&
+              footerLinks.map((link) => (
+                <span key={link.to} className="flex items-center gap-2">
+                  <span aria-hidden>·</span>
+                  <Link
+                    to={link.to}
+                    className="font-semibold text-muted-foreground transition hover:text-primary"
+                  >
+                    {link.label}
+                  </Link>
+                </span>
+              ))}
           </nav>
 
           {/* Right: Contact Info */}
@@ -62,7 +66,8 @@ export const Footer = (): JSX.Element => {
         {/* Attribution */}
         <div className="border-t border-nav-border pt-4">
           <p className="font-semibold uppercase tracking-wide text-muted-foreground/80">
-            Built by an<br />
+            Built by an
+            <br />
             Active-Duty Airmen
           </p>
         </div>

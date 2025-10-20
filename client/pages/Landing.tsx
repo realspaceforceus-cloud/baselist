@@ -1159,11 +1159,11 @@ const Landing = (): JSX.Element => {
         <section className="px-4">
           <div className="mx-auto flex max-w-4xl flex-col items-center gap-5 text-center">
             <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-              {seoConfig.primary_tagline.includes('—') ? (
+              {seoConfig.primary_tagline.includes("—") ? (
                 <>
-                  {seoConfig.primary_tagline.split('—')[0].trim()}
+                  {seoConfig.primary_tagline.split("—")[0].trim()}
                   <br />
-                  {seoConfig.primary_tagline.split('—')[1].trim()}
+                  {seoConfig.primary_tagline.split("—")[1].trim()}
                 </>
               ) : (
                 seoConfig.primary_tagline
@@ -1172,46 +1172,46 @@ const Landing = (): JSX.Element => {
             <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
               {seoConfig.secondary_tagline}
             </p>
-          <div className="flex items-center justify-center gap-8">
-            {ICON_STEPS.map(({ label, icon: Icon }) => (
-              <div key={label} className="flex flex-col items-center gap-2">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
-                  <Icon className="h-5 w-5" aria-hidden />
+            <div className="flex items-center justify-center gap-8">
+              {ICON_STEPS.map(({ label, icon: Icon }) => (
+                <div key={label} className="flex flex-col items-center gap-2">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-primary">
+                    <Icon className="h-5 w-5" aria-hidden />
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button
+                size="lg"
+                className="rounded-full px-8"
+                onClick={handleStartJoin}
+              >
+                Join Now
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full px-8"
+                type="button"
+                onClick={openSignIn}
+              >
+                Sign In
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1">
+                <span role="img" aria-hidden>
+                  🔒
                 </span>
-                <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button
-              size="lg"
-              className="rounded-full px-8"
-              onClick={handleStartJoin}
-            >
-              Join Now
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-full px-8"
-              type="button"
-              onClick={openSignIn}
-            >
-              Sign In
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <span role="img" aria-hidden>
-                🔒
+                All data encrypted. No IDs stored. Trusted across the DoW.
               </span>
-              All data encrypted. No IDs stored. Trusted across the DoW.
-            </span>
-          </p>
-        </div>
-      </section>
+            </p>
+          </div>
+        </section>
       </div>
     </>
   );

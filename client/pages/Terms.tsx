@@ -26,8 +26,7 @@ const Terms = (): JSX.Element => {
         <div className="space-y-4 rounded-3xl border border-border bg-background/80 p-6 shadow-soft">
           <h2 className="text-xl font-semibold text-foreground">Eligibility</h2>
           <p className="text-sm text-muted-foreground">
-            Users must be DoD-affiliated and 18 years or older to use
-            TrustyPCS.
+            Users must be DoD-affiliated and 18 years or older to use TrustyPCS.
           </p>
         </div>
 
@@ -39,11 +38,11 @@ const Terms = (): JSX.Element => {
             <li>No weapons, ammunition, or restricted/controlled items.</li>
             <li>No adult or explicit content.</li>
             <li>No counterfeit goods or scams.</li>
-            <li>No external payment links or sharing of personal information.</li>
-            <li>No harassment, abuse, or hateful behavior.</li>
             <li>
-              No spam or duplicate postings of the same item.
+              No external payment links or sharing of personal information.
             </li>
+            <li>No harassment, abuse, or hateful behavior.</li>
+            <li>No spam or duplicate postings of the same item.</li>
           </ul>
         </div>
 

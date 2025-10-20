@@ -4,7 +4,8 @@ const FAQ = (): JSX.Element => {
   const items: Array<{ question: string; answer: string }> = [
     {
       question: "Who can join TrustyPCS?",
-      answer: "Anyone with a .mil email, invite code, or verified DoW connection.",
+      answer:
+        "Anyone with a .mil email, invite code, or verified DoW connection.",
     },
     {
       question: "Do I have to share my real name or rank?",
@@ -12,31 +13,38 @@ const FAQ = (): JSX.Element => {
     },
     {
       question: "Is TrustyPCS free to use?",
-      answer: "Yes. TrustyPCS is free. Optional local sponsors help keep it running.",
+      answer:
+        "Yes. TrustyPCS is free. Optional local sponsors help keep it running.",
     },
     {
       question: "How do I verify my military affiliation?",
-      answer: ".mil email, invite code, or a short manual review (uploads are auto-deleted).",
+      answer:
+        ".mil email, invite code, or a short manual review (uploads are auto-deleted).",
     },
     {
       question: "How are PCS marketplace transactions rated?",
-      answer: "After both sides mark the transaction complete, buyers and sellers can rate 1–5 ⭐ — no text reviews.",
+      answer:
+        "After both sides mark the transaction complete, buyers and sellers can rate 1–5 ⭐ — no text reviews.",
     },
     {
       question: "What if I encounter a scam on TrustyPCS?",
-      answer: "Tap \"Report.\" Our moderators review every report within 24 hours.",
+      answer:
+        'Tap "Report." Our moderators review every report within 24 hours.',
     },
     {
       question: "Is my personal data safe on the military marketplace?",
-      answer: "Yes. All data is encrypted in transit and at rest. We never store sensitive military ID information.",
+      answer:
+        "Yes. All data is encrypted in transit and at rest. We never store sensitive military ID information.",
     },
     {
       question: "Can I sell military-related items?",
-      answer: "Yes, but all listings must follow our community guidelines. Prohibited items include weapons, controlled substances, and classified materials.",
+      answer:
+        "Yes, but all listings must follow our community guidelines. Prohibited items include weapons, controlled substances, and classified materials.",
     },
     {
       question: "How do I request a new military base?",
-      answer: "Use the 'Request your base' feature in the base selector. Our team will review and add it to TrustyPCS shortly.",
+      answer:
+        "Use the 'Request your base' feature in the base selector. Our team will review and add it to TrustyPCS shortly.",
     },
   ];
 
@@ -54,7 +62,8 @@ const FAQ = (): JSX.Element => {
             Frequently Asked Questions - TrustyPCS Military Marketplace
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Find answers to common questions about TrustyPCS, the military PCS marketplace for DoD families.
+            Find answers to common questions about TrustyPCS, the military PCS
+            marketplace for DoD families.
           </p>
         </header>
 

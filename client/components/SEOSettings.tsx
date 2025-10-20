@@ -1,6 +1,6 @@
 /**
  * SEO Settings Configuration
- * 
+ *
  * This file centralizes all SEO-related settings and metadata.
  * Admins can update these settings through the admin panel to control:
  * - Page titles and meta descriptions
@@ -12,7 +12,7 @@
 export interface SEOConfig {
   // Primary tagline
   primary_tagline: string;
-  // Secondary/visual tagline  
+  // Secondary/visual tagline
   secondary_tagline: string;
   // Homepage meta description
   homepage_meta_description: string;
@@ -30,14 +30,21 @@ export interface SEOConfig {
 
 // Default SEO configuration
 export const DEFAULT_SEO_CONFIG: SEOConfig = {
-  primary_tagline: "Military PCS Marketplace — Buy, Sell & Connect with Verified DoW Families",
+  primary_tagline:
+    "Military PCS Marketplace — Buy, Sell & Connect with Verified DoW Families",
   secondary_tagline: "The Trusted Marketplace for Military PCS Moves",
-  homepage_meta_description: "TrustyPCS is the secure marketplace built for military members and DoW families. Buy, sell, and connect with verified users during your PCS relocation.",
-  base_page_title_template: "{{base_name}} Military PCS Marketplace | Buy & Sell Locally | TrustyPCS",
-  base_page_description_template: "Buy and sell locally at {{base_name}}. TrustyPCS connects verified DoD families for safe PCS relocation sales near {{base_name}}.",
-  primary_keywords: "military PCS marketplace, PCS relocation sales, military base classifieds, military yard sale online, military moving sale, DoD family marketplace",
-  local_keywords: "military classifieds, Fort Liberty PCS sales, Fayetteville military marketplace, San Antonio PCS, Ramstein Air Base classifieds",
-  trust_keywords: "DoD verified marketplace, secure military marketplace, trusted PCS sales, verified military families only, family-friendly PCS community",
+  homepage_meta_description:
+    "TrustyPCS is the secure marketplace built for military members and DoW families. Buy, sell, and connect with verified users during your PCS relocation.",
+  base_page_title_template:
+    "{{base_name}} Military PCS Marketplace | Buy & Sell Locally | TrustyPCS",
+  base_page_description_template:
+    "Buy and sell locally at {{base_name}}. TrustyPCS connects verified DoD families for safe PCS relocation sales near {{base_name}}.",
+  primary_keywords:
+    "military PCS marketplace, PCS relocation sales, military base classifieds, military yard sale online, military moving sale, DoD family marketplace",
+  local_keywords:
+    "military classifieds, Fort Liberty PCS sales, Fayetteville military marketplace, San Antonio PCS, Ramstein Air Base classifieds",
+  trust_keywords:
+    "DoD verified marketplace, secure military marketplace, trusted PCS sales, verified military families only, family-friendly PCS community",
 };
 
 /**
@@ -108,21 +115,35 @@ export const SEO_ADMIN_FIELDS = [
  */
 export function getSEOConfig(settings: Record<string, string>): SEOConfig {
   return {
-    primary_tagline: settings.primary_tagline || DEFAULT_SEO_CONFIG.primary_tagline,
-    secondary_tagline: settings.secondary_tagline || DEFAULT_SEO_CONFIG.secondary_tagline,
-    homepage_meta_description: settings.homepage_meta_description || DEFAULT_SEO_CONFIG.homepage_meta_description,
-    base_page_title_template: settings.base_page_title_template || DEFAULT_SEO_CONFIG.base_page_title_template,
-    base_page_description_template: settings.base_page_description_template || DEFAULT_SEO_CONFIG.base_page_description_template,
-    primary_keywords: settings.primary_keywords || DEFAULT_SEO_CONFIG.primary_keywords,
-    local_keywords: settings.local_keywords || DEFAULT_SEO_CONFIG.local_keywords,
-    trust_keywords: settings.trust_keywords || DEFAULT_SEO_CONFIG.trust_keywords,
+    primary_tagline:
+      settings.primary_tagline || DEFAULT_SEO_CONFIG.primary_tagline,
+    secondary_tagline:
+      settings.secondary_tagline || DEFAULT_SEO_CONFIG.secondary_tagline,
+    homepage_meta_description:
+      settings.homepage_meta_description ||
+      DEFAULT_SEO_CONFIG.homepage_meta_description,
+    base_page_title_template:
+      settings.base_page_title_template ||
+      DEFAULT_SEO_CONFIG.base_page_title_template,
+    base_page_description_template:
+      settings.base_page_description_template ||
+      DEFAULT_SEO_CONFIG.base_page_description_template,
+    primary_keywords:
+      settings.primary_keywords || DEFAULT_SEO_CONFIG.primary_keywords,
+    local_keywords:
+      settings.local_keywords || DEFAULT_SEO_CONFIG.local_keywords,
+    trust_keywords:
+      settings.trust_keywords || DEFAULT_SEO_CONFIG.trust_keywords,
   };
 }
 
 /**
  * Replace template placeholders with actual values
  */
-export function renderTemplate(template: string, replacements: Record<string, string>): string {
+export function renderTemplate(
+  template: string,
+  replacements: Record<string, string>,
+): string {
   let result = template;
   Object.entries(replacements).forEach(([key, value]) => {
     result = result.replace(new RegExp(`{{${key}}}`, "g"), value);
