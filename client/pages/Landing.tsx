@@ -374,7 +374,7 @@ const Landing = (): JSX.Element => {
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch("/.netlify/functions/verify-status/resend", {
+      const response = await fetch("/api/verify/resend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: pendingEmail }),
