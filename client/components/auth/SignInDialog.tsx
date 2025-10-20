@@ -16,7 +16,8 @@ import { PASSWORD_MIN_LENGTH } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
 import { useBaseList } from "@/context/BaseListContext";
 
-const formatPasswordHint = () => `Use ${PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.`;
+const formatPasswordHint = () =>
+  `Use ${PASSWORD_MIN_LENGTH}+ characters. A simple phrase works great.`;
 
 export const SignInDialog = (): JSX.Element => {
   const { state, close, setView, openForgot, openReset } = useAuthDialog();
@@ -57,7 +58,10 @@ export const SignInDialog = (): JSX.Element => {
     if (!state.resetToken) {
       return null;
     }
-    if (!pendingPasswordReset || pendingPasswordReset.token !== state.resetToken) {
+    if (
+      !pendingPasswordReset ||
+      pendingPasswordReset.token !== state.resetToken
+    ) {
       return null;
     }
     return pendingPasswordReset.token;
@@ -77,7 +81,9 @@ export const SignInDialog = (): JSX.Element => {
       close();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Unable to sign in. Try again.",
+        error instanceof Error
+          ? error.message
+          : "Unable to sign in. Try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -195,7 +201,11 @@ export const SignInDialog = (): JSX.Element => {
         <p className="text-sm font-semibold text-destructive">{errorMessage}</p>
       ) : null}
       <DialogFooter>
-        <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full rounded-full"
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
       </DialogFooter>
@@ -309,22 +319,25 @@ export const SignInDialog = (): JSX.Element => {
   };
 
   return (
-    <Dialog open={state.isOpen} onOpenChange={(open) => (!open ? close() : undefined)}>
+    <Dialog
+      open={state.isOpen}
+      onOpenChange={(open) => (!open ? close() : undefined)}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {state.view === "signIn"
               ? "Welcome back"
               : state.view === "forgot"
-              ? "Reset your password"
-              : "Set a new password"}
+                ? "Reset your password"
+                : "Set a new password"}
           </DialogTitle>
           <DialogDescription>
             {state.view === "signIn"
               ? "Enter your credentials. We can remember this device for 30 days."
               : state.view === "forgot"
-              ? "We never store your password. Reset links expire quickly for security."
-              : "Create a new password to regain access."}
+                ? "We never store your password. Reset links expire quickly for security."
+                : "Create a new password to regain access."}
           </DialogDescription>
         </DialogHeader>
         {renderBody()}

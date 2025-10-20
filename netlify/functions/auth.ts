@@ -10,7 +10,8 @@ const sendEmail = async (
 ): Promise<boolean> => {
   try {
     const apiKey = process.env.SENDGRID_API_KEY;
-    const fromEmail = process.env.SENDGRID_FROM_EMAIL || "noreply@trustypcs.com";
+    const fromEmail =
+      process.env.SENDGRID_FROM_EMAIL || "noreply@trustypcs.com";
 
     if (!apiKey) {
       console.log("[EMAIL] SendGrid API key not configured - logging instead");
@@ -541,7 +542,11 @@ const handleResetPasswordRequest = async (event: any) => {
       <p style="color: #666; font-size: 12px;">If you didn't request this, you can ignore this email.</p>
     `;
 
-    const sendEmailResult = await sendEmail(trimmedEmail, "Reset Your TrustyPCS Password", emailHtml);
+    const sendEmailResult = await sendEmail(
+      trimmedEmail,
+      "Reset Your TrustyPCS Password",
+      emailHtml,
+    );
 
     if (!sendEmailResult) {
       console.error("Failed to send password reset email");
