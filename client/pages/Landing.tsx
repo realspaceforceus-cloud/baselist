@@ -205,6 +205,8 @@ const Landing = (): JSX.Element => {
       setPendingUserId(signupData.userId);
       setPendingEmail(signupData.email);
       setPendingPassword(trimmedPassword);
+      setPendingUsername(trimmedUsername);
+      setPendingBaseId(selectedBaseId);
 
       // Then request a verification code for inbound verification
       const verifyResponse = await fetch(
