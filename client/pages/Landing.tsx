@@ -1150,21 +1150,19 @@ const Landing = (): JSX.Element => {
   return (
     <>
       <SEOHead
-        title="TrustyPCS - Military PCS Marketplace | Buy & Sell for DoD Families"
-        description="TrustyPCS is the #1 verified military PCS marketplace for DoD families and Active-Duty service members. Buy, sell, and connect locally on military bases. Safe, secure, and DoD-verified."
-        keywords="military PCS marketplace, PCS sales, DoD classifieds, military relocation, military base classifieds, military families"
+        title={`TrustyPCS - ${seoConfig.primary_tagline}`}
+        description={seoConfig.homepage_meta_description}
+        keywords={seoConfig.primary_keywords}
         canonical="https://trustypcs.com/"
       />
       <div className="space-y-10 py-10 animate-fade-in">
         <section className="px-4">
           <div className="mx-auto flex max-w-4xl flex-col items-center gap-5 text-center">
             <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-              Military PCS Marketplace for DoD Families
+              {seoConfig.primary_tagline}
             </h1>
             <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-              Built by Active-Duty service members for verified DoW families and military personnel.
-              Buy, sell, and connect locally on base with trusted community members.
-              Safe, secure, and DoD-verified.
+              {seoConfig.secondary_tagline}
             </p>
           <div className="flex items-center justify-center gap-8">
             {ICON_STEPS.map(({ label, icon: Icon }) => (
