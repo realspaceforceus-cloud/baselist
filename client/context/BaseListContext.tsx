@@ -377,16 +377,13 @@ export const BaseListProvider = ({
         setCurrentBaseIdState(currentAccount.baseId);
       }
     } else if (!isAuthenticated) {
-      const disciplineRecord = memberDiscipline[CURRENT_USER.id];
-      setUser({
-        ...CURRENT_USER,
-        currentBaseId: CURRENT_USER.currentBaseId,
-        status: disciplineRecord?.suspendedAt ? "suspended" : "active",
-        strikes: disciplineRecord?.strikes ?? 0,
-      });
-      if (currentBaseId !== CURRENT_USER.currentBaseId) {
-        setCurrentBaseIdState(CURRENT_USER.currentBaseId);
-      }
+      // User is not authenticated - show default unauthenticated state
+      setUser((prev) => ({
+        ...prev,
+        id: "",
+        name: "User",
+        verified: false,
+      }));
     }
   }, [currentAccount, currentBaseId, isAuthenticated, memberDiscipline]);
 
@@ -999,7 +996,7 @@ export const BaseListProvider = ({
       }
 
       if (method === "invite") {
-        toast.info("Enter your invite code from the Profile ��� Verify screen.");
+        toast.info("Enter your invite code from the Profile → Verify screen.");
         return;
       }
 
