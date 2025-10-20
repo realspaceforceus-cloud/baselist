@@ -122,11 +122,8 @@ const Messages = (): JSX.Element => {
 
         const listing = listings.find((item) => item.id === thread.listingId);
         const partnerId = thread.participants.find((participant) => participant !== user.id);
-        const seller = listing
-          ? SELLERS.find((candidate) => candidate.id === listing.sellerId)
-          : partnerId
-          ? SELLERS.find((candidate) => candidate.id === partnerId)
-          : undefined;
+        // Seller will be fetched from backend - not using mock data
+        const seller = undefined;
         const partnerName = partnerId ? getMemberName(partnerId) : "Member";
 
         const lastMessage = thread.messages[thread.messages.length - 1] ?? undefined;
