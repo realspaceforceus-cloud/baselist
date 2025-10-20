@@ -275,10 +275,11 @@ const Landing = (): JSX.Element => {
       const data = await response.json();
 
       if (data.status === "verified") {
-        // Only process once - if we've already shown the success notification, don't do it again
-        if (hasShownSuccessNotification) {
+        // Only process once - skip if verification already complete
+        if (verificationCompleteRef.current) {
           return;
         }
+        verificationCompleteRef.current = true;
 
         setIsVerificationPending(false);
         if (verificationCheckInterval) {
