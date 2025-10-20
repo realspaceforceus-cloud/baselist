@@ -42,12 +42,15 @@ interface EmailVerificationDialogState {
 export const Settings = (): JSX.Element => {
   const { user, signOut } = useBaseList();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
   const [emailVerificationDialog, setEmailVerificationDialog] =
     useState<EmailVerificationDialogState>({ isOpen: false, newEmail: "" });
 
