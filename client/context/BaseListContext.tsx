@@ -815,7 +815,10 @@ export const BaseListProvider = ({
             );
           }
         } catch (error) {
-          if (error instanceof Error && error.message.includes("Confirm your DoW email")) {
+          if (
+            error instanceof Error &&
+            error.message.includes("Confirm your DoW email")
+          ) {
             throw error;
           }
           throw new Error(

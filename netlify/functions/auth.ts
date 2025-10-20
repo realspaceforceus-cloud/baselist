@@ -575,7 +575,8 @@ const handleLogin = async (event: any) => {
       return {
         statusCode: 403,
         body: JSON.stringify({
-          error: "Confirm your DoW email from the link we sent before signing in.",
+          error:
+            "Confirm your DoW email from the link we sent before signing in.",
         }),
       };
     }
