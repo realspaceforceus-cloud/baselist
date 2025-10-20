@@ -337,7 +337,7 @@ const Landing = (): JSX.Element => {
   };
 
   const handleFinishSignup = () => {
-    if (!pendingUserId || !pendingEmail || !pendingPassword) {
+    if (!pendingUserId || !pendingEmail || !pendingPassword || !pendingUsername || !pendingBaseId) {
       return;
     }
 
@@ -347,6 +347,15 @@ const Landing = (): JSX.Element => {
     }
 
     try {
+      // Register the account in the local context so signInWithPassword can find it
+      registerNewAccount(
+        pendingUserId,
+        pendingUsername,
+        pendingEmail,
+        pendingPassword,
+        pendingBaseId,
+      );
+
       // Auto-login with the email and password from signup
       signInWithPassword(pendingEmail, pendingPassword);
 
@@ -354,6 +363,8 @@ const Landing = (): JSX.Element => {
       setPendingUserId(null);
       setPendingEmail("");
       setPendingPassword("");
+      setPendingUsername("");
+      setPendingBaseId("");
       setAccountForm(defaultAccountForm);
       setVerificationCode("");
       setVerificationError(null);
