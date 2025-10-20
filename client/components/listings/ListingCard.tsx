@@ -3,6 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 
 import { RatingBadge } from "@/components/shared/RatingBadge";
+import { generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
 import type { Listing, Seller } from "@/types";
 
