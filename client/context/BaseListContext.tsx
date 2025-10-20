@@ -311,15 +311,30 @@ export const BaseListProvider = ({
     CURRENT_USER.currentBaseId,
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
-    ...ACCOUNT_SEED,
-  ]);
+  const [accounts, setAccounts] = useState<BaseListAccount[]>(() => {
+    const seedAccounts = [...ACCOUNT_SEED];
+    // Restore user's account from localStorage if available
+    if (typeof window === "undefined") return seedAccounts;
+    try {
+      const savedAccount = localStorage.getItem("activeAccount");
+      if (savedAccount) {
+        const account = JSON.parse(savedAccount) as BaseListAccount;
+        // Only add if not already in seed data
+        const exists = seedAccounts.some((a) => a.id === account.id);
+        if (!exists) {
+          return [...seedAccounts, account];
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+    return seedAccounts;
+  });
   const [activeAccountId, setActiveAccountId] = useState<string | null>(() => {
     // Restore session from localStorage on mount
     if (typeof window === "undefined") return null;
     try {
       const saved = localStorage.getItem("activeAccountId");
-      // Restore the session - validation will happen when the account is looked up
       return saved && typeof saved === "string" && saved.length > 0 ? saved : null;
     } catch {
       return null;
