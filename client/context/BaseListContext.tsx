@@ -245,7 +245,7 @@ export const BaseListProvider = ({
 }): JSX.Element => {
   const [bases, setBases] = useState<Base[]>([]);
   const [currentBaseId, setCurrentBaseIdState] = useState<string>(
-    CURRENT_USER.currentBaseId,
+    BASES[0]?.id ?? "ramstein-ab",
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [accounts, setAccounts] = useState<BaseListAccount[]>(() => [
