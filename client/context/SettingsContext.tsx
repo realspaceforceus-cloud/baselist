@@ -77,6 +77,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         phone_number: "+1 (555) PCS-SELL",
         footer_copyright: `© ${new Date().getFullYear()} TrustyPCS. All rights reserved.`,
         footer_show_links: "true",
+        // SEO Settings
+        primary_tagline: "Military PCS Marketplace — Buy, Sell & Connect with Verified DoD Families",
+        secondary_tagline: "The Trusted Marketplace for Military PCS Moves",
+        homepage_meta_description: "TrustyPCS is the secure marketplace built for military members and DoD families. Buy, sell, and connect with verified users during your PCS relocation.",
+        base_page_title_template: "{{base_name}} Military PCS Marketplace | Buy & Sell Locally | TrustyPCS",
+        base_page_description_template: "Buy and sell locally at {{base_name}}. TrustyPCS connects verified DoD families for safe PCS relocation sales near {{base_name}}.",
+        primary_keywords: "military PCS marketplace, PCS relocation sales, military base classifieds, military yard sale online, military moving sale, DoD family marketplace",
+        local_keywords: "military classifieds, Fort Liberty PCS sales, Fayetteville military marketplace, San Antonio PCS, Ramstein Air Base classifieds",
+        trust_keywords: "DoD verified marketplace, secure military marketplace, trusted PCS sales, verified military families only, family-friendly PCS community",
       });
     } finally {
       setLoading(false);
