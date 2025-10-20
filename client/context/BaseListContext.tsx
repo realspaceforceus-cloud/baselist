@@ -11,13 +11,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import {
-  CURRENT_USER,
   LISTINGS as LISTING_SEED,
   MESSAGE_THREADS as MESSAGE_THREAD_SEED,
-  SELLERS,
   SPONSOR_PLACEMENTS,
 } from "@/data/mock";
 import { adminApi } from "@/lib/adminApi";
+import { authService, type AuthUser } from "@/lib/authService";
 import type {
   AccountNotice,
   AccountNoticeCategory,
