@@ -704,6 +704,10 @@ export const handler: Handler = async (event) => {
     return handleResetPasswordComplete(event);
   }
 
+  if (method === "GET" && path === "/me") {
+    return handleMe(event);
+  }
+
   return {
     statusCode: 404,
     headers: { "Content-Type": "application/json" },
