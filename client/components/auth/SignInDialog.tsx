@@ -16,8 +16,7 @@ import { PASSWORD_MIN_LENGTH } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
 import { useBaseList } from "@/context/BaseListContext";
 
-const formatPasswordHint = () =>
-  `Use ${PASSWORD_MIN_LENGTH}+ characters.`;
+const formatPasswordHint = () => `Use ${PASSWORD_MIN_LENGTH}+ characters.`;
 
 export const SignInDialog = (): JSX.Element => {
   const { state, close, setView, openForgot, openReset } = useAuthDialog();
@@ -90,17 +89,22 @@ export const SignInDialog = (): JSX.Element => {
     }
   };
 
-  const handleForgotSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleForgotSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const response = await fetch("/.netlify/functions/auth/reset-password/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail.trim() }),
-      });
+      const response = await fetch(
+        "/.netlify/functions/auth/reset-password/request",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: forgotEmail.trim() }),
+        },
+      );
 
       if (!response.ok) {
         const data = await response.json();
@@ -110,14 +114,15 @@ export const SignInDialog = (): JSX.Element => {
       }
 
       toast.success("Reset link sent", {
-        description: "Check your email for the password reset link. It expires in 15 minutes.",
+        description:
+          "Check your email for the password reset link. It expires in 15 minutes.",
       });
       setView("signIn");
       setForgotEmail("");
       setIsSubmitting(false);
     } catch (err) {
       setErrorMessage(
-        err instanceof Error ? err.message : "Failed to send reset email"
+        err instanceof Error ? err.message : "Failed to send reset email",
       );
       setIsSubmitting(false);
     }
