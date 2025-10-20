@@ -414,16 +414,15 @@ const Landing = (): JSX.Element => {
     }
   };
 
-  // Countdown timer for proceed button
+  // Countdown timer for proceed button - only set up once when proceedCountdown is first set to 5
   useEffect(() => {
-    if (proceedCountdown <= 0) {
-      return;
+    if (proceedCountdown !== 5) {
+      return; // Only start the countdown when it's initially set to 5
     }
 
     const timer = setInterval(() => {
       setProceedCountdown((prev) => {
         if (prev <= 1) {
-          clearInterval(timer);
           return 0;
         }
         return prev - 1;
@@ -431,7 +430,7 @@ const Landing = (): JSX.Element => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [proceedCountdown]);
+  }, []); // Empty dependency array - only run once on mount
 
   // Cleanup on component unmount
   useEffect(() => {
