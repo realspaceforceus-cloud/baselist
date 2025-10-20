@@ -315,6 +315,7 @@ export const BaseListProvider = ({
     ...ACCOUNT_SEED,
   ]);
   const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
+  const [isRestoringSession, setIsRestoringSession] = useState(true);
   const [memberDiscipline, setMemberDiscipline] = useState<
     Record<string, MemberDisciplineRecord>
   >(() => ({ ...INITIAL_DISCIPLINE }));
