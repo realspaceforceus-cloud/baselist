@@ -36,7 +36,7 @@ export const ListingCard = ({ listing, seller }: ListingCardProps): JSX.Element 
 
   return (
     <Link
-      to={`/listing/${listing.id}`}
+      to={`/listing/${generateSlug(listing.title, listing.id)}`}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <div className="relative aspect-square overflow-hidden">
