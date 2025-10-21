@@ -219,6 +219,7 @@ export const handler: Handler = async (event) => {
           "users",
         );
 
+        const usersMap = new Map();
         if (userIds.length > 0) {
           const placeholders = userIds.map((_, i) => `$${i + 1}`).join(",");
           const usersResult = await client.query(
@@ -232,24 +233,88 @@ export const handler: Handler = async (event) => {
             "authors",
           );
 
-          const usersMap = new Map(
-            usersResult.rows.map((user) => [
-              user.id,
-              {
-                id: user.id,
-                name: user.name,
-                verified: !!user.verified,
-                memberSince: new Date().toISOString(),
-                avatarUrl: user.avatarUrl || "",
-              },
-            ]),
-          );
+          usersResult.rows.forEach((user) => {
+            usersMap.set(user.id, {
+              id: user.id,
+              name: user.name,
+              verified: !!user.verified,
+              memberSince: new Date().toISOString(),
+              avatarUrl: user.avatarUrl || "",
+            });
+          });
 
           for (const post of posts) {
             if (usersMap.has(post.userId)) {
               post.author = usersMap.get(post.userId);
             }
           }
+        }
+
+        // Fetch comments for all posts
+        console.log("[FEED] GET /posts - Fetching comments");
+        const commentsResult = await client.query(
+          `SELECT
+            id, post_id, user_id, content, created_at
+           FROM feed_engagement
+           WHERE post_id = ANY($1) AND engagement_type = 'comment' AND deleted_at IS NULL
+           ORDER BY created_at DESC`,
+          [posts.map((p) => p.id)],
+        );
+
+        console.log(
+          "[FEED] GET /posts - Fetched",
+          commentsResult.rows.length,
+          "comments",
+        );
+
+        const commenterIds = [
+          ...new Set(commentsResult.rows.map((c) => c.user_id)),
+        ];
+
+        const commenterMap = new Map();
+        if (commenterIds.length > 0) {
+          const placeholders = commenterIds
+            .map((_, i) => `$${i + 1}`)
+            .join(",");
+          const commentersResult = await client.query(
+            `SELECT id, username as name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
+            commenterIds,
+          );
+
+          commentersResult.rows.forEach((user) => {
+            commenterMap.set(user.id, {
+              id: user.id,
+              name: user.name,
+              verified: !!user.verified,
+              memberSince: new Date().toISOString(),
+              avatarUrl: user.avatarUrl || "",
+            });
+          });
+        }
+
+        // Group comments by post
+        const commentsByPost: Record<string, any[]> = {};
+        for (const post of posts) {
+          commentsByPost[post.id] = [];
+        }
+
+        for (const comment of commentsResult.rows) {
+          const author = commenterMap.get(comment.user_id);
+          commentsByPost[comment.post_id].push({
+            id: comment.id,
+            postId: comment.post_id,
+            userId: comment.user_id,
+            content: comment.content,
+            createdAt: comment.created_at,
+            author,
+            likes: 0,
+            userLiked: false,
+          });
+        }
+
+        // Attach comments to posts
+        for (const post of posts) {
+          post.userComments = commentsByPost[post.id];
         }
 
         console.log(
