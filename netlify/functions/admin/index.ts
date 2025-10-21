@@ -108,13 +108,15 @@ export const handler: Handler = async (event) => {
 
       // Build count query by extracting the FROM clause
       const fromIndex = query.indexOf(" FROM");
-      const countQuery = fromIndex >= 0
-        ? `SELECT COUNT(*) as count ${query.substring(fromIndex)}`
-        : `SELECT COUNT(*) as count FROM users`;
+      const countQuery =
+        fromIndex >= 0
+          ? `SELECT COUNT(*) as count ${query.substring(fromIndex)}`
+          : `SELECT COUNT(*) as count FROM users`;
       let total = 0;
       try {
         const countResult = await client.query(countQuery, params);
-        total = countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0;
+        total =
+          countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0;
       } catch (countErr) {
         // If count query fails, just continue without pagination
         console.error("Count query error:", countErr);
