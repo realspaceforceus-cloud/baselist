@@ -554,6 +554,12 @@ export const handler: Handler = async (event) => {
         // Notify post author if they're not the commenter
         if (postResult.rows[0] && postResult.rows[0].user_id !== userId) {
           const commenterName = author?.name || "Someone";
+          console.log("[FEED] Creating post_commented notification", {
+            postAuthorId: postResult.rows[0].user_id,
+            commenterId: userId,
+            commenterName,
+            postId,
+          });
           try {
             await createNotification({
               userId: postResult.rows[0].user_id,
@@ -565,9 +571,15 @@ export const handler: Handler = async (event) => {
               targetType: "post",
               data: { commentId: engagementId },
             });
+            console.log("[FEED] Notification created successfully");
           } catch (err) {
             console.error("[FEED] Error creating notification:", err);
           }
+        } else {
+          console.log("[FEED] Skipping notification - post author or commenter issue", {
+            hasPost: !!postResult.rows[0],
+            isSameUser: postResult.rows[0]?.user_id === userId,
+          });
         }
 
         return {
