@@ -13,10 +13,16 @@ interface SecuritySectionProps {
   auditEntries?: AdminAuditEntry[];
 }
 
-export const SecuritySection = ({ auditEntries = [] }: SecuritySectionProps): JSX.Element => {
+export const SecuritySection = ({
+  auditEntries = [],
+}: SecuritySectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Security & Audit" subtitle="Security" accent="2FA" />
+      <AdminSectionHeader
+        title="Security & Audit"
+        subtitle="Security"
+        accent="2FA"
+      />
       <div className="grid gap-4 md:grid-cols-2">
         <article className="rounded-3xl border border-border bg-background/90 p-4 shadow-soft">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -24,7 +30,8 @@ export const SecuritySection = ({ auditEntries = [] }: SecuritySectionProps): JS
             Two-factor required for admin and moderator logins.
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Enforce WebAuthn hardware keys for admins. SMS fallback expires after one hour of inactivity.
+            Enforce WebAuthn hardware keys for admins. SMS fallback expires
+            after one hour of inactivity.
           </p>
         </article>
         <article className="rounded-3xl border border-border bg-background/90 p-4 shadow-soft">
@@ -33,7 +40,8 @@ export const SecuritySection = ({ auditEntries = [] }: SecuritySectionProps): JS
             All actions stamped with actor, target, and result.
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Logs retained for 90 days. Export to command-level oversight with encrypted delivery.
+            Logs retained for 90 days. Export to command-level oversight with
+            encrypted delivery.
           </p>
         </article>
       </div>
@@ -48,7 +56,9 @@ export const SecuritySection = ({ auditEntries = [] }: SecuritySectionProps): JS
               key={entry.id}
               className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-2"
             >
-              <span className="font-semibold text-foreground">{entry.action}</span>
+              <span className="font-semibold text-foreground">
+                {entry.action}
+              </span>
               <span className="text-xs text-muted-foreground">
                 {entry.actor} • {entry.time}
               </span>

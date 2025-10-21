@@ -39,7 +39,11 @@ export const ReportsSection = ({
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Reports" subtitle="Manage" accent={`${reports.length} total`} />
+      <AdminSectionHeader
+        title="Reports"
+        subtitle="Manage"
+        accent={`${reports.length} total`}
+      />
 
       {/* Filter */}
       <div className="flex gap-2 flex-wrap">
@@ -77,15 +81,23 @@ export const ReportsSection = ({
             <tbody className="divide-y divide-border">
               {filteredReports.map((report) => (
                 <tr key={report.id} className="hover:bg-muted/20">
-                  <td className="px-4 py-3 font-medium capitalize">{report.type}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.reporter}</td>
+                  <td className="px-4 py-3 font-medium capitalize">
+                    {report.type}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {report.reporter}
+                  </td>
                   <td className="px-4 py-3 text-xs">
                     <span className="inline-flex rounded bg-muted px-2 py-1">
                       {report.targetLabel}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.base}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.time}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {report.base}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {report.time}
+                  </td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
                       {onApprove && (

@@ -14,10 +14,16 @@ interface MetricsSectionProps {
   metrics: AdminMetricCard[];
 }
 
-export const MetricsSection = ({ metrics = [] }: MetricsSectionProps): JSX.Element => {
+export const MetricsSection = ({
+  metrics = [],
+}: MetricsSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Metrics & Logs" subtitle="Metrics" accent="Pulse" />
+      <AdminSectionHeader
+        title="Metrics & Logs"
+        subtitle="Metrics"
+        accent="Pulse"
+      />
       <div className="grid gap-4 md:grid-cols-2">
         {metrics.map((metric) => (
           <article
@@ -34,8 +40,12 @@ export const MetricsSection = ({ metrics = [] }: MetricsSectionProps): JSX.Eleme
               </span>
             </div>
             <div className="mt-6 flex items-baseline justify-between">
-              <span className="text-3xl font-semibold text-foreground">{metric.value}</span>
-              <span className="text-xs text-muted-foreground">{metric.period}</span>
+              <span className="text-3xl font-semibold text-foreground">
+                {metric.value}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {metric.period}
+              </span>
             </div>
           </article>
         ))}

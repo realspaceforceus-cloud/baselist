@@ -11,10 +11,16 @@ interface SecurityAuditSectionProps {
   auditEntries?: AdminAuditEntry[];
 }
 
-export const SecurityAuditSection = ({ auditEntries = [] }: SecurityAuditSectionProps) => {
+export const SecurityAuditSection = ({
+  auditEntries = [],
+}: SecurityAuditSectionProps) => {
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Security & Audit" subtitle="Security" accent="Logs" />
+      <AdminSectionHeader
+        title="Security & Audit"
+        subtitle="Security"
+        accent="Logs"
+      />
 
       {auditEntries.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
@@ -34,8 +40,12 @@ export const SecurityAuditSection = ({ auditEntries = [] }: SecurityAuditSection
               {auditEntries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-muted/20">
                   <td className="px-4 py-3 font-medium">{entry.action}</td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{entry.actor}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{entry.time}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                    {entry.actor}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {entry.time}
+                  </td>
                 </tr>
               ))}
             </tbody>

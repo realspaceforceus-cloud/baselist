@@ -47,14 +47,28 @@ export const VerificationSection = ({
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Verification" subtitle="Manage" accent={`${documents.length} pending`} />
+      <AdminSectionHeader
+        title="Verification"
+        subtitle="Manage"
+        accent={`${documents.length} pending`}
+      />
 
       {/* Toggle */}
       <div className="flex gap-2">
-        <Button variant={viewMode === "queues" ? "default" : "outline"} size="sm" onClick={() => setViewMode("queues")} className="rounded-full">
+        <Button
+          variant={viewMode === "queues" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("queues")}
+          className="rounded-full"
+        >
           Queues
         </Button>
-        <Button variant={viewMode === "docs" ? "default" : "outline"} size="sm" onClick={() => setViewMode("docs")} className="rounded-full">
+        <Button
+          variant={viewMode === "docs" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("docs")}
+          className="rounded-full"
+        >
           Documents
         </Button>
       </div>
@@ -65,13 +79,20 @@ export const VerificationSection = ({
           {queues.map((queue) => {
             const Icon = queue.icon;
             return (
-              <div key={queue.id} className="rounded-3xl border border-border bg-background/90 p-4">
+              <div
+                key={queue.id}
+                className="rounded-3xl border border-border bg-background/90 p-4"
+              >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-semibold uppercase">{queue.label}</span>
+                  <span className="text-xs font-semibold uppercase">
+                    {queue.label}
+                  </span>
                   <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <div className="text-3xl font-semibold mb-1">{queue.count}</div>
-                <p className="text-xs text-muted-foreground">{queue.description}</p>
+                <p className="text-xs text-muted-foreground">
+                  {queue.description}
+                </p>
               </div>
             );
           })}
@@ -91,25 +112,45 @@ export const VerificationSection = ({
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold">Name</th>
                   <th className="px-4 py-3 text-left font-semibold">Method</th>
-                  <th className="px-4 py-3 text-left font-semibold">Submitted</th>
-                  <th className="px-4 py-3 text-center font-semibold">Actions</th>
+                  <th className="px-4 py-3 text-left font-semibold">
+                    Submitted
+                  </th>
+                  <th className="px-4 py-3 text-center font-semibold">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {documents.map((doc) => (
                   <tr key={doc.id} className="hover:bg-muted/20">
                     <td className="px-4 py-3 font-medium">{doc.name}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{doc.method}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{doc.submitted}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">
+                      {doc.method}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">
+                      {doc.submitted}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center gap-1">
                         {onApprove && (
-                          <Button size="sm" variant="ghost" onClick={() => onApprove(doc.id)} className="h-8 w-8 p-0 rounded-lg text-green-600" title="Approve">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onApprove(doc.id)}
+                            className="h-8 w-8 p-0 rounded-lg text-green-600"
+                            title="Approve"
+                          >
                             <Check className="h-4 w-4" />
                           </Button>
                         )}
                         {onDeny && (
-                          <Button size="sm" variant="ghost" onClick={() => onDeny(doc.id)} className="h-8 w-8 p-0 rounded-lg text-destructive" title="Deny">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onDeny(doc.id)}
+                            className="h-8 w-8 p-0 rounded-lg text-destructive"
+                            title="Deny"
+                          >
                             <FileX className="h-4 w-4" />
                           </Button>
                         )}

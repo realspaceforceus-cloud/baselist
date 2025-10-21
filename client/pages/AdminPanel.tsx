@@ -2113,16 +2113,18 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "users" ? (
             <UsersSection
-              users={Array.from(userDirectoryRef.current.values()).map((user) => ({
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                role: user.role,
-                status: user.status || "active",
-                baseId: user.baseId,
-                createdAt: user.createdAt,
-                dowVerifiedAt: user.dowVerifiedAt,
-              }))}
+              users={Array.from(userDirectoryRef.current.values()).map(
+                (user) => ({
+                  id: user.id,
+                  username: user.username,
+                  email: user.email,
+                  role: user.role,
+                  status: user.status || "active",
+                  baseId: user.baseId,
+                  createdAt: user.createdAt,
+                  dowVerifiedAt: user.dowVerifiedAt,
+                }),
+              )}
               onUserUpdate={(userId, updates) =>
                 adminApi.updateUser(userId, updates)
               }
@@ -2163,9 +2165,7 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "bases" ? (
-            <BasesSection
-              bases={visibleBaseRows}
-            />
+            <BasesSection bases={visibleBaseRows} />
           ) : null}
           {activeSection === "family-verification" ? (
             <FamilyVerificationSection userId={user.id} />
@@ -2174,9 +2174,7 @@ const AdminPanel = (): JSX.Element => {
             <BasesSection bases={visibleBaseRows} />
           ) : null}
           {activeSection === "sponsors" ? (
-            <SponsorsSection
-              placements={visibleSponsorRows}
-            />
+            <SponsorsSection placements={visibleSponsorRows} />
           ) : null}
           {activeSection === "messaging" ? (
             <MessagingSection
@@ -2186,9 +2184,7 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "metrics" ? (
-            <MetricsSection
-              metrics={metrics}
-            />
+            <MetricsSection metrics={metrics} />
           ) : null}
           {activeSection === "roles" ? (
             <RolesSection roles={createInitialRoles()} />

@@ -19,10 +19,18 @@ interface MessagingSectionProps {
   onMarkReviewed?: (threadId: string) => void;
 }
 
-export const MessagingSection = ({ threads = [], onBan, onMarkReviewed }: MessagingSectionProps) => {
+export const MessagingSection = ({
+  threads = [],
+  onBan,
+  onMarkReviewed,
+}: MessagingSectionProps) => {
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Messaging" subtitle="Manage" accent={`${threads.length} flagged`} />
+      <AdminSectionHeader
+        title="Messaging"
+        subtitle="Manage"
+        accent={`${threads.length} flagged`}
+      />
 
       {threads.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
@@ -31,7 +39,10 @@ export const MessagingSection = ({ threads = [], onBan, onMarkReviewed }: Messag
       ) : (
         <div className="space-y-3">
           {threads.map((thread) => (
-            <div key={thread.id} className="rounded-3xl border border-border bg-card p-4">
+            <div
+              key={thread.id}
+              className="rounded-3xl border border-border bg-card p-4"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
