@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
-import { Copy, Trash2, Plus, Check } from "lucide-react";
+import { Copy, Trash2, Plus, Check, Edit2, X, Save } from "lucide-react";
 import { toast } from "sonner";
+import { adminApi } from "@/lib/adminApi";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,16 @@ interface InvitationCodesSectionProps {
     maxUses?: number,
     expiresAt?: string,
     description?: string,
+  ) => Promise<InvitationCode>;
+  onUpdateCode?: (
+    codeId: string,
+    updates: {
+      code?: string;
+      maxUses?: number;
+      expiresAt?: string;
+      description?: string;
+      active?: boolean;
+    },
   ) => Promise<InvitationCode>;
   onDeleteCode?: (codeId: string) => Promise<void>;
 }
