@@ -102,11 +102,10 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const search =
-        new URLSearchParams(event.rawQueryString).get("search") || "";
-      const page = parseInt(
-        new URLSearchParams(event.rawQueryString).get("page") || "1",
-      );
+      const queryString = event.rawQueryString || "";
+      const params = new URLSearchParams(queryString.startsWith("?") ? queryString.substring(1) : queryString);
+      const search = params.get("search") || "";
+      const page = parseInt(params.get("page") || "1");
       const limit = 25;
       const offset = (page - 1) * limit;
 
