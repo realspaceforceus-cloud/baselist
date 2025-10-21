@@ -197,6 +197,9 @@ export const adminApi = {
   async getListings() {
     return apiRequest<AdminListingsResponse>(`${ADMIN_BASE}/listings`);
   },
+  async getListingDetail(listingId: string) {
+    return apiRequest<any>(`${ADMIN_BASE}/listings/${listingId}/detail`);
+  },
   async hideListing(listingId: string, payload: HideListingPayload) {
     return apiRequest<AdminListingMutationResponse>(
       `${ADMIN_BASE}/listings/${listingId}/hide`,
