@@ -17,10 +17,28 @@ export const BasesSection = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    // TODO: Fetch from API when endpoint is ready
-    setBases([]);
-    setIsLoading(false);
+    const loadBases = async () => {
+      setIsLoading(true);
+      try {
+        const result = await (await import("@/lib/adminApi")).adminApi.getBases();
+        const baseRows: AdminBaseRow[] = (result?.bases || []).map((base: any) => ({
+          id: base.id,
+          name: base.name || "Unknown",
+          region: base.region || "Unknown",
+          moderator: "—",
+          users: 0,
+          activeListings: 0,
+          pendingReports: 0,
+        }));
+        setBases(baseRows);
+      } catch (error) {
+        console.error("Failed to load bases:", error);
+        setBases([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadBases();
   }, []);
 
   return (
