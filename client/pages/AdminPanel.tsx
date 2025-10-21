@@ -1913,6 +1913,7 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "family-verification" ? (
             <FamilyVerificationSection userId={user.id} />
           ) : null}
+          {activeSection === "announcements" ? <AnnouncementsSection /> : null}
           {activeSection === "sponsors" ? <SponsorsSection /> : null}
           {activeSection === "messaging" ? <MessagingSection /> : null}
           {activeSection === "metrics" ? <MetricsSection /> : null}
