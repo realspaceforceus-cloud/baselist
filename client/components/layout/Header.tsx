@@ -196,8 +196,8 @@ export const Header = (): JSX.Element => {
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
-  const showAdminLink = user.role === "admin";
-  const avatarInitials = getAvatarInitials(user.name);
+  const showAdminLink = user?.role === "admin";
+  const avatarInitials = getAvatarInitials(user?.name ?? "");
   const verificationLabel = isDowVerified
     ? "Verified"
     : user.verificationStatus;
@@ -205,13 +205,14 @@ export const Header = (): JSX.Element => {
 
   const unreadMessageCount = useMemo(() => {
     const threads = messageThreads || [];
+    if (!user?.id) return 0;
     return threads.filter((thread) => {
       const lastReadAt = thread.lastReadAt?.[user.id];
       if (!lastReadAt) return thread.messages.length > 0;
       const lastMsg = thread.messages[thread.messages.length - 1];
       return lastMsg && new Date(lastMsg.sentAt) > new Date(lastReadAt);
     }).length;
-  }, [messageThreads, user.id]);
+  }, [messageThreads, user?.id]);
 
   const menuShortcuts = useMemo(() => {
     if (!showAdminLink) {
@@ -281,7 +282,7 @@ export const Header = (): JSX.Element => {
   };
 
   const handleSwitchBase = (baseId: string) => {
-    if (baseId !== currentBase.id) {
+    if (currentBase && baseId !== currentBase.id) {
       setCurrentBaseId(baseId);
     }
     setIsBaseSwitchOpen(false);
@@ -360,7 +361,7 @@ export const Header = (): JSX.Element => {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-xs md:text-sm text-foreground truncate">
-                      {currentBase.name}
+                      {currentBase?.name || "Select Base"}
                     </p>
                     <p className="text-[0.6rem] md:text-[0.65rem] text-muted-foreground hidden md:block">
                       Switch base
@@ -370,7 +371,7 @@ export const Header = (): JSX.Element => {
                 <div className="flex items-center gap-1 md:gap-3 flex-shrink-0">
                   <div className="hidden md:flex flex-col items-end gap-0.5">
                     <p className="text-sm font-semibold text-foreground">
-                      Welcome {user.name || "User"}!
+                      Welcome {user?.name || user?.username || "User"}!
                     </p>
                   </div>
                   <Button
