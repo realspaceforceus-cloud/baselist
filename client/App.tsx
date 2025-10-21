@@ -132,6 +132,14 @@ const AppContent = (): JSX.Element => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="admin/listing-detail/:listingId"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminListingDetail />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route path="*" element={<NotFound />} />
