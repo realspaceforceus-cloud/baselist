@@ -189,7 +189,6 @@ export const VehicleFilterBar = ({
               <SelectValue placeholder="All colors" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All colors</SelectItem>
               {vehicleColors.map((color) => (
                 <SelectItem key={color} value={color}>
                   {color}
