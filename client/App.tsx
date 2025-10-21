@@ -50,6 +50,7 @@ const AppContent = (): JSX.Element => {
       >
         {/* Public pages - accessible to all */}
         <Route index element={<Home />} />
+        <Route path="marketplace" element={<Marketplace />} />
         <Route path="listing/:listingSlug" element={<ListingDetail />} />
         <Route path="faq" element={<FAQ />} />
         <Route path="terms" element={<Terms />} />
