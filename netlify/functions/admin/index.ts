@@ -102,6 +102,7 @@ export const handler: Handler = async (event) => {
       if (!auth?.userId) {
         return {
           statusCode: 401,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Unauthorized" }),
         };
       }
@@ -586,6 +587,7 @@ export const handler: Handler = async (event) => {
       if (existing.rows.length > 0) {
         return {
           statusCode: 409,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Base already exists" }),
         };
       }
@@ -655,6 +657,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -1067,6 +1070,7 @@ export const handler: Handler = async (event) => {
     console.error("Admin API error:", errorMsg, err);
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: errorMsg }),
     };
   } finally {
