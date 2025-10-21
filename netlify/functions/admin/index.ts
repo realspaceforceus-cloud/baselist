@@ -2109,29 +2109,54 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const openReportsResult = await client.query(
-        `SELECT COUNT(*) as count FROM reports WHERE status = 'open'`,
-      );
+      try {
+        let openReportsResult = { rows: [{ count: 0 }] };
+        let flaggedThreadsResult = { rows: [{ count: 0 }] };
+        let pendingVerificationsResult = { rows: [{ count: 0 }] };
 
-      const flaggedThreadsResult = await client.query(
-        `SELECT COUNT(*) as count FROM audit_logs WHERE action LIKE '%flagged%'`,
-      );
+        try {
+          openReportsResult = await client.query(
+            `SELECT COUNT(*) as count FROM reports WHERE status = 'open'`,
+          );
+        } catch (err) {
+          console.error("Open reports query error:", err);
+        }
 
-      const pendingVerificationsResult = await client.query(
-        `SELECT COUNT(*) as count FROM verifications WHERE status = 'pending'`,
-      );
+        try {
+          flaggedThreadsResult = await client.query(
+            `SELECT COUNT(*) as count FROM audit_logs WHERE action LIKE '%flagged%'`,
+          );
+        } catch (err) {
+          console.error("Flagged threads query error:", err);
+        }
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          openReports: parseInt(openReportsResult.rows[0]?.count ?? 0),
-          flaggedContent: parseInt(flaggedThreadsResult.rows[0]?.count ?? 0),
-          pendingVerifications: parseInt(
-            pendingVerificationsResult.rows[0]?.count ?? 0,
-          ),
-        }),
-      };
+        try {
+          pendingVerificationsResult = await client.query(
+            `SELECT COUNT(*) as count FROM verifications WHERE status = 'pending'`,
+          );
+        } catch (err) {
+          console.error("Pending verifications query error:", err);
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            openReports: parseInt(openReportsResult.rows[0]?.count ?? 0),
+            flaggedContent: parseInt(flaggedThreadsResult.rows[0]?.count ?? 0),
+            pendingVerifications: parseInt(
+              pendingVerificationsResult.rows[0]?.count ?? 0,
+            ),
+          }),
+        };
+      } catch (error) {
+        console.error("Moderation endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch moderation metrics" }),
+        };
+      }
     }
 
     // GET /api/admin/analytics/revenue?period=24h|7d|30d|90d|all
