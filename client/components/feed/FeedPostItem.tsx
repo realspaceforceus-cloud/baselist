@@ -65,6 +65,31 @@ export function FeedPostItem({
     }
   };
 
+  // Recursively find and update a comment at any nesting level
+  const addReplyToComment = (
+    commentList: FeedComment[],
+    parentCommentId: string,
+    newComment: FeedComment,
+  ): FeedComment[] => {
+    return commentList.map((c) => {
+      if (c.id === parentCommentId) {
+        // Found the parent - add the reply
+        return {
+          ...c,
+          replies: [...(c.replies || []), newComment],
+        };
+      }
+      // Recursively search in nested replies
+      if (c.replies && c.replies.length > 0) {
+        return {
+          ...c,
+          replies: addReplyToComment(c.replies, parentCommentId, newComment),
+        };
+      }
+      return c;
+    });
+  };
+
   const handleComment = async (parentCommentId?: string) => {
     if (!user) {
       toast.error("Please sign in to comment");
@@ -82,18 +107,8 @@ export function FeedPostItem({
       );
 
       if (parentCommentId) {
-        // Add reply to parent comment
-        setComments(
-          comments.map((c) => {
-            if (c.id === parentCommentId) {
-              return {
-                ...c,
-                replies: [...(c.replies || []), newComment],
-              };
-            }
-            return c;
-          }),
-        );
+        // Add reply to parent comment (handles any nesting level)
+        setComments(addReplyToComment(comments, parentCommentId, newComment));
       } else {
         // Add top-level comment
         setComments([newComment, ...comments]);
