@@ -2113,7 +2113,16 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "users" ? (
             <UsersSection
-              onFetchUsers={(page, search) => adminApi.getUsers(page, search)}
+              users={scopedAccounts.map((acc) => ({
+                id: acc.id,
+                username: acc.username,
+                email: userDirectoryRef.current.get(acc.id)?.email || "",
+                role: acc.role,
+                status: userDirectoryRef.current.get(acc.id)?.status || "active",
+                baseId: acc.baseId,
+                createdAt: acc.createdAt,
+                dowVerifiedAt: userDirectoryRef.current.get(acc.id)?.dowVerifiedAt,
+              }))}
               onUserUpdate={(userId, updates) =>
                 adminApi.updateUser(userId, updates)
               }
