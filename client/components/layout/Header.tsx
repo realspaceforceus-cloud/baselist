@@ -237,6 +237,28 @@ export const Header = (): JSX.Element => {
     });
   }, [baseSearch, bases]);
 
+  const filteredNotifications = useMemo(() => {
+    if (notificationFilter === "all") {
+      return notifications;
+    }
+    return notifications.filter((n) => n.type === notificationFilter);
+  }, [notifications, notificationFilter]);
+
+  const notificationCategories = useMemo(() => {
+    const categories = new Map<Notification["type"] | "all", number>();
+    categories.set("all", notifications.length);
+
+    notifications.forEach((notif) => {
+      categories.set(notif.type, (categories.get(notif.type) || 0) + 1);
+    });
+
+    return Array.from(categories.entries()).sort((a, b) => {
+      if (a[0] === "all") return -1;
+      if (b[0] === "all") return 1;
+      return b[1] - a[1];
+    });
+  }, [notifications]);
+
   useEffect(() => {
     if (!isMenuOpen) {
       setBaseSearch("");
