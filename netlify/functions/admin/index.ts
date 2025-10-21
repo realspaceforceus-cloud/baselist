@@ -106,10 +106,11 @@ export const handler: Handler = async (event) => {
         params.push(`%${search}%`);
       }
 
-      const countQuery = query.replace(
-        /SELECT id,.*FROM/,
-        "SELECT COUNT(*) as count FROM",
-      );
+      // Build count query by extracting the FROM clause
+      const fromIndex = query.indexOf(" FROM");
+      const countQuery = fromIndex >= 0
+        ? `SELECT COUNT(*) as count ${query.substring(fromIndex)}`
+        : `SELECT COUNT(*) as count FROM users`;
       let total = 0;
       try {
         const countResult = await client.query(countQuery, params);
