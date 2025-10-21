@@ -169,9 +169,9 @@ export const BasesSection = () => {
     setEditingBase(base);
     setFormData({
       name: base.name,
-      abbreviation: "",
+      abbreviation: base.id, // Show the abbreviation from base ID
       region: base.region,
-      timezone: "",
+      timezone: "", // Will need to fetch actual timezone from API
     });
     setIsDialogOpen(true);
   };
@@ -185,6 +185,15 @@ export const BasesSection = () => {
       timezone: "",
     });
     setIsDialogOpen(true);
+  };
+
+  const handleRegionChange = (region: string) => {
+    setFormData({
+      ...formData,
+      region,
+      // Auto-default timezone based on region if it's new
+      timezone: !editingBase ? getTimezoneForRegion(region) : formData.timezone,
+    });
   };
 
   const handleSaveBase = async () => {
