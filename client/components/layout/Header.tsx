@@ -161,19 +161,21 @@ export const Header = (): JSX.Element => {
     if (!isNotificationsOpen || !isAuthenticated) return;
 
     const loadNotifications = async () => {
-      setIsLoadingNotifications(true);
       try {
         const response = await notificationsApi.getNotifications(50, 0);
         setNotifications(response.notifications);
         setUnreadNotificationCount(response.unreadCount);
       } catch (error) {
         console.error("Error loading notifications:", error);
-      } finally {
-        setIsLoadingNotifications(false);
       }
     };
 
+    // Load immediately
     loadNotifications();
+
+    // Auto-refresh every 3 seconds when panel is open
+    const interval = setInterval(loadNotifications, 3000);
+    return () => clearInterval(interval);
   }, [isNotificationsOpen, isAuthenticated]);
 
   // Load initial unread count with faster polling for instant notifications
