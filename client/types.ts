@@ -270,3 +270,23 @@ export interface FeedAnnouncement {
   updatedAt: string;
   isDismissed?: boolean;
 }
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  color: string;
+  backgroundColor: string;
+  textColor: string;
+  isVisible: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}
+
+export interface DismissedAnnouncement {
+  id: string;
+  userId: string;
+  announcementId: string;
+  dismissedAt: string;
+}
