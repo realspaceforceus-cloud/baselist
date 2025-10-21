@@ -51,6 +51,14 @@ const Post = (): JSX.Element => {
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [savedListingId, setSavedListingId] = useState<string | null>(null);
 
+  // Vehicle-specific fields
+  const [vehicleYear, setVehicleYear] = useState("");
+  const [vehicleMake, setVehicleMake] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [vehicleMiles, setVehicleMiles] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load listing data if editing
