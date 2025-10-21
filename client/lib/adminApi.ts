@@ -75,9 +75,11 @@ export const adminApi = {
     const params = new URLSearchParams();
     if (page) params.set("page", page.toString());
     if (search) params.set("search", search);
-    return apiRequest<{ users: AdminUserDTO[]; pagination: any }>(
-      `${ADMIN_BASE}/users?${params}`,
-    );
+    const url = `${ADMIN_BASE}/users?${params}`;
+    console.log("Fetching users from:", url);
+    const result = await apiRequest<{ users: AdminUserDTO[]; pagination: any }>(url);
+    console.log("Users API result:", result);
+    return result;
   },
   async updateUser(
     userId: string,
