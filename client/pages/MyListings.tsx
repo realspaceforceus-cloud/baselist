@@ -97,9 +97,12 @@ export const MyListings = (): JSX.Element => {
     try {
       await removeListing(listingId);
       setDeleteConfirm(null);
-      toast.success("Listing deleted");
+      toast.success("Listing deleted successfully");
     } catch (error) {
-      toast.error("Unable to delete listing");
+      console.error("Delete listing error:", error);
+      const errorMsg = error instanceof Error ? error.message : "Unable to delete listing";
+      toast.error(errorMsg);
+      setDeleteConfirm(null);
     }
   };
 
