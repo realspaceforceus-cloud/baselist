@@ -84,19 +84,32 @@ export const handler: Handler = async (event) => {
 
     // GET /api/notifications/count - get unread notification count
     if (method === "GET" && path === "/count") {
-      const result = await client.query(
-        `SELECT COUNT(*) as count FROM notifications 
-         WHERE user_id = $1 AND read = false AND dismissed = false`,
-        [userId],
-      );
+      try {
+        const result = await client.query(
+          `SELECT COUNT(*) as count FROM notifications
+           WHERE user_id = $1 AND read = false AND dismissed = false`,
+          [userId],
+        );
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          unreadCount: parseInt(result.rows[0].count),
-        }),
-      };
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+          body: JSON.stringify({
+            unreadCount: result.rows.length > 0 ? parseInt(result.rows[0].count) : 0,
+          }),
+        };
+      } catch (countErr) {
+        console.error("Error getting notification count:", countErr);
+        // Always return a valid response even on error
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+          body: JSON.stringify({
+            unreadCount: 0,
+            error: "temporary_unavailable",
+          }),
+        };
+      }
     }
 
     // PATCH /api/notifications/:id/read - mark notification as read
