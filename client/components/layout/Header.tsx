@@ -735,7 +735,7 @@ export const Header = (): JSX.Element => {
                       onClick={() => handleSwitchBase(base.id)}
                       className={cn(
                         "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition",
-                        base.id === currentBase.id
+                        currentBase && base.id === currentBase.id
                           ? "bg-primary/10 font-semibold text-primary"
                           : "text-foreground hover:bg-muted/50",
                       )}
