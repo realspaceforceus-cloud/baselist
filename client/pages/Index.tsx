@@ -252,7 +252,7 @@ const Index = (): JSX.Element => {
       {visibleListings.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {visibleListings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
+            <ListingCardWithSeller key={listing.id} listing={listing} />
           ))}
         </div>
       ) : (
