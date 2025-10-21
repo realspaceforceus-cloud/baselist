@@ -2185,16 +2185,11 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "sponsors" ? (
             <SponsorsSection
               placements={visibleSponsorRows}
-              bases={bases}
-              onCreate={handleCreateSponsor}
-              onUpdate={handleUpdateSponsor}
-              onDelete={handleRemoveSponsor}
             />
           ) : null}
           {activeSection === "messaging" ? (
             <MessagingSection
               threads={visibleFlaggedThreads}
-              onWarn={handleWarnThread}
               onBan={handleBanThread}
               onMarkReviewed={handleMarkThreadReviewed}
             />
@@ -2202,8 +2197,6 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "metrics" ? (
             <MetricsSection
               metrics={metrics}
-              onViewLog={handleViewAuditLog}
-              onExport={handleExportMetrics}
             />
           ) : null}
           {activeSection === "roles" ? (
