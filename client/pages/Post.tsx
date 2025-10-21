@@ -264,12 +264,11 @@ const Post = (): JSX.Element => {
       const listingData = {
         title: finalTitle,
         price: isFree ? 0 : Number(price),
-        is_free: isFree,
+        isFree: isFree,
         category: (category || "Other") as ListingCategory,
-        seller_id: user.id,
-        image_urls: imageUrls,
-        base_id: currentBaseId,
-        status: "active",
+        sellerId: user.id,
+        imageUrls: imageUrls,
+        baseId: currentBaseId,
         description: `${description.trim()}${
           category === "Vehicles"
             ? `\n\nVehicle Details:\n- Color: ${vehicleColor || "Not specified"}\n- Mileage: ${vehicleMiles ? vehicleMiles.toLocaleString() + " miles" : "Not specified"}`
