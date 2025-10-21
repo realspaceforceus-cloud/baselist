@@ -149,7 +149,12 @@ export const handler: Handler = async (event) => {
       const limit = Math.min(parseInt(params.get("limit") || "20"), 100);
       const offset = parseInt(params.get("offset") || "0");
 
-      console.log("[FEED] GET /posts - Params:", { baseId, limit, offset, userId });
+      console.log("[FEED] GET /posts - Params:", {
+        baseId,
+        limit,
+        offset,
+        userId,
+      });
 
       if (!baseId) {
         return {
@@ -185,13 +190,21 @@ export const handler: Handler = async (event) => {
           [baseId, limit, offset],
         );
 
-        console.log("[FEED] GET /posts - Query returned", result.rows.length, "rows");
+        console.log(
+          "[FEED] GET /posts - Query returned",
+          result.rows.length,
+          "rows",
+        );
 
         const posts = result.rows.map((row) => {
           try {
             return transformFeedPost(row);
           } catch (e) {
-            console.error("[FEED] GET /posts - Error transforming row:", e, row);
+            console.error(
+              "[FEED] GET /posts - Error transforming row:",
+              e,
+              row,
+            );
             throw e;
           }
         });
@@ -200,7 +213,11 @@ export const handler: Handler = async (event) => {
 
         // Fetch author info for all posts in one batch query
         const userIds = [...new Set(posts.map((p) => p.userId))];
-        console.log("[FEED] GET /posts - Fetching authors for", userIds.length, "users");
+        console.log(
+          "[FEED] GET /posts - Fetching authors for",
+          userIds.length,
+          "users",
+        );
 
         if (userIds.length > 0) {
           const placeholders = userIds.map((_, i) => `$${i + 1}`).join(",");
@@ -209,7 +226,11 @@ export const handler: Handler = async (event) => {
             userIds,
           );
 
-          console.log("[FEED] GET /posts - Fetched", usersResult.rows.length, "authors");
+          console.log(
+            "[FEED] GET /posts - Fetched",
+            usersResult.rows.length,
+            "authors",
+          );
 
           const usersMap = new Map(
             usersResult.rows.map((user) => [
@@ -231,7 +252,11 @@ export const handler: Handler = async (event) => {
           }
         }
 
-        console.log("[FEED] GET /posts - Success, returning", posts.length, "posts");
+        console.log(
+          "[FEED] GET /posts - Success, returning",
+          posts.length,
+          "posts",
+        );
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
@@ -582,7 +607,7 @@ export const handler: Handler = async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         error: errorMsg,
-        stack: process.env.NODE_ENV === "development" ? errorStack : undefined
+        stack: process.env.NODE_ENV === "development" ? errorStack : undefined,
       }),
     };
   }
