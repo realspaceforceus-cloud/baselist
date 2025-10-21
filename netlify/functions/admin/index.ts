@@ -207,6 +207,7 @@ export const handler: Handler = async (event) => {
       if (user.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "User not found" }),
         };
       }
