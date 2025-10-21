@@ -1973,7 +1973,9 @@ const AdminPanel = (): JSX.Element => {
             </div>
           </div>
           <div className="flex flex-col items-start gap-1 rounded-2xl border border-dashed border-nav-border bg-background/70 px-4 py-3 text-xs font-semibold text-muted-foreground">
-            <span className="text-foreground">Signed in as {user?.username || user?.name || "Admin"}</span>
+            <span className="text-foreground">
+              Signed in as {user?.username || user?.name || "Admin"}
+            </span>
             <span className="flex items-center gap-2 text-muted-foreground/80">
               <span className="inline-flex h-2 w-2 rounded-full bg-verified" />
               Role • {user?.role?.toUpperCase?.() ?? "ADMIN"}
@@ -2039,7 +2041,8 @@ const AdminPanel = (): JSX.Element => {
                   User management section is loading...
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Traditional admin user controls are available. New pagination system initializing.
+                  Traditional admin user controls are available. New pagination
+                  system initializing.
                 </p>
               </div>
             </div>
