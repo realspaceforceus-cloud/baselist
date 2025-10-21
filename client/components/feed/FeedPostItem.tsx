@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, BadgeCheck } from "lucide-react";
+import { Heart, MessageCircle, BadgeCheck, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { feedApi } from "@/lib/feedApi";
