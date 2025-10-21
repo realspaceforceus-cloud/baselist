@@ -60,6 +60,7 @@ export const AdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [bases, setBases] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showStrikeModal, setShowStrikeModal] = useState(false);
@@ -73,6 +74,17 @@ export const AdminUserDetail = () => {
     severity: "warning",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Editable fields
+  const [editMode, setEditMode] = useState(false);
+  const [editData, setEditData] = useState({
+    username: "",
+    email: "",
+    role: "member",
+    status: "active",
+    baseId: "",
+    avatarUrl: "",
+  });
 
   useEffect(() => {
     const loadUserDetail = async () => {
