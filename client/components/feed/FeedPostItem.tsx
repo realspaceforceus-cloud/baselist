@@ -443,65 +443,32 @@ export function FeedPostItem({
                 </button>
               )}
 
-              {/* Display comments */}
-              {(showAllComments ? comments : comments.slice(0, 2)).map(
-                (comment) => (
-                  <div
-                    key={comment.id}
-                    className="text-sm bg-background rounded-lg p-2"
-                  >
-                    <div className="flex items-start gap-2">
-                      <img
-                        src={
-                          comment.author?.avatarUrl ||
-                          "https://api.dicebear.com/7.x/initials/svg?seed=user"
-                        }
-                        alt={comment.author?.name}
-                        className="h-6 w-6 rounded-full object-cover flex-shrink-0 mt-0.5"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <Link
-                            to={`/profile/${comment.userId}`}
-                            className="font-semibold text-xs hover:text-primary transition"
-                          >
-                            {comment.author?.name}
-                          </Link>
-                          {comment.author?.verified && (
-                            <BadgeCheck className="h-3 w-3 text-blue-500" />
-                          )}
-                        </div>
-                        <p className="text-muted-foreground whitespace-pre-wrap">
-                          {comment.content}
-                        </p>
-                        <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
-                          <button
-                            onClick={() => handleLikeComment(comment.id)}
-                            className={`hover:text-primary transition ${
-                              comment.userLiked ? "text-red-500" : ""
-                            }`}
-                          >
-                            <Heart
-                              className="h-3 w-3 inline mr-1"
-                              fill={comment.userLiked ? "currentColor" : "none"}
-                            />
-                            {comment.likes || 0}
-                          </button>
-                          {canDeleteComment(comment.id) && (
-                            <button
-                              onClick={() => handleDeleteComment(comment.id)}
-                              className="hover:text-destructive transition"
-                            >
-                              <Trash2 className="h-3 w-3 inline mr-1" />
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ),
-              )}
+              {/* Display comments using nested component */}
+              <div className="space-y-3">
+                {(showAllComments ? comments : comments.slice(0, 2)).map(
+                  (comment) => (
+                    <FeedCommentItem
+                      key={comment.id}
+                      comment={comment}
+                      onLike={(commentId) => handleLikeComment(commentId)}
+                      onDelete={(commentId) => handleDeleteComment(commentId)}
+                      onReply={(parentCommentId, content) => {
+                        setCommentText(content);
+                        return new Promise((resolve) => {
+                          // The handleComment function will be called with parentCommentId
+                          const originalText = commentText;
+                          setCommentText(content);
+                          setTimeout(() => {
+                            handleComment(parentCommentId).then(resolve).catch(resolve);
+                          }, 0);
+                        });
+                      }}
+                      canDelete={canDeleteComment}
+                      isLoading={isDeleting || isCommentingLoading}
+                    />
+                  ),
+                )}
+              </div>
 
               {/* Show less button */}
               {showAllComments && comments.length > 2 && (
