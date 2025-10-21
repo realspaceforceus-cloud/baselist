@@ -1,12 +1,24 @@
 import { useState, useEffect } from "react";
-import { Building2, AlertCircle } from "lucide-react";
+import { Building2, AlertCircle, Edit2, Plus } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export interface AdminBaseRow {
   id: string;
   name: string;
   region: string;
-  moderator: string;
+  moderator: string | null;
   users: number;
   activeListings: number;
   pendingReports: number;
@@ -15,33 +27,44 @@ export interface AdminBaseRow {
 export const BasesSection = () => {
   const [bases, setBases] = useState<AdminBaseRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingBase, setEditingBase] = useState<AdminBaseRow | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    abbreviation: "",
+    region: "",
+    timezone: "",
+  });
+
+  const loadBases = async () => {
+    setIsLoading(true);
+    try {
+      const result = await (
+        await import("@/lib/adminApi")
+      ).adminApi.getBases();
+      const baseRows: AdminBaseRow[] = (result?.bases || []).map(
+        (base: any) => ({
+          id: base.id,
+          name: base.name || "Unknown",
+          region: base.region || "Unknown",
+          moderator: base.moderator || "—",
+          users: base.usersCount || 0,
+          activeListings: base.listingsCount || 0,
+          pendingReports: base.reportsCount || 0,
+        }),
+      );
+      setBases(baseRows);
+    } catch (error) {
+      console.error("Failed to load bases:", error);
+      toast.error("Failed to load bases");
+      setBases([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadBases = async () => {
-      setIsLoading(true);
-      try {
-        const result = await (
-          await import("@/lib/adminApi")
-        ).adminApi.getBases();
-        const baseRows: AdminBaseRow[] = (result?.bases || []).map(
-          (base: any) => ({
-            id: base.id,
-            name: base.name || "Unknown",
-            region: base.region || "Unknown",
-            moderator: "—",
-            users: 0,
-            activeListings: 0,
-            pendingReports: 0,
-          }),
-        );
-        setBases(baseRows);
-      } catch (error) {
-        console.error("Failed to load bases:", error);
-        setBases([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadBases();
   }, []);
 
