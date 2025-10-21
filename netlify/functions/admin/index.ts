@@ -193,12 +193,13 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
 
       const userId = path.replace("/users/", "");
-      const { status, role, verify, reason, strikeType, strikeDescription } =
+      const { status, role, baseId, verify, reason, strikeType, strikeDescription } =
         JSON.parse(event.body || "{}");
 
       const user = await client.query("SELECT * FROM users WHERE id = $1", [
@@ -215,6 +216,7 @@ export const handler: Handler = async (event) => {
       const updates: Record<string, any> = {};
       if (status) updates.status = status;
       if (role) updates.role = role;
+      if (baseId) updates.base_id = baseId;
       if (verify) updates.dow_verified_at = new Date().toISOString();
 
       const setClauses = Object.keys(updates)
@@ -258,6 +260,7 @@ export const handler: Handler = async (event) => {
             id: u.id,
             username: u.username,
             role: u.role,
+            baseId: u.base_id,
             status: u.status,
             dowVerifiedAt: u.dow_verified_at,
             joinMethod: u.join_method,
