@@ -84,7 +84,10 @@ export const adminApi = {
     console.log("Users API result type:", typeof result);
     console.log("Users API result.users:", result?.users);
     console.log("Users API result.users type:", typeof result?.users);
-    console.log("Users API result.users is array:", Array.isArray(result?.users));
+    console.log(
+      "Users API result.users is array:",
+      Array.isArray(result?.users),
+    );
     console.log("Users API result.users length:", result?.users?.length);
     return result;
   },

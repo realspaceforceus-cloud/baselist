@@ -48,7 +48,10 @@ export const UsersSection = () => {
         console.log("[UsersSection] Result keys:", Object.keys(result || {}));
         console.log("[UsersSection] Result.users:", result?.users);
         console.log("[UsersSection] Result.users type:", typeof result?.users);
-        console.log("[UsersSection] Result.users is array:", Array.isArray(result?.users));
+        console.log(
+          "[UsersSection] Result.users is array:",
+          Array.isArray(result?.users),
+        );
         const userList = result?.users || [];
         console.log("[UsersSection] Setting users, count:", userList.length);
         console.log("[UsersSection] userList:", userList);
