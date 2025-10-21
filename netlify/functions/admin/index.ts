@@ -57,22 +57,40 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const usersResult = await client.query(
-        "SELECT COUNT(*) as count FROM users",
-      );
-      const listingsResult = await client.query(
-        "SELECT COUNT(*) as count FROM listings WHERE status = 'active'",
-      );
-      const transactionsResult = await client.query(
-        "SELECT COUNT(*) as count FROM transactions",
-      );
+      let usersResult: any = { rows: [{ count: 0 }] };
+      let listingsResult: any = { rows: [{ count: 0 }] };
+      let transactionsResult: any = { rows: [{ count: 0 }] };
+
+      try {
+        usersResult = await client.query(
+          "SELECT COUNT(*) as count FROM users",
+        );
+      } catch (err) {
+        console.error("Users count error:", err);
+      }
+
+      try {
+        listingsResult = await client.query(
+          "SELECT COUNT(*) as count FROM listings WHERE status = 'active'",
+        );
+      } catch (err) {
+        console.error("Listings count error:", err);
+      }
+
+      try {
+        transactionsResult = await client.query(
+          "SELECT COUNT(*) as count FROM transactions",
+        );
+      } catch (err) {
+        console.error("Transactions count error:", err);
+      }
 
       return {
         statusCode: 200,
         body: JSON.stringify({
-          users: parseInt(usersResult.rows[0].count),
-          listings: parseInt(listingsResult.rows[0].count),
-          transactions: parseInt(transactionsResult.rows[0].count),
+          users: parseInt(usersResult.rows[0]?.count ?? 0),
+          listings: parseInt(listingsResult.rows[0]?.count ?? 0),
+          transactions: parseInt(transactionsResult.rows[0]?.count ?? 0),
         }),
       };
     }
