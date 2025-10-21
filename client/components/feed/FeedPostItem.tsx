@@ -564,18 +564,12 @@ export function FeedPostItem({
               className="h-8 w-8 rounded-full object-cover flex-shrink-0"
             />
             <div className="flex-1 flex gap-2">
-              <input
-                type="text"
+              <MentionAutocomplete
                 value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Add a comment..."
+                onChange={setCommentText}
+                placeholder="Add a comment... (@ to mention)"
                 className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleComment();
-                  }
-                }}
+                userId={user?.userId}
               />
               <button
                 onClick={handleComment}
