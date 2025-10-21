@@ -30,15 +30,25 @@ export interface AdminUserRecord {
 interface UsersSectionProps {
   users: AdminUserRecord[];
   onUserUpdate?: (userId: string, updates: any) => Promise<void>;
-  onAddStrike?: (userId: string, type: string, description: string) => Promise<void>;
+  onAddStrike?: (
+    userId: string,
+    type: string,
+    description: string,
+  ) => Promise<void>;
 }
 
 const ITEMS_PER_PAGE = 25;
 
-export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSectionProps) => {
+export const UsersSection = ({
+  users = [],
+  onUserUpdate,
+  onAddStrike,
+}: UsersSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
+    null,
+  );
   const [showModal, setShowModal] = useState<"edit" | "strike" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editRole, setEditRole] = useState("");
@@ -131,14 +141,20 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
 
   const formatDate = (date?: string) => {
     if (!date) return "—";
-    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "2-digit" }).format(
-      new Date(date),
-    );
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+    }).format(new Date(date));
   };
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Users" subtitle="Manage" accent={`${filteredUsers.length} found`} />
+      <AdminSectionHeader
+        title="Users"
+        subtitle="Manage"
+        accent={`${filteredUsers.length} found`}
+      />
 
       {/* Search */}
       <div className="flex gap-2 rounded-3xl border border-border bg-card p-4">
@@ -176,7 +192,9 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
               {paginatedUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-muted/20 transition">
                   <td className="px-4 py-3 font-medium">{user.username}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {user.email || "—"}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 capitalize">
                       {user.role}
@@ -195,7 +213,9 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
                       {user.status || "active"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(user.createdAt)}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDate(user.createdAt)}
+                  </td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
                       <Button
@@ -254,7 +274,9 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
             >
               <ChevronRight className="h-4 w-4" />
@@ -267,7 +289,9 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
       {showModal === "edit" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">Edit {selectedUser.username}</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Edit {selectedUser.username}
+            </h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Role</label>
@@ -297,10 +321,18 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(null)}
+                className="rounded-xl"
+              >
                 Cancel
               </Button>
-              <Button onClick={saveEdit} disabled={isSubmitting} className="rounded-xl">
+              <Button
+                onClick={saveEdit}
+                disabled={isSubmitting}
+                className="rounded-xl"
+              >
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
             </div>
@@ -312,7 +344,9 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
       {showModal === "strike" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">Add Strike: {selectedUser.username}</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Add Strike: {selectedUser.username}
+            </h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Reason</label>
@@ -324,7 +358,9 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
                     <SelectItem value="spam">Spam</SelectItem>
                     <SelectItem value="fraud">Fraud</SelectItem>
                     <SelectItem value="harassment">Harassment</SelectItem>
-                    <SelectItem value="inappropriate">Inappropriate content</SelectItem>
+                    <SelectItem value="inappropriate">
+                      Inappropriate content
+                    </SelectItem>
                     <SelectItem value="policy">Policy violation</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
@@ -341,10 +377,18 @@ export const UsersSection = ({ users = [], onUserUpdate, onAddStrike }: UsersSec
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(null)}
+                className="rounded-xl"
+              >
                 Cancel
               </Button>
-              <Button onClick={saveStrike} disabled={isSubmitting} className="rounded-xl bg-warning text-warning-foreground">
+              <Button
+                onClick={saveStrike}
+                disabled={isSubmitting}
+                className="rounded-xl bg-warning text-warning-foreground"
+              >
                 {isSubmitting ? "Saving..." : "Record Strike"}
               </Button>
             </div>
