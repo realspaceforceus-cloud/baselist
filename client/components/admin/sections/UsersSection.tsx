@@ -39,8 +39,10 @@ export const UsersSection = () => {
     const loadUsers = async () => {
       setIsLoading(true);
       try {
+        console.log("Fetching users, page:", currentPage, "search:", searchQuery);
         const result = await adminApi.getUsers(currentPage, searchQuery);
-        setUsers(result.users || []);
+        console.log("Users result:", result);
+        setUsers(result?.users || []);
       } catch (error) {
         console.error("Error loading users:", error);
         toast.error("Failed to load users");
@@ -52,6 +54,20 @@ export const UsersSection = () => {
 
     loadUsers();
   }, [currentPage, searchQuery]);
+
+  // Load users on mount
+  useEffect(() => {
+    if (users.length === 0 && !isLoading) {
+      setIsLoading(true);
+      adminApi.getUsers(1, "").then(result => {
+        setUsers(result?.users || []);
+        setIsLoading(false);
+      }).catch(err => {
+        console.error("Failed to load users on mount:", err);
+        setIsLoading(false);
+      });
+    }
+  }, []);
 
   // Filter and paginate
   const filteredUsers = useMemo(() => {
