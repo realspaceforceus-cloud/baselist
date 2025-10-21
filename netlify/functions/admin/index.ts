@@ -822,6 +822,142 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // DELETE /api/admin/bases/:id (soft delete)
+    if (method === "DELETE" && path.startsWith("/bases/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const baseId = path.replace("/bases/", "");
+
+        // Check if base exists
+        const baseCheck = await client.query("SELECT id FROM bases WHERE id = $1", [baseId]);
+        if (baseCheck.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Base not found" }),
+          };
+        }
+
+        // Soft delete: set deleted_at timestamp
+        const result = await client.query(
+          `UPDATE bases SET deleted_at = NOW(), updated_at = NOW() WHERE id = $1 RETURNING *`,
+          [baseId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ base: result.rows[0], message: "Base deleted successfully" }),
+        };
+      } catch (error) {
+        console.error("Failed to delete base:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to delete base" }),
+        };
+      }
+    }
+
+    // PATCH /api/admin/bases/:id/restore (restore soft-deleted base)
+    if (method === "PATCH" && path.includes("/bases/") && path.includes("/restore")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const baseId = path.replace("/bases/", "").replace("/restore", "");
+
+        // Check if base exists (including deleted ones)
+        const baseCheck = await client.query("SELECT id FROM bases WHERE id = $1", [baseId]);
+        if (baseCheck.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Base not found" }),
+          };
+        }
+
+        // Restore: clear deleted_at timestamp
+        const result = await client.query(
+          `UPDATE bases SET deleted_at = NULL, updated_at = NOW() WHERE id = $1 RETURNING *`,
+          [baseId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ base: result.rows[0], message: "Base restored successfully" }),
+        };
+      } catch (error) {
+        console.error("Failed to restore base:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to restore base" }),
+        };
+      }
+    }
+
+    // GET /api/admin/deleted-bases (show deleted bases)
+    if (method === "GET" && path === "/deleted-bases") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const basesResult = await client.query(
+          `SELECT * FROM bases WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
+        );
+
+        const deletedBases = await Promise.all(
+          basesResult.rows.map(async (base: any) => {
+            const usersCount = await client.query(
+              `SELECT COUNT(*) as count FROM users WHERE base_id = $1`,
+              [base.id],
+            );
+            return {
+              id: base.id,
+              name: base.name,
+              abbreviation: base.abbreviation,
+              region: base.region,
+              timezone: base.timezone,
+              usersCount: parseInt(usersCount.rows[0]?.count ?? 0),
+              deletedAt: base.deleted_at,
+            };
+          }),
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bases: deletedBases }),
+        };
+      } catch (error) {
+        console.error("Failed to fetch deleted bases:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch deleted bases" }),
+        };
+      }
+    }
+
     // GET /api/admin/invitation-codes
     if (method === "GET" && path === "/invitation-codes") {
       if (!(await isAdmin(auth.userId))) {
