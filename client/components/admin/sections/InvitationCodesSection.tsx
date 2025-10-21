@@ -438,17 +438,149 @@ export const InvitationCodesSection = ({
                     </div>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleDeleteCode(code.id)}
-                    className="text-destructive hover:bg-destructive/10 rounded-xl"
-                  >
-                    <Trash2 className="h-4 w-4" aria-hidden />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleEditCode(code)}
+                      className="text-primary hover:bg-primary/10 rounded-xl"
+                      disabled={editingId === code.id}
+                    >
+                      <Edit2 className="h-4 w-4" aria-hidden />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleDeleteCode(code.id)}
+                      className="text-destructive hover:bg-destructive/10 rounded-xl"
+                      disabled={editingId === code.id}
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden />
+                    </Button>
+                  </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingId && (
+        <div className="rounded-3xl border border-border bg-card p-6 shadow-soft space-y-4">
+          <h3 className="text-lg font-semibold text-foreground">
+            Edit Code
+          </h3>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Code
+              </label>
+              <Input
+                value={editFormData.code}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    code: e.target.value.toUpperCase(),
+                  })
+                }
+                placeholder="INVITE123"
+                className="rounded-xl font-mono"
+                maxLength={16}
+                disabled={isUpdating}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Max Uses
+              </label>
+              <Input
+                type="number"
+                value={editFormData.maxUses}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, maxUses: e.target.value })
+                }
+                placeholder="Leave empty for unlimited"
+                className="rounded-xl"
+                min="1"
+                disabled={isUpdating}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Expires At
+              </label>
+              <Input
+                type="date"
+                value={editFormData.expiresAt}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    expiresAt: e.target.value,
+                  })
+                }
+                className="rounded-xl"
+                disabled={isUpdating}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Description
+              </label>
+              <Input
+                value={editFormData.description}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    description: e.target.value,
+                  })
+                }
+                placeholder="e.g., Sponsors program"
+                className="rounded-xl"
+                disabled={isUpdating}
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <input
+                  type="checkbox"
+                  checked={editFormData.active}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      active: e.target.checked,
+                    })
+                  }
+                  disabled={isUpdating}
+                  className="rounded"
+                />
+                Active
+              </label>
+            </div>
+          </div>
+
+          <div className="flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setEditingId(null)}
+              className="rounded-xl"
+              disabled={isUpdating}
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateCode}
+              disabled={isUpdating || !editFormData.code}
+              className="rounded-xl"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {isUpdating ? "Saving..." : "Save"}
+            </Button>
+          </div>
         </div>
       )}
     </section>
