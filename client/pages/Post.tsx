@@ -711,13 +711,25 @@ const Post = (): JSX.Element => {
                 >
                   Color
                 </label>
-                <Input
-                  id="vehicle-color"
-                  placeholder="Blue"
-                  value={vehicleColor}
-                  onChange={(event) => setVehicleColor(event.target.value)}
-                  className="h-10 rounded-2xl text-base"
-                />
+                <Select value={vehicleColor} onValueChange={setVehicleColor}>
+                  <SelectTrigger id="vehicle-color" className="h-10 rounded-2xl">
+                    <SelectValue placeholder="Select color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Black">Black</SelectItem>
+                    <SelectItem value="White">White</SelectItem>
+                    <SelectItem value="Silver">Silver</SelectItem>
+                    <SelectItem value="Gray">Gray</SelectItem>
+                    <SelectItem value="Red">Red</SelectItem>
+                    <SelectItem value="Blue">Blue</SelectItem>
+                    <SelectItem value="Brown">Brown</SelectItem>
+                    <SelectItem value="Green">Green</SelectItem>
+                    <SelectItem value="Gold">Gold</SelectItem>
+                    <SelectItem value="Beige">Beige</SelectItem>
+                    <SelectItem value="Orange">Orange</SelectItem>
+                    <SelectItem value="Purple">Purple</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
