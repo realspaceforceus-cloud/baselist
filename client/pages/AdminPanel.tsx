@@ -2193,7 +2193,7 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "roles" ? (
-            <RolesEnhanced
+            <RolesSection
               users={accountList.map((acc) => ({
                 id: acc.id,
                 username: acc.username,
