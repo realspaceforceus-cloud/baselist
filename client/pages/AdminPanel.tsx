@@ -436,6 +436,7 @@ const sections: AdminNavItem[] = [
   },
   { id: "invitation-codes", label: "Invitation Codes", icon: UsersIcon },
   { id: "bases", label: "Bases", icon: Building2 },
+  { id: "announcements", label: "Announcements", icon: AlertCircle },
   { id: "sponsors", label: "Sponsors", icon: Megaphone },
   { id: "messaging", label: "Messaging", icon: MessageSquareWarning },
   { id: "metrics", label: "Metrics", icon: BarChart3 },
