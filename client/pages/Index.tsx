@@ -234,6 +234,13 @@ const Index = (): JSX.Element => {
         </div>
 
         <SponsorTile placement={sponsorPlacement} />
+
+        {activeFilter === "Vehicles" && (
+          <VehicleFilterBar
+            filters={vehicleFilters}
+            onFiltersChange={setVehicleFilters}
+          />
+        )}
       </div>
 
       {visibleListings.length > 0 ? (
