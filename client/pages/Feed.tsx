@@ -73,6 +73,10 @@ export default function Feed(): JSX.Element {
     setPosts((prev) => [newPost, ...prev]);
   };
 
+  const handlePostDeleted = (postId: string) => {
+    setPosts((prev) => prev.filter((p) => p.id !== postId));
+  };
+
   const handleAnnouncementDismissed = (announcementId: string) => {
     setAnnouncements((prev) =>
       prev.map((ann) =>
