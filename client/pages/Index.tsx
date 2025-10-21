@@ -53,6 +53,10 @@ const Index = (): JSX.Element => {
     [currentBaseId, sponsorPlacements],
   );
 
+  const vehicleOptions = useMemo(() => {
+    return extractVehicleOptions(listings);
+  }, [listings]);
+
   const filteredListings = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
 
