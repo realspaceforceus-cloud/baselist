@@ -62,7 +62,9 @@ export const InvitationCodesSection = ({
 
     setIsLoading(true);
     try {
-      const result = await onFetchCodes(selectedBase !== "all" ? selectedBase : undefined);
+      const result = await onFetchCodes(
+        selectedBase !== "all" ? selectedBase : undefined,
+      );
       setCodes(result);
     } catch (error) {
       toast.error("Failed to load invitation codes");
