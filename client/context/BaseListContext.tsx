@@ -153,7 +153,7 @@ const INITIAL_NOTICES: AccountNotice[] = [];
 type BaseListContextValue = {
   bases: Base[];
   currentBaseId: string;
-  currentBase: Base;
+  currentBase: Base | undefined;
   setCurrentBaseId: (baseId: string) => void;
   refreshBases: () => Promise<void>;
   searchQuery: string;
