@@ -1,0 +1,239 @@
+import { useState } from "react";
+import { Image, Calendar, BarChart3, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { feedApi } from "@/lib/feedApi";
+import { useBaseList } from "@/context/BaseListContext";
+import { useAuth } from "@/context/AuthContext";
+import type { FeedPost } from "@/types";
+
+interface FeedComposerProps {
+  onPostCreated: (post: FeedPost) => void;
+  baseName: string;
+}
+
+type ComposerMode = "text" | "photo" | "poll" | "event" | "psa";
+
+export function FeedComposer({
+  onPostCreated,
+  baseName,
+}: FeedComposerProps): JSX.Element {
+  const { user } = useAuth();
+  const { currentBaseId } = useBaseList();
+  const [content, setContent] = useState("");
+  const [mode, setMode] = useState<ComposerMode>("text");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
+  const [eventData, setEventData] = useState({
+    title: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+  });
+
+  const isAdmin = user?.role === "admin" || user?.role === "moderator";
+  const isFormValid = content.trim().length > 0;
+
+  const handleSubmit = async () => {
+    if (!isFormValid || !currentBaseId) return;
+
+    setIsSubmitting(true);
+    try {
+      let pollOpts = undefined;
+      let eventDataToSend = undefined;
+
+      if (mode === "poll") {
+        pollOpts = pollOptions
+          .filter((opt) => opt.trim())
+          .map((opt) => ({
+            id: Math.random().toString(36).substr(2, 9),
+            text: opt,
+            votes: 0,
+          }));
+
+        if (pollOpts.length < 2) {
+          toast.error("Add at least 2 poll options");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      if (mode === "event") {
+        if (!eventData.title || !eventData.startDate) {
+          toast.error("Event title and start date are required");
+          setIsSubmitting(false);
+          return;
+        }
+        eventDataToSend = eventData;
+      }
+
+      const post = await feedApi.createPost(
+        currentBaseId,
+        mode,
+        content,
+        [],
+        pollOpts,
+        eventDataToSend,
+      );
+
+      onPostCreated(post);
+      setContent("");
+      setMode("text");
+      setPollOptions(["", ""]);
+      setEventData({
+        title: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+      });
+      setShowOptions(false);
+      toast.success("Post created!");
+    } catch (error) {
+      toast.error("Failed to create post");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 shadow-card">
+      {/* Header */}
+      <p className="mb-4 text-sm font-semibold text-muted-foreground">
+        What's happening at {baseName}?
+      </p>
+
+      {/* Mode Tabs */}
+      <div className="mb-4 flex flex-wrap gap-2 border-b border-border pb-3">
+        {(["text", "photo", "poll", "event"] as ComposerMode[]).map((m) => (
+          <button
+            key={m}
+            onClick={() => {
+              setMode(m);
+              setShowOptions(true);
+            }}
+            className={`capitalize px-3 py-1 text-sm font-medium rounded transition ${
+              mode === m
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent"
+            }`}
+          >
+            {m}
+          </button>
+        ))}
+        {isAdmin && (
+          <button
+            onClick={() => {
+              setMode("psa");
+              setShowOptions(true);
+            }}
+            className={`px-3 py-1 text-sm font-medium rounded transition flex items-center gap-1 ${
+              mode === "psa"
+                ? "bg-destructive text-destructive-foreground"
+                : "text-muted-foreground hover:bg-accent"
+            }`}
+          >
+            <AlertCircle className="h-4 w-4" />
+            PSA
+          </button>
+        )}
+      </div>
+
+      {/* Text Input */}
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder={`Share your thoughts...`}
+        className="mb-4 min-h-[100px] w-full rounded-lg border border-border bg-background p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+
+      {/* Mode-specific options */}
+      {showOptions && mode === "poll" && (
+        <div className="mb-4 space-y-2 rounded-lg bg-accent/50 p-3">
+          <p className="text-sm font-medium">Poll options</p>
+          {pollOptions.map((opt, idx) => (
+            <input
+              key={idx}
+              type="text"
+              value={opt}
+              onChange={(e) => {
+                const newOpts = [...pollOptions];
+                newOpts[idx] = e.target.value;
+                setPollOptions(newOpts);
+              }}
+              placeholder={`Option ${idx + 1}`}
+              className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
+            />
+          ))}
+          <button
+            onClick={() =>
+              setPollOptions([...pollOptions, ""])
+            }
+            className="text-xs text-primary hover:underline"
+          >
+            + Add option
+          </button>
+        </div>
+      )}
+
+      {showOptions && mode === "event" && (
+        <div className="mb-4 space-y-3 rounded-lg bg-accent/50 p-3">
+          <input
+            type="text"
+            value={eventData.title}
+            onChange={(e) =>
+              setEventData({ ...eventData, title: e.target.value })
+            }
+            placeholder="Event title"
+            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
+          />
+          <textarea
+            value={eventData.description}
+            onChange={(e) =>
+              setEventData({ ...eventData, description: e.target.value })
+            }
+            placeholder="Event description"
+            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
+          />
+          <input
+            type="datetime-local"
+            value={eventData.startDate}
+            onChange={(e) =>
+              setEventData({ ...eventData, startDate: e.target.value })
+            }
+            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
+          />
+          <input
+            type="text"
+            value={eventData.endDate}
+            onChange={(e) =>
+              setEventData({ ...eventData, endDate: e.target.value })
+            }
+            placeholder="End date (optional)"
+            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
+          />
+        </div>
+      )}
+
+      {/* Action buttons */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          {mode === "photo" && (
+            <button className="rounded p-2 text-muted-foreground hover:bg-accent">
+              <Image className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <Button
+          onClick={handleSubmit}
+          disabled={!isFormValid || isSubmitting}
+          className="rounded-full px-6"
+        >
+          {isSubmitting ? "Posting..." : "Post"}
+        </Button>
+      </div>
+    </div>
+  );
+}
