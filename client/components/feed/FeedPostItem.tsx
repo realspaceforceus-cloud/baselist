@@ -329,10 +329,10 @@ export function FeedPostItem({
                       {voteCount}
                     </span>
                   </div>
-                  <div className="mt-1 h-1 rounded-full bg-border overflow-hidden">
+                  <div className="mt-1 h-2 rounded-full bg-muted/50 overflow-hidden">
                     <div
                       className={`h-full transition-all ${
-                        userVoted ? "bg-primary" : "bg-muted"
+                        userVoted ? "bg-primary" : "bg-primary/60"
                       }`}
                       style={{ width: `${percentage}%` }}
                     />
