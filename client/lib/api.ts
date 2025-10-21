@@ -1,5 +1,9 @@
 import { apiRequest } from "./apiClient";
 
+// Safe array utility - always returns an array
+export const asArray = <T,>(v: T[] | undefined | null): T[] =>
+  Array.isArray(v) ? v : [];
+
 // Auth endpoints
 export const auth = {
   register: async (
