@@ -185,7 +185,7 @@ export const SettingsSection = (): JSX.Element => {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Username
               </label>
               <Input
@@ -196,13 +196,13 @@ export const SettingsSection = (): JSX.Element => {
                 placeholder="Enter new username"
                 className="rounded-lg"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Leave blank to keep current
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Email
               </label>
               <Input
@@ -213,7 +213,7 @@ export const SettingsSection = (): JSX.Element => {
                 placeholder="Enter new email"
                 className="rounded-lg"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Leave blank to keep current
               </p>
             </div>
