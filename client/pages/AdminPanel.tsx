@@ -1934,6 +1934,68 @@ const AdminPanel = (): JSX.Element => {
   );
 
   const roles = useMemo(() => createInitialRoles(), []);
+
+  // Load reports from API
+  useEffect(() => {
+    let active = true;
+    const loadReports = async () => {
+      try {
+        const reportsData = await adminApi.getReports();
+        if (!active) return;
+        if (reportsData && "reports" in reportsData && Array.isArray(reportsData.reports)) {
+          setReports(
+            reportsData.reports.map((r: any) => ({
+              id: r.id,
+              type: r.type || "General",
+              reporter: r.reported_by || "Unknown",
+              targetType: r.target_type || "listing",
+              targetId: r.target_id || "",
+              targetLabel: r.reason || "Reported content",
+              base: r.base_id || "Unknown",
+              time: formatRelativeTime(r.created_at),
+              attachmentUrl: r.evidence_url,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load reports:", error);
+      }
+    };
+    loadReports();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Load verification documents from API
+  useEffect(() => {
+    let active = true;
+    const loadVerifications = async () => {
+      try {
+        const verificationsData = await adminApi.getVerifications();
+        if (!active) return;
+        if (verificationsData && "verifications" in verificationsData && Array.isArray(verificationsData.verifications)) {
+          setVerificationDocs(
+            verificationsData.verifications.map((v: any) => ({
+              id: v.id,
+              userId: v.user_id,
+              name: v.user_name || "Unknown",
+              method: v.method || "Unknown",
+              submitted: formatRelativeTime(v.submitted_at),
+              url: v.document_url || "",
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load verifications:", error);
+      }
+    };
+    loadVerifications();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const unreadNoticeCount = useMemo(
     () =>
       notices.filter(
