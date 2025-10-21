@@ -1113,13 +1113,13 @@ export const handler: Handler = async (event) => {
 
       const user = userResult.rows[0];
 
-      // Get account strikes
+      // Get account notes (strikes and admin notes)
       const strikesResult = await client.query(
         `SELECT * FROM account_notes WHERE user_id = $1 ORDER BY created_at DESC`,
         [userId],
       );
 
-      // Get user listings
+      // Get user listings (all statuses including deleted and inactive)
       const listingsResult = await client.query(
         `SELECT id, title, price, status, created_at FROM listings WHERE seller_id = $1 ORDER BY created_at DESC`,
         [userId],
