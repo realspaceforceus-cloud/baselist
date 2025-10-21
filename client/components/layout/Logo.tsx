@@ -7,9 +7,14 @@ export const Logo = (): JSX.Element => {
       className="flex items-center transition hover:opacity-80 cursor-pointer"
       aria-label="TrustyPCS home"
     >
-      <span className="text-2xl font-semibold tracking-tight text-foreground pointer-events-none">
-        <span className="font-normal">trusty</span>
-        <span className="font-bold">PCS</span>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+      `}</style>
+      <span className="flex items-baseline gap-1 pointer-events-none">
+        <span style={{ fontFamily: "'Great Vibes', cursive" }} className="text-3xl text-foreground">
+          trusty
+        </span>
+        <span className="text-2xl font-bold tracking-tight text-foreground">PCS</span>
       </span>
     </Link>
   );
