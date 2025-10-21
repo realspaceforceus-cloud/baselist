@@ -45,7 +45,7 @@ export const InvitationCodesSection = ({
   onDeleteCode,
 }: InvitationCodesSectionProps) => {
   const [codes, setCodes] = useState<InvitationCode[]>([]);
-  const [selectedBase, setSelectedBase] = useState<string>("");
+  const [selectedBase, setSelectedBase] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
