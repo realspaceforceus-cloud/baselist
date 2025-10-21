@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Ban, Edit2 } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { adminApi } from "@/lib/adminApi";
@@ -20,7 +26,9 @@ export interface AdminUserRecord {
 export const UsersSection = () => {
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
+    null,
+  );
   const [showModal, setShowModal] = useState<"edit" | "strike" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editRole, setEditRole] = useState("");
@@ -62,7 +70,10 @@ export const UsersSection = () => {
     if (!selectedUser) return;
     setIsSubmitting(true);
     try {
-      await adminApi.updateUser(selectedUser.id, { role: editRole, status: editStatus });
+      await adminApi.updateUser(selectedUser.id, {
+        role: editRole,
+        status: editStatus,
+      });
       toast.success("User updated");
       setShowModal(null);
       setSelectedUser(null);
@@ -90,7 +101,13 @@ export const UsersSection = () => {
     }
     setIsSubmitting(true);
     try {
-      await adminApi.addAccountNote(selectedUser.id, "strike", strikeDescription, strikeReason, "critical");
+      await adminApi.addAccountNote(
+        selectedUser.id,
+        "strike",
+        strikeDescription,
+        strikeReason,
+        "critical",
+      );
       toast.success("Strike recorded");
       setShowModal(null);
       setSelectedUser(null);
@@ -114,14 +131,20 @@ export const UsersSection = () => {
 
   const formatDate = (date?: string) => {
     if (!date) return "—";
-    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "2-digit" }).format(
-      new Date(date),
-    );
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+    }).format(new Date(date));
   };
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Users" subtitle="Manage" accent={`${users.length} total`} />
+      <AdminSectionHeader
+        title="Users"
+        subtitle="Manage"
+        accent={`${users.length} total`}
+      />
 
       {/* Loading */}
       {isLoading && (
@@ -155,7 +178,9 @@ export const UsersSection = () => {
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-muted/20">
                   <td className="px-4 py-3 font-medium">{user.username}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {user.email || "—"}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 capitalize">
                       {user.role}
@@ -174,7 +199,9 @@ export const UsersSection = () => {
                       {user.status || "active"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(user.createdAt)}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDate(user.createdAt)}
+                  </td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
                       <Button
@@ -216,7 +243,9 @@ export const UsersSection = () => {
       {showModal === "edit" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">Edit {selectedUser.username}</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Edit {selectedUser.username}
+            </h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Role</label>
@@ -246,10 +275,18 @@ export const UsersSection = () => {
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(null)}
+                className="rounded-xl"
+              >
                 Cancel
               </Button>
-              <Button onClick={saveEdit} disabled={isSubmitting} className="rounded-xl">
+              <Button
+                onClick={saveEdit}
+                disabled={isSubmitting}
+                className="rounded-xl"
+              >
                 Save
               </Button>
             </div>
@@ -261,7 +298,9 @@ export const UsersSection = () => {
       {showModal === "strike" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">Add Strike: {selectedUser.username}</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Add Strike: {selectedUser.username}
+            </h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Reason</label>
@@ -290,10 +329,18 @@ export const UsersSection = () => {
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(null)}
+                className="rounded-xl"
+              >
                 Cancel
               </Button>
-              <Button onClick={saveStrike} disabled={isSubmitting} className="rounded-xl bg-warning text-warning-foreground">
+              <Button
+                onClick={saveStrike}
+                disabled={isSubmitting}
+                className="rounded-xl bg-warning text-warning-foreground"
+              >
                 Record
               </Button>
             </div>

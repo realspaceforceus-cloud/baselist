@@ -23,7 +23,11 @@ export const MetricsSection = (): JSX.Element => {
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Metrics & Logs" subtitle="Metrics" accent="Pulse" />
+      <AdminSectionHeader
+        title="Metrics & Logs"
+        subtitle="Metrics"
+        accent="Pulse"
+      />
 
       {isLoading ? (
         <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
@@ -50,8 +54,12 @@ export const MetricsSection = (): JSX.Element => {
                 </span>
               </div>
               <div className="mt-6 flex items-baseline justify-between">
-                <span className="text-3xl font-semibold text-foreground">{metric.value}</span>
-                <span className="text-xs text-muted-foreground">{metric.period}</span>
+                <span className="text-3xl font-semibold text-foreground">
+                  {metric.value}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {metric.period}
+                </span>
               </div>
             </article>
           ))}

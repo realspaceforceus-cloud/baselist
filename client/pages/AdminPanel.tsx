@@ -2111,9 +2111,7 @@ const AdminPanel = (): JSX.Element => {
               </section>
             </>
           ) : null}
-          {activeSection === "users" ? (
-            <UsersSection />
-          ) : null}
+          {activeSection === "users" ? <UsersSection /> : null}
           {activeSection === "listings" ? <ListingsSection /> : null}
           {activeSection === "reports" ? <ReportsSection /> : null}
           {activeSection === "verification" ? <VerificationSection /> : null}

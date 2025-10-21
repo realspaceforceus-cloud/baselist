@@ -39,7 +39,11 @@ export const ReportsSection = () => {
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Reports" subtitle="Manage" accent={`${reports.length} total`} />
+      <AdminSectionHeader
+        title="Reports"
+        subtitle="Manage"
+        accent={`${reports.length} total`}
+      />
 
       {/* Filter */}
       <div className="flex gap-2 flex-wrap">
@@ -81,19 +85,37 @@ export const ReportsSection = () => {
             <tbody className="divide-y divide-border">
               {filteredReports.map((report) => (
                 <tr key={report.id} className="hover:bg-muted/20">
-                  <td className="px-4 py-3 font-medium capitalize">{report.type}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.reporter}</td>
-                  <td className="px-4 py-3 text-xs">
-                    <span className="inline-flex rounded bg-muted px-2 py-1">{report.targetLabel}</span>
+                  <td className="px-4 py-3 font-medium capitalize">
+                    {report.type}
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.base}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.time}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {report.reporter}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    <span className="inline-flex rounded bg-muted px-2 py-1">
+                      {report.targetLabel}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {report.base}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {report.time}
+                  </td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
-                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-green-600">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-lg text-green-600"
+                      >
                         <CheckCircle2 className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-destructive">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-lg text-destructive"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>

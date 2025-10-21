@@ -36,14 +36,28 @@ export const VerificationSection = () => {
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Verification" subtitle="Manage" accent={`${documents.length} pending`} />
+      <AdminSectionHeader
+        title="Verification"
+        subtitle="Manage"
+        accent={`${documents.length} pending`}
+      />
 
       {/* Toggle */}
       <div className="flex gap-2">
-        <Button variant={viewMode === "queues" ? "default" : "outline"} size="sm" onClick={() => setViewMode("queues")} className="rounded-full">
+        <Button
+          variant={viewMode === "queues" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("queues")}
+          className="rounded-full"
+        >
           Queues
         </Button>
-        <Button variant={viewMode === "docs" ? "default" : "outline"} size="sm" onClick={() => setViewMode("docs")} className="rounded-full">
+        <Button
+          variant={viewMode === "docs" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("docs")}
+          className="rounded-full"
+        >
           Documents
         </Button>
       </div>
@@ -52,18 +66,29 @@ export const VerificationSection = () => {
       {viewMode === "queues" && (
         <div className="grid gap-3 md:grid-cols-3">
           {queues.length === 0 ? (
-            <div className="col-span-3 text-center text-muted-foreground p-8">No queue data</div>
+            <div className="col-span-3 text-center text-muted-foreground p-8">
+              No queue data
+            </div>
           ) : (
             queues.map((queue) => {
               const Icon = queue.icon;
               return (
-                <div key={queue.id} className="rounded-3xl border border-border bg-background/90 p-4">
+                <div
+                  key={queue.id}
+                  className="rounded-3xl border border-border bg-background/90 p-4"
+                >
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-semibold uppercase">{queue.label}</span>
+                    <span className="text-xs font-semibold uppercase">
+                      {queue.label}
+                    </span>
                     <Icon className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="text-3xl font-semibold mb-1">{queue.count}</div>
-                  <p className="text-xs text-muted-foreground">{queue.description}</p>
+                  <div className="text-3xl font-semibold mb-1">
+                    {queue.count}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {queue.description}
+                  </p>
                 </div>
               );
             })
@@ -74,7 +99,9 @@ export const VerificationSection = () => {
       {/* Documents View */}
       {viewMode === "docs" &&
         (isLoading ? (
-          <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">Loading...</div>
+          <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+            Loading...
+          </div>
         ) : documents.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
             No documents pending
@@ -86,22 +113,38 @@ export const VerificationSection = () => {
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold">Name</th>
                   <th className="px-4 py-3 text-left font-semibold">Method</th>
-                  <th className="px-4 py-3 text-left font-semibold">Submitted</th>
-                  <th className="px-4 py-3 text-center font-semibold">Actions</th>
+                  <th className="px-4 py-3 text-left font-semibold">
+                    Submitted
+                  </th>
+                  <th className="px-4 py-3 text-center font-semibold">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {documents.map((doc) => (
                   <tr key={doc.id} className="hover:bg-muted/20">
                     <td className="px-4 py-3 font-medium">{doc.name}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{doc.method}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{doc.submitted}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">
+                      {doc.method}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">
+                      {doc.submitted}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center gap-1">
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-green-600">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 w-8 p-0 rounded-lg text-green-600"
+                        >
                           <Check className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-destructive">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 w-8 p-0 rounded-lg text-destructive"
+                        >
                           <FileX className="h-4 w-4" />
                         </Button>
                       </div>

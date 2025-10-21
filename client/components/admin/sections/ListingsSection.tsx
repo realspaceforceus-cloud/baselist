@@ -17,16 +17,21 @@ export interface AdminListingRow {
 }
 
 const statusClassName: Record<AdminListingStatus, string> = {
-  Active: "rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-success",
+  Active:
+    "rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-success",
   Sold: "rounded-full bg-muted/70 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground",
-  Flagged: "rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning",
-  Removed: "rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-destructive",
+  Flagged:
+    "rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning",
+  Removed:
+    "rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-destructive",
 };
 
 export const ListingsSection = () => {
   const [listings, setListings] = useState<AdminListingRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<AdminListingStatus | "All">("Active");
+  const [activeFilter, setActiveFilter] = useState<AdminListingStatus | "All">(
+    "Active",
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -40,7 +45,13 @@ export const ListingsSection = () => {
     return listings.filter((l) => l.status === activeFilter);
   }, [activeFilter, listings]);
 
-  const filters: Array<AdminListingStatus | "All"> = ["Active", "Sold", "Flagged", "Removed", "All"];
+  const filters: Array<AdminListingStatus | "All"> = [
+    "Active",
+    "Sold",
+    "Flagged",
+    "Removed",
+    "All",
+  ];
 
   return (
     <section className="space-y-4">
@@ -60,7 +71,9 @@ export const ListingsSection = () => {
             }
           >
             {filter}
-            {filter === "Flagged" ? <AlertTriangle className="h-3.5 w-3.5" /> : null}
+            {filter === "Flagged" ? (
+              <AlertTriangle className="h-3.5 w-3.5" />
+            ) : null}
           </button>
         ))}
       </div>
@@ -92,21 +105,43 @@ export const ListingsSection = () => {
             <tbody className="divide-y divide-border bg-card/80">
               {filteredListings.map((listing) => (
                 <tr key={listing.id} className="hover:bg-muted/40">
-                  <td className="px-4 py-3 font-semibold text-foreground">{listing.item}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{listing.base}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{listing.price}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{listing.seller}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{listing.date}</td>
-                  <td className="px-4 py-3">
-                    <span className={statusClassName[listing.status]}>{listing.status}</span>
+                  <td className="px-4 py-3 font-semibold text-foreground">
+                    {listing.item}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{listing.reports}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {listing.base}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {listing.price}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {listing.seller}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {listing.date}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={statusClassName[listing.status]}>
+                      {listing.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {listing.reports}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                      <Button variant="outline" size="sm" className="rounded-full">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full"
+                      >
                         View
                       </Button>
-                      <Button variant="outline" size="sm" className="rounded-full">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full"
+                      >
                         <Flag className="h-3.5 w-3.5 mr-1" />
                         {listing.status === "Flagged" ? "Clear" : "Flag"}
                       </Button>

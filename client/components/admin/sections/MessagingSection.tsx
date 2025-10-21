@@ -25,7 +25,11 @@ export const MessagingSection = () => {
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Messaging" subtitle="Manage" accent={`${threads.length} flagged`} />
+      <AdminSectionHeader
+        title="Messaging"
+        subtitle="Manage"
+        accent={`${threads.length} flagged`}
+      />
 
       {isLoading ? (
         <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
@@ -38,7 +42,10 @@ export const MessagingSection = () => {
       ) : (
         <div className="space-y-3">
           {threads.map((thread) => (
-            <div key={thread.id} className="rounded-3xl border border-border bg-card p-4">
+            <div
+              key={thread.id}
+              className="rounded-3xl border border-border bg-card p-4"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
@@ -48,7 +55,9 @@ export const MessagingSection = () => {
                       {thread.base}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{thread.participants}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {thread.participants}
+                  </p>
                   <p className="text-sm text-foreground italic border-l-2 border-muted pl-3">
                     "{thread.excerpt}"
                   </p>

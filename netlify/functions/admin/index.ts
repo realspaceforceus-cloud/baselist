@@ -108,7 +108,9 @@ export const handler: Handler = async (event) => {
       // }
 
       const queryString = event.rawQueryString || "";
-      const params = new URLSearchParams(queryString.startsWith("?") ? queryString.substring(1) : queryString);
+      const params = new URLSearchParams(
+        queryString.startsWith("?") ? queryString.substring(1) : queryString,
+      );
       const search = params.get("search") || "";
       const page = parseInt(params.get("page") || "1");
       const limit = 25;
@@ -135,7 +137,16 @@ export const handler: Handler = async (event) => {
       // Fetch users
       let result: any = { rows: [] };
       try {
-        console.log("Users query - whereClause:", whereClause, "searchParams:", searchParams, "limit:", limit, "offset:", offset);
+        console.log(
+          "Users query - whereClause:",
+          whereClause,
+          "searchParams:",
+          searchParams,
+          "limit:",
+          limit,
+          "offset:",
+          offset,
+        );
         result = await client.query(
           `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt",
                   dow_verified_at as "dowVerifiedAt", avatar_url as "avatarUrl"
