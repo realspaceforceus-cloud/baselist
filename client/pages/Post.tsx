@@ -175,7 +175,12 @@ const Post = (): JSX.Element => {
       nextErrors.photos = "Add at least one photo.";
     }
 
-    if (!title.trim()) {
+    // For vehicles, validate vehicle details instead of relying solely on title
+    if (category === "Vehicles") {
+      if (!vehicleYear || !vehicleMake || !vehicleModel) {
+        nextErrors.title = "Please fill in year, make, and model for vehicles.";
+      }
+    } else if (!title.trim()) {
       nextErrors.title = "Enter a clear title.";
     }
 
