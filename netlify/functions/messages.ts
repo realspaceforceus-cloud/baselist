@@ -90,6 +90,40 @@ export const handler: Handler = async (event) => {
         [threadId],
       );
 
+      // Get listing title for notification
+      const listingResult = await client.query(
+        "SELECT title FROM listings WHERE id = $1",
+        [listingId],
+      );
+      const listingTitle = listingResult.rows[0]?.title || "an item";
+
+      // Get sender name for notification
+      const senderResult = await client.query(
+        "SELECT username FROM users WHERE id = $1",
+        [authorId],
+      );
+      const senderName = senderResult.rows[0]?.username || "Someone";
+
+      // Create notification for recipient
+      try {
+        await createNotification({
+          userId: recipientId,
+          type: "message",
+          title: `New message from ${senderName}`,
+          description: `${senderName} sent you a message about "${listingTitle}"`,
+          actorId: authorId,
+          targetId: threadId,
+          targetType: "thread",
+          data: {
+            listingId,
+            messagePreview: body.substring(0, 100),
+          },
+        });
+      } catch (notificationErr) {
+        console.error("Error creating notification:", notificationErr);
+        // Don't fail the entire request if notification creation fails
+      }
+
       // Fetch the full thread
       const threadResult = await client.query(
         "SELECT * FROM message_threads WHERE id = $1",
