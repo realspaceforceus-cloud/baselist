@@ -651,13 +651,9 @@ const Post = (): JSX.Element => {
                 >
                   Make <span className="text-destructive">*</span>
                 </label>
-                <Input
-                  id="vehicle-make"
-                  placeholder="Honda"
+                <VehicleMakeSelect
                   value={vehicleMake}
-                  onChange={(event) => setVehicleMake(event.target.value)}
-                  className="h-10 rounded-2xl text-base"
-                  aria-invalid={Boolean(errors.title)}
+                  onChange={setVehicleMake}
                 />
               </div>
 
@@ -668,13 +664,9 @@ const Post = (): JSX.Element => {
                 >
                   Model <span className="text-destructive">*</span>
                 </label>
-                <Input
-                  id="vehicle-model"
-                  placeholder="Civic"
+                <VehicleModelSelect
                   value={vehicleModel}
-                  onChange={(event) => setVehicleModel(event.target.value)}
-                  className="h-10 rounded-2xl text-base"
-                  aria-invalid={Boolean(errors.title)}
+                  onChange={setVehicleModel}
                 />
               </div>
 
