@@ -8,18 +8,31 @@ const transformFeedPost = (row: any) => {
   let eventData = undefined;
 
   if (row.poll_options) {
-    pollOptions =
-      typeof row.poll_options === "string"
-        ? JSON.parse(row.poll_options)
-        : row.poll_options;
+    try {
+      pollOptions =
+        typeof row.poll_options === "string"
+          ? JSON.parse(row.poll_options)
+          : row.poll_options;
+    } catch (e) {
+      console.error("[FEED] Error parsing poll_options:", e);
+      pollOptions = undefined;
+    }
   }
 
   if (row.event_data) {
-    eventData =
-      typeof row.event_data === "string"
-        ? JSON.parse(row.event_data)
-        : row.event_data;
+    try {
+      eventData =
+        typeof row.event_data === "string"
+          ? JSON.parse(row.event_data)
+          : row.event_data;
+    } catch (e) {
+      console.error("[FEED] Error parsing event_data:", e);
+      eventData = undefined;
+    }
   }
+
+  const likes = parseInt(row.likes?.toString() || "0", 10) || 0;
+  const comments = parseInt(row.comments?.toString() || "0", 10) || 0;
 
   return {
     id: row.id,
@@ -33,8 +46,8 @@ const transformFeedPost = (row: any) => {
     eventData: eventData,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    likes: row.likes || 0,
-    comments: row.comments || 0,
+    likes,
+    comments,
   };
 };
 
