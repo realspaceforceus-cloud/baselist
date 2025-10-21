@@ -27,6 +27,7 @@ export function MentionAutocomplete({
   className,
   onFocus,
   onBlur,
+  onKeyPress,
   isTextarea = false,
   userId,
 }: MentionAutocompleteProps): JSX.Element {
