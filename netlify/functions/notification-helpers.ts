@@ -15,7 +15,9 @@ export interface CreateNotificationOptions {
     | "transaction_complete"
     | "post_commented"
     | "comment_liked"
-    | "comment_replied";
+    | "comment_replied"
+    | "tagged_in_post"
+    | "tagged_in_comment";
   title: string;
   description: string;
   actorId?: string;
