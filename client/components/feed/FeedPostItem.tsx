@@ -31,9 +31,7 @@ export function FeedPostItem({
   const [isLiked, setIsLiked] = useState(post.userLiked || false);
   const [likes, setLikes] = useState(post.likes || 0);
   const [isLiking, setIsLiking] = useState(false);
-  const [showComments, setShowComments] = useState(
-    (post.userComments?.length || 0) > 0,
-  );
+  const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isCommentingLoading, setIsCommentingLoading] = useState(false);
   const [pollOptions, setPollOptions] = useState(post.pollOptions || []);
