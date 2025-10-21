@@ -12,11 +12,9 @@ export interface AdminMetricCard {
 
 interface MetricsSectionProps {
   metrics: AdminMetricCard[];
-  onViewLog: () => void;
-  onExport: () => void;
 }
 
-export const MetricsSection = ({ metrics, onViewLog, onExport }: MetricsSectionProps): JSX.Element => {
+export const MetricsSection = ({ metrics = [] }: MetricsSectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Metrics & Logs" subtitle="Metrics" accent="Pulse" />
