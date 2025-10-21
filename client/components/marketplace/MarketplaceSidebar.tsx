@@ -92,13 +92,13 @@ export function MarketplaceSidebar({
             </div>
 
             {/* View Button */}
-            <div className="flex flex-shrink-0 items-center justify-center">
+            <div className="flex flex-shrink-0 items-center">
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   window.location.href = `/listing/${slug}`;
                 }}
-                className="rounded border border-border bg-background px-3 py-1 text-xs font-semibold text-foreground hover:bg-accent transition"
+                className="rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 text-sm font-semibold transition shadow-sm hover:shadow-md"
               >
                 View
               </button>
