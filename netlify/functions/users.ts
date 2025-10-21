@@ -13,7 +13,27 @@ export const handler: Handler = async (event) => {
     try {
       const id = path.slice(1);
       const result = await client.query(
-        "SELECT id, username, email, role, base_id, avatar_url, created_at FROM users WHERE id = $1",
+        `SELECT
+          u.id,
+          u.username as name,
+          u.email,
+          u.role,
+          u.base_id as "baseId",
+          u.avatar_url as "avatarUrl",
+          u.created_at as "memberSince",
+          u.dow_verified_at as "verifiedAt",
+          u.last_login_at as "lastActiveAt",
+          COALESCE(
+            (SELECT AVG(CAST(score AS FLOAT)) FROM ratings r
+             INNER JOIN transactions t ON r.transaction_id = t.id
+             WHERE t.seller_id = u.id AND r.user_id != u.id),
+            NULL
+          ) as rating,
+          (SELECT COUNT(*) FROM ratings r
+           INNER JOIN transactions t ON r.transaction_id = t.id
+           WHERE t.seller_id = u.id AND r.user_id != u.id) as "ratingCount",
+          (SELECT COUNT(*) FROM transactions WHERE seller_id = u.id AND status = 'completed') as "completedSales"
+        FROM users u WHERE u.id = $1`,
         [id],
       );
 
@@ -24,9 +44,24 @@ export const handler: Handler = async (event) => {
         };
       }
 
+      const user = result.rows[0];
       return {
         statusCode: 200,
-        body: JSON.stringify(result.rows[0]),
+        body: JSON.stringify({
+          id: user.id,
+          name: user.name || "Member",
+          email: user.email,
+          role: user.role,
+          baseId: user.baseId,
+          avatarUrl: user.avatarUrl || "",
+          memberSince: user.memberSince,
+          verified: !!user.verifiedAt,
+          verifiedAt: user.verifiedAt,
+          lastActiveAt: user.lastActiveAt,
+          rating: user.rating ? parseFloat(user.rating) : null,
+          ratingCount: parseInt(user.ratingCount) || 0,
+          completedSales: parseInt(user.completedSales) || 0,
+        }),
       };
     } catch (err) {
       const errorMsg =
