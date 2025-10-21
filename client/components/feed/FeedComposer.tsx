@@ -33,13 +33,62 @@ export function FeedComposer({
   const isAdmin = user?.role === "admin" || user?.role === "moderator";
   const isFormValid = content.trim().length > 0;
 
+  const handlePhotoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    setIsUploadingPhoto(true);
+    try {
+      const newImages: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const signature = await cloudinaryClient.getSignature();
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_key", "765912238265989");
+        formData.append("signature", signature.signature);
+        formData.append("timestamp", signature.timestamp.toString());
+        formData.append("cloud_name", "dc4qnchym");
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dc4qnchym/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const result = await response.json();
+        newImages.push(result.secure_url);
+      }
+
+      setUploadedImages([...uploadedImages, ...newImages]);
+      toast.success(`${newImages.length} image(s) uploaded`);
+    } catch (error) {
+      toast.error("Failed to upload image");
+      console.error(error);
+    } finally {
+      setIsUploadingPhoto(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     if (!isFormValid || !currentBaseId) return;
 
     setIsSubmitting(true);
     try {
       let pollOpts = undefined;
-      let eventDataToSend = undefined;
 
       if (mode === "poll") {
         pollOpts = pollOptions
@@ -57,34 +106,20 @@ export function FeedComposer({
         }
       }
 
-      if (mode === "event") {
-        if (!eventData.title || !eventData.startDate) {
-          toast.error("Event title and start date are required");
-          setIsSubmitting(false);
-          return;
-        }
-        eventDataToSend = eventData;
-      }
-
       const post = await feedApi.createPost(
         currentBaseId,
         mode,
         content,
-        [],
+        uploadedImages,
         pollOpts,
-        eventDataToSend,
+        undefined,
       );
 
       onPostCreated(post);
       setContent("");
       setMode("text");
       setPollOptions(["", ""]);
-      setEventData({
-        title: "",
-        description: "",
-        startDate: "",
-        endDate: "",
-      });
+      setUploadedImages([]);
       setShowOptions(false);
       toast.success("Post created!");
     } catch (error) {
