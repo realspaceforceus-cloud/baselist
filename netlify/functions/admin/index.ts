@@ -1886,19 +1886,34 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-      const result = await client.query(
-        `SELECT COUNT(*) as count FROM user_sessions WHERE is_active = true AND last_activity >= $1`,
-        [fiveMinutesAgo],
-      );
+      try {
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        let result = { rows: [{ count: 0 }] };
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          activeUsers: parseInt(result.rows[0]?.count ?? 0),
-        }),
-      };
+        try {
+          result = await client.query(
+            `SELECT COUNT(*) as count FROM user_sessions WHERE is_active = true AND last_activity >= $1`,
+            [fiveMinutesAgo],
+          );
+        } catch (err) {
+          console.error("Live users query error:", err);
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            activeUsers: parseInt(result.rows[0]?.count ?? 0),
+          }),
+        };
+      } catch (error) {
+        console.error("Live users endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch live users" }),
+        };
+      }
     }
 
     // GET /api/admin/analytics/bases-by-users?period=24h|7d|30d|90d|all
