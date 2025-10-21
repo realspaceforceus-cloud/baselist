@@ -45,28 +45,10 @@ export const MetricsSection = ({ metrics = [] }: MetricsSectionProps): JSX.Eleme
           </div>
         ) : null}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border bg-card/90 p-4 shadow-soft text-sm">
+      <div className="rounded-3xl border border-border bg-card/90 p-4 text-sm">
         <div className="flex items-center gap-3 text-muted-foreground">
           <LineChart className="h-5 w-5 text-primary" aria-hidden />
-          <span>Weekly audit log stored for 90 days with export on demand.</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs font-semibold">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2"
-            onClick={onViewLog}
-          >
-            <Clock3 className="h-3.5 w-3.5" aria-hidden />
-            View log
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2"
-            onClick={onExport}
-          >
-            <Download className="h-3.5 w-3.5" aria-hidden />
-            Export CSV
-          </button>
+          <span>Weekly audit log stored for 90 days.</span>
         </div>
       </div>
     </section>
