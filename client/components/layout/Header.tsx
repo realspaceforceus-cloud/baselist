@@ -53,11 +53,6 @@ const NAV_ITEMS = [
     end: true,
   },
   {
-    label: "Post",
-    to: "/post",
-    icon: PlusCircle,
-  },
-  {
     label: "Messages",
     to: "/messages",
     icon: MessageSquare,
