@@ -114,29 +114,34 @@ export function MentionAutocomplete({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!showSuggestions || suggestions.length === 0) return;
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (selectedIndex >= 0) {
-          insertMention(suggestions[selectedIndex].username);
-        }
-        break;
-      case "Escape":
-        setShowSuggestions(false);
-        break;
+    // Handle mentions autocomplete
+    if (showSuggestions && suggestions.length > 0) {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedIndex((prev) =>
+            prev < suggestions.length - 1 ? prev + 1 : prev
+          );
+          return;
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
+          return;
+        case "Enter":
+          if (selectedIndex >= 0) {
+            e.preventDefault();
+            insertMention(suggestions[selectedIndex].username);
+            return;
+          }
+          break;
+        case "Escape":
+          setShowSuggestions(false);
+          return;
+      }
     }
+
+    // Pass other key events through
+    onKeyPress?.(e);
   };
 
   const Component = isTextarea ? "textarea" : "input";
