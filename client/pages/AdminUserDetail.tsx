@@ -310,17 +310,43 @@ export const AdminUserDetail = () => {
         <div className="rounded-3xl border border-border bg-card p-8 space-y-6">
           <div className="flex items-start gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={userInfo.avatarUrl} alt={userInfo.username} />
-              <AvatarFallback>{userInfo.username.charAt(0)}</AvatarFallback>
+              <AvatarImage src={editMode ? editData.avatarUrl || userInfo.avatarUrl : userInfo.avatarUrl} alt={userInfo.username} />
+              <AvatarFallback>{(editMode ? editData.username : userInfo.username).charAt(0)}</AvatarFallback>
             </Avatar>
 
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold">{userInfo.username}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    ID: {userInfo.id}
-                  </p>
+                <div className="flex-1">
+                  {editMode ? (
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="text-xs font-semibold uppercase">Username</Label>
+                        <Input
+                          value={editData.username}
+                          onChange={(e) => setEditData({ ...editData, username: e.target.value })}
+                          className="rounded-lg mt-1"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs font-semibold uppercase">Avatar URL</Label>
+                        <Input
+                          value={editData.avatarUrl}
+                          onChange={(e) => setEditData({ ...editData, avatarUrl: e.target.value })}
+                          className="rounded-lg mt-1"
+                          placeholder="https://..."
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className="text-2xl font-bold">{userInfo.username}</h2>
+                      <p className="text-sm text-muted-foreground">
+                        ID: {userInfo.id}
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Dialog
