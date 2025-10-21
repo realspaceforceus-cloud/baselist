@@ -249,8 +249,11 @@ const Post = (): JSX.Element => {
         ? listings.find((l) => l.id === editListingId)
         : null;
 
+      // Build title based on category
+      const finalTitle = category === "Vehicles" ? buildVehicleTitle() : title.trim();
+
       const listingData = {
-        title: title.trim(),
+        title: finalTitle,
         price: isFree ? 0 : Number(price),
         is_free: isFree,
         category: (category || "Other") as ListingCategory,
@@ -258,7 +261,11 @@ const Post = (): JSX.Element => {
         image_urls: imageUrls,
         base_id: currentBaseId,
         status: "active",
-        description: description.trim(),
+        description: `${description.trim()}${
+          category === "Vehicles"
+            ? `\n\nVehicle Details:\n- Color: ${vehicleColor || "Not specified"}\n- Mileage: ${vehicleMiles ? vehicleMiles.toLocaleString() + " miles" : "Not specified"}`
+            : ""
+        }`,
       };
 
       // For editing, use PUT; for creating, use POST
