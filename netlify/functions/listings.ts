@@ -16,6 +16,12 @@ const transformListing = (row: any) => ({
   description: row.description,
   promoted: row.promoted,
   postedAt: row.created_at,
+  vehicleYear: row.vehicle_year,
+  vehicleMake: row.vehicle_make,
+  vehicleModel: row.vehicle_model,
+  vehicleType: row.vehicle_type,
+  vehicleColor: row.vehicle_color,
+  vehicleMiles: row.vehicle_miles,
 });
 
 export const handler: Handler = async (event) => {
