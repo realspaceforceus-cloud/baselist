@@ -1,12 +1,4 @@
-import type { Listing } from "@/types";
-
-export interface VehicleOptions {
-  years: string[];
-  makes: string[];
-  models: string[];
-  types: string[];
-  colors: string[];
-}
+import type { Listing, VehicleOptions } from "@/types";
 
 export const extractVehicleOptions = (listings: Listing[]): VehicleOptions => {
   const vehicleListings = listings.filter((l) => l.category === "Vehicles");
