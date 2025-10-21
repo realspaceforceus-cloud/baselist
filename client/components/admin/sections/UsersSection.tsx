@@ -1,296 +1,393 @@
-import { FormEvent, useMemo, useState } from "react";
-import { Ban, Check, Gavel, History, RotateCcw, Search, ShieldCheck, MailCheck } from "lucide-react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { Ban, Check, Gavel, Search, ShieldCheck, Edit2, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
 export interface AdminUserRecord {
   id: string;
-  name: string;
+  username: string;
   email: string;
-  pendingEmail?: string;
-  base: string;
-  verified: boolean;
-  suspended: boolean;
-  joined: string;
-  ratingLabel: string;
-  reports: number;
-  listings: number;
-  messages: number;
-  strikes: number;
+  role: "member" | "moderator" | "admin";
+  status: "active" | "suspended" | "banned";
+  baseId: string;
+  createdAt: string;
+  dowVerifiedAt?: string;
+  lastLoginAt?: string;
+  avatarUrl?: string;
+  joinMethod?: "email" | "code" | "sponsor";
 }
 
 interface UsersSectionProps {
-  users: AdminUserRecord[];
-  onVerify: (userId: string) => void;
-  onSuspend: (userId: string) => void;
-  onReinstate: (userId: string) => void;
-  onResetVerification: (userId: string) => void;
-  onViewActivity: (userId: string) => void;
-  onIssueStrike: (userId: string, note: string) => void;
-  onApprovePendingEmail?: (userId: string, newEmail: string) => void;
-  onRejectPendingEmail?: (userId: string) => void;
+  onUserUpdate?: (userId: string, updates: any) => Promise<void>;
+  onAddStrike?: (userId: string, type: string, description: string) => Promise<void>;
+  onFetchUsers?: (page: number, search: string) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
 }
 
 export const UsersSection = ({
-  users,
-  onVerify,
-  onSuspend,
-  onReinstate,
-  onResetVerification,
-  onViewActivity,
-  onIssueStrike,
-  onApprovePendingEmail,
-  onRejectPendingEmail,
-}: UsersSectionProps): JSX.Element => {
-  const [query, setQuery] = useState<string>("");
-  const [strikeTarget, setStrikeTarget] = useState<string | null>(null);
-  const [strikeDrafts, setStrikeDrafts] = useState<Record<string, string>>({});
-  const [strikeErrors, setStrikeErrors] = useState<Record<string, string>>({});
+  onUserUpdate,
+  onAddStrike,
+  onFetchUsers,
+}: UsersSectionProps) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState<AdminUserRecord[]>([]);
+  const [pagination, setPagination] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [isEditingModal, setIsEditingModal] = useState(false);
+  const [editFormData, setEditFormData] = useState<Partial<AdminUserRecord>>({});
+  const [strikeForm, setStrikeForm] = useState({ type: "", description: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const filteredUsers = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) {
-      return users;
+  // Fetch users with pagination
+  const loadUsers = useCallback(async () => {
+    if (!onFetchUsers) return;
+
+    setIsLoading(true);
+    try {
+      const result = await onFetchUsers(currentPage, searchQuery);
+      setUsers(result.users);
+      setPagination(result.pagination);
+    } catch (error) {
+      toast.error("Failed to load users");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    return users.filter((user) =>
-      [user.name, user.base].some((value) => value.toLowerCase().includes(normalized)),
-    );
-  }, [query, users]);
+  }, [currentPage, searchQuery, onFetchUsers]);
 
-  const openStrikeForm = (userId: string) => {
-    setStrikeTarget(userId);
-    setStrikeDrafts((prev) => ({ ...prev, [userId]: prev[userId] ?? "" }));
-    setStrikeErrors((prev) => {
-      const next = { ...prev };
-      delete next[userId];
-      return next;
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
+
+  const handleSearch = useCallback((value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  }, []);
+
+  const handleEditUser = (user: AdminUserRecord) => {
+    setSelectedUser(user);
+    setEditFormData({
+      role: user.role,
+      status: user.status,
     });
+    setIsEditingModal(true);
   };
 
-  const cancelStrikeForm = (userId?: string) => {
-    const target = userId ?? strikeTarget;
-    setStrikeTarget(null);
-    if (target) {
-      setStrikeErrors((prev) => {
-        if (!prev[target]) {
-          return prev;
-        }
-        const next = { ...prev };
-        delete next[target];
-        return next;
-      });
+  const handleSaveChanges = async () => {
+    if (!selectedUser || !onUserUpdate) return;
+
+    setIsSubmitting(true);
+    try {
+      await onUserUpdate(selectedUser.id, editFormData);
+      toast.success("User updated successfully");
+      setIsEditingModal(false);
+      await loadUsers();
+    } catch (error) {
+      toast.error("Failed to update user");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleStrikeSubmit = (event: FormEvent<HTMLFormElement>, userId: string) => {
-    event.preventDefault();
-    const note = strikeDrafts[userId]?.trim() ?? "";
-    if (!note) {
-      setStrikeErrors((prev) => ({ ...prev, [userId]: "Add a short note before issuing a strike." }));
+  const handleAddStrike = async () => {
+    if (!selectedUser || !onAddStrike || !strikeForm.type || !strikeForm.description) {
+      toast.error("Please fill in all strike fields");
       return;
     }
-    onIssueStrike(userId, note);
-    setStrikeTarget(null);
-    setStrikeDrafts((prev) => ({ ...prev, [userId]: "" }));
-    setStrikeErrors((prev) => {
-      const next = { ...prev };
-      delete next[userId];
-      return next;
-    });
+
+    setIsSubmitting(true);
+    try {
+      await onAddStrike(selectedUser.id, strikeForm.type, strikeForm.description);
+      toast.success("Strike recorded");
+      setStrikeForm({ type: "", description: "" });
+      await loadUsers();
+    } catch (error) {
+      toast.error("Failed to record strike");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleStrikeChange = (userId: string, value: string) => {
-    setStrikeDrafts((prev) => ({ ...prev, [userId]: value }));
-    setStrikeErrors((prev) => {
-      if (!prev[userId]) {
-        return prev;
-      }
-      const next = { ...prev };
-      delete next[userId];
-      return next;
-    });
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Never";
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(dateString));
+  };
+
+  const getJoinMethodLabel = (method?: string) => {
+    switch (method) {
+      case "code":
+        return "Invitation code";
+      case "sponsor":
+        return "Sponsor verified";
+      default:
+        return "Email verification";
+    }
   };
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="User Controls" subtitle="Users" accent="Access" />
-      <div className="flex flex-col gap-3 rounded-3xl border border-border bg-background/80 p-4 shadow-soft md:flex-row md:items-center md:justify-between">
-        <label className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-nav-border bg-card px-3 py-2 text-sm text-muted-foreground md:max-w-md">
-          <Search className="h-4 w-4" aria-hidden />
+      <AdminSectionHeader title="User Controls" subtitle="Manage users" accent="25 per page" />
+
+      {/* Search Bar */}
+      <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft md:flex-row md:items-center md:justify-between">
+        <label className="flex w-full items-center gap-3 rounded-2xl border border-border bg-background px-3 py-2 md:max-w-md">
+          <Search className="h-4 w-4 text-muted-foreground" aria-hidden />
           <input
             type="search"
             placeholder="Search username, email, or base"
             className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
-            aria-label="Search users"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </label>
-        <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
-          <span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-success">
-            <Check className="h-3.5 w-3.5" aria-hidden />
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 text-success">
+            <Check className="h-3 w-3" aria-hidden />
             Verified
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-warning/10 px-3 py-1 text-warning">
-            <History className="h-3.5 w-3.5" aria-hidden />
-            Pending audit
+          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-1 text-warning">
+            Active
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1 text-destructive">
-            <Ban className="h-3.5 w-3.5" aria-hidden />
+          <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-1 text-destructive">
+            <Ban className="h-3 w-3" aria-hidden />
             Suspended
           </span>
         </div>
       </div>
-      <div className="space-y-3">
-        {filteredUsers.map((user) => {
-          const statusBadge = user.suspended
-            ? "rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-destructive"
-            : user.verified
-            ? "rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-success"
-            : "rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning";
 
-          return (
-            <article
-              key={user.id}
-              className="flex flex-col gap-3 rounded-3xl border border-border bg-card/90 p-4 shadow-soft"
-            >
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-1">
-                  <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
-                    <span>{user.name}</span>
-                    <span className={statusBadge}>
-                      {user.suspended ? "Suspended" : user.verified ? "Verified" : "Unverified"}
+      {/* Users Table */}
+      {isLoading ? (
+        <div className="rounded-3xl border border-border bg-card p-6 text-center text-muted-foreground">
+          Loading users...
+        </div>
+      ) : users.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-border bg-background/50 p-6 text-center text-muted-foreground">
+          No users found
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-3xl border border-border bg-card shadow-soft">
+          <table className="w-full text-sm">
+            <thead className="border-b border-border bg-muted/50">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">User</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">Email</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">Role</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">Status</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">Joined</th>
+                <th className="px-4 py-3 text-center font-semibold text-foreground">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {users.map((user) => (
+                <tr key={user.id} className="hover:bg-muted/20">
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-foreground">{user.username}</div>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email}</td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary capitalize">
+                      {user.role}
                     </span>
-                    {user.strikes > 0 ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-warning">
-                        {user.strikes} strike{user.strikes === 1 ? "" : "s"}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {user.base} • Joined {user.joined}
-                  </div>
-                  <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                    <span>Ratings {user.ratingLabel}</span>
-                    <span>Reports {user.reports}</span>
-                    <span>Listings {user.listings}</span>
-                    <span>Messages {user.messages}</span>
-                  </div>
-                  {user.pendingEmail && (
-                    <div className="mt-2 rounded-lg border border-warning/30 bg-warning/5 p-2">
-                      <p className="text-xs font-semibold text-warning">
-                        Pending email change: {user.email} → {user.pendingEmail}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                  <button
-                    type="button"
-                    className="rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-card disabled:opacity-60"
-                    onClick={() => onVerify(user.id)}
-                    disabled={user.verified}
-                  >
-                    <ShieldCheck className="mr-1 h-3.5 w-3.5" aria-hidden />
-                    Verify
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-full border border-border px-4 py-2"
-                    onClick={() => (user.suspended ? onReinstate(user.id) : onSuspend(user.id))}
-                  >
-                    {user.suspended ? "Reinstate" : "Suspend"}
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-border px-4 py-2"
-                    onClick={() => onResetVerification(user.id)}
-                  >
-                    <RotateCcw className="h-3.5 w-3.5" aria-hidden />
-                    Reset method
-                  </button>
-                  {user.pendingEmail && onApprovePendingEmail && onRejectPendingEmail ? (
-                    <>
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-1 rounded-full border border-success px-4 py-2 text-success"
-                        onClick={() => onApprovePendingEmail(user.id, user.pendingEmail!)}
-                      >
-                        <Check className="h-3.5 w-3.5" aria-hidden />
-                        Approve email
-                      </button>
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-1 rounded-full border border-destructive px-4 py-2 text-destructive"
-                        onClick={() => onRejectPendingEmail(user.id)}
-                      >
-                        <Ban className="h-3.5 w-3.5" aria-hidden />
-                        Reject
-                      </button>
-                    </>
-                  ) : null}
-                  <button
-                    type="button"
-                    className="rounded-full border border-border px-4 py-2"
-                    onClick={() => onViewActivity(user.id)}
-                  >
-                    Activity log
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-warning px-4 py-2 text-warning"
-                    onClick={() =>
-                      strikeTarget === user.id ? cancelStrikeForm(user.id) : openStrikeForm(user.id)
-                    }
-                  >
-                    <Gavel className="h-3.5 w-3.5" aria-hidden />
-                    Issue strike
-                  </button>
-                </div>
-              </div>
-              {strikeTarget === user.id ? (
-                <form
-                  className="space-y-3 rounded-2xl border border-dashed border-warning bg-warning/5 p-4"
-                  onSubmit={(event) => handleStrikeSubmit(event, user.id)}
-                >
-                  <label className="flex flex-col gap-2 text-xs font-medium text-muted-foreground">
-                    <span className="text-foreground">Strike reason</span>
-                    <textarea
-                      className="min-h-[96px] resize-y rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
-                      placeholder="Document the behavior and include any references (e.g., report ID)."
-                      value={strikeDrafts[user.id] ?? ""}
-                      onChange={(event) => handleStrikeChange(user.id, event.target.value)}
-                    />
-                  </label>
-                  {strikeErrors[user.id] ? (
-                    <p className="text-xs font-medium text-destructive">{strikeErrors[user.id]}</p>
-                  ) : null}
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                    <button
-                      type="button"
-                      className="rounded-full border border-border px-4 py-2"
-                      onClick={() => cancelStrikeForm(user.id)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${
+                        user.status === "active"
+                          ? "bg-success/10 text-success"
+                          : "bg-destructive/10 text-destructive"
+                      }`}
                     >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="rounded-full bg-warning px-4 py-2 text-warning-foreground shadow-card"
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDate(user.createdAt)}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditUser(user)}
+                      className="rounded-full"
                     >
-                      Record strike
-                    </button>
-                  </div>
-                </form>
-              ) : null}
-            </article>
-          );
-        })}
-        {filteredUsers.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
-            No users match your search.
+                      <Edit2 className="h-4 w-4" aria-hidden />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && pagination.pages > 1 && (
+        <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-soft">
+          <span className="text-sm text-muted-foreground">
+            Page {pagination.page} of {pagination.pages} ({pagination.total} total users)
+          </span>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="rounded-full"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.min(pagination.pages, currentPage + 1))}
+              disabled={currentPage === pagination.pages}
+              className="rounded-full"
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden />
+            </Button>
           </div>
-        ) : null}
-      </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {isEditingModal && selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border bg-card p-6 shadow-xl">
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Edit User: {selectedUser.username}
+            </h2>
+
+            <div className="space-y-4 mb-6">
+              {/* User Info */}
+              <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Email:</span> {selectedUser.email}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Member since:</span>{" "}
+                  {formatDate(selectedUser.createdAt)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Last active:</span>{" "}
+                  {formatDate(selectedUser.lastLoginAt)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Verified:</span>{" "}
+                  {selectedUser.dowVerifiedAt ? formatDate(selectedUser.dowVerifiedAt) : "Not verified"}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Joined via:</span>{" "}
+                  {getJoinMethodLabel(selectedUser.joinMethod)}
+                </p>
+              </div>
+
+              {/* Role */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Role</label>
+                <Select value={editFormData.role || ""} onValueChange={(val) => setEditFormData({ ...editFormData, role: val as any })}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="member">Member</SelectItem>
+                    <SelectItem value="moderator">Moderator</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Status</label>
+                <Select value={editFormData.status || ""} onValueChange={(val) => setEditFormData({ ...editFormData, status: val as any })}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                    <SelectItem value="banned">Banned</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Add Strike */}
+              <div className="rounded-2xl border border-warning/20 bg-warning/5 p-4 space-y-3">
+                <h3 className="font-semibold text-warning">Add Strike</h3>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Reason</label>
+                  <Select value={strikeForm.type} onValueChange={(val) => setStrikeForm({ ...strikeForm, type: val })}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Select reason" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="spam">Spam</SelectItem>
+                      <SelectItem value="fraud">Fraud</SelectItem>
+                      <SelectItem value="harassment">Harassment</SelectItem>
+                      <SelectItem value="inappropriate_content">Inappropriate content</SelectItem>
+                      <SelectItem value="policy_violation">Policy violation</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Description</label>
+                  <Textarea
+                    placeholder="Document the behavior and any references..."
+                    value={strikeForm.description}
+                    onChange={(e) => setStrikeForm({ ...strikeForm, description: e.target.value })}
+                    className="rounded-xl min-h-[80px]"
+                  />
+                </div>
+                <Button
+                  onClick={handleAddStrike}
+                  disabled={isSubmitting || !strikeForm.type || !strikeForm.description}
+                  className="w-full bg-warning text-warning-foreground rounded-xl"
+                >
+                  <Gavel className="h-4 w-4 mr-2" aria-hidden />
+                  Record Strike
+                </Button>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setIsEditingModal(false)}
+                className="rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveChanges}
+                disabled={isSubmitting}
+                className="rounded-xl"
+              >
+                {isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
