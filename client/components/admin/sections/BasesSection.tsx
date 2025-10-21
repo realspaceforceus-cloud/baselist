@@ -197,14 +197,15 @@ export const BasesSection = () => {
   };
 
   const handleSaveBase = async () => {
-    if (
-      !formData.name ||
-      !formData.abbreviation ||
-      !formData.region ||
-      !formData.timezone
-    ) {
-      toast.error("All fields are required");
+    if (!formData.name || !formData.abbreviation || !formData.region) {
+      toast.error("Name, abbreviation, and region are required");
       return;
+    }
+
+    // Auto-set timezone if empty
+    let timezone = formData.timezone;
+    if (!timezone) {
+      timezone = getTimezoneForRegion(formData.region);
     }
 
     setIsSubmitting(true);
@@ -216,7 +217,7 @@ export const BasesSection = () => {
           name: formData.name,
           abbreviation: formData.abbreviation,
           region: formData.region,
-          timezone: formData.timezone,
+          timezone,
         });
         toast.success("Base updated successfully");
       } else {
@@ -226,7 +227,7 @@ export const BasesSection = () => {
           name: formData.name,
           abbreviation: formData.abbreviation,
           region: formData.region,
-          timezone: formData.timezone,
+          timezone,
           latitude: 0,
           longitude: 0,
         });
