@@ -215,7 +215,7 @@ export const NotificationItem = ({
             <p className="text-xs text-muted-foreground mt-1">
               {notification.description}
             </p>
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center justify-between mt-3 gap-2">
               <p className="text-xs text-muted-foreground">
                 {(() => {
                   try {
@@ -233,14 +233,14 @@ export const NotificationItem = ({
               </p>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="h-6 w-6 p-0"
+                className="h-7 px-2.5 text-xs font-medium rounded-md border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/50"
                 onClick={handleDismiss}
                 disabled={isLoading}
                 title="Dismiss notification"
               >
-                <X className="h-3.5 w-3.5" aria-hidden />
+                Dismiss
               </Button>
             </div>
           </div>
