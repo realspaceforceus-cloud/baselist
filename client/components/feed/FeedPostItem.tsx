@@ -570,6 +570,12 @@ export function FeedPostItem({
                 placeholder="Add a comment... (@ to mention)"
                 className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 userId={user?.userId}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleComment();
+                  }
+                }}
               />
               <button
                 onClick={handleComment}
