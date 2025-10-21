@@ -53,6 +53,7 @@ export const InvitationCodesSection = ({
   bases = [],
   onFetchCodes,
   onCreateCode,
+  onUpdateCode,
   onDeleteCode,
 }: InvitationCodesSectionProps) => {
   const [codes, setCodes] = useState<InvitationCode[]>([]);
@@ -60,11 +61,20 @@ export const InvitationCodesSection = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState({
     code: "",
     maxUses: "",
     expiresAt: "",
     description: "",
+  });
+  const [editFormData, setEditFormData] = useState({
+    code: "",
+    maxUses: "",
+    expiresAt: "",
+    description: "",
+    active: true,
   });
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
