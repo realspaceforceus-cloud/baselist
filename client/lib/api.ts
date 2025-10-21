@@ -186,3 +186,44 @@ export const messages = {
     });
   },
 };
+
+// Notifications endpoints
+export const notifications = {
+  getNotifications: async (limit = 50, offset = 0, unreadOnly = false) => {
+    const params = new URLSearchParams();
+    params.append("limit", limit.toString());
+    params.append("offset", offset.toString());
+    if (unreadOnly) params.append("unread", "true");
+    return apiRequest<{
+      notifications: any[];
+      unreadCount: number;
+      total: number;
+    }>(`/api/notifications?${params.toString()}`, {
+      method: "GET",
+    });
+  },
+
+  getUnreadCount: async () => {
+    return apiRequest<{ unreadCount: number }>("/api/notifications/count", {
+      method: "GET",
+    });
+  },
+
+  markAsRead: async (notificationId: string) => {
+    return apiRequest<any>(`/api/notifications/${notificationId}/read`, {
+      method: "PATCH",
+    });
+  },
+
+  dismiss: async (notificationId: string) => {
+    return apiRequest<any>(`/api/notifications/${notificationId}/dismiss`, {
+      method: "PATCH",
+    });
+  },
+
+  markAllAsRead: async () => {
+    return apiRequest<{ success: boolean }>("/api/notifications/read-all", {
+      method: "PATCH",
+    });
+  },
+};
