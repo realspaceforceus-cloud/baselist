@@ -18,6 +18,8 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isCommentingLoading, setIsCommentingLoading] = useState(false);
+  const [pollOptions, setPollOptions] = useState(post.pollOptions || []);
+  const [isVoting, setIsVoting] = useState(false);
 
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), {
     addSuffix: true,
