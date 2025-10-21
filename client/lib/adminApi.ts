@@ -254,4 +254,38 @@ export const adminApi = {
   async getFlaggedThreads() {
     return apiRequest<AdminThreadsResponse>(`${ADMIN_BASE}/threads/flagged`);
   },
+  async getUserDetail(userId: string) {
+    return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/detail`);
+  },
+  async resetUserPassword(userId: string, options: { generateTemp?: boolean; sendEmail?: boolean }) {
+    return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/password-reset`, {
+      method: "POST",
+      body: JSON.stringify(options),
+    });
+  },
+  async removeStrike(userId: string, strikeId: string): Promise<void> {
+    await apiRequest<void>(`${ADMIN_BASE}/users/${userId}/strikes/${strikeId}`, {
+      method: "DELETE",
+    });
+  },
+  async addStrike(
+    userId: string,
+    strikeType: string,
+    description: string,
+    severity?: string,
+  ): Promise<any> {
+    const { note } = await apiRequest<{ note: any }>(
+      `${ADMIN_BASE}/account-notes/${userId}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          noteType: "strike",
+          strikeReason: strikeType,
+          description,
+          severity: severity || "warning",
+        }),
+      },
+    );
+    return note;
+  },
 };
