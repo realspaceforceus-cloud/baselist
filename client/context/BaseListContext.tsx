@@ -2185,6 +2185,7 @@ export const BaseListProvider = ({
       currentBaseId,
       currentBase,
       setCurrentBaseId,
+      refreshBases: fetchBases,
       searchQuery,
       setSearchQuery,
       clearSearch,
