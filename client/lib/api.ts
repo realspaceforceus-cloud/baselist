@@ -204,9 +204,16 @@ export const notifications = {
   },
 
   getUnreadCount: async () => {
-    return apiRequest<{ unreadCount: number }>("/api/notifications/count", {
-      method: "GET",
-    });
+    try {
+      const response = await apiRequest<{ unreadCount: number }>("/api/notifications/count", {
+        method: "GET",
+      });
+      return response || { unreadCount: 0 };
+    } catch (error) {
+      // Always return a valid response even on error
+      console.error("Error loading notification count:", error);
+      return { unreadCount: 0 };
+    }
   },
 
   markAsRead: async (notificationId: string) => {
