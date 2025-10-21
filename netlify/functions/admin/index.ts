@@ -283,9 +283,16 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const result = await client.query(
-        `SELECT id, actor_id as "actorId", action, created_at as "createdAt" FROM audit_logs ORDER BY created_at DESC LIMIT 200`,
-      );
+      let result: any;
+      try {
+        result = await client.query(
+          `SELECT id, actor_id as "actorId", action, created_at as "createdAt" FROM audit_logs ORDER BY created_at DESC LIMIT 200`,
+        );
+      } catch (auditErr) {
+        console.error("Audit log query error:", auditErr);
+        // Return empty audit log if table doesn't exist
+        result = { rows: [] };
+      }
 
       return {
         statusCode: 200,
