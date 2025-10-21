@@ -43,6 +43,7 @@ const statusClassName: Record<AdminListingStatus, string> = {
 };
 
 export const ListingsSection = () => {
+  const navigate = useNavigate();
   const [listings, setListings] = useState<AdminListingRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<AdminListingStatus | "All">(
