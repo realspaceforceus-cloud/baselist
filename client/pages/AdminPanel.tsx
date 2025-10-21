@@ -2173,14 +2173,7 @@ const AdminPanel = (): JSX.Element => {
             <FamilyVerificationSection userId={user.id} />
           ) : null}
           {activeSection === "bases" ? (
-            <BasesSection
-              bases={visibleBaseRows}
-              onAddBase={handleAddBase}
-              onEditBase={handleEditBase}
-              onArchiveBase={handleArchiveBase}
-              onAssignModerator={handleAssignModerator}
-              onViewStats={handleBaseStats}
-            />
+            <BasesSection bases={visibleBaseRows} />
           ) : null}
           {activeSection === "sponsors" ? (
             <SponsorsSection
