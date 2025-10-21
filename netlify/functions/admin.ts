@@ -3,16 +3,18 @@ import { pool } from "./db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 
-// Simple JWT verification for authorization
+// Cookie-based authorization (matches auth system)
 function verifyAdminAuth(event: any): { userId: string } | null {
-  const authHeader = event.headers.authorization || event.headers.Authorization;
-  if (!authHeader?.startsWith("Bearer ")) {
+  const cookies = event.headers.cookie || "";
+  const userIdMatch = cookies.match(/userId=([^;]+)/);
+  const userId = userIdMatch ? userIdMatch[1] : null;
+
+  if (!userId) {
     return null;
   }
 
-  // For now, we'll check if an admin user exists
-  // In production, you'd verify the JWT token here
-  return { userId: "admin" };
+  // userId is set, will verify admin role in the actual handlers
+  return { userId };
 }
 
 export const handler: Handler = async (event) => {
