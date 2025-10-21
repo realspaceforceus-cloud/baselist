@@ -2207,10 +2207,7 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "security" ? (
-            <SecuritySection
-              auditEntries={auditEntries}
-              onClearAudit={handleClearAudit}
-            />
+            <SecuritySection auditEntries={auditEntries} />
           ) : null}
           {activeSection === "settings" ? <SettingsSection /> : null}
           {activeSection === "seo" ? (
