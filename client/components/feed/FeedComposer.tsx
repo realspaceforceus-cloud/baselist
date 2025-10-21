@@ -153,12 +153,14 @@ export function FeedComposer({
         )}
       </div>
 
-      {/* Text Input */}
-      <textarea
+      {/* Text Input with mention autocomplete */}
+      <MentionAutocomplete
         value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder={`Share your thoughts...`}
+        onChange={setContent}
+        placeholder="Share your thoughts... (type @ to mention someone)"
         className="mb-4 min-h-[100px] w-full rounded-lg border border-border bg-background p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        isTextarea={true}
+        userId={user?.userId}
       />
 
       {/* Mode-specific options */}
