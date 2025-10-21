@@ -209,6 +209,68 @@ const ListingDetail = (): JSX.Element => {
     navigate("/");
   }, [navigate, seller, setCurrentBaseId, setSearchQuery, listing.baseId]);
 
+  const handleSaveListing = useCallback(async () => {
+    try {
+      const method = isSaved ? "DELETE" : "POST";
+      const response = await fetch(
+        `/.netlify/functions/saved-listings/${listing.id}`,
+        {
+          method,
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save listing");
+      }
+
+      setIsSaved(!isSaved);
+      toast.success(
+        isSaved ? "Listing removed from saves" : "Listing saved!",
+        {
+          description: isSaved
+            ? "You can find it in your saves later."
+            : "Check your saves anytime from your profile.",
+        },
+      );
+    } catch (error) {
+      toast.error("Unable to save listing");
+    }
+  }, [listing.id, isSaved]);
+
+  const handleReportListing = useCallback(async () => {
+    if (!reportReason.trim()) {
+      toast.error("Please provide a reason for the report");
+      return;
+    }
+
+    try {
+      const response = await fetch("/.netlify/functions/reports", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetType: "listing",
+          targetId: listing.id,
+          type: "Inappropriate Content",
+          notes: reportReason.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit report");
+      }
+
+      setReportDialogOpen(false);
+      setReportReason("");
+      toast.success("Report submitted", {
+        description: "Thank you for helping keep the community safe.",
+      });
+    } catch (error) {
+      toast.error("Unable to submit report");
+    }
+  }, [listing.id, reportReason]);
+
   if (isLoading) {
     return (
       <section className="space-y-4">
