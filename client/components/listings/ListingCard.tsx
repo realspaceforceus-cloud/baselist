@@ -178,7 +178,9 @@ export const ListingCard = ({
                   userId={seller.id}
                   size="sm"
                   initialAverage={seller.rating ?? null}
-                  initialCount={seller.ratingCount ?? seller.completedSales ?? 0}
+                  initialCount={
+                    seller.ratingCount ?? seller.completedSales ?? 0
+                  }
                   label={`${seller.name} rating`}
                 />
               ) : null}

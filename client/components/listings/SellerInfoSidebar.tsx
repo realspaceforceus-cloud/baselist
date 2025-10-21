@@ -86,7 +86,9 @@ export const SellerInfoSidebar = ({
               <div className="space-y-1 text-xs text-muted-foreground">
                 <p>
                   Member since{" "}
-                  <span className="font-medium text-foreground">{sellerYear}</span>
+                  <span className="font-medium text-foreground">
+                    {sellerYear}
+                  </span>
                 </p>
                 {seller.rating ? (
                   <p>
@@ -94,13 +96,18 @@ export const SellerInfoSidebar = ({
                     <span className="font-medium text-foreground">
                       {seller.rating.toFixed(1)}
                     </span>{" "}
-                    from {seller.ratingCount} {seller.ratingCount === 1 ? "sale" : "sales"}
+                    from {seller.ratingCount}{" "}
+                    {seller.ratingCount === 1 ? "sale" : "sales"}
                   </p>
                 ) : (
-                  <p className="text-xs text-muted-foreground">No ratings yet</p>
+                  <p className="text-xs text-muted-foreground">
+                    No ratings yet
+                  </p>
                 )}
                 {sellerLastActive && (
-                  <p className="text-xs text-muted-foreground">{sellerLastActive}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {sellerLastActive}
+                  </p>
                 )}
               </div>
             </div>
@@ -122,10 +129,7 @@ export const SellerInfoSidebar = ({
               disabled={isLoadingSave}
             >
               <Heart
-                className={cn(
-                  "h-4 w-4",
-                  isSaved ? "fill-current" : "",
-                )}
+                className={cn("h-4 w-4", isSaved ? "fill-current" : "")}
                 aria-hidden
               />
               {isSaved ? "Saved" : "Save listing"}
@@ -137,13 +141,17 @@ export const SellerInfoSidebar = ({
       <article className="rounded-3xl border border-red-200/50 dark:border-red-900/30 bg-red-50/50 dark:bg-red-950/20 p-6 shadow-card">
         <div className="space-y-3">
           <div className="flex items-start gap-3">
-            <Flag className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" aria-hidden />
+            <Flag
+              className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5"
+              aria-hidden
+            />
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold text-red-900 dark:text-red-200">
                 Report this listing
               </h3>
               <p className="text-xs text-red-800/70 dark:text-red-300/70 mt-1">
-                Help us keep the community safe by reporting inappropriate content or suspicious activity.
+                Help us keep the community safe by reporting inappropriate
+                content or suspicious activity.
               </p>
             </div>
           </div>

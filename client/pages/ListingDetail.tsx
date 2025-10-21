@@ -1,8 +1,4 @@
-import {
-  ArrowLeft,
-  MessageCircle,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft, MessageCircle, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate, useParams } from "react-router-dom";
