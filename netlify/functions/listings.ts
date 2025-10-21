@@ -230,7 +230,45 @@ export const handler: Handler = async (event) => {
     try {
       const id = path.slice(1);
 
+      // First fetch the listing to get seller info
+      const listingResult = await client.query(
+        "SELECT id, title, seller_id FROM listings WHERE id = $1",
+        [id],
+      );
+
+      if (listingResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Listing not found" }),
+        };
+      }
+
+      const { title, seller_id } = listingResult.rows[0];
+
+      // Delete the listing
       await client.query("DELETE FROM listings WHERE id = $1", [id]);
+
+      // Create notification for seller about listing removal
+      try {
+        const reasonFromBody = event.body
+          ? JSON.parse(event.body).reason || "Listing violates community guidelines"
+          : "Listing violates community guidelines";
+
+        await createNotification({
+          userId: seller_id,
+          type: "listing_removed",
+          title: `Your listing was removed`,
+          description: `Your listing "${title}" has been removed. Reason: ${reasonFromBody}`,
+          targetId: id,
+          targetType: "listing",
+          data: {
+            listingTitle: title,
+            reason: reasonFromBody,
+          },
+        });
+      } catch (notificationErr) {
+        console.error("Error creating listing removal notification:", notificationErr);
+      }
 
       return {
         statusCode: 200,
