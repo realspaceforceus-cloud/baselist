@@ -2114,16 +2114,7 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "users" ? (
             <UsersSection />
           ) : null}
-          {activeSection === "listings" ? (
-            <ListingsSection
-              listings={visibleListingRows}
-              onView={handleViewListing}
-              onRemove={handleRemoveListing}
-              onRestore={handleRestoreListing}
-              onInspectMessages={handleInspectMessages}
-              onToggleFlag={handleToggleFlag}
-            />
-          ) : null}
+          {activeSection === "listings" ? <ListingsSection /> : null}
           {activeSection === "reports" ? (
             <ReportsSection
               reports={visibleReports}
