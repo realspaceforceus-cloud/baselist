@@ -178,43 +178,62 @@ const handleGetRequests = async (event: any) => {
   const client = await pool.connect();
 
   try {
-    // Get all pending requests for this sponsor
-    const requestsResult = await client.query(
-      `SELECT 
-        sr.id, sr.family_member_id, sr.sponsor_username, sr.status, 
-        sr.created_at, sr.expires_at, sr.approval_reason,
-        u.username, u.email, u.avatar_url
-       FROM sponsor_requests sr
-       JOIN users u ON sr.family_member_id = u.id
-       WHERE sr.sponsor_id = $1 AND sr.status IN ('pending', 'approved', 'denied')
-       ORDER BY sr.created_at DESC`,
-      [sponsorId],
-    );
+    let requestsResult: any = { rows: [] };
+    let familyLinkResult: any = { rows: [] };
+    let cooldownResult: any = { rows: [] };
 
-    // Get current active family member (if any)
-    const familyLinkResult = await client.query(
-      `SELECT 
-        fl.id, fl.family_member_id, fl.status, fl.created_at,
-        u.username, u.email, u.avatar_url
-       FROM family_links fl
-       JOIN users u ON fl.family_member_id = u.id
-       WHERE fl.sponsor_id = $1 AND fl.status = 'active'
-       LIMIT 1`,
-      [sponsorId],
-    );
+    try {
+      // Get all pending requests for this sponsor
+      requestsResult = await client.query(
+        `SELECT
+          sr.id, sr.family_member_id, sr.sponsor_username, sr.status,
+          sr.created_at, sr.expires_at, sr.approval_reason,
+          u.username, u.email, u.avatar_url
+         FROM sponsor_requests sr
+         JOIN users u ON sr.family_member_id = u.id
+         WHERE sr.sponsor_id = $1 AND sr.status IN ('pending', 'approved', 'denied')
+         ORDER BY sr.created_at DESC`,
+        [sponsorId],
+      );
+    } catch (err) {
+      console.error("Error fetching sponsor requests:", err);
+      // Table may not exist yet, return empty
+    }
 
-    // Get cooldown status (if any)
-    const cooldownResult = await client.query(
-      `SELECT id, cooldown_until FROM sponsor_cooldowns 
-       WHERE sponsor_id = $1 AND cooldown_until > now()
-       LIMIT 1`,
-      [sponsorId],
-    );
+    try {
+      // Get current active family member (if any)
+      familyLinkResult = await client.query(
+        `SELECT
+          fl.id, fl.family_member_id, fl.status, fl.created_at,
+          u.username, u.email, u.avatar_url
+         FROM family_links fl
+         JOIN users u ON fl.family_member_id = u.id
+         WHERE fl.sponsor_id = $1 AND fl.status = 'active'
+         LIMIT 1`,
+        [sponsorId],
+      );
+    } catch (err) {
+      console.error("Error fetching family links:", err);
+      // Table may not exist yet, return null
+    }
+
+    try {
+      // Get cooldown status (if any)
+      cooldownResult = await client.query(
+        `SELECT id, cooldown_until FROM sponsor_cooldowns
+         WHERE sponsor_id = $1 AND cooldown_until > now()
+         LIMIT 1`,
+        [sponsorId],
+      );
+    } catch (err) {
+      console.error("Error fetching sponsor cooldowns:", err);
+      // Table may not exist yet, return null
+    }
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        requests: requestsResult.rows.map((row) => ({
+        requests: requestsResult.rows.map((row: any) => ({
           id: row.id,
           familyMemberId: row.family_member_id,
           username: row.username,
@@ -245,9 +264,14 @@ const handleGetRequests = async (event: any) => {
     };
   } catch (error) {
     console.error("Get requests error:", error);
+    // Return safe default even if everything fails
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Failed to fetch requests" }),
+      statusCode: 200,
+      body: JSON.stringify({
+        requests: [],
+        activeFamily: null,
+        cooldown: null,
+      }),
     };
   } finally {
     client.release();
