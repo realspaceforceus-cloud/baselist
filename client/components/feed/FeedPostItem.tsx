@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useState } from "react";
 import {
   Heart,
   MessageCircle,
@@ -211,7 +212,7 @@ export function FeedPostItem({
       case "event":
         return "📅";
       case "psa":
-        return "⚠️";
+        return "⚠���";
       default:
         return "💬";
     }
