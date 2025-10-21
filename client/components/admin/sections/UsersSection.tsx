@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Ban, Edit2 } from "lucide-react";
+import { Ban, Edit2, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import {
