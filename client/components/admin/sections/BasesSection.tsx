@@ -234,6 +234,8 @@ export const BasesSection = () => {
           longitude: 0,
         });
         toast.success("Base created successfully");
+        // Refresh bases in the global context so new base appears in selector
+        await refreshBasesContext();
       }
 
       setIsDialogOpen(false);
