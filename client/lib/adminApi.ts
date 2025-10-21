@@ -76,19 +76,9 @@ export const adminApi = {
     if (page) params.set("page", page.toString());
     if (search) params.set("search", search);
     const url = `${ADMIN_BASE}/users?${params}`;
-    console.log("Fetching users from:", url);
     const result = await apiRequest<{ users: AdminUserDTO[]; pagination: any }>(
       url,
     );
-    console.log("Users API result:", result);
-    console.log("Users API result type:", typeof result);
-    console.log("Users API result.users:", result?.users);
-    console.log("Users API result.users type:", typeof result?.users);
-    console.log(
-      "Users API result.users is array:",
-      Array.isArray(result?.users),
-    );
-    console.log("Users API result.users length:", result?.users?.length);
     return result;
   },
   async updateUser(
