@@ -375,9 +375,12 @@ export function FeedPostItem({
             </span>
           )}
           {comments.length > 0 && (
-            <span>
+            <button
+              onClick={() => setShowComments(true)}
+              className="hover:text-primary transition cursor-pointer"
+            >
               {comments.length} comment{comments.length !== 1 ? "s" : ""}
-            </span>
+            </button>
           )}
         </div>
       )}
