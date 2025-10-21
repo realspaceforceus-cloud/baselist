@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { asArray } from "@/lib/api";
 
 export interface AdminUserRecord {
   id: string;
