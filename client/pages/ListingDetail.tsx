@@ -1,10 +1,7 @@
 import {
   ArrowLeft,
-  Bookmark,
-  Flag,
   MessageCircle,
   ShieldCheck,
-  Check,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
@@ -13,6 +10,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/listings/ImageGallery";
+import { SellerInfoSidebar } from "@/components/listings/SellerInfoSidebar";
 import {
   Sheet,
   SheetContent,
@@ -42,26 +40,23 @@ const ListingDetail = (): JSX.Element => {
   const [isComposerOpen, setComposerOpen] = useState(false);
   const [messageBody, setMessageBody] = useState("");
   const [isSaved, setIsSaved] = useState(false);
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
 
-  // Extract actual ID from slug (slug format: "title-slug-12345678")
+  // Extract actual ID from slug
   const actualListingId = useMemo(() => {
     if (!listingSlug) return null;
 
-    // Check if it's a UUID (old format) or slug (new format)
     if (listingSlug.includes("-") && listingSlug.split("-").length > 1) {
-      // It's a slug, extract the ID
       return extractIdFromSlug(listingSlug);
     }
 
-    // It's already an ID
     return listingSlug;
   }, [listingSlug]);
 
   const listing = useMemo(() => {
     if (!actualListingId) return null;
-    // Search by ID or ID prefix (for short slug support)
     return (
       listings.find(
         (item) =>
@@ -185,18 +180,6 @@ const ListingDetail = (): JSX.Element => {
     [sellerFirstName],
   );
 
-  const sellerLastActive = useMemo(
-    () =>
-      seller?.lastActiveAt
-        ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
-          ? "Active today ✅"
-          : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
-              addSuffix: true,
-            })} 🕓`
-        : undefined,
-    [seller?.lastActiveAt],
-  );
-
   const handleOpenComposer = useCallback(() => {
     setMessageBody(defaultMessage);
     setComposerOpen(true);
@@ -237,6 +220,7 @@ const ListingDetail = (): JSX.Element => {
 
   const handleSaveListing = useCallback(async () => {
     try {
+      setIsLoadingSave(true);
       const method = isSaved ? "DELETE" : "POST";
       const response = await fetch(
         `/.netlify/functions/saved-listings/${listing.id}`,
@@ -258,6 +242,8 @@ const ListingDetail = (): JSX.Element => {
       });
     } catch (error) {
       toast.error("Unable to save listing");
+    } finally {
+      setIsLoadingSave(false);
     }
   }, [listing.id, isSaved]);
 
@@ -459,95 +445,14 @@ const ListingDetail = (): JSX.Element => {
             </div>
           </article>
 
-          <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  {seller?.avatarUrl ? (
-                    <img
-                      src={seller.avatarUrl}
-                      alt={seller.name}
-                      className="h-14 w-14 rounded-full object-cover flex-shrink-0"
-                    />
-                  ) : (
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary flex-shrink-0">
-                      {seller?.name?.[0]?.toUpperCase() ?? "M"}
-                    </span>
-                  )}
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={handleViewSellerListings}
-                        className="text-sm font-semibold text-foreground transition hover:text-primary hover:underline"
-                      >
-                        {seller?.name ?? "Member"}
-                      </button>
-                      {seller?.verified && (
-                        <div className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 rounded-full px-2 py-1">
-                          <Check
-                            className="h-3 w-3 text-green-600"
-                            aria-hidden
-                            title="Verified DoW Member"
-                          />
-                          <span className="text-xs font-semibold text-green-700 dark:text-green-400">
-                            Verified
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-1 text-xs text-muted-foreground">
-                      <p>
-                        Member since{" "}
-                        <span className="font-medium text-foreground">
-                          {seller?.memberSince
-                            ? new Date(seller.memberSince).getFullYear()
-                            : "2024"}
-                        </span>
-                      </p>
-                      {seller?.rating ? (
-                        <p>
-                          <span aria-hidden>⭐</span>{" "}
-                          <span className="font-medium text-foreground">
-                            {seller.rating.toFixed(1)}
-                          </span>{" "}
-                          rating
-                        </p>
-                      ) : null}
-                      {sellerLastActive ? <p>{sellerLastActive}</p> : null}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2 border-t border-border pt-4">
-                <Button
-                  className="w-full rounded-full"
-                  onClick={handleOpenComposer}
-                  disabled={!seller}
-                >
-                  <MessageCircle className="h-4 w-4" aria-hidden />
-                  Message seller
-                </Button>
-                <Button
-                  variant={isSaved ? "default" : "outline"}
-                  className="w-full rounded-full"
-                  onClick={handleSaveListing}
-                >
-                  <Bookmark className="h-4 w-4" aria-hidden />
-                  {isSaved ? "Saved" : "Save listing"}
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => setReportDialogOpen(true)}
-                >
-                  <Flag className="h-4 w-4" aria-hidden />
-                  Report listing
-                </Button>
-              </div>
-            </div>
-          </article>
+          <SellerInfoSidebar
+            seller={seller}
+            isSaved={isSaved}
+            onSaveListing={handleSaveListing}
+            onOpenComposer={handleOpenComposer}
+            onOpenReportDialog={() => setReportDialogOpen(true)}
+            isLoadingSave={isLoadingSave}
+          />
         </aside>
       </div>
 
@@ -597,8 +502,9 @@ const ListingDetail = (): JSX.Element => {
           className="h-auto max-h-[80vh] rounded-t-3xl border border-border bg-card px-6 pb-6 pt-8"
         >
           <SheetHeader className="space-y-2 text-left">
-            <SheetTitle className="text-lg font-semibold text-foreground">
-              Report listing
+            <SheetTitle className="text-lg font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5" aria-hidden />
+              Report this listing
             </SheetTitle>
             <p className="text-sm text-muted-foreground">
               Help us keep the community safe by reporting inappropriate content
@@ -624,7 +530,7 @@ const ListingDetail = (): JSX.Element => {
               />
             </div>
           </div>
-          <SheetFooter className="mt-6">
+          <SheetFooter className="mt-6 gap-2">
             <Button
               variant="outline"
               className="w-full rounded-full"
@@ -634,7 +540,7 @@ const ListingDetail = (): JSX.Element => {
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full"
+              className="w-full rounded-full bg-red-600 hover:bg-red-700"
               size="lg"
               onClick={handleReportListing}
               disabled={!reportReason.trim()}
