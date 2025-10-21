@@ -1926,40 +1926,55 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period =
-        new URLSearchParams(event.rawQueryString).get("period") || "7d";
-      let dateFilter = "1=1";
+      try {
+        const period =
+          new URLSearchParams(event.rawQueryString).get("period") || "7d";
+        let dateFilter = "1=1";
 
-      if (period === "24h") {
-        dateFilter = `last_activity >= NOW() - INTERVAL '24 hours'`;
-      } else if (period === "7d") {
-        dateFilter = `last_activity >= NOW() - INTERVAL '7 days'`;
-      } else if (period === "30d") {
-        dateFilter = `last_activity >= NOW() - INTERVAL '30 days'`;
-      } else if (period === "90d") {
-        dateFilter = `last_activity >= NOW() - INTERVAL '90 days'`;
+        if (period === "24h") {
+          dateFilter = `last_activity >= NOW() - INTERVAL '24 hours'`;
+        } else if (period === "7d") {
+          dateFilter = `last_activity >= NOW() - INTERVAL '7 days'`;
+        } else if (period === "30d") {
+          dateFilter = `last_activity >= NOW() - INTERVAL '30 days'`;
+        } else if (period === "90d") {
+          dateFilter = `last_activity >= NOW() - INTERVAL '90 days'`;
+        }
+
+        let result = { rows: [] };
+
+        try {
+          result = await client.query(
+            `SELECT b.name, COUNT(DISTINCT us.user_id) as count
+             FROM user_sessions us
+             JOIN bases b ON us.base_id = b.id
+             WHERE us.is_active = true AND ${dateFilter}
+             GROUP BY b.name, b.id
+             ORDER BY count DESC
+             LIMIT 5`,
+          );
+        } catch (err) {
+          console.error("Bases by users query error:", err);
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bases: result.rows.map((row: any) => ({
+              name: row.name,
+              count: parseInt(row.count),
+            })),
+          }),
+        };
+      } catch (error) {
+        console.error("Bases by users endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch bases by users" }),
+        };
       }
-
-      const result = await client.query(
-        `SELECT b.name, COUNT(DISTINCT us.user_id) as count
-         FROM user_sessions us
-         JOIN bases b ON us.base_id = b.id
-         WHERE us.is_active = true AND ${dateFilter}
-         GROUP BY b.name, b.id
-         ORDER BY count DESC
-         LIMIT 5`,
-      );
-
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bases: result.rows.map((row: any) => ({
-            name: row.name,
-            count: parseInt(row.count),
-          })),
-        }),
-      };
     }
 
     // GET /api/admin/analytics/bases-by-listings?period=24h|7d|30d|90d|all
