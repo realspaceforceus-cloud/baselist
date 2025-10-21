@@ -292,6 +292,60 @@ export const adminApi = {
   async getDeletedBases() {
     return apiRequest<{ bases: any[] }>(`${ADMIN_BASE}/deleted-bases`);
   },
+  async getSystemHealth() {
+    return apiRequest<{
+      uptime: number;
+      errorRate: number;
+      avgResponseTime: number;
+      failedTransactions: number;
+    }>(`${ADMIN_BASE}/analytics/system-health`);
+  },
+  async getLiveUsers() {
+    return apiRequest<{ activeUsers: number }>(
+      `${ADMIN_BASE}/analytics/live-users`,
+    );
+  },
+  async getBasesByUsers(period: string = "7d") {
+    return apiRequest<{ bases: Array<{ name: string; count: number }> }>(
+      `${ADMIN_BASE}/analytics/bases-by-users?period=${period}`,
+    );
+  },
+  async getBasesByListings(period: string = "7d") {
+    return apiRequest<{ bases: Array<{ name: string; count: number }> }>(
+      `${ADMIN_BASE}/analytics/bases-by-listings?period=${period}`,
+    );
+  },
+  async getBasesBySignups(period: string = "7d") {
+    return apiRequest<{ bases: Array<{ name: string; count: number }> }>(
+      `${ADMIN_BASE}/analytics/bases-by-signups?period=${period}`,
+    );
+  },
+  async getModerationMetrics() {
+    return apiRequest<{
+      openReports: number;
+      flaggedContent: number;
+      pendingVerifications: number;
+    }>(`${ADMIN_BASE}/analytics/moderation`);
+  },
+  async getRevenueMetrics(period: string = "24h") {
+    return apiRequest<{
+      totalRevenue: number;
+      completedTransactions: number;
+    }>(`${ADMIN_BASE}/analytics/revenue?period=${period}`);
+  },
+  async getPeakActivity() {
+    return apiRequest<{
+      peakHour: number | null;
+      peakDay: string | null;
+    }>(`${ADMIN_BASE}/analytics/peak-activity`);
+  },
+  async getRetention() {
+    return apiRequest<{
+      retentionRate: number;
+      retainingUsers: number;
+      totalEligible: number;
+    }>(`${ADMIN_BASE}/analytics/retention`);
+  },
   async getAudit(limit = 200) {
     const { audit } = await apiRequest<AdminAuditResponse>(
       `${ADMIN_BASE}/audit`,
