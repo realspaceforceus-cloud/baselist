@@ -107,8 +107,11 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const search = new URLSearchParams(event.rawQueryString).get("search") || "";
-      const page = parseInt(new URLSearchParams(event.rawQueryString).get("page") || "1");
+      const search =
+        new URLSearchParams(event.rawQueryString).get("search") || "";
+      const page = parseInt(
+        new URLSearchParams(event.rawQueryString).get("page") || "1",
+      );
       const limit = 25;
       const offset = (page - 1) * limit;
 
@@ -124,7 +127,10 @@ export const handler: Handler = async (event) => {
         params.push(`%${search}%`);
       }
 
-      const countQuery = query.replace(/SELECT.*FROM/, "SELECT COUNT(*) as count FROM");
+      const countQuery = query.replace(
+        /SELECT.*FROM/,
+        "SELECT COUNT(*) as count FROM",
+      );
       const countResult = await client.query(countQuery, params);
       const total = parseInt(countResult.rows[0].count);
 
@@ -157,7 +163,8 @@ export const handler: Handler = async (event) => {
       }
 
       const userId = path.replace("/users/", "");
-      const { status, role, verify, reason, strikeType, strikeDescription } = JSON.parse(event.body || "{}");
+      const { status, role, verify, reason, strikeType, strikeDescription } =
+        JSON.parse(event.body || "{}");
 
       const user = await client.query("SELECT * FROM users WHERE id = $1", [
         userId,
@@ -463,7 +470,8 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const baseId = new URLSearchParams(event.rawQueryString).get("baseId") || "";
+      const baseId =
+        new URLSearchParams(event.rawQueryString).get("baseId") || "";
       let query = "SELECT * FROM invitation_codes";
       const params: any[] = [];
 
@@ -545,7 +553,9 @@ export const handler: Handler = async (event) => {
 
       const codeId = path.replace("/invitation-codes/", "");
 
-      await client.query("DELETE FROM invitation_codes WHERE id = $1", [codeId]);
+      await client.query("DELETE FROM invitation_codes WHERE id = $1", [
+        codeId,
+      ]);
 
       return {
         statusCode: 200,
@@ -592,7 +602,9 @@ export const handler: Handler = async (event) => {
       if (!noteType || !description) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: "noteType and description are required" }),
+          body: JSON.stringify({
+            error: "noteType and description are required",
+          }),
         };
       }
 
@@ -625,7 +637,9 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const limit = parseInt(new URLSearchParams(event.rawQueryString).get("limit") || "100");
+      const limit = parseInt(
+        new URLSearchParams(event.rawQueryString).get("limit") || "100",
+      );
 
       const result = await client.query(
         "SELECT * FROM failed_login_attempts ORDER BY attempted_at DESC LIMIT $1",
@@ -678,7 +692,13 @@ export const handler: Handler = async (event) => {
       const result = await client.query(
         `INSERT INTO ip_blacklist (id, ip_address, reason, added_by, notes)
          VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [`blacklist-${Date.now()}`, ipAddress, reason, auth.userId, notes || null],
+        [
+          `blacklist-${Date.now()}`,
+          ipAddress,
+          reason,
+          auth.userId,
+          notes || null,
+        ],
       );
 
       return {

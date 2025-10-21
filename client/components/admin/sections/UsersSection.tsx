@@ -1,5 +1,14 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Ban, Check, Gavel, Search, ShieldCheck, Edit2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Ban,
+  Check,
+  Gavel,
+  Search,
+  ShieldCheck,
+  Edit2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
@@ -30,8 +39,15 @@ export interface AdminUserRecord {
 
 interface UsersSectionProps {
   onUserUpdate?: (userId: string, updates: any) => Promise<void>;
-  onAddStrike?: (userId: string, type: string, description: string) => Promise<void>;
-  onFetchUsers?: (page: number, search: string) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
+  onAddStrike?: (
+    userId: string,
+    type: string,
+    description: string,
+  ) => Promise<void>;
+  onFetchUsers?: (
+    page: number,
+    search: string,
+  ) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
 }
 
 export const UsersSection = ({
@@ -44,9 +60,13 @@ export const UsersSection = ({
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
+    null,
+  );
   const [isEditingModal, setIsEditingModal] = useState(false);
-  const [editFormData, setEditFormData] = useState<Partial<AdminUserRecord>>({});
+  const [editFormData, setEditFormData] = useState<Partial<AdminUserRecord>>(
+    {},
+  );
   const [strikeForm, setStrikeForm] = useState({ type: "", description: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -103,14 +123,23 @@ export const UsersSection = ({
   };
 
   const handleAddStrike = async () => {
-    if (!selectedUser || !onAddStrike || !strikeForm.type || !strikeForm.description) {
+    if (
+      !selectedUser ||
+      !onAddStrike ||
+      !strikeForm.type ||
+      !strikeForm.description
+    ) {
       toast.error("Please fill in all strike fields");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await onAddStrike(selectedUser.id, strikeForm.type, strikeForm.description);
+      await onAddStrike(
+        selectedUser.id,
+        strikeForm.type,
+        strikeForm.description,
+      );
       toast.success("Strike recorded");
       setStrikeForm({ type: "", description: "" });
       await loadUsers();
@@ -144,7 +173,11 @@ export const UsersSection = ({
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="User Controls" subtitle="Manage users" accent="25 per page" />
+      <AdminSectionHeader
+        title="User Controls"
+        subtitle="Manage users"
+        accent="25 per page"
+      />
 
       {/* Search Bar */}
       <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft md:flex-row md:items-center md:justify-between">
@@ -187,21 +220,37 @@ export const UsersSection = ({
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">User</th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">Email</th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">Role</th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">Status</th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">Joined</th>
-                <th className="px-4 py-3 text-center font-semibold text-foreground">Actions</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">
+                  User
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">
+                  Email
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">
+                  Role
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">
+                  Joined
+                </th>
+                <th className="px-4 py-3 text-center font-semibold text-foreground">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-muted/20">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-foreground">{user.username}</div>
+                    <div className="font-medium text-foreground">
+                      {user.username}
+                    </div>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {user.email}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary capitalize">
                       {user.role}
@@ -242,7 +291,8 @@ export const UsersSection = ({
       {pagination && pagination.pages > 1 && (
         <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-soft">
           <span className="text-sm text-muted-foreground">
-            Page {pagination.page} of {pagination.pages} ({pagination.total} total users)
+            Page {pagination.page} of {pagination.pages} ({pagination.total}{" "}
+            total users)
           </span>
           <div className="flex gap-2">
             <Button
@@ -257,7 +307,9 @@ export const UsersSection = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(Math.min(pagination.pages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(pagination.pages, currentPage + 1))
+              }
               disabled={currentPage === pagination.pages}
               className="rounded-full"
             >
@@ -279,30 +331,46 @@ export const UsersSection = ({
               {/* User Info */}
               <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Email:</span> {selectedUser.email}
+                  <span className="font-medium text-foreground">Email:</span>{" "}
+                  {selectedUser.email}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Member since:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    Member since:
+                  </span>{" "}
                   {formatDate(selectedUser.createdAt)}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Last active:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    Last active:
+                  </span>{" "}
                   {formatDate(selectedUser.lastLoginAt)}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <span className="font-medium text-foreground">Verified:</span>{" "}
-                  {selectedUser.dowVerifiedAt ? formatDate(selectedUser.dowVerifiedAt) : "Not verified"}
+                  {selectedUser.dowVerifiedAt
+                    ? formatDate(selectedUser.dowVerifiedAt)
+                    : "Not verified"}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Joined via:</span>{" "}
+                  <span className="font-medium text-foreground">
+                    Joined via:
+                  </span>{" "}
                   {getJoinMethodLabel(selectedUser.joinMethod)}
                 </p>
               </div>
 
               {/* Role */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Role</label>
-                <Select value={editFormData.role || ""} onValueChange={(val) => setEditFormData({ ...editFormData, role: val as any })}>
+                <label className="text-sm font-medium text-foreground">
+                  Role
+                </label>
+                <Select
+                  value={editFormData.role || ""}
+                  onValueChange={(val) =>
+                    setEditFormData({ ...editFormData, role: val as any })
+                  }
+                >
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
@@ -316,8 +384,15 @@ export const UsersSection = ({
 
               {/* Status */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Status</label>
-                <Select value={editFormData.status || ""} onValueChange={(val) => setEditFormData({ ...editFormData, status: val as any })}>
+                <label className="text-sm font-medium text-foreground">
+                  Status
+                </label>
+                <Select
+                  value={editFormData.status || ""}
+                  onValueChange={(val) =>
+                    setEditFormData({ ...editFormData, status: val as any })
+                  }
+                >
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
@@ -333,8 +408,15 @@ export const UsersSection = ({
               <div className="rounded-2xl border border-warning/20 bg-warning/5 p-4 space-y-3">
                 <h3 className="font-semibold text-warning">Add Strike</h3>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Reason</label>
-                  <Select value={strikeForm.type} onValueChange={(val) => setStrikeForm({ ...strikeForm, type: val })}>
+                  <label className="text-sm font-medium text-foreground">
+                    Reason
+                  </label>
+                  <Select
+                    value={strikeForm.type}
+                    onValueChange={(val) =>
+                      setStrikeForm({ ...strikeForm, type: val })
+                    }
+                  >
                     <SelectTrigger className="rounded-xl">
                       <SelectValue placeholder="Select reason" />
                     </SelectTrigger>
@@ -342,24 +424,37 @@ export const UsersSection = ({
                       <SelectItem value="spam">Spam</SelectItem>
                       <SelectItem value="fraud">Fraud</SelectItem>
                       <SelectItem value="harassment">Harassment</SelectItem>
-                      <SelectItem value="inappropriate_content">Inappropriate content</SelectItem>
-                      <SelectItem value="policy_violation">Policy violation</SelectItem>
+                      <SelectItem value="inappropriate_content">
+                        Inappropriate content
+                      </SelectItem>
+                      <SelectItem value="policy_violation">
+                        Policy violation
+                      </SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Description</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Description
+                  </label>
                   <Textarea
                     placeholder="Document the behavior and any references..."
                     value={strikeForm.description}
-                    onChange={(e) => setStrikeForm({ ...strikeForm, description: e.target.value })}
+                    onChange={(e) =>
+                      setStrikeForm({
+                        ...strikeForm,
+                        description: e.target.value,
+                      })
+                    }
                     className="rounded-xl min-h-[80px]"
                   />
                 </div>
                 <Button
                   onClick={handleAddStrike}
-                  disabled={isSubmitting || !strikeForm.type || !strikeForm.description}
+                  disabled={
+                    isSubmitting || !strikeForm.type || !strikeForm.description
+                  }
                   className="w-full bg-warning text-warning-foreground rounded-xl"
                 >
                   <Gavel className="h-4 w-4 mr-2" aria-hidden />

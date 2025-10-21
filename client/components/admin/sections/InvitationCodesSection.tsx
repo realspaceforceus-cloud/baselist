@@ -28,7 +28,13 @@ interface InvitationCode {
 interface InvitationCodesSectionProps {
   bases?: Array<{ id: string; name: string }>;
   onFetchCodes?: (baseId?: string) => Promise<InvitationCode[]>;
-  onCreateCode?: (code: string, baseId: string, maxUses?: number, expiresAt?: string, description?: string) => Promise<InvitationCode>;
+  onCreateCode?: (
+    code: string,
+    baseId: string,
+    maxUses?: number,
+    expiresAt?: string,
+    description?: string,
+  ) => Promise<InvitationCode>;
   onDeleteCode?: (codeId: string) => Promise<void>;
 }
 
@@ -182,33 +188,48 @@ export const InvitationCodesSection = ({
       {/* Create Form */}
       {showCreateForm && (
         <div className="rounded-3xl border border-border bg-card p-6 shadow-soft space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Create New Code</h3>
+          <h3 className="text-lg font-semibold text-foreground">
+            Create New Code
+          </h3>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Code</label>
+              <label className="text-sm font-medium text-foreground">
+                Code
+              </label>
               <div className="flex gap-2">
                 <Input
                   value={formData.code}
                   onChange={(e) =>
-                    setFormData({ ...formData, code: e.target.value.toUpperCase() })
+                    setFormData({
+                      ...formData,
+                      code: e.target.value.toUpperCase(),
+                    })
                   }
                   placeholder="INVITE123"
                   className="rounded-xl font-mono"
                   maxLength={16}
                 />
-                <Button onClick={generateCode} variant="outline" className="rounded-xl">
+                <Button
+                  onClick={generateCode}
+                  variant="outline"
+                  className="rounded-xl"
+                >
                   Generate
                 </Button>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Max Uses</label>
+              <label className="text-sm font-medium text-foreground">
+                Max Uses
+              </label>
               <Input
                 type="number"
                 value={formData.maxUses}
-                onChange={(e) => setFormData({ ...formData, maxUses: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, maxUses: e.target.value })
+                }
                 placeholder="Leave empty for unlimited"
                 className="rounded-xl"
                 min="1"
@@ -216,20 +237,28 @@ export const InvitationCodesSection = ({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Expires At</label>
+              <label className="text-sm font-medium text-foreground">
+                Expires At
+              </label>
               <Input
                 type="date"
                 value={formData.expiresAt}
-                onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, expiresAt: e.target.value })
+                }
                 className="rounded-xl"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Description</label>
+              <label className="text-sm font-medium text-foreground">
+                Description
+              </label>
               <Input
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="e.g., Sponsors program"
                 className="rounded-xl"
               />
@@ -268,7 +297,8 @@ export const InvitationCodesSection = ({
         <div className="space-y-3">
           {codes.map((code) => {
             const isValid = isCodeValid(code);
-            const baseName = bases.find((b) => b.id === code.baseId)?.name || code.baseId;
+            const baseName =
+              bases.find((b) => b.id === code.baseId)?.name || code.baseId;
 
             return (
               <div
@@ -310,12 +340,16 @@ export const InvitationCodesSection = ({
 
                     <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground md:grid-cols-4">
                       <div>
-                        <p className="font-medium text-foreground">{baseName}</p>
+                        <p className="font-medium text-foreground">
+                          {baseName}
+                        </p>
                         <p>Base</p>
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {code.maxUses ? `${code.usesCount}/${code.maxUses}` : "Unlimited"}
+                          {code.maxUses
+                            ? `${code.usesCount}/${code.maxUses}`
+                            : "Unlimited"}
                         </p>
                         <p>Uses</p>
                       </div>
@@ -327,7 +361,9 @@ export const InvitationCodesSection = ({
                       </div>
                       {code.description && (
                         <div>
-                          <p className="font-medium text-foreground">{code.description}</p>
+                          <p className="font-medium text-foreground">
+                            {code.description}
+                          </p>
                           <p>Note</p>
                         </div>
                       )}

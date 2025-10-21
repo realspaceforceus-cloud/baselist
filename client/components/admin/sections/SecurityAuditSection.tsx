@@ -30,7 +30,11 @@ interface IPBlacklistEntry {
 interface SecurityAuditSectionProps {
   onFetchFailedLogins?: (limit?: number) => Promise<FailedLoginAttempt[]>;
   onFetchIPBlacklist?: () => Promise<IPBlacklistEntry[]>;
-  onAddIPToBlacklist?: (ipAddress: string, reason: string, notes?: string) => Promise<IPBlacklistEntry>;
+  onAddIPToBlacklist?: (
+    ipAddress: string,
+    reason: string,
+    notes?: string,
+  ) => Promise<IPBlacklistEntry>;
   onRemoveIPFromBlacklist?: (entryId: string) => Promise<void>;
 }
 
@@ -148,7 +152,11 @@ export const SecurityAuditSection = ({
   if (isLoading) {
     return (
       <section className="space-y-4">
-        <AdminSectionHeader title="Security & Audit" subtitle="Monitor threats" accent="Active" />
+        <AdminSectionHeader
+          title="Security & Audit"
+          subtitle="Monitor threats"
+          accent="Active"
+        />
         <div className="rounded-3xl border border-border bg-card p-6 text-center text-muted-foreground">
           Loading security data...
         </div>
@@ -158,7 +166,11 @@ export const SecurityAuditSection = ({
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Security & Audit" subtitle="Monitor and manage security" accent="Real-time" />
+      <AdminSectionHeader
+        title="Security & Audit"
+        subtitle="Monitor and manage security"
+        accent="Real-time"
+      />
 
       <Tabs defaultValue="logins" className="space-y-4">
         <TabsList className="rounded-full bg-muted/60 p-1 grid w-full max-w-xs grid-cols-2">
@@ -179,7 +191,10 @@ export const SecurityAuditSection = ({
           ) : (
             <div className="space-y-3">
               {Object.entries(loginsByIP).map(([ip, logins]) => (
-                <div key={ip} className="rounded-3xl border border-border bg-card p-4 shadow-soft">
+                <div
+                  key={ip}
+                  className="rounded-3xl border border-border bg-card p-4 shadow-soft"
+                >
                   <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
@@ -197,7 +212,8 @@ export const SecurityAuditSection = ({
                           )}
                         </button>
                         <span className="inline-flex rounded-full bg-warning/10 px-2 py-1 text-xs font-medium text-warning">
-                          {logins.length} attempt{logins.length === 1 ? "" : "s"}
+                          {logins.length} attempt
+                          {logins.length === 1 ? "" : "s"}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -223,8 +239,12 @@ export const SecurityAuditSection = ({
                   {/* Recent attempts */}
                   <div className="mt-3 max-h-[120px] overflow-y-auto space-y-1">
                     {logins.slice(0, 5).map((login) => (
-                      <div key={login.id} className="text-xs text-muted-foreground">
-                        <span className="font-mono">{login.identifier}</span> - {formatDate(login.attemptedAt)}
+                      <div
+                        key={login.id}
+                        className="text-xs text-muted-foreground"
+                      >
+                        <span className="font-mono">{login.identifier}</span> -{" "}
+                        {formatDate(login.attemptedAt)}
                       </div>
                     ))}
                     {logins.length > 5 && (
@@ -243,16 +263,23 @@ export const SecurityAuditSection = ({
         <TabsContent value="blacklist" className="space-y-3">
           {showAddIPForm && (
             <div className="rounded-3xl border border-border bg-card p-6 shadow-soft space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Add to Blacklist</h3>
+              <h3 className="text-lg font-semibold text-foreground">
+                Add to Blacklist
+              </h3>
 
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">IP Address</label>
+                  <label className="text-sm font-medium text-foreground">
+                    IP Address
+                  </label>
                   <Input
                     type="text"
                     value={ipFormData.ipAddress}
                     onChange={(e) =>
-                      setIPFormData({ ...ipFormData, ipAddress: e.target.value })
+                      setIPFormData({
+                        ...ipFormData,
+                        ipAddress: e.target.value,
+                      })
                     }
                     placeholder="192.168.1.1"
                     className="rounded-xl font-mono"
@@ -260,7 +287,9 @@ export const SecurityAuditSection = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Reason</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Reason
+                  </label>
                   <select
                     value={ipFormData.reason}
                     onChange={(e) =>
@@ -269,9 +298,15 @@ export const SecurityAuditSection = ({
                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground"
                   >
                     <option value="">Select a reason</option>
-                    <option value="Brute force attacks">Brute force attacks</option>
-                    <option value="Multiple failed logins">Multiple failed logins</option>
-                    <option value="Suspicious activity">Suspicious activity</option>
+                    <option value="Brute force attacks">
+                      Brute force attacks
+                    </option>
+                    <option value="Multiple failed logins">
+                      Multiple failed logins
+                    </option>
+                    <option value="Suspicious activity">
+                      Suspicious activity
+                    </option>
                     <option value="Fraud attempt">Fraud attempt</option>
                     <option value="Spam">Spam</option>
                     <option value="Other">Other</option>
@@ -279,7 +314,9 @@ export const SecurityAuditSection = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Notes</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Notes
+                  </label>
                   <Textarea
                     value={ipFormData.notes}
                     onChange={(e) =>
@@ -301,7 +338,9 @@ export const SecurityAuditSection = ({
                 </Button>
                 <Button
                   onClick={handleAddIP}
-                  disabled={isSubmitting || !ipFormData.ipAddress || !ipFormData.reason}
+                  disabled={
+                    isSubmitting || !ipFormData.ipAddress || !ipFormData.reason
+                  }
                   className="rounded-xl bg-warning text-warning-foreground"
                 >
                   {isSubmitting ? "Adding..." : "Add to Blacklist"}
@@ -317,7 +356,10 @@ export const SecurityAuditSection = ({
           ) : (
             <div className="space-y-3">
               {blacklistedIPs.map((entry) => (
-                <div key={entry.id} className="rounded-3xl border border-border bg-card p-4 shadow-soft">
+                <div
+                  key={entry.id}
+                  className="rounded-3xl border border-border bg-card p-4 shadow-soft"
+                >
                   <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
@@ -325,7 +367,12 @@ export const SecurityAuditSection = ({
                           {entry.ipAddress}
                         </code>
                         <button
-                          onClick={() => copyToClipboard(entry.ipAddress, `blacklist-${entry.id}`)}
+                          onClick={() =>
+                            copyToClipboard(
+                              entry.ipAddress,
+                              `blacklist-${entry.id}`,
+                            )
+                          }
                           className="text-xs text-muted-foreground hover:text-foreground"
                         >
                           {copiedId === `blacklist-${entry.id}` ? (
@@ -338,7 +385,9 @@ export const SecurityAuditSection = ({
 
                       <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground md:grid-cols-3">
                         <div>
-                          <p className="font-medium text-foreground">{entry.reason}</p>
+                          <p className="font-medium text-foreground">
+                            {entry.reason}
+                          </p>
                           <p>Reason</p>
                         </div>
                         <div>
