@@ -747,7 +747,8 @@ const AdminPanel = (): JSX.Element => {
         if (!active) {
           return;
         }
-        const snapshot = metricsResponse.snapshot || metricsResponse.totals || metricsResponse;
+        const snapshot =
+          metricsResponse.snapshot || metricsResponse.totals || metricsResponse;
         setMetrics((prev) =>
           prev.map((card) => {
             if (card.id === "verified") {
