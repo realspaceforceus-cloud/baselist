@@ -8,15 +8,17 @@ const transformFeedPost = (row: any) => {
   let eventData = undefined;
 
   if (row.poll_options) {
-    pollOptions = typeof row.poll_options === 'string'
-      ? JSON.parse(row.poll_options)
-      : row.poll_options;
+    pollOptions =
+      typeof row.poll_options === "string"
+        ? JSON.parse(row.poll_options)
+        : row.poll_options;
   }
 
   if (row.event_data) {
-    eventData = typeof row.event_data === 'string'
-      ? JSON.parse(row.event_data)
-      : row.event_data;
+    eventData =
+      typeof row.event_data === "string"
+        ? JSON.parse(row.event_data)
+        : row.event_data;
   }
 
   return {
