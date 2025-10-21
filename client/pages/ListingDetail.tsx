@@ -332,17 +332,7 @@ const ListingDetail = (): JSX.Element => {
 
       <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
         <div className="space-y-4">
-          <div className="aspect-square overflow-hidden rounded-3xl border border-border bg-card shadow-card">
-            <img
-              src={listing.imageUrls[0]}
-              alt={`${listing.title} primary photo`}
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div className="rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
-            Swipeable gallery, additional photos, and status chips will render
-            here once the detail page is fully built.
-          </div>
+          <ImageGallery images={listing.imageUrls} title={listing.title} />
         </div>
 
         <aside className="space-y-4">
