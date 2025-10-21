@@ -912,6 +912,7 @@ export const handler: Handler = async (event) => {
       if (adminResult.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Admin user not found" }),
         };
       }
@@ -922,6 +923,7 @@ export const handler: Handler = async (event) => {
         if (!currentPassword) {
           return {
             statusCode: 400,
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               error: "Current password required to set new password",
             }),
@@ -935,6 +937,7 @@ export const handler: Handler = async (event) => {
         if (!passwordValid) {
           return {
             statusCode: 401,
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ error: "Current password is incorrect" }),
           };
         }
@@ -949,6 +952,7 @@ export const handler: Handler = async (event) => {
       if (Object.keys(updates).length === 0) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "No changes provided" }),
         };
       }
@@ -966,6 +970,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           success: true,
           message: "Admin account updated successfully",
@@ -975,6 +980,7 @@ export const handler: Handler = async (event) => {
 
     return {
       statusCode: 404,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
