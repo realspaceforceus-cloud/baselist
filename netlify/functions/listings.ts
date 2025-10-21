@@ -218,6 +218,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(transformListing(result.rows[0])),
       };
     } catch (err) {
@@ -225,6 +226,7 @@ export const handler: Handler = async (event) => {
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
@@ -247,6 +249,7 @@ export const handler: Handler = async (event) => {
       if (listingResult.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Listing not found" }),
         };
       }
@@ -284,6 +287,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ success: true }),
       };
     } catch (err) {
@@ -291,6 +295,7 @@ export const handler: Handler = async (event) => {
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
