@@ -1155,8 +1155,57 @@ export const handler: Handler = async (event) => {
       }
     }
 
+    // GET /api/admin/invitation-codes/:id/users
+    if (method === "GET" && path.includes("/invitation-codes/") && path.includes("/users")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const codeId = path.replace("/invitation-codes/", "").replace("/users", "");
+
+        const result = await client.query(
+          `SELECT u.id, u.username, u.email, u.created_at, u.dow_verified_at,
+                  u.is_dow_verified, sl.ip_address
+           FROM users u
+           LEFT JOIN successful_login_attempts sl ON u.id = sl.user_id AND sl.logged_in_at = (
+             SELECT MAX(logged_in_at) FROM successful_login_attempts WHERE user_id = u.id
+           )
+           WHERE u.invitation_code_id = $1
+           ORDER BY u.created_at DESC`,
+          [codeId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            users: result.rows.map((row: any) => ({
+              id: row.id,
+              username: row.username,
+              email: row.email,
+              createdAt: row.created_at,
+              isDowVerified: row.is_dow_verified,
+              ipAddress: row.ip_address,
+            })),
+          }),
+        };
+      } catch (error) {
+        console.error("Failed to fetch users for invitation code:", error);
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ users: [] }),
+        };
+      }
+    }
+
     // DELETE /api/admin/invitation-codes/:id
-    if (method === "DELETE" && path.startsWith("/invitation-codes/")) {
+    if (method === "DELETE" && path.startsWith("/invitation-codes/") && !path.includes("/users")) {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
