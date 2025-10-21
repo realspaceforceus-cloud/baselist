@@ -12,21 +12,6 @@ export const AnnouncementBanner = ({
   const [isDismissed, setIsDismissed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load dismissal state from localStorage on mount
-  useEffect(() => {
-    if (announcement) {
-      const dismissedAnnouncements = JSON.parse(
-        localStorage.getItem("dismissedAnnouncements") || "[]",
-      );
-      setIsDismissed(dismissedAnnouncements.includes(announcement.id));
-    }
-  }, [announcement]);
-
-  // Reset dismissed state when a new announcement arrives
-  useEffect(() => {
-    setIsDismissed(false);
-  }, [announcement?.id]);
-
   const handleDismiss = async () => {
     if (!announcement) return;
 
