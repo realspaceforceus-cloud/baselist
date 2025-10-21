@@ -519,6 +519,12 @@ export const handler: Handler = async (event) => {
 
       const client = await pool.connect();
       try {
+        // Get post info first to notify the post author
+        const postResult = await client.query(
+          "SELECT user_id FROM feed_posts WHERE id = $1",
+          [postId],
+        );
+
         const engagementId = randomUUID();
         const result = await client.query(
           `INSERT INTO feed_engagement (id, post_id, user_id, engagement_type, content, created_at)
@@ -544,6 +550,25 @@ export const handler: Handler = async (event) => {
               avatarUrl: authorResult.rows[0].avatarUrl || "",
             }
           : undefined;
+
+        // Notify post author if they're not the commenter
+        if (postResult.rows[0] && postResult.rows[0].user_id !== userId) {
+          const commenterName = author?.name || "Someone";
+          try {
+            await createNotification({
+              userId: postResult.rows[0].user_id,
+              type: "post_commented",
+              title: `${commenterName} commented on your post`,
+              description: content.substring(0, 100),
+              actorId: userId,
+              targetId: postId,
+              targetType: "post",
+              data: { commentId: engagementId },
+            });
+          } catch (err) {
+            console.error("[FEED] Error creating notification:", err);
+          }
+        }
 
         return {
           statusCode: 201,
