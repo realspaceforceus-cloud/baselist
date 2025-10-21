@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import { pool } from "./db";
+import { pool } from "../db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 
