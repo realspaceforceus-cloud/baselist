@@ -104,14 +104,18 @@ export const AnnouncementBanner = ({
             </p>
           </div>
           <Button
-            variant="ghost"
-            size="icon"
+            variant="outline"
+            size="sm"
             onClick={handleDismiss}
             disabled={isLoading}
-            className="flex-shrink-0"
+            className="flex-shrink-0 h-8 px-3 text-xs font-medium"
+            style={{
+              borderColor: announcement.textColor,
+              color: announcement.textColor,
+            }}
             aria-label="Dismiss announcement"
           >
-            <X className="h-5 w-5" />
+            {isLoading ? "Dismissing..." : "Dismiss"}
           </Button>
         </div>
       </div>
