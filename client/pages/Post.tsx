@@ -53,6 +53,30 @@ const Post = (): JSX.Element => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Load listing data if editing
+  useEffect(() => {
+    if (!editListingId) return;
+
+    const listingToEdit = listings.find((l) => l.id === editListingId);
+    if (!listingToEdit) return;
+
+    setTitle(listingToEdit.title);
+    setPrice(String(listingToEdit.price));
+    setIsFree(listingToEdit.isFree);
+    setCategory(listingToEdit.category);
+    setDescription(listingToEdit.description || "");
+
+    // Load existing images as previews
+    if (listingToEdit.imageUrls && listingToEdit.imageUrls.length > 0) {
+      const existingPhotos = listingToEdit.imageUrls.map((url) => ({
+        id: crypto.randomUUID(),
+        file: new File([], url),
+        preview: url,
+      }));
+      setPhotos(existingPhotos);
+    }
+  }, [editListingId, listings]);
+
   useEffect(() => {
     return () => {
       photos.forEach((photo) => URL.revokeObjectURL(photo.preview));
