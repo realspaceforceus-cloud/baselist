@@ -520,6 +520,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base: result.rows[0] }),
       };
     }
@@ -541,6 +542,7 @@ export const handler: Handler = async (event) => {
       if (Object.keys(updates).length === 0) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "No valid updates provided" }),
         };
       }
@@ -558,12 +560,14 @@ export const handler: Handler = async (event) => {
       if (result.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Base not found" }),
         };
       }
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base: result.rows[0] }),
       };
     }
