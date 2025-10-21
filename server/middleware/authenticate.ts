@@ -34,7 +34,11 @@ const extractUserIdCookie = (req: Request) => {
   return null;
 };
 
-export const authenticate = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
+export const authenticate = (
+  req: AuthenticatedRequest,
+  _res: Response,
+  next: NextFunction,
+) => {
   // First try JWT token (Bearer token or access_token cookie)
   const token = extractBearerToken(req);
   if (token) {
@@ -70,14 +74,22 @@ export const authenticate = (req: AuthenticatedRequest, _res: Response, next: Ne
   return next();
 };
 
-export const requireAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const requireAuth = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   if (!req.user) {
     return res.status(401).json({ error: "Unauthorized" });
   }
   return next();
 };
 
-export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const requireAdmin = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   if (!req.user) {
     return res.status(401).json({ error: "Unauthorized" });
   }
