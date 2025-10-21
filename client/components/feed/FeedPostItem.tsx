@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Heart, MessageCircle, BadgeCheck, AlertCircle, Trash2, Flag, ChevronDown, ChevronUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { feedApi } from "@/lib/feedApi";
 import { useAuth } from "@/context/AuthContext";
 import { useBaseList } from "@/context/BaseListContext";
