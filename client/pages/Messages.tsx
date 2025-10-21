@@ -965,10 +965,8 @@ const Messages = (): JSX.Element => {
             <h2 className="text-xl font-semibold text-foreground">
               No messages yet
             </h2>
+            <p className="text-sm text-muted-foreground">Start a conversation by browsing items or reaching out to other community members.</p>
           </div>
-          <Button asChild className="rounded-full px-6">
-            <Link to="/">Browse listings</Link>
-          </Button>
         </div>
       ) : isMobile ? (
         mobileShowingConversation ? (
