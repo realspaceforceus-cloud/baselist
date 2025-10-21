@@ -420,76 +420,94 @@ const ListingDetail = (): JSX.Element => {
           </article>
 
           <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
-            <div className="flex items-center gap-3">
-              {seller?.avatarUrl ? (
-                <img
-                  src={seller.avatarUrl}
-                  alt={seller.name}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-              ) : (
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-lg font-semibold text-foreground">
-                  {seller?.name?.[0] ?? "B"}
-                </span>
-              )}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleViewSellerListings}
-                    className="text-sm font-semibold text-foreground transition hover:text-primary hover:underline"
-                  >
-                    {seller?.name ?? "Member"}
-                  </button>
-                  {seller?.verified && (
-                    <ShieldCheck
-                      className="h-4 w-4 text-green-600"
-                      aria-hidden
-                      title="Verified DoW Member"
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  {seller?.avatarUrl ? (
+                    <img
+                      src={seller.avatarUrl}
+                      alt={seller.name}
+                      className="h-14 w-14 rounded-full object-cover flex-shrink-0"
                     />
+                  ) : (
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary flex-shrink-0">
+                      {seller?.name?.[0]?.toUpperCase() ?? "M"}
+                    </span>
                   )}
-                </div>
-                {seller?.rating ? (
-                  <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-                    <span aria-hidden>⭐</span>
-                    {seller.rating.toFixed(1)}
+                  <div className="space-y-1 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={handleViewSellerListings}
+                        className="text-sm font-semibold text-foreground transition hover:text-primary hover:underline"
+                      >
+                        {seller?.name ?? "Member"}
+                      </button>
+                      {seller?.verified && (
+                        <div className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 rounded-full px-2 py-1">
+                          <Check
+                            className="h-3 w-3 text-green-600"
+                            aria-hidden
+                            title="Verified DoW Member"
+                          />
+                          <span className="text-xs font-semibold text-green-700 dark:text-green-400">
+                            Verified
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <p>
+                        Member since{" "}
+                        <span className="font-medium text-foreground">
+                          {seller?.memberSince
+                            ? new Date(seller.memberSince).getFullYear()
+                            : "2024"}
+                        </span>
+                      </p>
+                      {seller?.rating ? (
+                        <p>
+                          <span aria-hidden>⭐</span>{" "}
+                          <span className="font-medium text-foreground">
+                            {seller.rating.toFixed(1)}
+                          </span>{" "}
+                          rating
+                        </p>
+                      ) : null}
+                      {sellerLastActive ? (
+                        <p>{sellerLastActive}</p>
+                      ) : null}
+                    </div>
                   </div>
-                ) : null}
-                <p className="text-xs text-muted-foreground">
-                  Member since{" "}
-                  {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
-                </p>
-                {sellerLastActive ? (
-                  <p className="text-xs text-muted-foreground">
-                    {sellerLastActive}
-                  </p>
-                ) : null}
+                </div>
               </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <Button
-                className="w-full rounded-full"
-                onClick={handleOpenComposer}
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden />
-                Message seller
-              </Button>
-              <Button
-                variant={isSaved ? "default" : "outline"}
-                className="w-full rounded-full"
-                onClick={handleSaveListing}
-              >
-                <Bookmark className="h-4 w-4" aria-hidden />
-                {isSaved ? "Saved" : "Save listing"}
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full rounded-full text-destructive hover:text-destructive"
-                onClick={() => setReportDialogOpen(true)}
-              >
-                <Flag className="h-4 w-4" aria-hidden />
-                Report
-              </Button>
+
+              <div className="space-y-2 border-t border-border pt-4">
+                <Button
+                  className="w-full rounded-full"
+                  onClick={handleOpenComposer}
+                  disabled={!seller}
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden />
+                  Message seller
+                </Button>
+                <Button
+                  variant={isSaved ? "default" : "outline"}
+                  className="w-full rounded-full"
+                  onClick={handleSaveListing}
+                >
+                  <Bookmark className="h-4 w-4" aria-hidden />
+                  {isSaved ? "Saved" : "Save listing"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => setReportDialogOpen(true)}
+                >
+                  <Flag className="h-4 w-4" aria-hidden />
+                  Report listing
+                </Button>
+              </div>
             </div>
           </article>
         </aside>
