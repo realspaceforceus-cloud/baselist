@@ -1252,6 +1252,77 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // PATCH /api/admin/users/:id/profile
+    if (
+      method === "PATCH" &&
+      path.startsWith("/users/") &&
+      path.includes("/profile")
+    ) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/users/", "").replace("/profile", "");
+      const { username, email, role, status, baseId, avatarUrl } = JSON.parse(
+        event.body || "{}",
+      );
+
+      const updates: Record<string, any> = {};
+      if (username) updates.username = username;
+      if (email) updates.email = email;
+      if (role) updates.role = role;
+      if (status) updates.status = status;
+      if (baseId) updates.base_id = baseId;
+      if (avatarUrl) updates.avatar_url = avatarUrl;
+
+      if (Object.keys(updates).length === 0) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "No valid updates provided" }),
+        };
+      }
+
+      const setClauses = Object.keys(updates)
+        .map((key, i) => `${key} = $${i + 1}`)
+        .join(", ");
+
+      const values = Object.values(updates);
+      const result = await client.query(
+        `UPDATE users SET ${setClauses}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
+        [...values, userId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "User not found" }),
+        };
+      }
+
+      const u = result.rows[0];
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: {
+            id: u.id,
+            username: u.username,
+            email: u.email,
+            role: u.role,
+            status: u.status,
+            baseId: u.base_id,
+            avatarUrl: u.avatar_url,
+          },
+        }),
+      };
+    }
+
     // POST /api/admin/users/:id/password-reset
     if (
       method === "POST" &&
