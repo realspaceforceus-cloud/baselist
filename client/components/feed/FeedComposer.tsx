@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Image, Calendar, BarChart3, AlertCircle } from "lucide-react";
+import { useState, useRef } from "react";
+import { Image, BarChart3, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { feedApi } from "@/lib/feedApi";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuth } from "@/context/AuthContext";
+import { cloudinaryClient } from "@/lib/cloudinaryClient";
 import type { FeedPost } from "@/types";
 
 interface FeedComposerProps {
@@ -12,7 +13,7 @@ interface FeedComposerProps {
   baseName: string;
 }
 
-type ComposerMode = "text" | "photo" | "poll" | "event" | "psa";
+type ComposerMode = "text" | "photo" | "poll" | "psa";
 
 export function FeedComposer({
   onPostCreated,
