@@ -71,6 +71,47 @@ const Index = (): JSX.Element => {
         }
       }
 
+      // Apply vehicle filters only if viewing Vehicles category
+      if (activeFilter === "Vehicles" && listing.category === "Vehicles") {
+        if (vehicleFilters.year && listing.vehicleYear !== vehicleFilters.year) {
+          return false;
+        }
+        if (
+          vehicleFilters.make &&
+          (!listing.vehicleMake ||
+            !listing.vehicleMake
+              .toLowerCase()
+              .includes(vehicleFilters.make.toLowerCase()))
+        ) {
+          return false;
+        }
+        if (
+          vehicleFilters.model &&
+          (!listing.vehicleModel ||
+            !listing.vehicleModel
+              .toLowerCase()
+              .includes(vehicleFilters.model.toLowerCase()))
+        ) {
+          return false;
+        }
+        if (vehicleFilters.type && listing.vehicleType !== vehicleFilters.type) {
+          return false;
+        }
+        if (
+          vehicleFilters.color &&
+          listing.vehicleColor !== vehicleFilters.color
+        ) {
+          return false;
+        }
+        if (vehicleFilters.maxMiles && listing.vehicleMiles) {
+          const maxMiles = Number(vehicleFilters.maxMiles);
+          const listingMiles = Number(listing.vehicleMiles);
+          if (listingMiles > maxMiles) {
+            return false;
+          }
+        }
+      }
+
       if (!normalizedSearch) {
         return true;
       }
@@ -82,7 +123,7 @@ const Index = (): JSX.Element => {
 
       return haystack.includes(normalizedSearch);
     });
-  }, [activeFilter, currentBaseId, listings, searchQuery]);
+  }, [activeFilter, currentBaseId, listings, searchQuery, vehicleFilters]);
 
   const visibleListings = useMemo(
     () => filteredListings.slice(0, visibleCount),
