@@ -26,3 +26,5 @@ export type { AdminAuditEntry } from "./SecuritySection";
 export { EmailTemplatesSection } from "./EmailTemplatesSection";
 export { FamilyVerificationSection } from "./FamilyVerificationSection";
 export { SEOSection } from "./SEOSection";
+export { InvitationCodesSection } from "./InvitationCodesSection";
+export { SecurityAuditSection } from "./SecurityAuditSection";
