@@ -548,7 +548,12 @@ const AdminPanel = (): JSX.Element => {
     createListingRows(listings, bases, getMemberName),
   );
   const [metrics, setMetrics] = useState<AdminMetricCard[]>(() =>
-    createMetricCards(accountList, listings, transactions, verificationDocs.length),
+    createMetricCards(
+      accountList,
+      listings,
+      transactions,
+      verificationDocs.length,
+    ),
   );
 
   const sponsorRows = useMemo<AdminSponsorRow[]>(
