@@ -527,31 +527,33 @@ export const Header = (): JSX.Element => {
             </div>
           </SheetHeader>
           <div className="space-y-4 overflow-y-auto">
-            <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
-                Base
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsBaseSwitchOpen(true)}
-                className="flex w-full items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-left text-xs transition hover:bg-muted/50"
-              >
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <MapPin className="h-3 w-3" aria-hidden />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground truncate">
-                    {currentBase.name}
-                  </p>
-                  <p className="text-[0.65rem] text-muted-foreground truncate">
-                    {currentBase.region}
-                  </p>
-                </div>
-                <span className="text-[0.65rem] font-semibold text-primary">
-                  Switch
-                </span>
-              </button>
-            </div>
+            {currentBase && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
+                  Base
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsBaseSwitchOpen(true)}
+                  className="flex w-full items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-left text-xs transition hover:bg-muted/50"
+                >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <MapPin className="h-3 w-3" aria-hidden />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground truncate">
+                      {currentBase.name}
+                    </p>
+                    <p className="text-[0.65rem] text-muted-foreground truncate">
+                      {currentBase.region}
+                    </p>
+                  </div>
+                  <span className="text-[0.65rem] font-semibold text-primary">
+                    Switch
+                  </span>
+                </button>
+              </div>
+            )}
             <div>
               <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
                 Shortcuts
