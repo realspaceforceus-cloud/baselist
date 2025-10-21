@@ -34,6 +34,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           savedListingIds: result.rows.map((row) => row.listing_id),
         }),
@@ -43,6 +44,14 @@ export const handler: Handler = async (event) => {
     // POST /api/saved-listings/:listingId - save a listing
     if (method === "POST" && path.startsWith("/")) {
       const listingId = path.slice(1);
+
+      if (!listingId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Listing ID is required" }),
+        };
+      }
 
       // Check if already saved
       const existingResult = await client.query(
@@ -54,6 +63,7 @@ export const handler: Handler = async (event) => {
       if (existingResult.rows.length > 0) {
         return {
           statusCode: 200,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: "Listing already saved" }),
         };
       }
@@ -68,6 +78,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ success: true }),
       };
     }
@@ -76,7 +87,15 @@ export const handler: Handler = async (event) => {
     if (method === "DELETE" && path.startsWith("/")) {
       const listingId = path.slice(1);
 
-      const result = await client.query(
+      if (!listingId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Listing ID is required" }),
+        };
+      }
+
+      await client.query(
         `DELETE FROM saved_listings
          WHERE user_id = $1 AND listing_id = $2`,
         [userId, listingId],
@@ -84,19 +103,23 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ success: true }),
       };
     }
 
     return {
       statusCode: 404,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
     const errorMsg =
       err instanceof Error ? err.message : "Internal server error";
+    console.error("Saved listings error:", errorMsg);
     return {
-      statusCode: 400,
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: errorMsg }),
     };
   } finally {
