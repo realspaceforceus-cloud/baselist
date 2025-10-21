@@ -79,8 +79,15 @@ export const handler: Handler = async (event) => {
         const offset = parseInt(query.offset as string) || 0;
         const unreadOnly = query.unread === "true";
 
+        console.log("[NOTIFICATIONS] Fetching notifications", {
+          userId,
+          limit,
+          offset,
+          unreadOnly,
+        });
+
         let sql = `
-          SELECT 
+          SELECT
             id, user_id, type, title, description, actor_id, target_id, target_type,
             data, read, dismissed, created_at, read_at, dismissed_at
           FROM notifications
@@ -99,10 +106,18 @@ export const handler: Handler = async (event) => {
 
         // Get unread count
         const countResult = await client.query(
-          `SELECT COUNT(*) as count FROM notifications 
+          `SELECT COUNT(*) as count FROM notifications
            WHERE user_id = $1 AND read = false AND dismissed = false`,
           [userId],
         );
+
+        console.log("[NOTIFICATIONS] Result", {
+          count: result.rows.length,
+          unreadCount:
+            countResult.rows.length > 0
+              ? parseInt(countResult.rows[0].count)
+              : 0,
+        });
 
         return json({
           notifications: result.rows,
