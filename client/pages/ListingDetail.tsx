@@ -146,6 +146,30 @@ const ListingDetail = (): JSX.Element => {
     fetchSeller();
   }, [listing?.sellerId]);
 
+  // Check if listing is saved
+  useEffect(() => {
+    if (!listing?.id) {
+      return;
+    }
+
+    const checkIfSaved = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/saved-listings", {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const savedIds = data.savedListingIds || [];
+          setIsSaved(savedIds.includes(listing.id));
+        }
+      } catch (error) {
+        console.error("Failed to check saved status:", error);
+      }
+    };
+
+    checkIfSaved();
+  }, [listing?.id]);
+
   const listingBase = useMemo(
     () => bases.find((base) => base.id === listing?.baseId),
     [bases, listing?.baseId],
