@@ -749,7 +749,7 @@ export const Header = (): JSX.Element => {
                           {base.region}
                         </p>
                       </div>
-                      {base.id === currentBase.id && (
+                      {currentBase && base.id === currentBase.id && (
                         <Check
                           className="h-4 w-4 text-primary flex-shrink-0"
                           aria-hidden
