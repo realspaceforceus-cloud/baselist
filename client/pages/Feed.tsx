@@ -17,30 +17,6 @@ export default function Feed(): JSX.Element {
 
   const baseName = currentBase?.abbreviation || "community";
 
-  const loadPosts = useCallback(async () => {
-    if (!currentBaseId) {
-      console.debug("Feed: Skipping loadPosts - no currentBaseId");
-      return;
-    }
-
-    try {
-      console.debug("Feed: Loading posts for base", currentBaseId);
-      setIsLoading(true);
-      const newPosts = await feedApi.getPosts(currentBaseId, 20, offset);
-      console.debug("Feed: Loaded posts", newPosts.length, newPosts);
-      if (offset === 0) {
-        setPosts(newPosts);
-      } else {
-        setPosts((prev) => [...prev, ...newPosts]);
-      }
-      setHasMore(newPosts.length === 20);
-    } catch (error) {
-      console.error("Feed: Failed to load posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentBaseId, offset]);
-
   const loadAnnouncements = useCallback(async () => {
     if (!currentBaseId) return;
 
@@ -53,18 +29,45 @@ export default function Feed(): JSX.Element {
   }, [currentBaseId]);
 
   useEffect(() => {
-    console.debug("Feed: currentBaseId changed to", currentBaseId);
+    if (!currentBaseId) {
+      console.debug("Feed: Skipping load - no currentBaseId");
+      return;
+    }
+
+    console.debug("Feed: Loading posts for base", currentBaseId);
+    setIsLoading(true);
     setOffset(0);
     setPosts([]);
-    loadPosts();
+
+    (async () => {
+      try {
+        const newPosts = await feedApi.getPosts(currentBaseId, 20, 0);
+        console.debug("Feed: Loaded posts", newPosts.length, newPosts);
+        setPosts(newPosts);
+        setHasMore(newPosts.length === 20);
+      } catch (error) {
+        console.error("Feed: Failed to load posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+
     loadAnnouncements();
-  }, [currentBaseId, loadPosts, loadAnnouncements]);
+  }, [currentBaseId, loadAnnouncements]);
 
   useEffect(() => {
-    if (offset > 0) {
-      loadPosts();
+    if (offset > 0 && currentBaseId) {
+      (async () => {
+        try {
+          const newPosts = await feedApi.getPosts(currentBaseId, 20, offset);
+          setPosts((prev) => [...prev, ...newPosts]);
+          setHasMore(newPosts.length === 20);
+        } catch (error) {
+          console.error("Feed: Failed to load more posts:", error);
+        }
+      })();
     }
-  }, [offset]);
+  }, [offset, currentBaseId]);
 
   const handlePostCreated = (newPost: FeedPost) => {
     setPosts((prev) => [newPost, ...prev]);
