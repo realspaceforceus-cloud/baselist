@@ -410,7 +410,7 @@ const Post = (): JSX.Element => {
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between md:gap-6 md:p-8">
         <div className="space-y-3">
           <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Post a listing in 30 seconds.
+            {isEditing ? "Edit your listing" : "Post a listing in 30 seconds."}
           </h1>
           <p className="max-w-2xl text-base text-muted-foreground">
             Upload photos, add the essentials, and your post appears instantly
