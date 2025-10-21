@@ -1,7 +1,8 @@
-import type { LucideIcon } from "lucide-react";
-import { Check, Eye, FileX } from "lucide-react";
-
+import { useState, useMemo } from "react";
+import { Check, FileX } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
+import { Button } from "@/components/ui/button";
+import type { LucideIcon } from "lucide-react";
 
 export interface VerificationQueueSummary {
   id: string;
@@ -24,103 +25,102 @@ export interface VerificationDocument {
 interface VerificationSectionProps {
   queues: VerificationQueueSummary[];
   documents: VerificationDocument[];
-  onApprove: (documentId: string) => void;
-  onDeny: (documentId: string) => void;
+  onApprove?: (documentId: string) => void;
+  onDeny?: (documentId: string) => void;
 }
 
 export const VerificationSection = ({
-  queues,
-  documents,
+  queues = [],
+  documents = [],
   onApprove,
   onDeny,
-}: VerificationSectionProps): JSX.Element => {
+}: VerificationSectionProps) => {
+  const [viewMode, setViewMode] = useState<"queues" | "docs">("queues");
+
+  const methodCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    documents.forEach((doc) => {
+      counts[doc.method] = (counts[doc.method] || 0) + 1;
+    });
+    return counts;
+  }, [documents]);
+
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Verification Requests" subtitle="Verification" accent="Identity" />
-      <div className="grid gap-3 md:grid-cols-3">
-        {queues.map((queue) => {
-          const Icon = queue.icon;
+      <AdminSectionHeader title="Verification" subtitle="Manage" accent={`${documents.length} pending`} />
 
-          return (
-            <article
-              key={queue.id}
-              className="rounded-3xl border border-border bg-background/90 p-4 shadow-soft"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {queue.label}
-                </span>
-                <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <Icon className="h-4 w-4" aria-hidden />
-                </span>
-              </div>
-              <div className="mt-5 flex items-baseline justify-between">
-                <span className="text-3xl font-semibold text-foreground">{queue.count}</span>
-                <span className={`text-xs font-medium ${queue.toneClass ?? "text-muted-foreground"}`}>
-                  {queue.description}
-                </span>
-              </div>
-            </article>
-          );
-        })}
+      {/* Toggle */}
+      <div className="flex gap-2">
+        <Button variant={viewMode === "queues" ? "default" : "outline"} size="sm" onClick={() => setViewMode("queues")} className="rounded-full">
+          Queues
+        </Button>
+        <Button variant={viewMode === "docs" ? "default" : "outline"} size="sm" onClick={() => setViewMode("docs")} className="rounded-full">
+          Documents
+        </Button>
       </div>
-      <div className="space-y-3 rounded-3xl border border-border bg-card/90 p-4 shadow-soft">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-foreground">Latest submissions</span>
-          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Auto-delete after decision
-          </span>
-        </div>
-        <div className="space-y-3">
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm"
-            >
-              <div className="space-y-0.5">
-                <div className="font-semibold text-foreground">
-                  {doc.name}
-                  <span className="ml-2 rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning">
-                    {doc.method}
-                  </span>
+
+      {/* Queues View */}
+      {viewMode === "queues" && (
+        <div className="grid gap-3 md:grid-cols-3">
+          {queues.map((queue) => {
+            const Icon = queue.icon;
+            return (
+              <div key={queue.id} className="rounded-3xl border border-border bg-background/90 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-semibold uppercase">{queue.label}</span>
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
-                <div className="text-xs text-muted-foreground">Submitted {doc.submitted}</div>
+                <div className="text-3xl font-semibold mb-1">{queue.count}</div>
+                <p className="text-xs text-muted-foreground">{queue.description}</p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                <a
-                  href={doc.url}
-                  className="rounded-full border border-border px-3 py-1"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View proof
-                </a>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1 rounded-full border border-success px-3 py-1 text-success"
-                  onClick={() => onApprove(doc.id)}
-                >
-                  <Check className="h-3.5 w-3.5" aria-hidden />
-                  Approve
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1 rounded-full border border-destructive px-3 py-1 text-destructive"
-                  onClick={() => onDeny(doc.id)}
-                >
-                  <FileX className="h-3.5 w-3.5" aria-hidden />
-                  Deny
-                </button>
-              </div>
-            </div>
-          ))}
-          {documents.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-5 text-sm text-muted-foreground">
-              All manual requests are cleared.
-            </div>
-          ) : null}
+            );
+          })}
         </div>
-      </div>
+      )}
+
+      {/* Documents View */}
+      {viewMode === "docs" &&
+        (documents.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
+            No documents pending
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-3xl border border-border bg-card">
+            <table className="w-full text-sm">
+              <thead className="border-b border-border bg-muted/50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold">Name</th>
+                  <th className="px-4 py-3 text-left font-semibold">Method</th>
+                  <th className="px-4 py-3 text-left font-semibold">Submitted</th>
+                  <th className="px-4 py-3 text-center font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {documents.map((doc) => (
+                  <tr key={doc.id} className="hover:bg-muted/20">
+                    <td className="px-4 py-3 font-medium">{doc.name}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{doc.method}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{doc.submitted}</td>
+                    <td className="px-4 py-3 text-center">
+                      <div className="flex justify-center gap-1">
+                        {onApprove && (
+                          <Button size="sm" variant="ghost" onClick={() => onApprove(doc.id)} className="h-8 w-8 p-0 rounded-lg text-green-600" title="Approve">
+                            <Check className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {onDeny && (
+                          <Button size="sm" variant="ghost" onClick={() => onDeny(doc.id)} className="h-8 w-8 p-0 rounded-lg text-destructive" title="Deny">
+                            <FileX className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
     </section>
   );
 };
