@@ -128,8 +128,9 @@ export const handler: Handler = async (event) => {
       }
 
       // Fetch users
-      let result: any;
+      let result: any = { rows: [] };
       try {
+        console.log("Users query - whereClause:", whereClause, "searchParams:", searchParams, "limit:", limit, "offset:", offset);
         result = await client.query(
           `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt",
                   dow_verified_at as "dowVerifiedAt", avatar_url as "avatarUrl"
@@ -137,6 +138,7 @@ export const handler: Handler = async (event) => {
            ORDER BY created_at DESC LIMIT $${searchParams.length + 1} OFFSET $${searchParams.length + 2}`,
           [...searchParams, limit, offset],
         );
+        console.log("Users query result count:", result.rows.length);
       } catch (err) {
         console.error("Users query error:", err);
         result = { rows: [] };
