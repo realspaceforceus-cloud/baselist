@@ -2,12 +2,12 @@
 CREATE TABLE IF NOT EXISTS notifications (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  type TEXT NOT NULL CHECK (type IN ('message', 'item_sold', 'item_favorited', 'listing_removed', 'verification_needed', 'offer_received', 'offer_accepted', 'offer_declined', 'transaction_complete')),
+  type TEXT NOT NULL CHECK (type IN ('message', 'item_sold', 'item_favorited', 'listing_removed', 'verification_needed', 'offer_received', 'offer_accepted', 'offer_declined', 'transaction_complete', 'post_commented', 'comment_liked')),
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   actor_id TEXT REFERENCES users(id) ON DELETE SET NULL,
-  target_id TEXT, -- listing_id, thread_id, or user_id depending on type
-  target_type TEXT CHECK (target_type IN ('listing', 'thread', 'user')),
+  target_id TEXT, -- listing_id, thread_id, user_id, or post_id depending on type
+  target_type TEXT CHECK (target_type IN ('listing', 'thread', 'user', 'post')),
   data JSONB DEFAULT '{}', -- Additional context data
   read BOOLEAN DEFAULT FALSE,
   dismissed BOOLEAN DEFAULT FALSE,
