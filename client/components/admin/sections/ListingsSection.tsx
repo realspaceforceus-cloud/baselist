@@ -224,13 +224,33 @@ export const ListingsSection = () => {
               {filteredListings.map((listing) => (
                 <tr key={listing.id} className="hover:bg-muted/40">
                   <td className="px-4 py-3 font-semibold text-foreground">
-                    {listing.item}
+                    {editingId === listing.id ? (
+                      <Input
+                        value={editingTitle}
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        className="h-8 rounded-lg"
+                        disabled={isSubmitting}
+                      />
+                    ) : (
+                      listing.item
+                    )}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {listing.base}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {listing.price}
+                    {editingId === listing.id ? (
+                      <Input
+                        type="number"
+                        value={editingPrice}
+                        onChange={(e) => setEditingPrice(e.target.value)}
+                        className="h-8 rounded-lg w-24"
+                        disabled={isSubmitting}
+                        step="0.01"
+                      />
+                    ) : (
+                      listing.price
+                    )}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {listing.seller}
@@ -247,41 +267,59 @@ export const ListingsSection = () => {
                     {listing.reports}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full"
-                      >
-                        View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full"
-                      >
-                        <Flag className="h-3.5 w-3.5 mr-1" />
-                        {listing.status === "Flagged" ? "Clear" : "Flag"}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full border-destructive text-destructive"
-                        disabled={listing.status === "Removed"}
-                      >
-                        <ShieldOff className="h-3.5 w-3.5 mr-1" />
-                        Remove
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full"
-                        disabled={listing.status !== "Removed"}
-                      >
-                        <RefreshCcw className="h-3.5 w-3.5 mr-1" />
-                        Restore
-                      </Button>
-                    </div>
+                    {editingId === listing.id ? (
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-lg text-success"
+                          onClick={handleSaveListing}
+                          disabled={isSubmitting}
+                        >
+                          <Save className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-lg"
+                          onClick={() => setEditingId(null)}
+                          disabled={isSubmitting}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-lg"
+                          onClick={() => handleEditListing(listing)}
+                        >
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full border-destructive text-destructive"
+                          disabled={listing.status === "Removed"}
+                          onClick={() => handleHideListing(listing.id)}
+                        >
+                          <ShieldOff className="h-3.5 w-3.5 mr-1" />
+                          Remove
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full"
+                          disabled={listing.status !== "Removed"}
+                          onClick={() => handleRestoreListing(listing.id)}
+                        >
+                          <RefreshCcw className="h-3.5 w-3.5 mr-1" />
+                          Restore
+                        </Button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
