@@ -73,7 +73,10 @@ const Index = (): JSX.Element => {
 
       // Apply vehicle filters only if viewing Vehicles category
       if (activeFilter === "Vehicles" && listing.category === "Vehicles") {
-        if (vehicleFilters.year && String(listing.vehicleYear || "") !== vehicleFilters.year) {
+        if (
+          vehicleFilters.year &&
+          String(listing.vehicleYear || "") !== vehicleFilters.year
+        ) {
           return false;
         }
         if (vehicleFilters.make) {
@@ -88,10 +91,16 @@ const Index = (): JSX.Element => {
             return false;
           }
         }
-        if (vehicleFilters.type && String(listing.vehicleType || "") !== vehicleFilters.type) {
+        if (
+          vehicleFilters.type &&
+          String(listing.vehicleType || "") !== vehicleFilters.type
+        ) {
           return false;
         }
-        if (vehicleFilters.color && String(listing.vehicleColor || "") !== vehicleFilters.color) {
+        if (
+          vehicleFilters.color &&
+          String(listing.vehicleColor || "") !== vehicleFilters.color
+        ) {
           return false;
         }
         if (vehicleFilters.maxMiles) {

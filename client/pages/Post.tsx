@@ -618,7 +618,8 @@ const Post = (): JSX.Element => {
                 Vehicle Details
               </h3>
               <p className="text-sm text-muted-foreground">
-                Provide vehicle information to help buyers find exactly what they're looking for.
+                Provide vehicle information to help buyers find exactly what
+                they're looking for.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
