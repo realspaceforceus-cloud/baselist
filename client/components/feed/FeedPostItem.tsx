@@ -406,43 +406,10 @@ export function FeedPostItem({
         </button>
       </div>
 
-      {/* Comment box */}
+      {/* Comments section - always show if there are comments or if comment box is open */}
       {showComments && (
         <div className="mt-4 border-t border-border pt-4 space-y-3">
-          <div className="flex gap-2">
-            <img
-              src={
-                user?.avatarUrl ||
-                "https://api.dicebear.com/7.x/initials/svg?seed=user"
-              }
-              alt={user?.name}
-              className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-            />
-            <div className="flex-1 flex gap-2">
-              <input
-                type="text"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Add a comment..."
-                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleComment();
-                  }
-                }}
-              />
-              <button
-                onClick={handleComment}
-                disabled={!commentText.trim() || isCommentingLoading}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-              >
-                {isCommentingLoading ? "..." : "Post"}
-              </button>
-            </div>
-          </div>
-
-          {/* Comments section */}
+          {/* Comments display */}
           {comments.length > 0 && (
             <div className="space-y-3 rounded-lg bg-accent/30 p-3">
               {/* View all comments button */}
@@ -528,6 +495,40 @@ export function FeedPostItem({
               )}
             </div>
           )}
+
+          {/* Comment input box */}
+          <div className="flex gap-2">
+            <img
+              src={
+                user?.avatarUrl ||
+                "https://api.dicebear.com/7.x/initials/svg?seed=user"
+              }
+              alt={user?.name}
+              className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+            />
+            <div className="flex-1 flex gap-2">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Add a comment..."
+                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleComment();
+                  }
+                }}
+              />
+              <button
+                onClick={handleComment}
+                disabled={!commentText.trim() || isCommentingLoading}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              >
+                {isCommentingLoading ? "..." : "Post"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </article>
