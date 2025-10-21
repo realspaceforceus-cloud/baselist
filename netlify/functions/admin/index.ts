@@ -1040,19 +1040,38 @@ export const handler: Handler = async (event) => {
           };
         }
 
-        const result = await client.query(
-          `INSERT INTO invitation_codes (id, code, created_by, base_id, max_uses, expires_at, description)
-           VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-          [
-            `code-${Date.now()}`,
-            code,
-            auth.userId,
-            baseId,
-            maxUses || null,
-            expiresAt || null,
-            description || null,
-          ],
-        );
+        let result = { rows: [] };
+
+        try {
+          result = await client.query(
+            `INSERT INTO invitation_codes (id, code, created_by, base_id, max_uses, expires_at, description)
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [
+              `code-${Date.now()}`,
+              code,
+              auth.userId,
+              baseId,
+              maxUses || null,
+              expiresAt || null,
+              description || null,
+            ],
+          );
+        } catch (queryErr) {
+          console.error("Invitation code insert query error:", queryErr);
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Failed to create invitation code - database error" }),
+          };
+        }
+
+        if (result.rows.length === 0) {
+          return {
+            statusCode: 500,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Code creation returned no rows" }),
+          };
+        }
 
         return {
           statusCode: 201,
