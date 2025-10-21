@@ -3,6 +3,11 @@ import { pool } from "./db";
 import { randomUUID } from "crypto";
 import { getUserIdFromAuth } from "./auth";
 import { createNotification } from "./notification-helpers";
+import {
+  extractMentions,
+  getMentionedUserIds,
+  trackInteraction,
+} from "./tag-parser";
 
 const transformFeedPost = (row: any) => {
   let pollOptions = undefined;
