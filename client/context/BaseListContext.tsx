@@ -1787,19 +1787,18 @@ export const BaseListProvider = ({
             (t) => t.id === threadFromBackend.id,
           );
           if (existingIndex !== -1) {
-            // Update existing thread
+            // Update existing thread - move to top
             const remaining = prev.filter((_, i) => i !== existingIndex);
             return [threadFromBackend, ...remaining];
           }
-          // Add new thread
+          // Add new thread to top
           return [threadFromBackend, ...prev];
         });
 
         return threadFromBackend;
       } catch (error) {
-        throw error instanceof Error
-          ? error
-          : new Error("Failed to send message");
+        const errorMsg = error instanceof Error ? error.message : "Failed to send message";
+        throw error instanceof Error ? error : new Error(errorMsg);
       }
     },
     [isAuthenticated, isDowVerified],
