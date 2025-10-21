@@ -326,7 +326,10 @@ export const Header = (): JSX.Element => {
                     className="relative flex h-9 md:h-11 w-9 md:w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                     title="Notifications"
                   >
-                    <Bell className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground" aria-hidden />
+                    <Bell
+                      className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground"
+                      aria-hidden
+                    />
                     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[0.6rem] font-bold text-background shadow-sm">
                       3
                     </span>
@@ -535,11 +538,16 @@ export const Header = (): JSX.Element => {
                     <MessageSquare className="h-5 w-5" aria-hidden />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Your listing was removed</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Your PS5 listing was removed for violating community guidelines.
+                    <p className="text-sm font-semibold text-foreground">
+                      Your listing was removed
                     </p>
-                    <p className="text-xs text-muted-foreground mt-2">2 hours ago</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Your PS5 listing was removed for violating community
+                      guidelines.
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      2 hours ago
+                    </p>
                   </div>
                 </div>
               </div>
@@ -549,11 +557,15 @@ export const Header = (): JSX.Element => {
                     <Check className="h-5 w-5" aria-hidden />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">New message from Capt Monroe</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      New message from Capt Monroe
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Interested in the motorcycle you posted?
                     </p>
-                    <p className="text-xs text-muted-foreground mt-2">5 hours ago</p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      5 hours ago
+                    </p>
                   </div>
                 </div>
               </div>
@@ -563,11 +575,15 @@ export const Header = (): JSX.Element => {
                     <MessageSquare className="h-5 w-5" aria-hidden />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Account verification needed</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      Account verification needed
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Complete your DoD verification to continue selling.
                     </p>
-                    <p className="text-xs text-muted-foreground mt-2">1 day ago</p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      1 day ago
+                    </p>
                   </div>
                 </div>
               </div>

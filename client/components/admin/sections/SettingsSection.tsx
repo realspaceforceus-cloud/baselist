@@ -248,7 +248,9 @@ export const SettingsSection = (): JSX.Element => {
                     placeholder="••••••••"
                     className="rounded-lg"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">Min 8 characters</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Min 8 characters
+                  </p>
                 </div>
 
                 <div>
@@ -548,7 +550,9 @@ export const SettingsSection = (): JSX.Element => {
           {isSaved && (
             <div className="flex items-center gap-2 text-green-600">
               <CheckCircle2 className="w-5 h-5" />
-              <span className="text-sm font-medium text-foreground">All changes saved</span>
+              <span className="text-sm font-medium text-foreground">
+                All changes saved
+              </span>
             </div>
           )}
         </div>

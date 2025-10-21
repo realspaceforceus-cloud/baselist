@@ -1942,7 +1942,11 @@ const AdminPanel = (): JSX.Element => {
       try {
         const reportsData = await adminApi.getReports();
         if (!active) return;
-        if (reportsData && "reports" in reportsData && Array.isArray(reportsData.reports)) {
+        if (
+          reportsData &&
+          "reports" in reportsData &&
+          Array.isArray(reportsData.reports)
+        ) {
           setReports(
             reportsData.reports.map((r: any) => ({
               id: r.id,
@@ -1954,7 +1958,7 @@ const AdminPanel = (): JSX.Element => {
               base: r.base_id || "Unknown",
               time: formatRelativeTime(r.created_at),
               attachmentUrl: r.evidence_url,
-            }))
+            })),
           );
         }
       } catch (error) {
@@ -1974,7 +1978,11 @@ const AdminPanel = (): JSX.Element => {
       try {
         const verificationsData = await adminApi.getVerifications();
         if (!active) return;
-        if (verificationsData && "verifications" in verificationsData && Array.isArray(verificationsData.verifications)) {
+        if (
+          verificationsData &&
+          "verifications" in verificationsData &&
+          Array.isArray(verificationsData.verifications)
+        ) {
           setVerificationDocs(
             verificationsData.verifications.map((v: any) => ({
               id: v.id,
@@ -1983,7 +1991,7 @@ const AdminPanel = (): JSX.Element => {
               method: v.method || "Unknown",
               submitted: formatRelativeTime(v.submitted_at),
               url: v.document_url || "",
-            }))
+            })),
           );
         }
       } catch (error) {
@@ -2099,9 +2107,17 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "users" ? (
             <UsersSection
               onFetchUsers={(page, search) => adminApi.getUsers(page, search)}
-              onUserUpdate={(userId, updates) => adminApi.updateUser(userId, updates)}
+              onUserUpdate={(userId, updates) =>
+                adminApi.updateUser(userId, updates)
+              }
               onAddStrike={(userId, strikeType, description) =>
-                adminApi.addAccountNote(userId, "strike", description, strikeType, "critical")
+                adminApi.addAccountNote(
+                  userId,
+                  "strike",
+                  description,
+                  strikeType,
+                  "critical",
+                )
               }
             />
           ) : null}

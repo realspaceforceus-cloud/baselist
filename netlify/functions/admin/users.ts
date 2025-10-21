@@ -106,9 +106,10 @@ export const handler: Handler = async (event) => {
       const { status, role, verify, reason, strikeType, strikeDescription } =
         JSON.parse(event.body || "{}");
 
-      const userResult = await client.query("SELECT * FROM users WHERE id = $1", [
-        userId,
-      ]);
+      const userResult = await client.query(
+        "SELECT * FROM users WHERE id = $1",
+        [userId],
+      );
       if (userResult.rows.length === 0) {
         return {
           statusCode: 404,

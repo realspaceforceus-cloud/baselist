@@ -26,7 +26,10 @@ interface UserWithRole {
 interface RolesEnhancedProps {
   users?: UserWithRole[];
   onFetchUsers?: () => Promise<UserWithRole[]>;
-  onUpdateUserRole?: (userId: string, newRole: "member" | "moderator" | "admin") => Promise<void>;
+  onUpdateUserRole?: (
+    userId: string,
+    newRole: "member" | "moderator" | "admin",
+  ) => Promise<void>;
 }
 
 export const RolesEnhanced = ({
@@ -76,7 +79,7 @@ export const RolesEnhanced = ({
 
   const handleSaveChanges = async () => {
     if (!onUpdateUserRole) return;
-    
+
     const updates = Object.entries(roleChanges);
     if (updates.length === 0) {
       toast.error("No changes to save");
@@ -86,15 +89,18 @@ export const RolesEnhanced = ({
     setIsSaving(true);
     try {
       for (const [userId, newRole] of updates) {
-        await onUpdateUserRole(userId, newRole as "member" | "moderator" | "admin");
+        await onUpdateUserRole(
+          userId,
+          newRole as "member" | "moderator" | "admin",
+        );
       }
-      
+
       setUsers(
         users.map((user) =>
           roleChanges[user.id]
             ? { ...user, role: roleChanges[user.id] as typeof user.role }
-            : user
-        )
+            : user,
+        ),
       );
       setRoleChanges({});
       setEditingUserId(null);
@@ -181,7 +187,12 @@ export const RolesEnhanced = ({
                   const hasChanges = roleChanges[user.id] !== undefined;
 
                   return (
-                    <tr key={user.id} className={hasChanges ? "bg-warning/5" : "hover:bg-muted/20"}>
+                    <tr
+                      key={user.id}
+                      className={
+                        hasChanges ? "bg-warning/5" : "hover:bg-muted/20"
+                      }
+                    >
                       <td className="px-4 py-3">
                         <div className="font-medium text-foreground">
                           {user.username}
@@ -196,7 +207,7 @@ export const RolesEnhanced = ({
                       <td className="px-4 py-3">
                         <span
                           className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${getRoleColor(
-                            user.role
+                            user.role,
                           )}`}
                         >
                           {user.role}
