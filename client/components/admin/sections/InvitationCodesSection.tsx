@@ -134,8 +134,8 @@ export const InvitationCodesSection = ({
   };
 
   const handleCreateCode = async () => {
-    if (!formData.code || !selectedBase) {
-      toast.error("Code and base are required");
+    if (!formData.code || !selectedBaseForCreation || selectedBaseForCreation === "all") {
+      toast.error("Code and a specific base are required");
       return;
     }
 
@@ -144,7 +144,7 @@ export const InvitationCodesSection = ({
       if (onCreateCode) {
         await onCreateCode(
           formData.code,
-          selectedBase,
+          selectedBaseForCreation,
           formData.maxUses ? parseInt(formData.maxUses) : undefined,
           formData.expiresAt || undefined,
           formData.description || undefined,
@@ -152,7 +152,7 @@ export const InvitationCodesSection = ({
       } else {
         await adminApi.createInvitationCode(
           formData.code,
-          selectedBase,
+          selectedBaseForCreation,
           formData.maxUses ? parseInt(formData.maxUses) : undefined,
           formData.expiresAt || undefined,
           formData.description || undefined,
@@ -160,6 +160,7 @@ export const InvitationCodesSection = ({
       }
       toast.success("Invitation code created");
       setFormData({ code: "", maxUses: "", expiresAt: "", description: "" });
+      setSelectedBaseForCreation("");
       setShowCreateForm(false);
       await loadCodes();
     } catch (error) {
