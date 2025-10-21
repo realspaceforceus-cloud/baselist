@@ -33,22 +33,50 @@ export const handler: Handler = async (event) => {
     }
   }
 
-  // POST /api/messages - send message
+  // POST /api/messages - send message (creates thread if needed)
   if (method === "POST" && path === "") {
     const client = await pool.connect();
     try {
-      const { threadId, authorId, body } = JSON.parse(event.body || "{}");
+      const { listingId, recipientId, body } = JSON.parse(event.body || "{}");
 
-      if (!threadId || !authorId || !body) {
+      // Get userId from cookies
+      const cookies = event.headers.cookie || "";
+      const userIdMatch = cookies.match(/userId=([^;]+)/);
+      const authorId = userIdMatch ? userIdMatch[1] : null;
+
+      if (!authorId || !listingId || !recipientId || !body) {
         return {
           statusCode: 400,
           body: JSON.stringify({ error: "Missing required fields" }),
         };
       }
 
-      const messageId = randomUUID();
+      // Check if thread already exists
+      const threadCheckResult = await client.query(
+        `SELECT id FROM message_threads
+         WHERE listing_id = $1 AND $2 = ANY(participants) AND $3 = ANY(participants)
+         LIMIT 1`,
+        [listingId, authorId, recipientId],
+      );
 
-      const result = await client.query(
+      let threadId: string;
+
+      if (threadCheckResult.rows.length > 0) {
+        // Use existing thread
+        threadId = threadCheckResult.rows[0].id;
+      } else {
+        // Create new thread
+        threadId = randomUUID();
+        await client.query(
+          `INSERT INTO message_threads (id, listing_id, participants, status, archived_by, deleted_by, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`,
+          [threadId, listingId, [authorId, recipientId], "active", "[]", "[]"],
+        );
+      }
+
+      // Insert message
+      const messageId = randomUUID();
+      const messageResult = await client.query(
         `INSERT INTO messages (id, thread_id, author_id, body, sent_at, type)
          VALUES ($1, $2, $3, $4, NOW(), $5)
          RETURNING *`,
@@ -61,9 +89,18 @@ export const handler: Handler = async (event) => {
         [threadId],
       );
 
+      // Fetch the full thread
+      const threadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
       return {
         statusCode: 201,
-        body: JSON.stringify(result.rows[0]),
+        body: JSON.stringify({
+          message: messageResult.rows[0],
+          thread: threadResult.rows[0],
+        }),
       };
     } catch (err) {
       const errorMsg =
