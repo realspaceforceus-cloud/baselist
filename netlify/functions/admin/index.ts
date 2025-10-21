@@ -38,6 +38,221 @@ export const handler: Handler = async (event) => {
       return result.rows.length > 0 && result.rows[0].role === "admin";
     };
 
+    // GET /api/admin/dashboard
+    if (method === "GET" && path === "/dashboard") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const usersResult = await client.query(
+        "SELECT COUNT(*) as count FROM users",
+      );
+      const listingsResult = await client.query(
+        "SELECT COUNT(*) as count FROM listings WHERE status = 'active'",
+      );
+      const transactionsResult = await client.query(
+        "SELECT COUNT(*) as count FROM transactions",
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          users: parseInt(usersResult.rows[0].count),
+          listings: parseInt(listingsResult.rows[0].count),
+          transactions: parseInt(transactionsResult.rows[0].count),
+        }),
+      };
+    }
+
+    // GET /api/admin/users (with pagination and search)
+    if (method === "GET" && path === "/users") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const search =
+        new URLSearchParams(event.rawQueryString).get("search") || "";
+      const page = parseInt(
+        new URLSearchParams(event.rawQueryString).get("page") || "1",
+      );
+      const limit = 25;
+      const offset = (page - 1) * limit;
+
+      let query = `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt",
+                updated_at as "updatedAt", dow_verified_at as "dowVerifiedAt", last_login_at as "lastLoginAt",
+                remember_device_until as "rememberDeviceUntil", avatar_url as "avatarUrl", join_method as "joinMethod"
+         FROM users`;
+
+      const params: any[] = [];
+
+      if (search) {
+        query += ` WHERE (username ILIKE $1 OR email ILIKE $1 OR base_id ILIKE $1)`;
+        params.push(`%${search}%`);
+      }
+
+      const countQuery = query.replace(
+        /SELECT.*FROM/,
+        "SELECT COUNT(*) as count FROM",
+      );
+      const countResult = await client.query(countQuery, params);
+      const total = parseInt(countResult.rows[0].count);
+
+      query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(limit, offset);
+
+      const result = await client.query(query, params);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          users: result.rows,
+          pagination: {
+            page,
+            limit,
+            total,
+            pages: Math.ceil(total / limit),
+          },
+        }),
+      };
+    }
+
+    // PATCH /api/admin/users/:id
+    if (method === "PATCH" && path.startsWith("/users/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/users/", "");
+      const { status, role, verify, reason, strikeType, strikeDescription } =
+        JSON.parse(event.body || "{}");
+
+      const user = await client.query("SELECT * FROM users WHERE id = $1", [
+        userId,
+      ]);
+      if (user.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "User not found" }),
+        };
+      }
+
+      const updates: Record<string, any> = {};
+      if (status) updates.status = status;
+      if (role) updates.role = role;
+      if (verify) updates.dow_verified_at = new Date().toISOString();
+
+      const setClauses = Object.keys(updates)
+        .map((key, i) => `${key} = $${i + 1}`)
+        .join(", ");
+
+      if (setClauses) {
+        const values = Object.values(updates);
+        await client.query(
+          `UPDATE users SET ${setClauses}, updated_at = NOW() WHERE id = $${values.length + 1}`,
+          [...values, userId],
+        );
+      }
+
+      if (strikeType && strikeDescription) {
+        await client.query(
+          `INSERT INTO account_notes (id, user_id, created_by, note_type, strike_reason, description, severity)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [
+            `note-${Date.now()}`,
+            userId,
+            auth.userId,
+            "strike",
+            strikeType,
+            strikeDescription,
+            "critical",
+          ],
+        );
+      }
+
+      const updated = await client.query("SELECT * FROM users WHERE id = $1", [
+        userId,
+      ]);
+      const u = updated.rows[0];
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          user: {
+            id: u.id,
+            username: u.username,
+            role: u.role,
+            status: u.status,
+            dowVerifiedAt: u.dow_verified_at,
+            joinMethod: u.join_method,
+          },
+        }),
+      };
+    }
+
+    // GET /api/admin/metrics
+    if (method === "GET" && path === "/metrics") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const verifiedResult = await client.query(
+        "SELECT COUNT(*) as count FROM users WHERE dow_verified_at IS NOT NULL",
+      );
+      const listingsResult = await client.query(
+        "SELECT COUNT(*) as total, COUNT(CASE WHEN status = 'sold' THEN 1 END) as sold FROM listings",
+      );
+      const reportsResult = await client.query(
+        "SELECT COUNT(*) as count FROM reports WHERE status = 'open'",
+      );
+      const backlogResult = await client.query(
+        "SELECT COUNT(*) as count FROM verifications WHERE status = 'pending'",
+      );
+
+      const snapshot = {
+        verifiedMembers: parseInt(verifiedResult.rows[0].count),
+        totalListings: parseInt(listingsResult.rows[0].total),
+        soldListings: parseInt(listingsResult.rows[0].sold),
+        openReports: parseInt(reportsResult.rows[0].count),
+        manualVerificationBacklog: parseInt(backlogResult.rows[0].count),
+      };
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ snapshot }),
+      };
+    }
+
+    // GET /api/admin/audit
+    if (method === "GET" && path === "/audit") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const result = await client.query(
+        `SELECT id, actor_id as "actorId", action, created_at as "createdAt" FROM audit_logs ORDER BY created_at DESC LIMIT 200`,
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ audit: result.rows }),
+      };
+    }
+
     // GET /api/admin/listings
     if (method === "GET" && path === "/listings") {
       const result = await client.query(
