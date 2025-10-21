@@ -33,8 +33,24 @@ export const handler: Handler = async (event) => {
   const client = await pool.connect();
 
   try {
+    // Check if user is admin (for routes that require it)
+    const isAdmin = async (userId: string): Promise<boolean> => {
+      const result = await client.query(
+        "SELECT role FROM users WHERE id = $1",
+        [userId],
+      );
+      return result.rows.length > 0 && result.rows[0].role === "admin";
+    };
+
     // GET /api/admin/dashboard
     if (method === "GET" && path === "/dashboard") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
       const usersResult = await client.query(
         "SELECT COUNT(*) as count FROM users",
       );
@@ -57,6 +73,13 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/metrics
     if (method === "GET" && path === "/metrics") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
       const transactionsResult = await client.query(
         "SELECT COUNT(*) as count FROM transactions",
       );
@@ -75,18 +98,52 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    // GET /api/admin/users
+    // GET /api/admin/users (with pagination and search)
     if (method === "GET" && path === "/users") {
-      const result = await client.query(
-        `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt", 
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const search = new URLSearchParams(event.rawQueryString).get("search") || "";
+      const page = parseInt(new URLSearchParams(event.rawQueryString).get("page") || "1");
+      const limit = 25;
+      const offset = (page - 1) * limit;
+
+      let query = `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt",
                 updated_at as "updatedAt", dow_verified_at as "dowVerifiedAt", last_login_at as "lastLoginAt",
-                remember_device_until as "rememberDeviceUntil", avatar_url as "avatarUrl"
-         FROM users ORDER BY created_at DESC`,
-      );
+                remember_device_until as "rememberDeviceUntil", avatar_url as "avatarUrl", join_method as "joinMethod"
+         FROM users`;
+
+      const params: any[] = [];
+
+      if (search) {
+        query += ` WHERE (username ILIKE $1 OR email ILIKE $1 OR base_id ILIKE $1)`;
+        params.push(`%${search}%`);
+      }
+
+      const countQuery = query.replace(/SELECT.*FROM/, "SELECT COUNT(*) as count FROM");
+      const countResult = await client.query(countQuery, params);
+      const total = parseInt(countResult.rows[0].count);
+
+      query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(limit, offset);
+
+      const result = await client.query(query, params);
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ users: result.rows }),
+        body: JSON.stringify({
+          users: result.rows,
+          pagination: {
+            page,
+            limit,
+            total,
+            pages: Math.ceil(total / limit),
+          },
+        }),
       };
     }
 
