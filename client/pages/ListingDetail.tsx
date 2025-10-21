@@ -418,17 +418,17 @@ const ListingDetail = (): JSX.Element => {
                 Message seller
               </Button>
               <Button
-                variant="outline"
+                variant={isSaved ? "default" : "outline"}
                 className="w-full rounded-full"
-                disabled
+                onClick={handleSaveListing}
               >
                 <Bookmark className="h-4 w-4" aria-hidden />
-                Save listing
+                {isSaved ? "Saved" : "Save listing"}
               </Button>
               <Button
                 variant="ghost"
                 className="w-full rounded-full text-destructive hover:text-destructive"
-                disabled
+                onClick={() => setReportDialogOpen(true)}
               >
                 <Flag className="h-4 w-4" aria-hidden />
                 Report
