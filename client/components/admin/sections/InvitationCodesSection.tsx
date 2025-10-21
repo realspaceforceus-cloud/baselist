@@ -80,6 +80,7 @@ export const InvitationCodesSection = ({
   const [expandedCodeId, setExpandedCodeId] = useState<string | null>(null);
   const [codeUsers, setCodeUsers] = useState<Record<string, any[]>>({});
   const [loadingCodeUsers, setLoadingCodeUsers] = useState<string | null>(null);
+  const [selectedBaseForCreation, setSelectedBaseForCreation] = useState<string>("");
 
   const loadCodeUsers = async (codeId: string) => {
     if (codeUsers[codeId]) {
