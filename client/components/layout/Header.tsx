@@ -20,6 +20,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { Logo } from "@/components/layout/Logo";
 import { SearchInput } from "@/components/layout/SearchInput";
+import { NotificationItem } from "@/components/layout/NotificationItem";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,8 @@ import { cn } from "@/lib/utils";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuthDialog } from "@/context/AuthDialogContext";
 import { useSettings } from "@/context/SettingsContext";
+import { notifications as notificationsApi } from "@/lib/api";
+import type { Notification } from "@/types";
 
 const NAV_ITEMS = [
   {
