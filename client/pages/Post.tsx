@@ -770,7 +770,13 @@ const Post = (): JSX.Element => {
             className="rounded-full px-8"
             disabled={submissionState !== "idle"}
           >
-            {submissionState === "submitting" ? "Posting…" : "Post"}
+            {submissionState === "submitting"
+              ? isEditing
+                ? "Saving…"
+                : "Posting…"
+              : isEditing
+                ? "Save changes"
+                : "Post listing"}
           </Button>
         </footer>
       </form>
