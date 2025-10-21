@@ -183,31 +183,54 @@ const Post = (): JSX.Element => {
       setSubmissionState("submitting");
       setSubmissionError(null);
 
-      // Upload images to Cloudinary
+      // Upload new images to Cloudinary (skip URLs that are already Cloudinary URLs)
       const imageUrls = await Promise.all(
-        photos.map((photo) => uploadImageToCloudinary(photo.file)),
+        photos.map(async (photo) => {
+          // If it's already a URL (existing image), return it as-is
+          if (photo.preview.startsWith("http")) {
+            return photo.preview;
+          }
+          // Otherwise upload the new file
+          return uploadImageToCloudinary(photo.file);
+        }),
       );
 
-      const listing: Listing = {
-        id: `listing-${crypto.randomUUID()}`,
+      const isEditing = !!editListingId;
+      const existingListing = isEditing
+        ? listings.find((l) => l.id === editListingId)
+        : null;
+
+      const listingData = {
         title: title.trim(),
         price: isFree ? 0 : Number(price),
-        isFree,
+        is_free: isFree,
         category: (category || "Other") as ListingCategory,
-        postedAt: new Date().toISOString(),
-        sellerId: user.id,
-        imageUrls,
-        baseId: currentBaseId,
+        seller_id: user.id,
+        image_urls: imageUrls,
+        base_id: currentBaseId,
         status: "active",
         description: description.trim(),
       };
 
-      // Save listing to backend
-      const response = await fetch("/.netlify/functions/listings", {
-        method: "POST",
+      // For editing, use PUT; for creating, use POST
+      const method = isEditing ? "PUT" : "POST";
+      const endpoint = isEditing
+        ? `/.netlify/functions/listings/${editListingId}`
+        : "/.netlify/functions/listings";
+
+      const response = await fetch(endpoint, {
+        method,
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(listing),
+        body: JSON.stringify(
+          isEditing
+            ? listingData
+            : {
+                id: `listing-${crypto.randomUUID()}`,
+                postedAt: new Date().toISOString(),
+                ...listingData,
+              }
+        ),
       });
 
       if (!response.ok) {
