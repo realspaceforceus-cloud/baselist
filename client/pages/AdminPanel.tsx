@@ -589,6 +589,7 @@ const AdminPanel = (): JSX.Element => {
   const [listingRows, setListingRows] = useState<AdminListingRow[]>(() =>
     createListingRows(listings, bases, getMemberName),
   );
+  const [metricsLoading, setMetricsLoading] = useState(true);
   const [metrics, setMetrics] = useState<AdminMetricCard[]>(() =>
     createMetricCards(
       accountList,
