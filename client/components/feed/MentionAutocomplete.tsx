@@ -15,6 +15,7 @@ interface MentionAutocompleteProps {
   className?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  onKeyPress?: (e: React.KeyboardEvent) => void;
   isTextarea?: boolean;
   userId?: string; // Current user ID for smart filtering
 }
