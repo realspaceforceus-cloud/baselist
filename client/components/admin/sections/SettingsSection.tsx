@@ -177,8 +177,8 @@ export const SettingsSection = (): JSX.Element => {
       {/* Admin Account Settings */}
       <Card className="p-6 border-primary/20 bg-primary/5">
         <div className="flex items-center gap-2 mb-4">
-          <Lock className="w-5 h-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">
+          <Lock className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">
             Super Admin Account
           </h3>
         </div>
