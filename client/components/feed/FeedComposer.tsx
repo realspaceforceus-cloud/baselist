@@ -21,17 +21,14 @@ export function FeedComposer({
 }: FeedComposerProps): JSX.Element {
   const { user } = useAuth();
   const { currentBaseId } = useBaseList();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
   const [mode, setMode] = useState<ComposerMode>("text");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
-  const [eventData, setEventData] = useState({
-    title: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-  });
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const isAdmin = user?.role === "admin" || user?.role === "moderator";
   const isFormValid = content.trim().length > 0;
