@@ -85,6 +85,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           users: parseInt(usersResult.rows[0]?.count ?? 0),
           listings: parseInt(listingsResult.rows[0]?.count ?? 0),
@@ -162,6 +163,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           users: result.rows.map((row: any) => ({
             id: row.id,
