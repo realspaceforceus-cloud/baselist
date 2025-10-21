@@ -205,9 +205,12 @@ export const notifications = {
 
   getUnreadCount: async () => {
     try {
-      const response = await apiRequest<{ unreadCount: number }>("/api/notifications/count", {
-        method: "GET",
-      });
+      const response = await apiRequest<{ unreadCount: number }>(
+        "/api/notifications/count",
+        {
+          method: "GET",
+        },
+      );
       return response || { unreadCount: 0 };
     } catch (error) {
       // Always return a valid response even on error

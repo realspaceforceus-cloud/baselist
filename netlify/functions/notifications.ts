@@ -23,7 +23,10 @@ export const handler: Handler = async (event) => {
   if (method === "GET" && path === "/count" && !userId) {
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+      headers: {
+        "Content-Type": "application/json",
+        "cache-control": "no-store",
+      },
       body: JSON.stringify({ unreadCount: 0 }),
     };
   }
@@ -93,9 +96,13 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 200,
-          headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+          headers: {
+            "Content-Type": "application/json",
+            "cache-control": "no-store",
+          },
           body: JSON.stringify({
-            unreadCount: result.rows.length > 0 ? parseInt(result.rows[0].count) : 0,
+            unreadCount:
+              result.rows.length > 0 ? parseInt(result.rows[0].count) : 0,
           }),
         };
       } catch (countErr) {
@@ -103,7 +110,10 @@ export const handler: Handler = async (event) => {
         // Always return a valid response even on error
         return {
           statusCode: 200,
-          headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+          headers: {
+            "Content-Type": "application/json",
+            "cache-control": "no-store",
+          },
           body: JSON.stringify({
             unreadCount: 0,
             error: "temporary_unavailable",
