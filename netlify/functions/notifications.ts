@@ -19,6 +19,15 @@ export const handler: Handler = async (event) => {
   const userIdMatch = cookies.match(/userId=([^;]+)/);
   const userId = userIdMatch ? userIdMatch[1] : null;
 
+  // Special case: /count endpoint can return 0 for unauthenticated users
+  if (method === "GET" && path === "/count" && !userId) {
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+      body: JSON.stringify({ unreadCount: 0 }),
+    };
+  }
+
   if (!userId) {
     return {
       statusCode: 401,
