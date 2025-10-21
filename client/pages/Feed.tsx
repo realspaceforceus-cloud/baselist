@@ -109,7 +109,11 @@ export default function Feed(): JSX.Element {
         )}
 
         {posts.map((post) => (
-          <FeedPostItem key={post.id} post={post} />
+          <FeedPostItem
+            key={post.id}
+            post={post}
+            onPostDeleted={() => handlePostDeleted(post.id)}
+          />
         ))}
 
         {isLoading && (
