@@ -335,13 +335,44 @@ export const handler: Handler = async (event) => {
     // GET /api/admin/listings
     if (method === "GET" && path === "/listings") {
       const result = await client.query(
-        `SELECT * FROM listings ORDER BY created_at DESC`,
+        `SELECT l.*, u.username as seller_username, b.name as base_name FROM listings l
+         LEFT JOIN users u ON l.seller_id = u.id
+         LEFT JOIN bases b ON l.base_id = b.id
+         ORDER BY l.created_at DESC`,
+      );
+
+      const listingsWithReports = await Promise.all(
+        result.rows.map(async (listing: any) => {
+          const reportsCount = await client.query(
+            `SELECT COUNT(*) as count FROM reports WHERE target_type = 'listing' AND target_id = $1`,
+            [listing.id],
+          );
+
+          return {
+            id: listing.id,
+            title: listing.title,
+            price: listing.price,
+            isFree: listing.is_free,
+            category: listing.category,
+            status: listing.status,
+            sellerId: listing.seller_id,
+            sellerUsername: listing.seller_username,
+            baseId: listing.base_id,
+            baseName: listing.base_name,
+            description: listing.description,
+            imageUrls: listing.image_urls,
+            promoted: listing.promoted,
+            createdAt: listing.created_at,
+            updatedAt: listing.updated_at,
+            reportCount: parseInt(reportsCount.rows[0]?.count ?? 0),
+          };
+        }),
       );
 
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ listings: result.rows }),
+        body: JSON.stringify({ listings: listingsWithReports }),
       };
     }
 
