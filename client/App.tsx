@@ -26,6 +26,7 @@ import Guidelines from "./pages/Guidelines";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import AdminPanel from "./pages/AdminPanel";
+import { AdminUserDetail } from "./pages/AdminUserDetail";
 import ResetPassword from "./pages/ResetPassword";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
