@@ -209,13 +209,13 @@ export const notifications = {
 
   getUnreadCount: async () => {
     try {
-      const response = await apiRequest<{ unreadCount: number }>(
+      const data = await apiRequest<any>(
         "/api/notifications/count",
         {
           method: "GET",
         },
       );
-      return response || { unreadCount: 0 };
+      return { unreadCount: Number(data?.unreadCount ?? 0) };
     } catch (error) {
       // Always return a valid response even on error
       console.error("Error loading notification count:", error);
