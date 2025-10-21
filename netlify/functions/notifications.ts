@@ -43,9 +43,24 @@ export const handler: Handler = async (event) => {
         return json({ unreadCount: 0 });
       }
 
-      // TODO: real query once notifications table exists
-      // For now, return 0 to prevent UI crashes
-      return json({ unreadCount: 0 });
+      try {
+        const client = await pool.connect();
+        try {
+          const result = await client.query(
+            `SELECT COUNT(*) as count FROM notifications
+             WHERE user_id = $1 AND read = false AND dismissed = false`,
+            [userId],
+          );
+          const count = result.rows.length > 0 ? parseInt(result.rows[0].count) : 0;
+          return json({ unreadCount: count });
+        } finally {
+          client.release();
+        }
+      } catch (dbErr) {
+        console.error("NOTIFICATIONS_COUNT_ERROR", dbErr);
+        // If DB fails, return safe default
+        return json({ unreadCount: 0 });
+      }
     }
 
     // All other endpoints require auth
