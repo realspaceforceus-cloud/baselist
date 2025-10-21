@@ -137,6 +137,9 @@ export const Header = (): JSX.Element => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("theme") === "dark";
   });
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
   useEffect(() => {
     const html = document.documentElement;
