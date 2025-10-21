@@ -57,6 +57,12 @@ export interface Listing {
   status: "active" | "sold";
   promoted?: "bump" | "feature";
   description: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  vehicleType?: string;
+  vehicleColor?: string;
+  vehicleMiles?: string;
 }
 
 export interface SponsorPlacement {
