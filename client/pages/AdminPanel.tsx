@@ -2123,7 +2123,7 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "messaging" ? <MessagingSection /> : null}
           {activeSection === "metrics" ? <MetricsSection /> : null}
           {activeSection === "roles" ? (
-            <UsersSection />
+            <RolesSection />
           ) : null}
           {activeSection === "email-templates" ? (
             <EmailTemplatesSection />
