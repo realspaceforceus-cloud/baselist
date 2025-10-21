@@ -197,7 +197,11 @@ export const Header = (): JSX.Element => {
       setBaseSearch("");
       return;
     }
-  }, [isMenuOpen]);
+    // Close notifications when menu opens
+    if (isMenuOpen && isNotificationsOpen) {
+      setIsNotificationsOpen(false);
+    }
+  }, [isMenuOpen, isNotificationsOpen]);
 
   const handleNavigate = (to: string) => {
     setMenuOpen(false);
