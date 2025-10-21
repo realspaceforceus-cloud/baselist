@@ -164,3 +164,11 @@ export interface AccountNotice {
   createdAt: string;
   read: boolean;
 }
+
+export interface VehicleOptions {
+  years: string[];
+  makes: string[];
+  models: string[];
+  types: string[];
+  colors: string[];
+}
