@@ -2115,13 +2115,7 @@ const AdminPanel = (): JSX.Element => {
             <UsersSection />
           ) : null}
           {activeSection === "listings" ? <ListingsSection /> : null}
-          {activeSection === "reports" ? (
-            <ReportsSection
-              reports={visibleReports}
-              onApprove={handleApproveReport}
-              onDismiss={handleDismissReport}
-            />
-          ) : null}
+          {activeSection === "reports" ? <ReportsSection /> : null}
           {activeSection === "verification" ? (
             <VerificationSection
               queues={visibleVerificationQueues}
