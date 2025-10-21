@@ -1,6 +1,6 @@
-import { ShieldCheck, UserMinus, MessageCircleWarning } from "lucide-react";
-
+import { AlertTriangle, Ban } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
+import { Button } from "@/components/ui/button";
 
 export interface AdminFlaggedThread {
   id: string;
@@ -15,77 +15,59 @@ export interface AdminFlaggedThread {
 
 interface MessagingSectionProps {
   threads: AdminFlaggedThread[];
-  onWarn: (threadId: string) => void;
-  onBan: (threadId: string, offendingUserId?: string) => void;
-  onMarkReviewed: (threadId: string) => void;
+  onBan?: (threadId: string, offendingUserId?: string) => void;
+  onMarkReviewed?: (threadId: string) => void;
 }
 
-export const MessagingSection = ({ threads, onWarn, onBan, onMarkReviewed }: MessagingSectionProps): JSX.Element => {
+export const MessagingSection = ({ threads = [], onBan, onMarkReviewed }: MessagingSectionProps) => {
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Messaging Oversight" subtitle="Messaging" accent="Flagged" />
-      <p className="text-xs text-muted-foreground">
-        Admins see only reported threads. Every access is recorded with timestamp and reviewer ID.
-      </p>
-      <div className="space-y-3">
-        {threads.map((thread) => (
-          <article
-            key={thread.id}
-            className="rounded-3xl border border-border bg-background/90 p-4 shadow-soft"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <MessageCircleWarning className="h-4 w-4 text-warning" aria-hidden />
-                  <span>{thread.reason}</span>
-                  <span className="rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-warning">
-                    {thread.base}
-                  </span>
+      <AdminSectionHeader title="Messaging" subtitle="Manage" accent={`${threads.length} flagged`} />
+
+      {threads.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
+          No flagged threads
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {threads.map((thread) => (
+            <div key={thread.id} className="rounded-3xl border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-warning" />
+                    <span className="font-semibold">{thread.reason}</span>
+                    <span className="inline-flex rounded-full bg-warning/10 px-2 py-0.5 text-xs font-medium text-warning">
+                      {thread.base}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {thread.participants}
+                    {thread.flaggedAt && ` • ${thread.flaggedAt}`}
+                  </p>
+                  <p className="text-sm text-foreground italic border-l-2 border-muted pl-3">
+                    "{thread.excerpt}"
+                  </p>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  Thread {thread.id} • {thread.participants}
-                  {thread.flaggedAt ? ` • Flagged ${thread.flaggedAt}` : ""}
-                </div>
-                <p className="rounded-2xl border border-dashed border-nav-border bg-card/90 px-3 py-2 text-sm text-foreground/80">
-                  “{thread.excerpt}”
-                </p>
-                <div className="text-xs text-muted-foreground">
-                  Last accessed: {thread.accessedBy ?? "Not yet"}
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-2 text-xs font-semibold">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1 rounded-full border border-border px-4 py-2"
-                  onClick={() => {
-                    onWarn(thread.id);
-                    onMarkReviewed(thread.id);
-                  }}
-                >
-                  <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                  Warn users
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1 rounded-full border border-destructive px-4 py-2 text-destructive"
-                  onClick={() => onBan(thread.id, thread.offendingUserId)}
-                >
-                  <UserMinus className="h-3.5 w-3.5" aria-hidden />
-                  Ban offender
-                </button>
+                {onBan && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      onBan(thread.id, thread.offendingUserId);
+                      onMarkReviewed?.(thread.id);
+                    }}
+                    className="rounded-lg whitespace-nowrap"
+                  >
+                    <Ban className="h-4 w-4 mr-1" />
+                    Ban
+                  </Button>
+                )}
               </div>
             </div>
-          </article>
-        ))}
-        {threads.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-nav-border bg-background/80 p-6 text-sm text-muted-foreground">
-            No reported threads need review.
-          </div>
-        ) : null}
-      </div>
-      <div className="rounded-3xl border border-dashed border-nav-border bg-card/90 px-4 py-3 text-xs text-muted-foreground">
-        Access log retained for 90 days with reviewer, timestamp, and action taken.
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
