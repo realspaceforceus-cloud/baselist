@@ -60,27 +60,48 @@ export const ListingCard = ({
           </span>
         ) : null}
       </div>
-      <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="space-y-2">
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="text-base font-semibold text-foreground">
-              {listing.title}
-            </h3>
-            <span
-              className={cn(
-                "rounded-full px-3 py-1 text-xs font-semibold",
-                listing.isFree || listing.price === 0
-                  ? "bg-success/10 text-success"
-                  : "bg-primary/10 text-primary",
-              )}
-            >
+          <h3 className="text-base font-semibold text-foreground line-clamp-2">
+            {listing.title}
+          </h3>
+          <div className="flex items-baseline gap-2">
+            <span className="text-lg font-bold text-primary">
               {priceLabel}
             </span>
+            {listing.category === "Vehicles" && listing.vehicleMiles && (
+              <span className="text-xs text-muted-foreground">
+                • {Number(listing.vehicleMiles).toLocaleString()} mi
+              </span>
+            )}
           </div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
             {listing.category} • {timeAgo}
           </div>
         </div>
+
+        {listing.category === "Vehicles" && (
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            {listing.vehicleYear && (
+              <div className="rounded-lg bg-muted/50 p-2 text-center">
+                <p className="text-xs text-muted-foreground">Year</p>
+                <p className="font-semibold text-foreground">{listing.vehicleYear}</p>
+              </div>
+            )}
+            {listing.vehicleMake && (
+              <div className="rounded-lg bg-muted/50 p-2 text-center">
+                <p className="text-xs text-muted-foreground">Make</p>
+                <p className="font-semibold text-foreground text-xs truncate">{listing.vehicleMake}</p>
+              </div>
+            )}
+            {listing.vehicleType && (
+              <div className="rounded-lg bg-muted/50 p-2 text-center">
+                <p className="text-xs text-muted-foreground">Type</p>
+                <p className="font-semibold text-foreground text-xs truncate">{listing.vehicleType}</p>
+              </div>
+            )}
+          </div>
+        )}
         <div className="mt-auto flex items-center gap-3">
           {seller?.avatarUrl ? (
             <img
