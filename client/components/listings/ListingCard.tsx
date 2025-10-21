@@ -102,43 +102,44 @@ export const ListingCard = ({
             )}
           </div>
         )}
-        <div className="mt-auto flex items-center gap-3">
-          {seller?.avatarUrl ? (
-            <img
-              src={seller.avatarUrl}
-              alt={seller.name}
-              className="h-9 w-9 flex-shrink-0 rounded-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground">
-              {seller?.name?.[0] ?? "B"}
-            </span>
-          )}
-          <div className="flex flex-col">
-            <span className="flex flex-wrap items-center gap-2 text-sm font-medium text-foreground">
-              <span className="flex items-center gap-1">
-                {seller?.name ?? "Verified member"}
-                {seller?.verified ? (
-                  <BadgeCheck className="h-4 w-4 text-verified" aria-hidden />
-                ) : null}
+        <div className="mt-auto border-t border-border pt-3">
+          <div className="flex items-center gap-2.5">
+            {seller?.avatarUrl ? (
+              <img
+                src={seller.avatarUrl}
+                alt={seller.name}
+                className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary flex-shrink-0">
+                {seller?.name?.[0]?.toUpperCase() ?? "M"}
               </span>
-              {seller ? (
-                <RatingBadge
-                  userId={seller.id}
-                  size="sm"
-                  initialAverage={seller.rating ?? null}
-                  initialCount={
-                    seller.ratingCount ?? seller.completedSales ?? 0
-                  }
-                  label={`${seller.name} rating`}
-                />
-              ) : null}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              Member since{" "}
-              {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
-            </span>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1 flex-wrap">
+                <span className="text-sm font-semibold text-foreground truncate">
+                  {seller?.name ?? "Member"}
+                </span>
+                {seller?.verified ? (
+                  <BadgeCheck className="h-3.5 w-3.5 text-green-600 flex-shrink-0" aria-hidden />
+                ) : null}
+              </div>
+              <span className="text-xs text-muted-foreground">
+                Since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
+              </span>
+            </div>
+            {seller ? (
+              <RatingBadge
+                userId={seller.id}
+                size="sm"
+                initialAverage={seller.rating ?? null}
+                initialCount={
+                  seller.ratingCount ?? seller.completedSales ?? 0
+                }
+                label={`${seller.name} rating`}
+              />
+            ) : null}
           </div>
         </div>
       </div>
