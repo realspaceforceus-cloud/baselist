@@ -1795,7 +1795,9 @@ export const handler: Handler = async (event) => {
       }
 
       try {
-        const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const last24h = new Date(
+          Date.now() - 24 * 60 * 60 * 1000,
+        ).toISOString();
 
         let totalRequestsResult = { rows: [{ count: 0 }] };
         let failedRequestsResult = { rows: [{ count: 0 }] };
@@ -1839,7 +1841,9 @@ export const handler: Handler = async (event) => {
         }
 
         const totalRequests = parseInt(totalRequestsResult.rows[0]?.count ?? 0);
-        const failedRequests = parseInt(failedRequestsResult.rows[0]?.count ?? 0);
+        const failedRequests = parseInt(
+          failedRequestsResult.rows[0]?.count ?? 0,
+        );
         const errorRate =
           totalRequests > 0
             ? ((failedRequests / totalRequests) * 100).toFixed(2)
@@ -1892,7 +1896,9 @@ export const handler: Handler = async (event) => {
       }
 
       try {
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const fiveMinutesAgo = new Date(
+          Date.now() - 5 * 60 * 1000,
+        ).toISOString();
         let result = { rows: [{ count: 0 }] };
 
         try {
