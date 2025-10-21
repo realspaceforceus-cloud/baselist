@@ -722,9 +722,7 @@ const AdminPanel = (): JSX.Element => {
         if (!active) {
           return;
         }
-        // Debug: log the response structure
-        console.log("getUsers response:", response);
-        const users = response.users || response;
+        const users = response.users;
         userDirectoryRef.current = new Map<string, AdminUserDTO>(
           users.map((entry) => [entry.id, entry]),
         );
