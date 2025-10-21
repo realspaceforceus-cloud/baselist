@@ -29,11 +29,18 @@ interface RoleUser {
   createdAt: string;
 }
 
+interface BaseOption {
+  id: string;
+  name: string;
+}
+
 export const RolesSection = (): JSX.Element => {
   const [users, setUsers] = useState<RoleUser[]>([]);
+  const [bases, setBases] = useState<BaseOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<string>("");
+  const [editingBaseId, setEditingBaseId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
