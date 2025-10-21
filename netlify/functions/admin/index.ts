@@ -387,6 +387,80 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // PATCH /api/admin/listings/:id
+    if (method === "PATCH" && path.startsWith("/listings/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const listingId = path.replace("/listings/", "");
+        const {
+          title,
+          description,
+          price,
+          isFree,
+          category,
+          baseId,
+          imageUrls,
+          promoted,
+        } = JSON.parse(event.body || "{}");
+
+        const updates: Record<string, any> = {};
+        if (title !== undefined) updates.title = title;
+        if (description !== undefined) updates.description = description;
+        if (price !== undefined) updates.price = price;
+        if (isFree !== undefined) updates.is_free = isFree;
+        if (category !== undefined) updates.category = category;
+        if (baseId !== undefined) updates.base_id = baseId;
+        if (imageUrls !== undefined) updates.image_urls = imageUrls;
+        if (promoted !== undefined) updates.promoted = promoted;
+
+        if (Object.keys(updates).length === 0) {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "No valid updates provided" }),
+          };
+        }
+
+        const setClauses = Object.keys(updates)
+          .map((key, i) => `${key} = $${i + 1}`)
+          .join(", ");
+
+        const values = Object.values(updates);
+        const result = await client.query(
+          `UPDATE listings SET ${setClauses}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
+          [...values, listingId],
+        );
+
+        if (result.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Listing not found" }),
+          };
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ listing: result.rows[0] }),
+        };
+      } catch (error) {
+        console.error("Failed to update listing:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to update listing" }),
+        };
+      }
+    }
+
     // POST /api/admin/listings/:id/hide
     if (
       method === "POST" &&
