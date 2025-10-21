@@ -2258,6 +2258,7 @@ export const BaseListProvider = ({
       currentBase,
       currentBaseId,
       deleteThread,
+      fetchBases,
       getUserRatingSummary,
       initiateTransaction,
       markTransactionComplete,
