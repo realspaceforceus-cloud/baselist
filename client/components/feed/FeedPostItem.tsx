@@ -367,18 +367,20 @@ export function FeedPostItem({
       </div>
 
       {/* Engagement stats */}
-      <div className="mb-3 flex gap-4 border-t border-border pt-2 text-xs text-muted-foreground">
-        {likes > 0 && (
-          <span>
-            {likes} like{likes !== 1 ? "s" : ""}
-          </span>
-        )}
-        {post.comments && post.comments > 0 && (
-          <span>
-            {post.comments} comment{post.comments !== 1 ? "s" : ""}
-          </span>
-        )}
-      </div>
+      {(likes > 0 || comments.length > 0) && (
+        <div className="mb-3 flex gap-4 border-t border-border pt-2 text-xs text-muted-foreground">
+          {likes > 0 && (
+            <span>
+              {likes} like{likes !== 1 ? "s" : ""}
+            </span>
+          )}
+          {comments.length > 0 && (
+            <span>
+              {comments.length} comment{comments.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex gap-4 border-t border-border pt-3">
