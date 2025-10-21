@@ -291,6 +291,24 @@ export const InvitationCodesSection = ({
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">
+                Base *
+              </label>
+              <Select value={selectedBaseForCreation} onValueChange={setSelectedBaseForCreation}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Select a base..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {bases.map((base) => (
+                    <SelectItem key={base.id} value={base.id}>
+                      {base.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
                 Code
               </label>
               <div className="flex gap-2">
@@ -364,14 +382,17 @@ export const InvitationCodesSection = ({
           <div className="flex gap-2 justify-end">
             <Button
               variant="outline"
-              onClick={() => setShowCreateForm(false)}
+              onClick={() => {
+                setShowCreateForm(false);
+                setSelectedBaseForCreation("");
+              }}
               className="rounded-xl"
             >
               Cancel
             </Button>
             <Button
               onClick={handleCreateCode}
-              disabled={isCreating || !formData.code || !selectedBase}
+              disabled={isCreating || !formData.code || !selectedBaseForCreation || selectedBaseForCreation === "all"}
               className="rounded-xl"
             >
               {isCreating ? "Creating..." : "Create Code"}
