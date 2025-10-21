@@ -486,6 +486,60 @@ export const InvitationCodesSection = ({
                     </Button>
                   </div>
                 </div>
+
+                {/* Expanded Users List */}
+                {expandedCodeId === code.id && (
+                  <div className="mt-4 pt-4 border-t border-border space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">
+                      Users who signed up with this code
+                    </h4>
+                    {codeUsers[code.id] && codeUsers[code.id].length > 0 ? (
+                      <div className="space-y-2">
+                        {codeUsers[code.id].map((user) => (
+                          <div
+                            key={user.id}
+                            className="p-3 rounded-lg bg-muted/30 border border-border text-xs space-y-1"
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-foreground">
+                                {user.username}
+                              </p>
+                              <span
+                                className={`inline-flex rounded-full px-2 py-0.5 font-medium ${
+                                  user.isDowVerified
+                                    ? "bg-success/10 text-success"
+                                    : "bg-warning/10 text-warning"
+                                }`}
+                              >
+                                {user.isDowVerified ? "Verified" : "Not Verified"}
+                              </span>
+                            </div>
+                            <p className="text-muted-foreground">{user.email}</p>
+                            <div className="grid grid-cols-2 gap-2 pt-1 text-muted-foreground">
+                              <span>
+                                Signed up:{" "}
+                                {new Intl.DateTimeFormat("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }).format(new Date(user.createdAt))}
+                              </span>
+                              {user.ipAddress && (
+                                <span>IP: {user.ipAddress}</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground text-xs">
+                        No users have signed up with this code yet.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
