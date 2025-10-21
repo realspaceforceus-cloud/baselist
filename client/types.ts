@@ -208,7 +208,7 @@ export type FeedPostType = "text" | "photo" | "poll" | "event" | "psa";
 export interface PollOption {
   id: string;
   text: string;
-  votes: number;
+  votes: string[] | number;
 }
 
 export interface EventData {
