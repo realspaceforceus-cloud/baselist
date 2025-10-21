@@ -84,21 +84,34 @@ export const RolesSection = (): JSX.Element => {
   const handleEditRole = (user: RoleUser) => {
     setEditingUserId(user.id);
     setEditingRole(user.role);
+    setEditingBaseId(user.baseId || "");
   };
 
   const handleSaveRole = async () => {
     if (!editingUserId) return;
+
+    if (!editingBaseId) {
+      toast.error("Base assignment is required");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      await adminApi.updateUser(editingUserId, { role: editingRole as any });
+      await adminApi.updateUser(editingUserId, {
+        role: editingRole as any,
+        baseId: editingBaseId,
+      });
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
-          u.id === editingUserId ? { ...u, role: editingRole as any } : u,
+          u.id === editingUserId
+            ? { ...u, role: editingRole as any, baseId: editingBaseId }
+            : u,
         ),
       );
-      toast.success("Role updated");
+      toast.success("Role and base updated");
       setEditingUserId(null);
       setEditingRole("");
+      setEditingBaseId("");
     } catch (error) {
       console.error("Failed to update role:", error);
       toast.error("Failed to update role");
