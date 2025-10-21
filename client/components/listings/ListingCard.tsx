@@ -1,6 +1,8 @@
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 import { RatingBadge } from "@/components/shared/RatingBadge";
 import { generateSlug } from "@/lib/slugUtils";
