@@ -2121,22 +2121,10 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "family-verification" ? (
             <FamilyVerificationSection userId={user.id} />
           ) : null}
-          {activeSection === "bases" ? (
-            <BasesSection bases={visibleBaseRows} />
-          ) : null}
-          {activeSection === "sponsors" ? (
-            <SponsorsSection placements={visibleSponsorRows} />
-          ) : null}
-          {activeSection === "messaging" ? (
-            <MessagingSection
-              threads={visibleFlaggedThreads}
-              onBan={handleBanThread}
-              onMarkReviewed={handleMarkThreadReviewed}
-            />
-          ) : null}
-          {activeSection === "metrics" ? (
-            <MetricsSection metrics={metrics} />
-          ) : null}
+          {activeSection === "bases" ? <BasesSection /> : null}
+          {activeSection === "sponsors" ? <SponsorsSection /> : null}
+          {activeSection === "messaging" ? <MessagingSection /> : null}
+          {activeSection === "metrics" ? <MetricsSection /> : null}
           {activeSection === "roles" ? (
             <RolesSection roles={createInitialRoles()} />
           ) : null}
