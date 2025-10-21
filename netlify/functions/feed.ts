@@ -97,6 +97,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 201,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(transformAnnouncement(result.rows[0])),
         };
       } finally {
@@ -115,6 +116,7 @@ export const handler: Handler = async (event) => {
       if (!baseId) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "baseId is required" }),
         };
       }
@@ -122,7 +124,7 @@ export const handler: Handler = async (event) => {
       const client = await pool.connect();
       try {
         const result = await client.query(
-          `SELECT fp.*, 
+          `SELECT fp.*,
             (SELECT COUNT(*) FROM feed_engagement WHERE post_id = fp.id AND engagement_type = 'like' AND deleted_at IS NULL) as likes,
             (SELECT COUNT(*) FROM feed_engagement WHERE post_id = fp.id AND engagement_type = 'comment' AND deleted_at IS NULL) as comments
            FROM feed_posts fp
@@ -154,6 +156,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 200,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(posts),
         };
       } finally {
@@ -170,6 +173,7 @@ export const handler: Handler = async (event) => {
       if (!baseId) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "baseId is required" }),
         };
       }
@@ -177,8 +181,8 @@ export const handler: Handler = async (event) => {
       const client = await pool.connect();
       try {
         const result = await client.query(
-          `SELECT * FROM feed_announcements 
-           WHERE base_id = $1 AND deleted_at IS NULL 
+          `SELECT * FROM feed_announcements
+           WHERE base_id = $1 AND deleted_at IS NULL
            ORDER BY is_sticky DESC, created_at DESC`,
           [baseId],
         );
@@ -191,6 +195,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 200,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(announcements),
         };
       } finally {
@@ -204,6 +209,7 @@ export const handler: Handler = async (event) => {
       if (!userId) {
         return {
           statusCode: 401,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Unauthorized" }),
         };
       }
@@ -220,6 +226,7 @@ export const handler: Handler = async (event) => {
       if (!baseId || !postType || !content) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Missing required fields" }),
         };
       }
@@ -240,6 +247,7 @@ export const handler: Handler = async (event) => {
           ) {
             return {
               statusCode: 403,
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 error: "Only moderators and admins can post PSAs",
               }),
@@ -265,6 +273,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 201,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(transformFeedPost(result.rows[0])),
         };
       } finally {
@@ -278,6 +287,7 @@ export const handler: Handler = async (event) => {
       if (!userId) {
         return {
           statusCode: 401,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Unauthorized" }),
         };
       }
@@ -310,6 +320,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 200,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ success: true }),
         };
       } finally {
@@ -323,6 +334,7 @@ export const handler: Handler = async (event) => {
       if (!userId) {
         return {
           statusCode: 401,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Unauthorized" }),
         };
       }
@@ -333,6 +345,7 @@ export const handler: Handler = async (event) => {
       if (!content) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Comment content is required" }),
         };
       }
@@ -349,6 +362,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 201,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(result.rows[0]),
         };
       } finally {
@@ -362,6 +376,7 @@ export const handler: Handler = async (event) => {
       if (!userId) {
         return {
           statusCode: 401,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Unauthorized" }),
         };
       }
@@ -377,6 +392,7 @@ export const handler: Handler = async (event) => {
 
         return {
           statusCode: 200,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ success: true }),
         };
       } finally {
@@ -386,6 +402,7 @@ export const handler: Handler = async (event) => {
 
     return {
       statusCode: 404,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
