@@ -63,6 +63,39 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
     }
   };
 
+  const handlePollVote = async (optionId: string) => {
+    if (!user) {
+      toast.error("Please sign in to vote");
+      return;
+    }
+
+    setIsVoting(true);
+    try {
+      const result = await feedApi.voteOnPoll(post.id, optionId);
+      setPollOptions(result.pollOptions);
+      toast.success("Vote recorded!");
+    } catch (error) {
+      toast.error("Failed to vote");
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
+  const getUserVote = (): string | null => {
+    if (!user || !pollOptions) return null;
+    const votedOption = pollOptions.find((option) =>
+      Array.isArray(option.votes) && option.votes.includes(user.id),
+    );
+    return votedOption?.id || null;
+  };
+
+  const getVoteCount = (option: any): number => {
+    if (Array.isArray(option.votes)) {
+      return option.votes.length;
+    }
+    return typeof option.votes === "number" ? option.votes : 0;
+  };
+
   const getPostIcon = () => {
     switch (post.postType) {
       case "photo":
