@@ -622,6 +622,37 @@ export const Header = (): JSX.Element => {
               )}
             </SheetTitle>
           </SheetHeader>
+          {notifications.length > 0 && (
+            <div className="border-b border-border px-4 py-3 flex gap-2 overflow-x-auto">
+              {notificationCategories.map(([category, count]) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() =>
+                    setNotificationFilter(category as "all" | Notification["type"])
+                  }
+                  className={cn(
+                    "text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition",
+                    notificationFilter === category
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80",
+                  )}
+                >
+                  {category === "all"
+                    ? "All"
+                    : category
+                        .split("_")
+                        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(" ")}
+                  {count > 0 && (
+                    <span className="ml-1 text-[0.65rem] font-semibold">
+                      ({count})
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="flex-1 overflow-y-auto">
             {isLoadingNotifications ? (
               <div className="flex items-center justify-center h-32">
@@ -629,9 +660,9 @@ export const Header = (): JSX.Element => {
                   Loading notifications...
                 </p>
               </div>
-            ) : notifications.length > 0 ? (
+            ) : filteredNotifications.length > 0 ? (
               <div>
-                {notifications.map((notification) => (
+                {filteredNotifications.map((notification) => (
                   <NotificationItem
                     key={notification.id}
                     notification={notification}
@@ -652,7 +683,9 @@ export const Header = (): JSX.Element => {
               <div className="flex flex-col items-center justify-center h-32 text-center px-4">
                 <Bell className="h-8 w-8 text-muted-foreground/50 mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  No notifications yet
+                  {notificationFilter === "all"
+                    ? "No notifications yet"
+                    : `No ${notificationFilter.replace(/_/g, " ")} notifications`}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   We'll let you know when something interesting happens
