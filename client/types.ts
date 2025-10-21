@@ -172,3 +172,33 @@ export interface VehicleOptions {
   types: string[];
   colors: string[];
 }
+
+export type NotificationType =
+  | "message"
+  | "item_sold"
+  | "item_favorited"
+  | "listing_removed"
+  | "verification_needed"
+  | "offer_received"
+  | "offer_accepted"
+  | "offer_declined"
+  | "transaction_complete";
+
+export type NotificationTargetType = "listing" | "thread" | "user";
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  description: string;
+  actorId?: string;
+  targetId?: string;
+  targetType?: NotificationTargetType;
+  data?: Record<string, any>;
+  read: boolean;
+  dismissed: boolean;
+  createdAt: string;
+  readAt?: string;
+  dismissedAt?: string;
+}
