@@ -712,37 +712,46 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const { code, baseId, maxUses, expiresAt, description } = JSON.parse(
-        event.body || "{}",
-      );
+      try {
+        const { code, baseId, maxUses, expiresAt, description } = JSON.parse(
+          event.body || "{}",
+        );
 
-      if (!code || !baseId) {
+        if (!code || !baseId) {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "code and baseId are required" }),
+          };
+        }
+
+        const result = await client.query(
+          `INSERT INTO invitation_codes (id, code, created_by, base_id, max_uses, expires_at, description)
+           VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+          [
+            `code-${Date.now()}`,
+            code,
+            auth.userId,
+            baseId,
+            maxUses || null,
+            expiresAt || null,
+            description || null,
+          ],
+        );
+
         return {
-          statusCode: 400,
+          statusCode: 201,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "code and baseId are required" }),
+          body: JSON.stringify({ code: result.rows[0] }),
+        };
+      } catch (error) {
+        console.error("Failed to create invitation code:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to create invitation code" }),
         };
       }
-
-      const result = await client.query(
-        `INSERT INTO invitation_codes (id, code, created_by, base_id, max_uses, expires_at, description)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-        [
-          `code-${Date.now()}`,
-          code,
-          auth.userId,
-          baseId,
-          maxUses || null,
-          expiresAt || null,
-          description || null,
-        ],
-      );
-
-      return {
-        statusCode: 201,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: result.rows[0] }),
-      };
     }
 
     // DELETE /api/admin/invitation-codes/:id
