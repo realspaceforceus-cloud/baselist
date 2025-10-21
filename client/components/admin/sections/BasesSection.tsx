@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Building2, AlertCircle, Edit2, Plus } from "lucide-react";
+import { Building2, AlertCircle, Edit2, Plus, Trash2, RotateCcw } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
