@@ -73,6 +73,20 @@ export const feedApi = {
     return response.json();
   },
 
+  async voteOnPoll(postId: string, optionId: string): Promise<any> {
+    const response = await fetch(
+      `/.netlify/functions/feed/posts/${postId}/vote`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ optionId }),
+      },
+    );
+    if (!response.ok) throw new Error("Failed to vote on poll");
+    return response.json();
+  },
+
   async dismissAnnouncement(announcementId: string): Promise<void> {
     const response = await fetch(
       `/.netlify/functions/feed/announcements/${announcementId}/dismiss`,
