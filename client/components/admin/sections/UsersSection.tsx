@@ -1,8 +1,7 @@
-import { useState, useMemo, useEffect } from "react";
-import { Ban, Edit2, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Ban, Edit2 } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -16,14 +15,9 @@ export interface AdminUserRecord {
   status?: "active" | "suspended" | "banned";
   baseId: string;
   createdAt: string;
-  dowVerifiedAt?: string;
 }
 
-const ITEMS_PER_PAGE = 25;
-
 export const UsersSection = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
@@ -34,16 +28,20 @@ export const UsersSection = () => {
   const [strikeReason, setStrikeReason] = useState("");
   const [strikeDescription, setStrikeDescription] = useState("");
 
-  // Load users on mount
+  // Load users on mount - once, no dependencies
   useEffect(() => {
     const loadUsers = async () => {
       setIsLoading(true);
       try {
+        console.log("[UsersSection] Loading users...");
         const result = await adminApi.getUsers(1, "");
-        const allUsers = result?.users || [];
-        setUsers(allUsers);
+        console.log("[UsersSection] Got result:", result);
+        const userList = result?.users || [];
+        console.log("[UsersSection] Setting users, count:", userList.length);
+        setUsers(userList);
       } catch (error) {
-        console.error("Error loading users:", error);
+        console.error("[UsersSection] Error loading users:", error);
+        toast.error("Failed to load users");
         setUsers([]);
       } finally {
         setIsLoading(false);
@@ -52,25 +50,6 @@ export const UsersSection = () => {
 
     loadUsers();
   }, []);
-
-  // Filter and paginate
-  const filteredUsers = useMemo(() => {
-    if (!Array.isArray(users)) return [];
-    if (!searchQuery.trim()) return users;
-    const q = searchQuery.toLowerCase();
-    return users.filter(
-      (u) =>
-        u.username.toLowerCase().includes(q) ||
-        u.email?.toLowerCase().includes(q) ||
-        u.baseId.toLowerCase().includes(q),
-    );
-  }, [users, searchQuery]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
-  const paginatedUsers = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredUsers, currentPage]);
 
   const openEditModal = (user: AdminUserRecord) => {
     setSelectedUser(user);
@@ -87,9 +66,9 @@ export const UsersSection = () => {
       toast.success("User updated");
       setShowModal(null);
       setSelectedUser(null);
-      // Refresh
-      const result = await adminApi.getUsers(currentPage, searchQuery);
-      setUsers(result.users || []);
+      // Reload
+      const result = await adminApi.getUsers(1, "");
+      setUsers(result?.users || []);
     } catch (error) {
       toast.error("Failed to update user");
     } finally {
@@ -126,8 +105,8 @@ export const UsersSection = () => {
     try {
       await adminApi.updateUser(user.id, { status: "banned" });
       toast.success(`${user.username} banned`);
-      const result = await adminApi.getUsers(currentPage, searchQuery);
-      setUsers(result.users || []);
+      const result = await adminApi.getUsers(1, "");
+      setUsers(result?.users || []);
     } catch (error) {
       toast.error("Failed to ban user");
     }
@@ -142,31 +121,24 @@ export const UsersSection = () => {
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Users" subtitle="Manage" accent={`${filteredUsers.length} found`} />
+      <AdminSectionHeader title="Users" subtitle="Manage" accent={`${users.length} total`} />
 
-      {/* Search */}
-      <div className="flex gap-2 rounded-3xl border border-border bg-card p-4">
-        <Input
-          placeholder="Search username, email..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="flex-1"
-        />
-      </div>
+      {/* Loading */}
+      {isLoading && (
+        <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+          Loading users...
+        </div>
+      )}
+
+      {/* No users */}
+      {!isLoading && users.length === 0 && (
+        <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
+          No users found in database
+        </div>
+      )}
 
       {/* Table */}
-      {isLoading ? (
-        <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
-          Loading...
-        </div>
-      ) : filteredUsers.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
-          No users found
-        </div>
-      ) : (
+      {!isLoading && users.length > 0 && (
         <div className="overflow-x-auto rounded-3xl border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-muted/50">
@@ -180,8 +152,8 @@ export const UsersSection = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {paginatedUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-muted/20 transition">
+              {users.map((user) => (
+                <tr key={user.id} className="hover:bg-muted/20">
                   <td className="px-4 py-3 font-medium">{user.username}</td>
                   <td className="px-4 py-3 text-xs text-muted-foreground">{user.email || "—"}</td>
                   <td className="px-4 py-3">
@@ -210,7 +182,6 @@ export const UsersSection = () => {
                         size="sm"
                         onClick={() => openEditModal(user)}
                         className="h-8 w-8 p-0 rounded-lg"
-                        title="Edit"
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -218,8 +189,7 @@ export const UsersSection = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => openStrikeModal(user)}
-                        className="h-8 w-8 p-0 rounded-lg text-warning hover:text-warning"
-                        title="Add strike"
+                        className="h-8 w-8 p-0 rounded-lg text-warning"
                       >
                         ⚠
                       </Button>
@@ -228,8 +198,7 @@ export const UsersSection = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => quickBan(user)}
-                          className="h-8 w-8 p-0 rounded-lg text-destructive hover:text-destructive"
-                          title="Ban"
+                          className="h-8 w-8 p-0 rounded-lg text-destructive"
                         >
                           <Ban className="h-4 w-4" />
                         </Button>
@@ -240,33 +209,6 @@ export const UsersSection = () => {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
       )}
 
@@ -308,7 +250,7 @@ export const UsersSection = () => {
                 Cancel
               </Button>
               <Button onClick={saveEdit} disabled={isSubmitting} className="rounded-xl">
-                {isSubmitting ? "Saving..." : "Save"}
+                Save
               </Button>
             </div>
           </div>
