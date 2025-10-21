@@ -92,7 +92,10 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3">
           <img
-            src={post.author?.avatarUrl || "https://api.dicebear.com/7.x/initials/svg?seed=user"}
+            src={
+              post.author?.avatarUrl ||
+              "https://api.dicebear.com/7.x/initials/svg?seed=user"
+            }
             alt={post.author?.name}
             className="h-10 w-10 rounded-full object-cover"
           />
@@ -152,7 +155,12 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
                     style={{
                       width: `${
                         post.pollOptions && post.pollOptions.length > 0
-                          ? (option.votes / Math.max(...post.pollOptions.map((o) => o.votes || 0), 1)) * 100
+                          ? (option.votes /
+                              Math.max(
+                                ...post.pollOptions.map((o) => o.votes || 0),
+                                1,
+                              )) *
+                            100
                           : 0
                       }%`,
                     }}
@@ -186,9 +194,15 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
 
       {/* Engagement stats */}
       <div className="mb-3 flex gap-4 border-t border-border pt-2 text-xs text-muted-foreground">
-        {likes > 0 && <span>{likes} like{likes !== 1 ? "s" : ""}</span>}
+        {likes > 0 && (
+          <span>
+            {likes} like{likes !== 1 ? "s" : ""}
+          </span>
+        )}
         {post.comments && post.comments > 0 && (
-          <span>{post.comments} comment{post.comments !== 1 ? "s" : ""}</span>
+          <span>
+            {post.comments} comment{post.comments !== 1 ? "s" : ""}
+          </span>
         )}
       </div>
 
@@ -203,10 +217,7 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
               : "text-muted-foreground hover:bg-accent"
           }`}
         >
-          <Heart
-            className="h-4 w-4"
-            fill={isLiked ? "currentColor" : "none"}
-          />
+          <Heart className="h-4 w-4" fill={isLiked ? "currentColor" : "none"} />
           Like
         </button>
 

@@ -214,14 +214,8 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const {
-        baseId,
-        postType,
-        content,
-        imageUrls,
-        pollOptions,
-        eventData,
-      } = JSON.parse(event.body || "{}");
+      const { baseId, postType, content, imageUrls, pollOptions, eventData } =
+        JSON.parse(event.body || "{}");
 
       if (!baseId || !postType || !content) {
         return {
@@ -406,7 +400,8 @@ export const handler: Handler = async (event) => {
       body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : "Internal server error";
+    const errorMsg =
+      err instanceof Error ? err.message : "Internal server error";
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },

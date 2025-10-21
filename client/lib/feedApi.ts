@@ -92,19 +92,22 @@ export const feedApi = {
     isSticky: boolean = false,
     isDismissible: boolean = true,
   ): Promise<any> {
-    const response = await fetch("/.netlify/functions/feed/admin/announcements", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        baseId,
-        title,
-        content,
-        imageUrl,
-        isSticky,
-        isDismissible,
-      }),
-    });
+    const response = await fetch(
+      "/.netlify/functions/feed/admin/announcements",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          baseId,
+          title,
+          content,
+          imageUrl,
+          isSticky,
+          isDismissible,
+        }),
+      },
+    );
     if (!response.ok) throw new Error("Failed to create announcement");
     return response.json();
   },

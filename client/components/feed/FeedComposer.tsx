@@ -167,9 +167,7 @@ export function FeedComposer({
             />
           ))}
           <button
-            onClick={() =>
-              setPollOptions([...pollOptions, ""])
-            }
+            onClick={() => setPollOptions([...pollOptions, ""])}
             className="text-xs text-primary hover:underline"
           >
             + Add option

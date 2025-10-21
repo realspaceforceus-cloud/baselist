@@ -59,9 +59,7 @@ function AnnouncementCard({
     : "bg-amber-50/50 border-amber-200";
 
   return (
-    <div
-      className={`rounded-lg border ${bgClass} p-4 relative flex gap-3`}
-    >
+    <div className={`rounded-lg border ${bgClass} p-4 relative flex gap-3`}>
       {announcement.imageUrl && (
         <img
           src={announcement.imageUrl}

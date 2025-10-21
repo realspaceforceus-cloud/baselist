@@ -79,7 +79,9 @@ export function MarketplaceSidebar({
                       className="h-5 w-5 rounded-full object-cover"
                     />
                     <span className="flex items-center gap-1">
-                      <span className="text-muted-foreground">{seller.name}</span>
+                      <span className="text-muted-foreground">
+                        {seller.name}
+                      </span>
                       {seller.verified && (
                         <BadgeCheck className="h-3 w-3 text-blue-500" />
                       )}

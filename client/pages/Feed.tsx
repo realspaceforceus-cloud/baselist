@@ -85,10 +85,7 @@ export default function Feed(): JSX.Element {
       )}
 
       {/* Composer */}
-      <FeedComposer
-        onPostCreated={handlePostCreated}
-        baseName={baseName}
-      />
+      <FeedComposer onPostCreated={handlePostCreated} baseName={baseName} />
 
       {/* Feed Posts */}
       <div className="space-y-4">
