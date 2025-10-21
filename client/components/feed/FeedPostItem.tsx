@@ -157,16 +157,61 @@ export function FeedPostItem({
     }
   };
 
+  // Recursively find and delete a comment at any nesting level
+  const deleteCommentRecursive = (
+    commentList: FeedComment[],
+    commentId: string,
+  ): FeedComment[] => {
+    return commentList
+      .filter((c) => c.id !== commentId)
+      .map((c) => {
+        // Also remove from nested replies
+        if (c.replies && c.replies.length > 0) {
+          return {
+            ...c,
+            replies: deleteCommentRecursive(c.replies, commentId),
+          };
+        }
+        return c;
+      });
+  };
+
   const handleDeleteComment = async (commentId: string) => {
     if (!confirm("Are you sure you want to delete this comment?")) return;
 
     try {
       await feedApi.deleteComment(post.id, commentId);
-      setComments(comments.filter((c) => c.id !== commentId));
+      setComments(deleteCommentRecursive(comments, commentId));
       toast.success("Comment deleted");
     } catch (error) {
       toast.error("Failed to delete comment");
     }
+  };
+
+  // Recursively find and update a comment's like status at any nesting level
+  const likeCommentRecursive = (
+    commentList: FeedComment[],
+    commentId: string,
+  ): FeedComment[] => {
+    return commentList.map((c) => {
+      if (c.id === commentId) {
+        // Found it - toggle the like
+        const liked = c.userLiked;
+        return {
+          ...c,
+          userLiked: !liked,
+          likes: (c.likes || 0) + (liked ? -1 : 1),
+        };
+      }
+      // Recursively search in nested replies
+      if (c.replies && c.replies.length > 0) {
+        return {
+          ...c,
+          replies: likeCommentRecursive(c.replies, commentId),
+        };
+      }
+      return c;
+    });
   };
 
   const handleLikeComment = async (commentId: string) => {
@@ -177,19 +222,7 @@ export function FeedPostItem({
 
     try {
       await feedApi.likeComment(post.id, commentId);
-      setComments(
-        comments.map((c) => {
-          if (c.id === commentId) {
-            const liked = c.userLiked;
-            return {
-              ...c,
-              userLiked: !liked,
-              likes: (c.likes || 0) + (liked ? -1 : 1),
-            };
-          }
-          return c;
-        }),
-      );
+      setComments(likeCommentRecursive(comments, commentId));
     } catch (error) {
       toast.error("Failed to like comment");
     }
