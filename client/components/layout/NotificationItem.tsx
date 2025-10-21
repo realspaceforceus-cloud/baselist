@@ -51,6 +51,8 @@ export const NotificationItem = ({
         };
       case "post_commented":
       case "comment_replied":
+      case "tagged_in_post":
+      case "tagged_in_comment":
         return {
           icon: MessageSquare,
           bgColor: "bg-purple-50 dark:bg-purple-950",
