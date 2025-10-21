@@ -58,19 +58,20 @@ export const handler: Handler = async (event) => {
     }
   }
 
-  // GET /api/bases/:id - get specific base
+  // GET /api/bases/:id - get specific base (only if not deleted)
   if (method === "GET" && path && path !== "/") {
     let client;
     try {
       console.log("[BASES] Fetching specific base:", path);
       client = await pool.connect();
       const id = path.startsWith("/") ? path.slice(1) : path;
-      const result = await client.query("SELECT * FROM bases WHERE id = $1", [
-        id,
-      ]);
+      const result = await client.query(
+        "SELECT * FROM bases WHERE id = $1 AND deleted_at IS NULL",
+        [id],
+      );
 
       if (result.rows.length === 0) {
-        console.log("[BASES] Base not found:", id);
+        console.log("[BASES] Base not found or deleted:", id);
         return {
           statusCode: 404,
           headers: { "Content-Type": "application/json" },
