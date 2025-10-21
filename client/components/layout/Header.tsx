@@ -571,69 +571,71 @@ export const Header = (): JSX.Element => {
           className="flex h-full w-full max-w-sm flex-col gap-0 bg-background p-0"
         >
           <SheetHeader className="border-b border-border px-6 py-4">
-            <SheetTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" aria-hidden />
-              Notifications
+            <SheetTitle className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Bell className="h-5 w-5" aria-hidden />
+                Notifications
+              </div>
+              {unreadNotificationCount > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs h-6"
+                  onClick={async () => {
+                    try {
+                      await notificationsApi.markAllAsRead();
+                      setNotifications(
+                        notifications.map((n) => ({ ...n, read: true })),
+                      );
+                      setUnreadNotificationCount(0);
+                    } catch (error) {
+                      console.error("Error marking all as read:", error);
+                    }
+                  }}
+                >
+                  Mark all as read
+                </Button>
+              )}
             </SheetTitle>
           </SheetHeader>
           <div className="flex-1 overflow-y-auto">
-            <div className="divide-y divide-border">
-              <div className="p-4 hover:bg-muted/30 transition cursor-pointer">
-                <div className="flex gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 text-destructive flex-shrink-0">
-                    <MessageSquare className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">
-                      Your listing was removed
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Your PS5 listing was removed for violating community
-                      guidelines.
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      2 hours ago
-                    </p>
-                  </div>
-                </div>
+            {isLoadingNotifications ? (
+              <div className="flex items-center justify-center h-32">
+                <p className="text-sm text-muted-foreground">
+                  Loading notifications...
+                </p>
               </div>
-              <div className="p-4 hover:bg-muted/30 transition cursor-pointer">
-                <div className="flex gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary flex-shrink-0">
-                    <Check className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">
-                      New message from Capt Monroe
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Interested in the motorcycle you posted?
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      5 hours ago
-                    </p>
-                  </div>
-                </div>
+            ) : notifications.length > 0 ? (
+              <div>
+                {notifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    onDismiss={(id) => {
+                      setNotifications(
+                        notifications.filter((n) => n.id !== id),
+                      );
+                      if (!notification.read) {
+                        setUnreadNotificationCount(
+                          Math.max(0, unreadNotificationCount - 1),
+                        );
+                      }
+                    }}
+                  />
+                ))}
               </div>
-              <div className="p-4 hover:bg-muted/30 transition cursor-pointer">
-                <div className="flex gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-warning/10 text-warning flex-shrink-0">
-                    <MessageSquare className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">
-                      Account verification needed
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Complete your DoD verification to continue selling.
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      1 day ago
-                    </p>
-                  </div>
-                </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-32 text-center px-4">
+                <Bell className="h-8 w-8 text-muted-foreground/50 mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  No notifications yet
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  We'll let you know when something interesting happens
+                </p>
               </div>
-            </div>
+            )}
           </div>
         </SheetContent>
       </Sheet>
