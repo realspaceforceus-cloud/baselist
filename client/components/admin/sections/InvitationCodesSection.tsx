@@ -439,14 +439,17 @@ export const InvitationCodesSection = ({
                         </p>
                         <p>Base</p>
                       </div>
-                      <div>
+                      <button
+                        onClick={() => loadCodeUsers(code.id)}
+                        className="text-left hover:opacity-80 transition-opacity"
+                        disabled={loadingCodeUsers === code.id}
+                      >
                         <p className="font-medium text-foreground">
-                          {code.maxUses
-                            ? `${code.usesCount}/${code.maxUses}`
-                            : "Unlimited"}
+                          {code.usesCount}
+                          {code.maxUses ? `/${code.maxUses}` : ""}
                         </p>
-                        <p>Uses</p>
-                      </div>
+                        <p>{loadingCodeUsers === code.id ? "Loading..." : "Used"}</p>
+                      </button>
                       <div>
                         <p className="font-medium text-foreground">
                           {formatDate(code.expiresAt)}
