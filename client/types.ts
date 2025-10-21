@@ -202,3 +202,61 @@ export interface Notification {
   readAt?: string;
   dismissedAt?: string;
 }
+
+export type FeedPostType = "text" | "photo" | "poll" | "event" | "psa";
+
+export interface PollOption {
+  id: string;
+  text: string;
+  votes: number;
+}
+
+export interface EventData {
+  title: string;
+  description: string;
+  startDate: string;
+  endDate?: string;
+  location?: string;
+}
+
+export interface FeedPost {
+  id: string;
+  userId: string;
+  baseId: string;
+  postType: FeedPostType;
+  content: string;
+  imageUrls: string[];
+  pollOptions?: PollOption[];
+  pollVotes?: Record<string, string[]>;
+  eventData?: EventData;
+  createdAt: string;
+  updatedAt: string;
+  author?: Seller;
+  likes?: number;
+  comments?: number;
+  userLiked?: boolean;
+  userComments?: FeedComment[];
+}
+
+export interface FeedComment {
+  id: string;
+  postId: string;
+  userId: string;
+  content: string;
+  author?: Seller;
+  createdAt: string;
+}
+
+export interface FeedAnnouncement {
+  id: string;
+  baseId: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  isSticky: boolean;
+  isDismissible: boolean;
+  dismissedBy: string[];
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
