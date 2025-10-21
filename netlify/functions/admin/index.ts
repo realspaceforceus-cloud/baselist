@@ -1156,7 +1156,11 @@ export const handler: Handler = async (event) => {
     }
 
     // GET /api/admin/invitation-codes/:id/users
-    if (method === "GET" && path.includes("/invitation-codes/") && path.includes("/users")) {
+    if (
+      method === "GET" &&
+      path.includes("/invitation-codes/") &&
+      path.includes("/users")
+    ) {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
@@ -1166,7 +1170,9 @@ export const handler: Handler = async (event) => {
       }
 
       try {
-        const codeId = path.replace("/invitation-codes/", "").replace("/users", "");
+        const codeId = path
+          .replace("/invitation-codes/", "")
+          .replace("/users", "");
 
         const result = await client.query(
           `SELECT u.id, u.username, u.email, u.created_at, u.dow_verified_at,
@@ -1205,7 +1211,11 @@ export const handler: Handler = async (event) => {
     }
 
     // DELETE /api/admin/invitation-codes/:id
-    if (method === "DELETE" && path.startsWith("/invitation-codes/") && !path.includes("/users")) {
+    if (
+      method === "DELETE" &&
+      path.startsWith("/invitation-codes/") &&
+      !path.includes("/users")
+    ) {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,

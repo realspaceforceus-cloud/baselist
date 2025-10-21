@@ -1887,7 +1887,9 @@ const AdminPanel = (): JSX.Element => {
               Listings sold: {soldListingCount}
             </span>
             <span className="text-muted-foreground/70">
-              Verified members: {accountList.filter((a) => a.isDowVerified).length} / {accountList.length}
+              Verified members:{" "}
+              {accountList.filter((a) => a.isDowVerified).length} /{" "}
+              {accountList.length}
             </span>
           </div>
         </div>

@@ -80,7 +80,8 @@ export const InvitationCodesSection = ({
   const [expandedCodeId, setExpandedCodeId] = useState<string | null>(null);
   const [codeUsers, setCodeUsers] = useState<Record<string, any[]>>({});
   const [loadingCodeUsers, setLoadingCodeUsers] = useState<string | null>(null);
-  const [selectedBaseForCreation, setSelectedBaseForCreation] = useState<string>("");
+  const [selectedBaseForCreation, setSelectedBaseForCreation] =
+    useState<string>("");
 
   const loadCodeUsers = async (codeId: string) => {
     if (codeUsers[codeId]) {
@@ -90,7 +91,9 @@ export const InvitationCodesSection = ({
 
     setLoadingCodeUsers(codeId);
     try {
-      const response = await fetch(`/api/admin/invitation-codes/${codeId}/users`);
+      const response = await fetch(
+        `/api/admin/invitation-codes/${codeId}/users`,
+      );
       if (!response.ok) throw new Error("Failed to load users");
       const data = await response.json();
       setCodeUsers((prev) => ({ ...prev, [codeId]: data.users || [] }));
@@ -134,7 +137,11 @@ export const InvitationCodesSection = ({
   };
 
   const handleCreateCode = async () => {
-    if (!formData.code || !selectedBaseForCreation || selectedBaseForCreation === "all") {
+    if (
+      !formData.code ||
+      !selectedBaseForCreation ||
+      selectedBaseForCreation === "all"
+    ) {
       toast.error("Code and a specific base are required");
       return;
     }
@@ -293,7 +300,10 @@ export const InvitationCodesSection = ({
               <label className="text-sm font-medium text-foreground">
                 Base *
               </label>
-              <Select value={selectedBaseForCreation} onValueChange={setSelectedBaseForCreation}>
+              <Select
+                value={selectedBaseForCreation}
+                onValueChange={setSelectedBaseForCreation}
+              >
                 <SelectTrigger className="rounded-xl">
                   <SelectValue placeholder="Select a base..." />
                 </SelectTrigger>
@@ -392,7 +402,12 @@ export const InvitationCodesSection = ({
             </Button>
             <Button
               onClick={handleCreateCode}
-              disabled={isCreating || !formData.code || !selectedBaseForCreation || selectedBaseForCreation === "all"}
+              disabled={
+                isCreating ||
+                !formData.code ||
+                !selectedBaseForCreation ||
+                selectedBaseForCreation === "all"
+              }
               className="rounded-xl"
             >
               {isCreating ? "Creating..." : "Create Code"}
@@ -471,7 +486,9 @@ export const InvitationCodesSection = ({
                           {code.usesCount}
                           {code.maxUses ? `/${code.maxUses}` : ""}
                         </p>
-                        <p>{loadingCodeUsers === code.id ? "Loading..." : "Used"}</p>
+                        <p>
+                          {loadingCodeUsers === code.id ? "Loading..." : "Used"}
+                        </p>
                       </button>
                       <div>
                         <p className="font-medium text-foreground">
@@ -534,10 +551,14 @@ export const InvitationCodesSection = ({
                                     : "bg-warning/10 text-warning"
                                 }`}
                               >
-                                {user.isDowVerified ? "Verified" : "Not Verified"}
+                                {user.isDowVerified
+                                  ? "Verified"
+                                  : "Not Verified"}
                               </span>
                             </div>
-                            <p className="text-muted-foreground">{user.email}</p>
+                            <p className="text-muted-foreground">
+                              {user.email}
+                            </p>
                             <div className="grid grid-cols-2 gap-2 pt-1 text-muted-foreground">
                               <span>
                                 Signed up:{" "}
