@@ -259,4 +259,5 @@ export interface FeedAnnouncement {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  isDismissed?: boolean;
 }
