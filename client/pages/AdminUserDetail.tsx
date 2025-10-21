@@ -399,59 +399,117 @@ export const AdminUserDetail = () => {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Email
-                  </p>
-                  <p className="flex items-center gap-2 mt-1">
-                    <span className="font-medium">{userInfo.email}</span>
-                    <button
-                      onClick={() =>
-                        handleCopyToClipboard(userInfo.email, "Email")
-                      }
-                      className="hover:text-primary"
-                    >
-                      {copiedText === "Email" ? (
-                        <Check className="h-4 w-4" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Status
-                  </p>
-                  <p className="mt-1">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                        userInfo.status === "active"
-                          ? "bg-success/10 text-success"
-                          : userInfo.status === "suspended"
-                            ? "bg-warning/10 text-warning"
-                            : "bg-destructive/10 text-destructive"
-                      }`}
-                    >
-                      {userInfo.status}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Role
-                  </p>
-                  <p className="mt-1 capitalize font-medium">{userInfo.role}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Base
-                  </p>
-                  <p className="mt-1 flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    {userInfo.baseName || userInfo.baseId || "—"}
-                  </p>
-                </div>
+                {editMode ? (
+                  <>
+                    <div>
+                      <Label className="text-xs font-semibold uppercase">Email</Label>
+                      <Input
+                        value={editData.email}
+                        onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                        className="rounded-lg mt-1"
+                        type="email"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold uppercase">Status</Label>
+                      <Select value={editData.status} onValueChange={(value) => setEditData({ ...editData, status: value })}>
+                        <SelectTrigger className="mt-1 rounded-lg">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="suspended">Suspended</SelectItem>
+                          <SelectItem value="banned">Banned</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold uppercase">Role</Label>
+                      <Select value={editData.role} onValueChange={(value) => setEditData({ ...editData, role: value })}>
+                        <SelectTrigger className="mt-1 rounded-lg">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="member">Member</SelectItem>
+                          <SelectItem value="moderator">Moderator</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold uppercase">Base</Label>
+                      <Select value={editData.baseId} onValueChange={(value) => setEditData({ ...editData, baseId: value })}>
+                        <SelectTrigger className="mt-1 rounded-lg">
+                          <SelectValue placeholder="Select a base" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bases.map((base) => (
+                            <SelectItem key={base.id} value={base.id}>
+                              {base.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Email
+                      </p>
+                      <p className="flex items-center gap-2 mt-1">
+                        <span className="font-medium">{userInfo.email}</span>
+                        <button
+                          onClick={() =>
+                            handleCopyToClipboard(userInfo.email, "Email")
+                          }
+                          className="hover:text-primary"
+                        >
+                          {copiedText === "Email" ? (
+                            <Check className="h-4 w-4" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </button>
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Status
+                      </p>
+                      <p className="mt-1">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+                            userInfo.status === "active"
+                              ? "bg-success/10 text-success"
+                              : userInfo.status === "suspended"
+                                ? "bg-warning/10 text-warning"
+                                : "bg-destructive/10 text-destructive"
+                          }`}
+                        >
+                          {userInfo.status}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Role
+                      </p>
+                      <p className="mt-1 capitalize font-medium">{userInfo.role}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Base
+                      </p>
+                      <p className="mt-1 flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        {userInfo.baseName || userInfo.baseId || "—"}
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
