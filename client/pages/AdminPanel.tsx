@@ -2119,7 +2119,6 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "family-verification" ? (
             <FamilyVerificationSection userId={user.id} />
           ) : null}
-          {activeSection === "bases" ? <BasesSection /> : null}
           {activeSection === "sponsors" ? <SponsorsSection /> : null}
           {activeSection === "messaging" ? <MessagingSection /> : null}
           {activeSection === "metrics" ? <MetricsSection /> : null}
