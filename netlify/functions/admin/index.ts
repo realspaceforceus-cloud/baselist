@@ -1794,56 +1794,86 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      try {
+        const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-      const totalRequestsResult = await client.query(
-        `SELECT COUNT(*) as count FROM api_metrics WHERE recorded_at >= $1`,
-        [last24h],
-      );
+        let totalRequestsResult = { rows: [{ count: 0 }] };
+        let failedRequestsResult = { rows: [{ count: 0 }] };
+        let avgResponseTimeResult = { rows: [{ avg_time: 0 }] };
+        let failedTransactionsResult = { rows: [{ count: 0 }] };
 
-      const failedRequestsResult = await client.query(
-        `SELECT COUNT(*) as count FROM api_metrics WHERE recorded_at >= $1 AND status_code >= 400`,
-        [last24h],
-      );
+        try {
+          totalRequestsResult = await client.query(
+            `SELECT COUNT(*) as count FROM api_metrics WHERE recorded_at >= $1`,
+            [last24h],
+          );
+        } catch (err) {
+          console.error("System health total requests query error:", err);
+        }
 
-      const avgResponseTimeResult = await client.query(
-        `SELECT AVG(response_time_ms) as avg_time FROM api_metrics WHERE recorded_at >= $1 AND response_time_ms IS NOT NULL`,
-        [last24h],
-      );
+        try {
+          failedRequestsResult = await client.query(
+            `SELECT COUNT(*) as count FROM api_metrics WHERE recorded_at >= $1 AND status_code >= 400`,
+            [last24h],
+          );
+        } catch (err) {
+          console.error("System health failed requests query error:", err);
+        }
 
-      const failedTransactionsResult = await client.query(
-        `SELECT COUNT(*) as count FROM transactions WHERE status = 'cancelled' AND created_at >= $1`,
-        [last24h],
-      );
+        try {
+          avgResponseTimeResult = await client.query(
+            `SELECT AVG(response_time_ms) as avg_time FROM api_metrics WHERE recorded_at >= $1 AND response_time_ms IS NOT NULL`,
+            [last24h],
+          );
+        } catch (err) {
+          console.error("System health response time query error:", err);
+        }
 
-      const totalRequests = parseInt(totalRequestsResult.rows[0]?.count ?? 0);
-      const failedRequests = parseInt(failedRequestsResult.rows[0]?.count ?? 0);
-      const errorRate =
-        totalRequests > 0
-          ? ((failedRequests / totalRequests) * 100).toFixed(2)
-          : "0.00";
-      const avgResponseTime = Math.round(
-        parseFloat(avgResponseTimeResult.rows[0]?.avg_time ?? 0),
-      );
-      const failedTransactions = parseInt(
-        failedTransactionsResult.rows[0]?.count ?? 0,
-      );
+        try {
+          failedTransactionsResult = await client.query(
+            `SELECT COUNT(*) as count FROM transactions WHERE status = 'cancelled' AND created_at >= $1`,
+            [last24h],
+          );
+        } catch (err) {
+          console.error("System health failed transactions query error:", err);
+        }
 
-      const uptime =
-        totalRequests > 0
-          ? (100 - parseFloat(errorRate as string)).toFixed(2)
-          : "99.90";
+        const totalRequests = parseInt(totalRequestsResult.rows[0]?.count ?? 0);
+        const failedRequests = parseInt(failedRequestsResult.rows[0]?.count ?? 0);
+        const errorRate =
+          totalRequests > 0
+            ? ((failedRequests / totalRequests) * 100).toFixed(2)
+            : "0.00";
+        const avgResponseTime = Math.round(
+          parseFloat(avgResponseTimeResult.rows[0]?.avg_time ?? 0),
+        );
+        const failedTransactions = parseInt(
+          failedTransactionsResult.rows[0]?.count ?? 0,
+        );
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          uptime: parseFloat(uptime),
-          errorRate: parseFloat(errorRate as string),
-          avgResponseTime,
-          failedTransactions,
-        }),
-      };
+        const uptime =
+          totalRequests > 0
+            ? (100 - parseFloat(errorRate as string)).toFixed(2)
+            : "99.90";
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            uptime: parseFloat(uptime),
+            errorRate: parseFloat(errorRate as string),
+            avgResponseTime,
+            failedTransactions,
+          }),
+        };
+      } catch (error) {
+        console.error("System health endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch system health metrics" }),
+        };
+      }
     }
 
     // GET /api/admin/analytics/live-users
