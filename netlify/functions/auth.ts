@@ -3,6 +3,13 @@ import { pool } from "./db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 
+export const getUserIdFromAuth = (event: any): string | null => {
+  // Extract userId from cookies
+  const cookies = event.headers.cookie || "";
+  const userIdMatch = cookies.match(/userId=([^;]+)/);
+  return userIdMatch ? userIdMatch[1] : null;
+};
+
 const sendEmail = async (
   to: string,
   subject: string,
