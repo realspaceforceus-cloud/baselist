@@ -2078,10 +2078,17 @@ const AdminPanel = (): JSX.Element => {
         <div className="space-y-8">
           {activeSection === "dashboard" ? (
             <>
-              <DashboardSection
-                cards={dashboardCards}
-                onNavigate={setActiveSection}
-              />
+              {!metricsLoading && (
+                <DashboardSection
+                  cards={dashboardCards}
+                  onNavigate={setActiveSection}
+                />
+              )}
+              {metricsLoading && (
+                <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+                  Loading dashboard metrics...
+                </div>
+              )}
               <section className="space-y-3 rounded-3xl border border-border bg-background/80 p-5 shadow-soft">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-foreground">
