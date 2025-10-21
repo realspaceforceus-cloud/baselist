@@ -182,9 +182,11 @@ export type NotificationType =
   | "offer_received"
   | "offer_accepted"
   | "offer_declined"
-  | "transaction_complete";
+  | "transaction_complete"
+  | "post_commented"
+  | "comment_liked";
 
-export type NotificationTargetType = "listing" | "thread" | "user";
+export type NotificationTargetType = "listing" | "thread" | "user" | "post";
 
 export interface Notification {
   id: string;
