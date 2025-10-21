@@ -754,6 +754,70 @@ export const handler: Handler = async (event) => {
       }
     }
 
+    // PATCH /api/admin/invitation-codes/:id
+    if (method === "PATCH" && path.startsWith("/invitation-codes/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const codeId = path.replace("/invitation-codes/", "");
+        const { code, maxUses, expiresAt, description, active } = JSON.parse(
+          event.body || "{}",
+        );
+
+        const updates: Record<string, any> = {};
+        if (code !== undefined) updates.code = code;
+        if (maxUses !== undefined) updates.max_uses = maxUses || null;
+        if (expiresAt !== undefined) updates.expires_at = expiresAt || null;
+        if (description !== undefined) updates.description = description || null;
+        if (active !== undefined) updates.active = active;
+
+        if (Object.keys(updates).length === 0) {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "No valid updates provided" }),
+          };
+        }
+
+        const setClauses = Object.keys(updates)
+          .map((key, i) => `${key} = $${i + 1}`)
+          .join(", ");
+
+        const values = Object.values(updates);
+        const result = await client.query(
+          `UPDATE invitation_codes SET ${setClauses} WHERE id = $${values.length + 1} RETURNING *`,
+          [...values, codeId],
+        );
+
+        if (result.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Code not found" }),
+          };
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: result.rows[0] }),
+        };
+      } catch (error) {
+        console.error("Failed to update invitation code:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to update invitation code" }),
+        };
+      }
+    }
+
     // DELETE /api/admin/invitation-codes/:id
     if (method === "DELETE" && path.startsWith("/invitation-codes/")) {
       if (!(await isAdmin(auth.userId))) {
@@ -764,17 +828,26 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const codeId = path.replace("/invitation-codes/", "");
+      try {
+        const codeId = path.replace("/invitation-codes/", "");
 
-      await client.query("DELETE FROM invitation_codes WHERE id = $1", [
-        codeId,
-      ]);
+        await client.query("DELETE FROM invitation_codes WHERE id = $1", [
+          codeId,
+        ]);
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ success: true }),
-      };
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } catch (error) {
+        console.error("Failed to delete invitation code:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to delete invitation code" }),
+        };
+      }
     }
 
     // GET /api/admin/account-notes/:userId
