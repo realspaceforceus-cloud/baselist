@@ -24,12 +24,20 @@ export function MarketplaceSidebar({
   listings,
   sellers,
 }: MarketplaceSidebarProps): JSX.Element {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-3">
       {listings.map((listing) => {
         const seller = sellers[listing.sellerId];
         const slug = generateSlug(listing.title, listing.id);
         const firstImage = listing.imageUrls[0];
+
+        const handleViewClick = (e: React.MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          navigate(`/listing/${slug}`);
+        };
 
         return (
           <Link
