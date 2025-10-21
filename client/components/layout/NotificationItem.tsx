@@ -43,10 +43,17 @@ export const NotificationItem = ({
           textColor: "text-green-600 dark:text-green-400",
         };
       case "item_favorited":
+      case "comment_liked":
         return {
           icon: Heart,
           bgColor: "bg-rose-50 dark:bg-rose-950",
           textColor: "text-rose-600 dark:text-rose-400",
+        };
+      case "post_commented":
+        return {
+          icon: MessageSquare,
+          bgColor: "bg-purple-50 dark:bg-purple-950",
+          textColor: "text-purple-600 dark:text-purple-400",
         };
       case "listing_removed":
       case "verification_needed":
