@@ -200,7 +200,26 @@ export const RolesSection = (): JSX.Element => {
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {user.baseId || "—"}
+                    {editingUserId === user.id ? (
+                      <Select value={editingBaseId} onValueChange={setEditingBaseId}>
+                        <SelectTrigger className="w-40 rounded-xl">
+                          <SelectValue placeholder="Select base" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bases.map((base) => (
+                            <SelectItem key={base.id} value={base.id}>
+                              {base.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <>
+                        {bases.find((b) => b.id === user.baseId)?.name ||
+                          user.baseId ||
+                          "—"}
+                      </>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-center">
                     {editingUserId === user.id ? (
