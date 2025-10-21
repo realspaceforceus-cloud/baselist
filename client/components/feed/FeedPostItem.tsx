@@ -257,23 +257,23 @@ export function FeedPostItem({
             <p className="text-xs text-muted-foreground">{timeAgo}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           {canDeletePost && (
             <button
               onClick={handleDeletePost}
               disabled={isDeleting}
-              className="rounded p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition"
-              title="Delete post"
+              className="rounded px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition"
+              title="Delete your post"
             >
-              <Trash2 className="h-4 w-4" />
+              Delete
             </button>
           )}
           <button
             onClick={handleReportPost}
-            className="rounded p-2 text-muted-foreground hover:bg-accent transition"
+            className="rounded px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent transition"
             title="Report post"
           >
-            <Flag className="h-4 w-4" />
+            Report
           </button>
         </div>
       </div>
