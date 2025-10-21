@@ -15,7 +15,7 @@ export default defineConfig(({ command }) => ({
   build: {
     outDir: "dist/spa",
     cssMinify: "esbuild",
-    sourcemap: false,
+    sourcemap: true,  // Enable for debugging crashes
     chunkSizeWarningLimit: 1600,
   },
   css: {
