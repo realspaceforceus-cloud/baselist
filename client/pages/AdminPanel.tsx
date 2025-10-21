@@ -2152,11 +2152,8 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "reports" ? (
             <ReportsSection
               reports={visibleReports}
-              reportNotes={reportNotes}
               onApprove={handleApproveReport}
               onDismiss={handleDismissReport}
-              onOpenAttachment={handleOpenEvidence}
-              onAddNote={handleAddReportNote}
             />
           ) : null}
           {activeSection === "verification" ? (
