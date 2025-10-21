@@ -214,6 +214,21 @@ export const adminApi = {
       },
     );
   },
+  async updateListing(listingId: string, updates: {
+    title?: string;
+    description?: string;
+    price?: number;
+    isFree?: boolean;
+    category?: string;
+    baseId?: string;
+    imageUrls?: string[];
+    promoted?: boolean;
+  }) {
+    return apiRequest<any>(`${ADMIN_BASE}/listings/${listingId}`, {
+      method: "PATCH",
+      body: JSON.stringify(updates),
+    });
+  },
   async getReports() {
     return apiRequest<AdminReportsResponse>(`${ADMIN_BASE}/reports`);
   },
