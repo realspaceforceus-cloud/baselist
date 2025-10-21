@@ -38,6 +38,72 @@ export const handler: Handler = async (event) => {
   const path = event.path.replace("/.netlify/functions/feed", "");
 
   try {
+    // POST /feed/admin/announcements (admin only)
+    if (method === "POST" && path === "/admin/announcements") {
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const client = await pool.connect();
+      try {
+        // Check if user is admin
+        const userResult = await client.query(
+          "SELECT role FROM users WHERE id = $1",
+          [userId],
+        );
+
+        if (
+          !userResult.rows.length ||
+          !["admin", "moderator"].includes(userResult.rows[0].role)
+        ) {
+          return {
+            statusCode: 403,
+            body: JSON.stringify({
+              error: "Only admins can create announcements",
+            }),
+          };
+        }
+
+        const { baseId, title, content, imageUrl, isSticky, isDismissible } =
+          JSON.parse(event.body || "{}");
+
+        if (!baseId || !title || !content) {
+          return {
+            statusCode: 400,
+            body: JSON.stringify({ error: "Missing required fields" }),
+          };
+        }
+
+        const announcementId = randomUUID();
+        const result = await client.query(
+          `INSERT INTO feed_announcements (id, base_id, title, content, image_url, is_sticky, is_dismissible, created_by, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+           RETURNING *`,
+          [
+            announcementId,
+            baseId,
+            title,
+            content,
+            imageUrl || null,
+            isSticky || false,
+            isDismissible !== false,
+            userId,
+          ],
+        );
+
+        return {
+          statusCode: 201,
+          body: JSON.stringify(transformAnnouncement(result.rows[0])),
+        };
+      } finally {
+        client.release();
+      }
+    }
+
     // GET /feed/posts?baseId=xxx&limit=20&offset=0
     if (method === "GET" && path === "/posts") {
       const userId = await getUserIdFromAuth(event);
