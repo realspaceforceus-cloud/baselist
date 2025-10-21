@@ -18,11 +18,16 @@ export default function Feed(): JSX.Element {
   const baseName = currentBase?.abbreviation || "community";
 
   const loadPosts = useCallback(async () => {
-    if (!currentBaseId) return;
+    if (!currentBaseId) {
+      console.debug("Feed: Skipping loadPosts - no currentBaseId");
+      return;
+    }
 
     try {
+      console.debug("Feed: Loading posts for base", currentBaseId);
       setIsLoading(true);
       const newPosts = await feedApi.getPosts(currentBaseId, 20, offset);
+      console.debug("Feed: Loaded posts", newPosts.length, newPosts);
       if (offset === 0) {
         setPosts(newPosts);
       } else {
@@ -30,7 +35,7 @@ export default function Feed(): JSX.Element {
       }
       setHasMore(newPosts.length === 20);
     } catch (error) {
-      console.error("Failed to load posts:", error);
+      console.error("Feed: Failed to load posts:", error);
     } finally {
       setIsLoading(false);
     }
