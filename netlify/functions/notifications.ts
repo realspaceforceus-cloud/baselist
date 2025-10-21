@@ -33,6 +33,17 @@ export const handler: Handler = async (event) => {
   const client = await pool.connect();
 
   try {
+    // GET /api/notifications/count - get unread notification count
+    if (method === "GET" && path === "/count") {
+      const result = await client.query(
+        `SELECT COUNT(*) as count FROM notifications
+         WHERE user_id = $1 AND read = false AND dismissed = false`,
+        [userId],
+      );
+      const count = result.rows.length > 0 ? parseInt(result.rows[0].count) : 0;
+      return json({ unreadCount: count });
+    }
+
     // GET /api/notifications - get user's notifications
     if (method === "GET" && (path === "" || path === "/")) {
       const query = event.queryStringParameters || {};
