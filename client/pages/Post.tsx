@@ -63,6 +63,9 @@ const Post = (): JSX.Element => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Derived state for editing mode
+  const isEditing = !!editListingId;
+
   // Load listing data if editing
   useEffect(() => {
     if (!editListingId) return;
