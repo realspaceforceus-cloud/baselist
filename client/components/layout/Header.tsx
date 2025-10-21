@@ -10,6 +10,7 @@ import {
   Menu,
   MessageSquare,
   Moon,
+  PlusCircle,
   Search,
   ShieldCheck,
   ShoppingBag,
