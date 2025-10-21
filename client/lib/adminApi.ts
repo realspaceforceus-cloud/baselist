@@ -279,6 +279,19 @@ export const adminApi = {
       },
     );
   },
+  async deleteBase(baseId: string) {
+    return apiRequest<any>(`${ADMIN_BASE}/bases/${baseId}`, {
+      method: "DELETE",
+    });
+  },
+  async restoreBase(baseId: string) {
+    return apiRequest<any>(`${ADMIN_BASE}/bases/${baseId}/restore`, {
+      method: "PATCH",
+    });
+  },
+  async getDeletedBases() {
+    return apiRequest<{ bases: any[] }>(`${ADMIN_BASE}/deleted-bases`);
+  },
   async getAudit(limit = 200) {
     const { audit } = await apiRequest<AdminAuditResponse>(
       `${ADMIN_BASE}/audit`,
