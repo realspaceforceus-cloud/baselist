@@ -30,8 +30,15 @@ export interface AdminUserRecord {
 
 interface UsersSectionProps {
   onUserUpdate?: (userId: string, updates: any) => Promise<void>;
-  onAddStrike?: (userId: string, type: string, description: string) => Promise<void>;
-  onFetchUsers?: (page: number, search: string) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
+  onAddStrike?: (
+    userId: string,
+    type: string,
+    description: string,
+  ) => Promise<void>;
+  onFetchUsers?: (
+    page: number,
+    search: string,
+  ) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
 }
 
 export const UsersSection = ({
@@ -44,16 +51,18 @@ export const UsersSection = ({
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Modal state
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
+    null,
+  );
   const [showModal, setShowModal] = useState<"edit" | "strike" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Edit form
   const [editRole, setEditRole] = useState("");
   const [editStatus, setEditStatus] = useState("");
-  
+
   // Strike form
   const [strikeReason, setStrikeReason] = useState("");
   const [strikeDescription, setStrikeDescription] = useState("");
@@ -151,12 +160,20 @@ export const UsersSection = ({
 
   const formatDate = (date?: string) => {
     if (!date) return "—";
-    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "2-digit" }).format(new Date(date));
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "2-digit",
+    }).format(new Date(date));
   };
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader title="Users" subtitle="Manage" accent="25 per page" />
+      <AdminSectionHeader
+        title="Users"
+        subtitle="Manage"
+        accent="25 per page"
+      />
 
       {/* Search */}
       <div className="flex gap-2 rounded-3xl border border-border bg-card p-4">
@@ -198,7 +215,9 @@ export const UsersSection = ({
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-muted/20 transition">
                   <td className="px-4 py-3 font-medium">{user.username}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {user.email}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 capitalize">
                       {user.role}
@@ -217,7 +236,9 @@ export const UsersSection = ({
                       {user.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(user.createdAt)}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDate(user.createdAt)}
+                  </td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
                       <Button
@@ -262,7 +283,8 @@ export const UsersSection = ({
       {pagination && pagination.pages > 1 && (
         <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
           <span className="text-sm text-muted-foreground">
-            Page {pagination.page} of {pagination.pages} ({pagination.total} total)
+            Page {pagination.page} of {pagination.pages} ({pagination.total}{" "}
+            total)
           </span>
           <div className="flex gap-2">
             <Button
@@ -276,7 +298,9 @@ export const UsersSection = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(Math.min(pagination.pages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(pagination.pages, currentPage + 1))
+              }
               disabled={currentPage === pagination.pages}
             >
               <ChevronRight className="h-4 w-4" />
@@ -289,7 +313,9 @@ export const UsersSection = ({
       {showModal === "edit" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">Edit {selectedUser.username}</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Edit {selectedUser.username}
+            </h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Role</label>
@@ -319,10 +345,18 @@ export const UsersSection = ({
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(null)}
+                className="rounded-xl"
+              >
                 Cancel
               </Button>
-              <Button onClick={saveEdit} disabled={isSubmitting} className="rounded-xl">
+              <Button
+                onClick={saveEdit}
+                disabled={isSubmitting}
+                className="rounded-xl"
+              >
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
             </div>
@@ -334,7 +368,9 @@ export const UsersSection = ({
       {showModal === "strike" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">Add Strike: {selectedUser.username}</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Add Strike: {selectedUser.username}
+            </h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Reason</label>
@@ -346,7 +382,9 @@ export const UsersSection = ({
                     <SelectItem value="spam">Spam</SelectItem>
                     <SelectItem value="fraud">Fraud</SelectItem>
                     <SelectItem value="harassment">Harassment</SelectItem>
-                    <SelectItem value="inappropriate">Inappropriate content</SelectItem>
+                    <SelectItem value="inappropriate">
+                      Inappropriate content
+                    </SelectItem>
                     <SelectItem value="policy">Policy violation</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
@@ -363,10 +401,18 @@ export const UsersSection = ({
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+              <Button
+                variant="outline"
+                onClick={() => setShowModal(null)}
+                className="rounded-xl"
+              >
                 Cancel
               </Button>
-              <Button onClick={saveStrike} disabled={isSubmitting} className="rounded-xl bg-warning text-warning-foreground">
+              <Button
+                onClick={saveStrike}
+                disabled={isSubmitting}
+                className="rounded-xl bg-warning text-warning-foreground"
+              >
                 {isSubmitting ? "Saving..." : "Record Strike"}
               </Button>
             </div>
