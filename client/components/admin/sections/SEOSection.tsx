@@ -144,7 +144,9 @@ export const SEOSection = ({
               <li>
                 Use{" "}
                 <code className="bg-white/50 px-1 rounded">
-                  {{ base_name }}
+                  {"{"}
+                  {"{"}base_name{"}"}
+                  {"}"}
                 </code>{" "}
                 placeholder for dynamic base-specific pages
               </li>
