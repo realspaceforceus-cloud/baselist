@@ -22,6 +22,34 @@ interface VehicleFilters {
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
 
+// Wrapper component to fetch and pass seller data
+const ListingCardWithSeller = ({ listing }: { listing: Listing }): JSX.Element => {
+  const [seller, setSeller] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    if (!listing.sellerId) return;
+
+    const fetchSeller = async () => {
+      try {
+        const response = await fetch(
+          `/.netlify/functions/users/${listing.sellerId}`,
+          { credentials: "include" }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSeller(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch seller:", error);
+      }
+    };
+
+    fetchSeller();
+  }, [listing.sellerId]);
+
+  return <ListingCard listing={listing} seller={seller as any} />;
+};
+
 const Index = (): JSX.Element => {
   const {
     listings,
