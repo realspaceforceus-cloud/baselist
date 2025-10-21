@@ -291,7 +291,7 @@ export const InvitationCodesSection = ({
         <div className="rounded-3xl border border-border bg-card p-6 text-center text-muted-foreground">
           Loading codes...
         </div>
-      ) : codes.length === 0 ? (
+      ) : !Array.isArray(codes) || codes.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-background/50 p-6 text-center text-muted-foreground">
           No invitation codes created yet
         </div>
