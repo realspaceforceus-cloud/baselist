@@ -182,9 +182,10 @@ export const Header = (): JSX.Element => {
     const loadUnreadCount = async () => {
       try {
         const response = await notificationsApi.getUnreadCount();
-        setUnreadNotificationCount(response.unreadCount);
+        setUnreadNotificationCount(typeof response?.unreadCount === "number" ? response.unreadCount : 0);
       } catch (error) {
         console.error("Error loading notification count:", error);
+        setUnreadNotificationCount(0);
       }
     };
 
