@@ -213,6 +213,11 @@ const ListingDetail = (): JSX.Element => {
   }, [navigate, seller, listing, setCurrentBaseId, setSearchQuery]);
 
   const handleSaveListing = useCallback(async () => {
+    if (!listing) {
+      toast.error("Listing not found");
+      return;
+    }
+
     try {
       setIsLoadingSave(true);
       const method = isSaved ? "DELETE" : "POST";
@@ -239,7 +244,7 @@ const ListingDetail = (): JSX.Element => {
     } finally {
       setIsLoadingSave(false);
     }
-  }, [listing.id, isSaved]);
+  }, [listing, isSaved]);
 
   const handleReportListing = useCallback(async () => {
     if (!reportReason.trim()) {
