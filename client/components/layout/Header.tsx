@@ -53,6 +53,11 @@ const NAV_ITEMS = [
     end: true,
   },
   {
+    label: "Marketplace",
+    to: "/marketplace",
+    icon: ShoppingBag,
+  },
+  {
     label: "Messages",
     to: "/messages",
     icon: MessageSquare,
