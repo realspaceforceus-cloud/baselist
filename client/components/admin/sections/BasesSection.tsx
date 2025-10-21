@@ -14,6 +14,105 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+// Mapping of regions to timezones
+const REGION_TIMEZONE_MAP: Record<string, string> = {
+  // US States
+  "Alabama": "America/Chicago",
+  "Alaska": "America/Anchorage",
+  "Arizona": "America/Phoenix",
+  "Arkansas": "America/Chicago",
+  "California": "America/Los_Angeles",
+  "Colorado": "America/Denver",
+  "Connecticut": "America/New_York",
+  "Delaware": "America/New_York",
+  "Florida": "America/New_York",
+  "Georgia": "America/New_York",
+  "Hawaii": "Pacific/Honolulu",
+  "Idaho": "America/Boise",
+  "Illinois": "America/Chicago",
+  "Indiana": "America/Indiana/Indianapolis",
+  "Iowa": "America/Chicago",
+  "Kansas": "America/Chicago",
+  "Kentucky": "America/Kentucky/Louisville",
+  "Louisiana": "America/Chicago",
+  "Maine": "America/New_York",
+  "Maryland": "America/New_York",
+  "Massachusetts": "America/New_York",
+  "Michigan": "America/Detroit",
+  "Minnesota": "America/Chicago",
+  "Mississippi": "America/Chicago",
+  "Missouri": "America/Chicago",
+  "Montana": "America/Denver",
+  "Nebraska": "America/Chicago",
+  "Nevada": "America/Los_Angeles",
+  "New Hampshire": "America/New_York",
+  "New Jersey": "America/New_York",
+  "New Mexico": "America/Denver",
+  "New York": "America/New_York",
+  "North Carolina": "America/New_York",
+  "North Dakota": "America/Chicago",
+  "Ohio": "America/New_York",
+  "Oklahoma": "America/Chicago",
+  "Oregon": "America/Los_Angeles",
+  "Pennsylvania": "America/New_York",
+  "Rhode Island": "America/New_York",
+  "South Carolina": "America/New_York",
+  "South Dakota": "America/Chicago",
+  "Tennessee": "America/Chicago",
+  "Texas": "America/Chicago",
+  "Utah": "America/Denver",
+  "Vermont": "America/New_York",
+  "Virginia": "America/New_York",
+  "Washington": "America/Los_Angeles",
+  "West Virginia": "America/New_York",
+  "Wisconsin": "America/Chicago",
+  "Wyoming": "America/Denver",
+  // International Regions
+  "Germany": "Europe/Berlin",
+  "United Kingdom": "Europe/London",
+  "Italy": "Europe/Rome",
+  "Spain": "Europe/Madrid",
+  "France": "Europe/Paris",
+  "Japan": "Asia/Tokyo",
+  "South Korea": "Asia/Seoul",
+  "Qatar": "Asia/Qatar",
+  "United Arab Emirates": "Asia/Dubai",
+  "Turkey": "Europe/Istanbul",
+  "Saudi Arabia": "Asia/Riyadh",
+  "Kuwait": "Asia/Kuwait",
+  "Bahrain": "Asia/Bahrain",
+  "Oman": "Asia/Muscat",
+  "Jordan": "Asia/Amman",
+  "Iraq": "Asia/Baghdad",
+  "Afghanistan": "Asia/Kabul",
+  "India": "Asia/Kolkata",
+  "Philippines": "Asia/Manila",
+  "Thailand": "Asia/Bangkok",
+  "Singapore": "Asia/Singapore",
+  "Australia": "Australia/Sydney",
+  "Guam": "Pacific/Guam",
+  "Puerto Rico": "America/Puerto_Rico",
+  "Diego Garcia": "Indian/Chagos",
+};
+
+function getTimezoneForRegion(region: string): string {
+  // Try exact match first
+  if (REGION_TIMEZONE_MAP[region]) {
+    return REGION_TIMEZONE_MAP[region];
+  }
+
+  // Try case-insensitive match
+  const lowerRegion = region.toLowerCase();
+  for (const [key, tz] of Object.entries(REGION_TIMEZONE_MAP)) {
+    if (key.toLowerCase() === lowerRegion) {
+      return tz;
+    }
+  }
+
+  // Default to America/New_York if not found
+  return "America/New_York";
+}
+
 export interface AdminBaseRow {
   id: string;
   name: string;
