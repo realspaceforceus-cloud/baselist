@@ -398,6 +398,94 @@ export const handler: Handler = async (event) => {
       }
     }
 
+    // POST /feed/posts/:postId/vote
+    if (method === "POST" && path.match(/^\/posts\/[^/]+\/vote$/)) {
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const postId = path.split("/")[2];
+      const { optionId } = JSON.parse(event.body || "{}");
+
+      if (!optionId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "optionId is required" }),
+        };
+      }
+
+      const client = await pool.connect();
+      try {
+        // Get the post to access poll_options
+        const postResult = await client.query(
+          "SELECT poll_options FROM feed_posts WHERE id = $1",
+          [postId],
+        );
+
+        if (postResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Post not found" }),
+          };
+        }
+
+        let pollOptions = postResult.rows[0].poll_options;
+        if (typeof pollOptions === "string") {
+          pollOptions = JSON.parse(pollOptions);
+        }
+
+        if (!Array.isArray(pollOptions)) {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Post is not a poll" }),
+          };
+        }
+
+        // Remove user's previous vote from all options
+        pollOptions = pollOptions.map((option: any) => ({
+          ...option,
+          votes: Array.isArray(option.votes) ? option.votes : [],
+        }));
+
+        pollOptions.forEach((option: any) => {
+          if (Array.isArray(option.votes)) {
+            option.votes = option.votes.filter((v: string) => v !== userId);
+          }
+        });
+
+        // Add vote to selected option
+        const selectedOption = pollOptions.find((opt: any) => opt.id === optionId);
+        if (selectedOption) {
+          if (!Array.isArray(selectedOption.votes)) {
+            selectedOption.votes = [];
+          }
+          selectedOption.votes.push(userId);
+        }
+
+        // Update the post
+        await client.query(
+          "UPDATE feed_posts SET poll_options = $1, updated_at = NOW() WHERE id = $2",
+          [JSON.stringify(pollOptions), postId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true, pollOptions }),
+        };
+      } finally {
+        client.release();
+      }
+    }
+
     // POST /feed/announcements/:announcementId/dismiss
     if (method === "POST" && path.match(/^\/announcements\/[^/]+\/dismiss$/)) {
       const userId = await getUserIdFromAuth(event);
