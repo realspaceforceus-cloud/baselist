@@ -464,6 +464,45 @@ export const handler: Handler = async (event) => {
           ],
         );
 
+        // Handle tag mentions in post
+        try {
+          const mentions = extractMentions(content);
+          if (mentions.length > 0) {
+            const mentionedUsers = await getMentionedUserIds(mentions);
+
+            // Fetch post author name for notification
+            const authorResult = await client.query(
+              "SELECT username as name FROM users WHERE id = $1",
+              [userId],
+            );
+            const authorName = authorResult.rows[0]?.name || "Someone";
+
+            for (const mentionedUser of mentionedUsers) {
+              // Don't notify the poster about their own tag
+              if (mentionedUser.id === userId) continue;
+
+              try {
+                await createNotification({
+                  userId: mentionedUser.id,
+                  type: "tagged_in_post",
+                  title: `${authorName} tagged you in a post`,
+                  description: content.substring(0, 100),
+                  actorId: userId,
+                  targetId: postId,
+                  targetType: "post",
+                });
+              } catch (err) {
+                console.error(
+                  `[FEED] Error creating tag notification for ${mentionedUser.username}:`,
+                  err,
+                );
+              }
+            }
+          }
+        } catch (err) {
+          console.error("[FEED] Error processing post mentions:", err);
+        }
+
         return {
           statusCode: 201,
           headers: { "Content-Type": "application/json" },
