@@ -113,7 +113,10 @@ export const ListingsSection = () => {
 
     setIsSubmitting(true);
     try {
-      await adminApi.updateUser(editingId, {});
+      await adminApi.updateListing(editingId, {
+        title: editingTitle,
+        price: parseFloat(editingPrice),
+      });
       setListings((prev) =>
         prev.map((l) =>
           l.id === editingId
