@@ -1955,13 +1955,10 @@ const AdminPanel = (): JSX.Element => {
       try {
         const reportsData = await adminApi.getReports();
         if (!active) return;
-        if (
-          reportsData &&
-          "reports" in reportsData &&
-          Array.isArray(reportsData.reports)
-        ) {
+        const reports = Array.isArray(reportsData) ? reportsData : reportsData?.reports || [];
+        if (Array.isArray(reports)) {
           setReports(
-            reportsData.reports.map((r: any) => ({
+            reports.map((r: any) => ({
               id: r.id,
               type: r.type || "General",
               reporter: r.reported_by || "Unknown",
