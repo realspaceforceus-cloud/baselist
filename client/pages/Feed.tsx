@@ -53,11 +53,12 @@ export default function Feed(): JSX.Element {
   }, [currentBaseId]);
 
   useEffect(() => {
+    console.debug("Feed: currentBaseId changed to", currentBaseId);
     setOffset(0);
     setPosts([]);
     loadPosts();
     loadAnnouncements();
-  }, [currentBaseId]);
+  }, [currentBaseId, loadPosts, loadAnnouncements]);
 
   useEffect(() => {
     if (offset > 0) {
