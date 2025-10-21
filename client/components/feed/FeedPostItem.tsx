@@ -75,7 +75,11 @@ export function FeedPostItem({
 
     setIsCommentingLoading(true);
     try {
-      const newComment = await feedApi.commentOnPost(post.id, commentText, parentCommentId);
+      const newComment = await feedApi.commentOnPost(
+        post.id,
+        commentText,
+        parentCommentId,
+      );
 
       if (parentCommentId) {
         // Add reply to parent comment
@@ -459,7 +463,9 @@ export function FeedPostItem({
                           const originalText = commentText;
                           setCommentText(content);
                           setTimeout(() => {
-                            handleComment(parentCommentId).then(resolve).catch(resolve);
+                            handleComment(parentCommentId)
+                              .then(resolve)
+                              .catch(resolve);
                           }, 0);
                         });
                       }}

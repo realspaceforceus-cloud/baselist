@@ -91,10 +91,7 @@ export const NotificationItem = ({
         notification.targetId
       ) {
         navigate(`/listings/${notification.targetId}`);
-      } else if (
-        notification.targetType === "post" &&
-        notification.targetId
-      ) {
+      } else if (notification.targetType === "post" && notification.targetId) {
         navigate(`/feed#post-${notification.targetId}`);
       }
     } catch (error) {

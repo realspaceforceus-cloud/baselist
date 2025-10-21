@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Heart, Trash2, ChevronDown, ChevronUp, BadgeCheck } from "lucide-react";
+import {
+  Heart,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  BadgeCheck,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import type { FeedComment } from "@/types";
 

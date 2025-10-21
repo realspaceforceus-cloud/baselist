@@ -59,7 +59,11 @@ export const feedApi = {
     if (!response.ok) throw new Error("Failed to like post");
   },
 
-  async commentOnPost(postId: string, content: string, parentCommentId?: string): Promise<any> {
+  async commentOnPost(
+    postId: string,
+    content: string,
+    parentCommentId?: string,
+  ): Promise<any> {
     const response = await fetch(
       `/.netlify/functions/feed/posts/${postId}/comment`,
       {

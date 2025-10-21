@@ -618,7 +618,11 @@ export const handler: Handler = async (event) => {
           } catch (err) {
             console.error("[FEED] Error creating reply notification:", err);
           }
-        } else if (!parentCommentId && postResult.rows[0] && postResult.rows[0].user_id !== userId) {
+        } else if (
+          !parentCommentId &&
+          postResult.rows[0] &&
+          postResult.rows[0].user_id !== userId
+        ) {
           // This is a top-level comment - notify the post author
           console.log("[FEED] Creating post_commented notification", {
             postAuthorId: postResult.rows[0].user_id,
@@ -642,10 +646,15 @@ export const handler: Handler = async (event) => {
             console.error("[FEED] Error creating notification:", err);
           }
         } else {
-          console.log("[FEED] Skipping notification - self-comment or no parent", {
-            isReply: !!parentCommentId,
-            isSameUser: parentAuthorId === userId || postResult.rows[0]?.user_id === userId,
-          });
+          console.log(
+            "[FEED] Skipping notification - self-comment or no parent",
+            {
+              isReply: !!parentCommentId,
+              isSameUser:
+                parentAuthorId === userId ||
+                postResult.rows[0]?.user_id === userId,
+            },
+          );
         }
 
         return {
@@ -1013,7 +1022,10 @@ export const handler: Handler = async (event) => {
             [commentId],
           );
 
-          if (commentResult.rows[0] && commentResult.rows[0].user_id !== userId) {
+          if (
+            commentResult.rows[0] &&
+            commentResult.rows[0].user_id !== userId
+          ) {
             const liker = await client.query(
               "SELECT username FROM users WHERE id = $1",
               [userId],
