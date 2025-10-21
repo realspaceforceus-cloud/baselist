@@ -125,4 +125,50 @@ export const feedApi = {
     if (!response.ok) throw new Error("Failed to create announcement");
     return response.json();
   },
+
+  async deletePost(postId: string): Promise<void> {
+    const response = await fetch(
+      `/.netlify/functions/feed/posts/${postId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
+    if (!response.ok) throw new Error("Failed to delete post");
+  },
+
+  async reportPost(postId: string, reason: string): Promise<void> {
+    const response = await fetch(
+      `/.netlify/functions/feed/posts/${postId}/report`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason }),
+      },
+    );
+    if (!response.ok) throw new Error("Failed to report post");
+  },
+
+  async deleteComment(postId: string, commentId: string): Promise<void> {
+    const response = await fetch(
+      `/.netlify/functions/feed/posts/${postId}/comments/${commentId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
+    if (!response.ok) throw new Error("Failed to delete comment");
+  },
+
+  async likeComment(postId: string, commentId: string): Promise<void> {
+    const response = await fetch(
+      `/.netlify/functions/feed/posts/${postId}/comments/${commentId}/like`,
+      {
+        method: "POST",
+        credentials: "include",
+      },
+    );
+    if (!response.ok) throw new Error("Failed to like comment");
+  },
 };
