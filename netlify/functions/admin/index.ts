@@ -110,64 +110,53 @@ export const handler: Handler = async (event) => {
       const limit = 25;
       const offset = (page - 1) * limit;
 
-      let query = `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt",
-                updated_at as "updatedAt", dow_verified_at as "dowVerifiedAt", last_login_at as "lastLoginAt",
-                remember_device_until as "rememberDeviceUntil", avatar_url as "avatarUrl", join_method as "joinMethod"
-         FROM users`;
+      // Simple query - just the essential columns that definitely exist
+      const whereClause = search
+        ? ` WHERE (username ILIKE $1 OR email ILIKE $1 OR base_id ILIKE $1)`
+        : "";
+      const searchParams = search ? [`%${search}%`] : [];
 
-      const params: any[] = [];
-
-      if (search) {
-        query += ` WHERE (username ILIKE $1 OR email ILIKE $1 OR base_id ILIKE $1)`;
-        params.push(`%${search}%`);
-      }
-
-      // Build count query by extracting the FROM clause
-      const fromIndex = query.indexOf(" FROM");
-      const countQuery =
-        fromIndex >= 0
-          ? `SELECT COUNT(*) as count ${query.substring(fromIndex)}`
-          : `SELECT COUNT(*) as count FROM users`;
+      // Count total
       let total = 0;
       try {
-        const countResult = await client.query(countQuery, params);
-        total =
-          countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0;
-      } catch (countErr) {
-        // If count query fails, just continue without pagination
-        console.error("Count query error:", countErr);
-        total = 0;
+        const countResult = await client.query(
+          `SELECT COUNT(*) as count FROM users${whereClause}`,
+          searchParams,
+        );
+        total = parseInt(countResult.rows[0]?.count ?? 0);
+      } catch (err) {
+        console.error("Count error:", err);
       }
 
-      query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-      params.push(limit, offset);
-
+      // Fetch users
       let result: any;
       try {
-        result = await client.query(query, params);
-      } catch (queryErr) {
-        console.error("Users query error:", queryErr);
-        // Fallback to basic query without extra fields
-        const basicQuery = `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt"
-           FROM users`;
-        const basicParams: any[] = [];
-        let basicSql = basicQuery;
-
-        if (search) {
-          basicSql += ` WHERE (username ILIKE $1 OR email ILIKE $1 OR base_id ILIKE $1)`;
-          basicParams.push(`%${search}%`);
-        }
-
-        basicSql += ` ORDER BY created_at DESC LIMIT $${basicParams.length + 1} OFFSET $${basicParams.length + 2}`;
-        basicParams.push(limit, offset);
-
-        result = await client.query(basicSql, basicParams);
+        result = await client.query(
+          `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt",
+                  dow_verified_at as "dowVerifiedAt", avatar_url as "avatarUrl"
+           FROM users${whereClause}
+           ORDER BY created_at DESC LIMIT $${searchParams.length + 1} OFFSET $${searchParams.length + 2}`,
+          [...searchParams, limit, offset],
+        );
+      } catch (err) {
+        console.error("Users query error:", err);
+        result = { rows: [] };
       }
 
       return {
         statusCode: 200,
         body: JSON.stringify({
-          users: result.rows,
+          users: result.rows.map((row: any) => ({
+            id: row.id,
+            username: row.username,
+            email: row.email,
+            role: row.role,
+            status: row.status,
+            baseId: row.baseId,
+            createdAt: row.createdAt,
+            dowVerifiedAt: row.dowVerifiedAt,
+            avatarUrl: row.avatarUrl,
+          })),
           pagination: {
             page,
             limit,
