@@ -349,53 +349,55 @@ export const BaseListProvider = ({
   // Note: Session persistence is now handled by cookies (managed by AuthProvider)
   // No localStorage used for auth state - it's all cookie-based
 
-  // Fetch bases from the database on mount
-  useEffect(() => {
-    const fetchBases = async () => {
-      // On dev server, skip fetching and use mock data
-      if (import.meta.env.DEV) {
-        setBases(BASES);
-        return;
+  // Fetch bases from the database
+  const fetchBases = useCallback(async () => {
+    // On dev server, skip fetching and use mock data
+    if (import.meta.env.DEV) {
+      setBases(BASES);
+      return;
+    }
+
+    try {
+      const response = await fetch("/.netlify/functions/bases");
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error(
+          `Failed to fetch bases: HTTP ${response.status}`,
+          text.substring(0, 200),
+        );
+        throw new Error(`HTTP ${response.status}`);
       }
 
-      try {
-        const response = await fetch("/.netlify/functions/bases");
-
-        if (!response.ok) {
-          const text = await response.text();
-          console.error(
-            `Failed to fetch bases: HTTP ${response.status}`,
-            text.substring(0, 200),
-          );
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          console.error(
-            "Invalid content type:",
-            contentType,
-            "Response:",
-            text.substring(0, 200),
-          );
-          throw new Error("Invalid content type");
-        }
-
-        const basesData = await response.json();
-        if (Array.isArray(basesData) && basesData.length > 0) {
-          setBases(basesData);
-        } else {
-          console.warn("No bases returned from API:", basesData);
-          throw new Error("No bases returned from API");
-        }
-      } catch (error) {
-        console.error("Failed to fetch bases from database:", error);
-        // Don't throw - app should continue loading even if bases fetch fails
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error(
+          "Invalid content type:",
+          contentType,
+          "Response:",
+          text.substring(0, 200),
+        );
+        throw new Error("Invalid content type");
       }
-    };
-    fetchBases();
+
+      const basesData = await response.json();
+      if (Array.isArray(basesData) && basesData.length > 0) {
+        setBases(basesData);
+      } else {
+        console.warn("No bases returned from API:", basesData);
+        throw new Error("No bases returned from API");
+      }
+    } catch (error) {
+      console.error("Failed to fetch bases from database:", error);
+      // Don't throw - app should continue loading even if bases fetch fails
+    }
   }, []);
+
+  // Fetch bases on mount
+  useEffect(() => {
+    fetchBases();
+  }, [fetchBases]);
 
   // Fetch listings from the database
   useEffect(() => {
