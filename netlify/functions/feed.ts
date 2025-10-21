@@ -526,10 +526,16 @@ export const handler: Handler = async (event) => {
   } catch (err) {
     const errorMsg =
       err instanceof Error ? err.message : "Internal server error";
+    const errorStack =
+      err instanceof Error ? err.stack : "No stack trace available";
+    console.error("[FEED ERROR]", errorMsg, errorStack);
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: errorMsg }),
+      body: JSON.stringify({
+        error: errorMsg,
+        stack: process.env.NODE_ENV === "development" ? errorStack : undefined
+      }),
     };
   }
 };
