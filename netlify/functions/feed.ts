@@ -591,6 +591,231 @@ export const handler: Handler = async (event) => {
       }
     }
 
+    // DELETE /feed/posts/:postId
+    if (method === "DELETE" && path.match(/^\/posts\/[^/]+$/)) {
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const postId = path.split("/")[2];
+      const client = await pool.connect();
+
+      try {
+        const postResult = await client.query(
+          "SELECT user_id, base_id FROM feed_posts WHERE id = $1",
+          [postId],
+        );
+
+        if (postResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Post not found" }),
+          };
+        }
+
+        const post = postResult.rows[0];
+        const isAuthor = userId === post.user_id;
+
+        const userResult = await client.query(
+          "SELECT role FROM users WHERE id = $1",
+          [userId],
+        );
+
+        const isAdmin =
+          userResult.rows.length > 0 &&
+          ["admin", "moderator"].includes(userResult.rows[0].role);
+
+        if (!isAuthor && !isAdmin) {
+          return {
+            statusCode: 403,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              error: "You can only delete your own posts",
+            }),
+          };
+        }
+
+        await client.query("UPDATE feed_posts SET deleted_at = NOW() WHERE id = $1", [postId]);
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } finally {
+        client.release();
+      }
+    }
+
+    // POST /feed/posts/:postId/report
+    if (method === "POST" && path.match(/^\/posts\/[^/]+\/report$/)) {
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const postId = path.split("/")[2];
+      const { reason } = JSON.parse(event.body || "{}");
+
+      if (!reason) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Report reason is required" }),
+        };
+      }
+
+      const client = await pool.connect();
+
+      try {
+        const reportId = randomUUID();
+        await client.query(
+          `INSERT INTO feed_reports (id, post_id, user_id, reason, created_at)
+           VALUES ($1, $2, $3, $4, NOW())`,
+          [reportId, postId, userId, reason],
+        );
+
+        return {
+          statusCode: 201,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } catch (e) {
+        console.error("[FEED] Error creating report:", e);
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } finally {
+        client.release();
+      }
+    }
+
+    // DELETE /feed/posts/:postId/comments/:commentId
+    if (method === "DELETE" && path.match(/^\/posts\/[^/]+\/comments\/[^/]+$/)) {
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const pathParts = path.split("/");
+      const postId = pathParts[2];
+      const commentId = pathParts[4];
+
+      const client = await pool.connect();
+
+      try {
+        const commentResult = await client.query(
+          "SELECT user_id FROM feed_engagement WHERE id = $1 AND engagement_type = 'comment'",
+          [commentId],
+        );
+
+        if (commentResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Comment not found" }),
+          };
+        }
+
+        const comment = commentResult.rows[0];
+        const isAuthor = userId === comment.user_id;
+
+        const userResult = await client.query(
+          "SELECT role FROM users WHERE id = $1",
+          [userId],
+        );
+
+        const isAdmin =
+          userResult.rows.length > 0 &&
+          ["admin", "moderator"].includes(userResult.rows[0].role);
+
+        if (!isAuthor && !isAdmin) {
+          return {
+            statusCode: 403,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              error: "You can only delete your own comments",
+            }),
+          };
+        }
+
+        await client.query(
+          "UPDATE feed_engagement SET deleted_at = NOW() WHERE id = $1",
+          [commentId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } finally {
+        client.release();
+      }
+    }
+
+    // POST /feed/posts/:postId/comments/:commentId/like
+    if (method === "POST" && path.match(/^\/posts\/[^/]+\/comments\/[^/]+\/like$/)) {
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const pathParts = path.split("/");
+      const commentId = pathParts[4];
+
+      const client = await pool.connect();
+
+      try {
+        const existing = await client.query(
+          `SELECT id FROM feed_comment_likes WHERE comment_id = $1 AND user_id = $2`,
+          [commentId, userId],
+        );
+
+        if (existing.rows.length > 0) {
+          await client.query(
+            "DELETE FROM feed_comment_likes WHERE comment_id = $1 AND user_id = $2",
+            [commentId, userId],
+          );
+        } else {
+          const likeId = randomUUID();
+          await client.query(
+            `INSERT INTO feed_comment_likes (id, comment_id, user_id, created_at)
+             VALUES ($1, $2, $3, NOW())`,
+            [likeId, commentId, userId],
+          );
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } finally {
+        client.release();
+      }
+    }
+
     return {
       statusCode: 404,
       headers: { "Content-Type": "application/json" },
