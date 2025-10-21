@@ -127,6 +127,7 @@ export const handler: Handler = async (event) => {
       if (!title || !category || !baseId || !sellerId) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Missing required fields" }),
         };
       }
@@ -159,6 +160,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(transformListing(result.rows[0])),
       };
     } catch (err) {
@@ -166,6 +168,7 @@ export const handler: Handler = async (event) => {
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
