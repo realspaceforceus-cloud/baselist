@@ -49,6 +49,7 @@ export const ReportsSection = () => {
         setReports(reportRecords);
       } catch (error) {
         console.error("Failed to load reports:", error);
+        toast.error("Failed to load reports");
         setReports([]);
       } finally {
         setIsLoading(false);
