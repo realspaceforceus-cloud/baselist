@@ -57,7 +57,7 @@ export const VerificationSection = () => {
             label: ".mil Verified",
             count: verifications.filter((d) => d.method === ".mil").length,
             description: "Auto-approved via allow list",
-            icon: (await import("lucide-react")).MailCheck,
+            icon: MailCheck,
           },
           {
             id: "invite",
@@ -65,14 +65,14 @@ export const VerificationSection = () => {
             count: verifications.filter((d) => d.method === "Invite Code")
               .length,
             description: "Moderator review required",
-            icon: (await import("lucide-react")).Users,
+            icon: Users,
           },
           {
             id: "id",
             label: "ID Review",
             count: verifications.filter((d) => d.method === "ID Review").length,
             description: "Manual review required",
-            icon: (await import("lucide-react")).FileX,
+            icon: FileX,
           },
         ]);
       } catch (error) {
