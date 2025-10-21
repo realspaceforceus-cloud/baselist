@@ -755,6 +755,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -770,6 +771,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ attempts: result.rows }),
       };
     }
@@ -779,6 +781,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -789,6 +792,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ blacklist: result.rows }),
       };
     }
@@ -798,6 +802,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -807,6 +812,7 @@ export const handler: Handler = async (event) => {
       if (!ipAddress || !reason) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "ipAddress and reason are required" }),
         };
       }
@@ -825,6 +831,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entry: result.rows[0] }),
       };
     }
@@ -834,6 +841,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -844,6 +852,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ success: true }),
       };
     }
@@ -853,6 +862,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -863,6 +873,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ threads: result.rows }),
       };
     }
@@ -872,6 +883,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -882,6 +894,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ threads: result.rows }),
       };
     }
