@@ -45,29 +45,8 @@ export function FeedComposer({
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const signature = await cloudinaryClient.getSignature();
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("api_key", "765912238265989");
-        formData.append("signature", signature.signature);
-        formData.append("timestamp", signature.timestamp.toString());
-        formData.append("cloud_name", "dc4qnchym");
-
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/dc4qnchym/image/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to upload image");
-        }
-
-        const result = await response.json();
-        newImages.push(result.secure_url);
+        const url = await uploadImageToCloudinary(file);
+        newImages.push(url);
       }
 
       setUploadedImages([...uploadedImages, ...newImages]);
