@@ -59,7 +59,7 @@ export const handler: Handler = async (event) => {
         `INSERT INTO reports (id, type, reporter_id, target_type, target_id, base_id, notes, status, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
          RETURNING *`,
-        [reportId, type, userIdHeader, targetType, targetId, baseId, notes, "open"],
+        [reportId, type, userId, targetType, targetId, baseId, notes, "open"],
       );
 
       return {
