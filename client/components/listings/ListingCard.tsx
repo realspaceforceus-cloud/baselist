@@ -67,7 +67,9 @@ export const ListingCard = ({
           </h3>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-primary">{priceLabel}</span>
+              <span className="text-2xl font-bold text-primary">
+                {priceLabel}
+              </span>
             </div>
             {listing.category === "Vehicles" && listing.vehicleMiles && (
               <p className="text-sm font-semibold text-muted-foreground mt-1">

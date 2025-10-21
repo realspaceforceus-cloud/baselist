@@ -23,7 +23,11 @@ interface VehicleFilters {
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
 
 // Wrapper component to fetch and pass seller data
-const ListingCardWithSeller = ({ listing }: { listing: Listing }): JSX.Element => {
+const ListingCardWithSeller = ({
+  listing,
+}: {
+  listing: Listing;
+}): JSX.Element => {
   const [seller, setSeller] = useState<UserProfile | null>(null);
 
   useEffect(() => {
@@ -33,7 +37,7 @@ const ListingCardWithSeller = ({ listing }: { listing: Listing }): JSX.Element =
       try {
         const response = await fetch(
           `/.netlify/functions/users/${listing.sellerId}`,
-          { credentials: "include" }
+          { credentials: "include" },
         );
         if (response.ok) {
           const data = await response.json();
