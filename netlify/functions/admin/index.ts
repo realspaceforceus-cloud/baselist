@@ -2054,36 +2054,56 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period =
-        new URLSearchParams(event.rawQueryString).get("period") || "24h";
-      let dateFilter = "1=1";
+      try {
+        const period =
+          new URLSearchParams(event.rawQueryString).get("period") || "24h";
+        let dateFilter = "1=1";
 
-      if (period === "24h") {
-        dateFilter = `tm.created_at >= NOW() - INTERVAL '24 hours'`;
-      } else if (period === "7d") {
-        dateFilter = `tm.created_at >= NOW() - INTERVAL '7 days'`;
-      } else if (period === "30d") {
-        dateFilter = `tm.created_at >= NOW() - INTERVAL '30 days'`;
-      } else if (period === "90d") {
-        dateFilter = `tm.created_at >= NOW() - INTERVAL '90 days'`;
+        if (period === "24h") {
+          dateFilter = `tm.created_at >= NOW() - INTERVAL '24 hours'`;
+        } else if (period === "7d") {
+          dateFilter = `tm.created_at >= NOW() - INTERVAL '7 days'`;
+        } else if (period === "30d") {
+          dateFilter = `tm.created_at >= NOW() - INTERVAL '30 days'`;
+        } else if (period === "90d") {
+          dateFilter = `tm.created_at >= NOW() - INTERVAL '90 days'`;
+        }
+
+        let totalResult = { rows: [{ total: 0 }] };
+        let completedCount = { rows: [{ count: 0 }] };
+
+        try {
+          totalResult = await client.query(
+            `SELECT COALESCE(SUM(amount), 0) as total FROM transaction_metrics WHERE ${dateFilter}`,
+          );
+        } catch (err) {
+          console.error("Revenue total query error:", err);
+        }
+
+        try {
+          completedCount = await client.query(
+            `SELECT COUNT(*) as count FROM transactions WHERE status = 'completed' AND completed_at >= NOW() - INTERVAL '24 hours'`,
+          );
+        } catch (err) {
+          console.error("Completed transactions query error:", err);
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            totalRevenue: parseFloat(totalResult.rows[0]?.total ?? 0),
+            completedTransactions: parseInt(completedCount.rows[0]?.count ?? 0),
+          }),
+        };
+      } catch (error) {
+        console.error("Revenue endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch revenue metrics" }),
+        };
       }
-
-      const totalResult = await client.query(
-        `SELECT COALESCE(SUM(amount), 0) as total FROM transaction_metrics WHERE ${dateFilter}`,
-      );
-
-      const completedCount = await client.query(
-        `SELECT COUNT(*) as count FROM transactions WHERE status = 'completed' AND completed_at >= NOW() - INTERVAL '24 hours'`,
-      );
-
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          totalRevenue: parseFloat(totalResult.rows[0]?.total ?? 0),
-          completedTransactions: parseInt(completedCount.rows[0]?.count ?? 0),
-        }),
-      };
     }
 
     // GET /api/admin/analytics/peak-activity
