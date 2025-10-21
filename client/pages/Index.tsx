@@ -244,6 +244,7 @@ const Index = (): JSX.Element => {
           <VehicleFilterBar
             filters={vehicleFilters}
             onFiltersChange={setVehicleFilters}
+            availableOptions={vehicleOptions}
           />
         )}
       </div>
