@@ -712,7 +712,10 @@ const Post = (): JSX.Element => {
                   Color
                 </label>
                 <Select value={vehicleColor} onValueChange={setVehicleColor}>
-                  <SelectTrigger id="vehicle-color" className="h-10 rounded-2xl">
+                  <SelectTrigger
+                    id="vehicle-color"
+                    className="h-10 rounded-2xl"
+                  >
                     <SelectValue placeholder="Select color" />
                   </SelectTrigger>
                   <SelectContent>

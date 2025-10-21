@@ -53,7 +53,9 @@ export const extractVehicleOptions = (listings: Listing[]): VehicleOptions => {
     }),
     makes: Array.from(makes).sort(),
     models: Array.from(models).sort(),
-    types: Array.from(types).length > 0 ? Array.from(types).sort() : defaultTypes,
-    colors: Array.from(colors).length > 0 ? Array.from(colors).sort() : defaultColors,
+    types:
+      Array.from(types).length > 0 ? Array.from(types).sort() : defaultTypes,
+    colors:
+      Array.from(colors).length > 0 ? Array.from(colors).sort() : defaultColors,
   };
 };
