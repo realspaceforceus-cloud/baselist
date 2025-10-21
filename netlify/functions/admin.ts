@@ -149,8 +149,15 @@ export const handler: Handler = async (event) => {
 
     // PATCH /api/admin/users/:id
     if (method === "PATCH" && path.startsWith("/users/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
       const userId = path.replace("/users/", "");
-      const { status, role, verify, reason } = JSON.parse(event.body || "{}");
+      const { status, role, verify, reason, strikeType, strikeDescription } = JSON.parse(event.body || "{}");
 
       const user = await client.query("SELECT * FROM users WHERE id = $1", [
         userId,
@@ -179,6 +186,23 @@ export const handler: Handler = async (event) => {
         );
       }
 
+      // Add strike if requested
+      if (strikeType && strikeDescription) {
+        await client.query(
+          `INSERT INTO account_notes (id, user_id, created_by, note_type, strike_reason, description, severity)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [
+            `note-${Date.now()}`,
+            userId,
+            auth.userId,
+            "strike",
+            strikeType,
+            strikeDescription,
+            "critical",
+          ],
+        );
+      }
+
       const updated = await client.query("SELECT * FROM users WHERE id = $1", [
         userId,
       ]);
@@ -193,6 +217,7 @@ export const handler: Handler = async (event) => {
             role: u.role,
             status: u.status,
             dowVerifiedAt: u.dow_verified_at,
+            joinMethod: u.join_method,
           },
         }),
       };
