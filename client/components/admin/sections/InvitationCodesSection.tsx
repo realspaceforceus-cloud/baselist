@@ -187,9 +187,8 @@ export const InvitationCodesSection = ({
     if (!confirm("Are you sure you want to delete this code?")) return;
 
     try {
-      if (onDeleteCode) {
-        await onDeleteCode(codeId);
-      }
+      const deleteFn = onDeleteCode || adminApi.deleteInvitationCode;
+      await deleteFn(codeId);
       toast.success("Code deleted");
       await loadCodes();
     } catch (error) {
