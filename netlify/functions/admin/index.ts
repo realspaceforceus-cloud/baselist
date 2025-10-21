@@ -1977,9 +1977,11 @@ export const handler: Handler = async (event) => {
       } catch (error) {
         console.error("Bases by users endpoint error:", error);
         return {
-          statusCode: 500,
+          statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Failed to fetch bases by users" }),
+          body: JSON.stringify({
+            bases: [],
+          }),
         };
       }
     }
