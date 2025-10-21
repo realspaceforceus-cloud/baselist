@@ -124,6 +124,14 @@ export const InvitationCodesSection = ({
           formData.expiresAt || undefined,
           formData.description || undefined,
         );
+      } else {
+        await adminApi.createInvitationCode(
+          formData.code,
+          selectedBase,
+          formData.maxUses ? parseInt(formData.maxUses) : undefined,
+          formData.expiresAt || undefined,
+          formData.description || undefined,
+        );
       }
       toast.success("Invitation code created");
       setFormData({ code: "", maxUses: "", expiresAt: "", description: "" });
@@ -134,6 +142,44 @@ export const InvitationCodesSection = ({
       console.error(error);
     } finally {
       setIsCreating(false);
+    }
+  };
+
+  const handleEditCode = (code: InvitationCode) => {
+    setEditingId(code.id);
+    setEditFormData({
+      code: code.code,
+      maxUses: code.maxUses?.toString() || "",
+      expiresAt: code.expiresAt?.split("T")[0] || "",
+      description: code.description || "",
+      active: code.active,
+    });
+  };
+
+  const handleUpdateCode = async () => {
+    if (!editingId || !editFormData.code) {
+      toast.error("Code is required");
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const updateFn = onUpdateCode || adminApi.updateInvitationCode;
+      await updateFn(editingId, {
+        code: editFormData.code,
+        maxUses: editFormData.maxUses ? parseInt(editFormData.maxUses) : undefined,
+        expiresAt: editFormData.expiresAt || undefined,
+        description: editFormData.description || undefined,
+        active: editFormData.active,
+      });
+      toast.success("Code updated");
+      setEditingId(null);
+      await loadCodes();
+    } catch (error) {
+      toast.error("Failed to update code");
+      console.error(error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
