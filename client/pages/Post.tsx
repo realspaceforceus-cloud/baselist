@@ -35,7 +35,9 @@ const MAX_PHOTOS = 6;
 
 const Post = (): JSX.Element => {
   const navigate = useNavigate();
-  const { currentBase, currentBaseId, user, addListing } = useBaseList();
+  const [searchParams] = useSearchParams();
+  const { currentBase, currentBaseId, user, addListing, listings } = useBaseList();
+  const editListingId = searchParams.get("edit");
 
   const [photos, setPhotos] = useState<PhotoPreview[]>([]);
   const [title, setTitle] = useState("");
