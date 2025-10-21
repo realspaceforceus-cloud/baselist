@@ -26,6 +26,7 @@ interface VehicleFilterBarProps {
 export const VehicleFilterBar = ({
   filters,
   onFiltersChange,
+  availableOptions,
 }: VehicleFilterBarProps): JSX.Element => {
   const handleClear = () => {
     onFiltersChange({
