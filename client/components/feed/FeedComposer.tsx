@@ -49,7 +49,7 @@ export function FeedComposer({
           .map((opt) => ({
             id: Math.random().toString(36).substr(2, 9),
             text: opt,
-            votes: 0,
+            votes: [],
           }));
 
         if (pollOpts.length < 2) {
