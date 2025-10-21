@@ -22,6 +22,7 @@ export const handler: Handler = async (event) => {
       if (!userId) {
         return {
           statusCode: 401,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Unauthorized" }),
         };
       }
@@ -29,6 +30,7 @@ export const handler: Handler = async (event) => {
       if (!targetType || !targetId || !type || !notes) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Missing required fields" }),
         };
       }
@@ -64,6 +66,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ success: true, reportId }),
       };
     } catch (err) {
@@ -71,6 +74,7 @@ export const handler: Handler = async (event) => {
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
@@ -80,6 +84,7 @@ export const handler: Handler = async (event) => {
 
   return {
     statusCode: 404,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ error: "Not found" }),
   };
 };
