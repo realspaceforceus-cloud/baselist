@@ -411,14 +411,26 @@ export const BasesSection = () => {
                     )}
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditBase(base)}
-                      className="h-8 w-8 p-0 rounded-lg"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditBase(base)}
+                        className="h-8 w-8 p-0 rounded-lg"
+                        title="Edit base"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteBase(base.id, base.name)}
+                        className="h-8 w-8 p-0 rounded-lg text-destructive hover:bg-destructive/10"
+                        title="Delete base"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
