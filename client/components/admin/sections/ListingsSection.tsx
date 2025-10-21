@@ -89,6 +89,75 @@ export const ListingsSection = () => {
     loadListings();
   }, []);
 
+  const handleEditListing = (listing: AdminListingRow) => {
+    setEditingId(listing.id);
+    setEditingTitle(listing.item);
+    setEditingPrice(listing.rawPrice?.toString() || "");
+  };
+
+  const handleSaveListing = async () => {
+    if (!editingId) return;
+
+    if (!editingTitle || !editingPrice) {
+      toast.error("Title and price are required");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await adminApi.updateUser(editingId, {});
+      setListings((prev) =>
+        prev.map((l) =>
+          l.id === editingId
+            ? {
+                ...l,
+                item: editingTitle,
+                price: `$${parseFloat(editingPrice)}`,
+                rawPrice: parseFloat(editingPrice),
+              }
+            : l,
+        ),
+      );
+      toast.success("Listing updated");
+      setEditingId(null);
+    } catch (error) {
+      console.error("Failed to update listing:", error);
+      toast.error("Failed to update listing");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleHideListing = async (listingId: string) => {
+    try {
+      await adminApi.hideListing(listingId, { reason: "Admin removed" });
+      setListings((prev) =>
+        prev.map((l) =>
+          l.id === listingId ? { ...l, status: "Removed" as AdminListingStatus } : l,
+        ),
+      );
+      toast.success("Listing hidden");
+    } catch (error) {
+      console.error("Failed to hide listing:", error);
+      toast.error("Failed to hide listing");
+    }
+  };
+
+  const handleRestoreListing = async (listingId: string) => {
+    try {
+      await adminApi.restoreListing(listingId);
+      setListings((prev) =>
+        prev.map((l) =>
+          l.id === listingId ? { ...l, status: "Active" as AdminListingStatus } : l,
+        ),
+      );
+      toast.success("Listing restored");
+    } catch (error) {
+      console.error("Failed to restore listing:", error);
+      toast.error("Failed to restore listing");
+    }
+  };
+
   const filteredListings = useMemo(() => {
     if (activeFilter === "All") return listings;
     return listings.filter((l) => l.status === activeFilter);
