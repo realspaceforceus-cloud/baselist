@@ -24,10 +24,10 @@ export const handler: Handler = async (event) => {
     // GET /api/saved-listings - get user's saved listings
     if (method === "GET" && path === "") {
       const result = await client.query(
-        `SELECT listing_id FROM saved_listings 
-         WHERE user_id = $1 
+        `SELECT listing_id FROM saved_listings
+         WHERE user_id = $1
          ORDER BY created_at DESC`,
-        [userIdHeader],
+        [userId],
       );
 
       return {
@@ -44,9 +44,9 @@ export const handler: Handler = async (event) => {
 
       // Check if already saved
       const existingResult = await client.query(
-        `SELECT id FROM saved_listings 
+        `SELECT id FROM saved_listings
          WHERE user_id = $1 AND listing_id = $2`,
-        [userIdHeader, listingId],
+        [userId, listingId],
       );
 
       if (existingResult.rows.length > 0) {
@@ -61,7 +61,7 @@ export const handler: Handler = async (event) => {
         `INSERT INTO saved_listings (id, user_id, listing_id, created_at)
          VALUES ($1, $2, $3, NOW())
          RETURNING *`,
-        [randomUUID(), userIdHeader, listingId],
+        [randomUUID(), userId, listingId],
       );
 
       return {
@@ -75,9 +75,9 @@ export const handler: Handler = async (event) => {
       const listingId = path.slice(1);
 
       const result = await client.query(
-        `DELETE FROM saved_listings 
+        `DELETE FROM saved_listings
          WHERE user_id = $1 AND listing_id = $2`,
-        [userIdHeader, listingId],
+        [userId, listingId],
       );
 
       return {
