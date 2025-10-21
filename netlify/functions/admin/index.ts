@@ -387,6 +387,95 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // GET /api/admin/listings/:id/detail
+    if (
+      method === "GET" &&
+      path.startsWith("/listings/") &&
+      path.includes("/detail")
+    ) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const listingId = path.replace("/listings/", "").replace("/detail", "");
+
+        const listingResult = await client.query(
+          `SELECT l.*, u.username as seller_username, b.name as base_name FROM listings l
+           LEFT JOIN users u ON l.seller_id = u.id
+           LEFT JOIN bases b ON l.base_id = b.id
+           WHERE l.id = $1`,
+          [listingId],
+        );
+
+        if (listingResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Listing not found" }),
+          };
+        }
+
+        const listing = listingResult.rows[0];
+
+        // Get reports for this listing
+        const reportsResult = await client.query(
+          `SELECT * FROM reports WHERE target_type = 'listing' AND target_id = $1 ORDER BY created_at DESC`,
+          [listingId],
+        );
+
+        // Get messages related to this listing
+        const messagesResult = await client.query(
+          `SELECT COUNT(*) as count FROM message_threads WHERE listing_id = $1`,
+          [listingId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            listing: {
+              id: listing.id,
+              title: listing.title,
+              description: listing.description,
+              price: listing.price,
+              isFree: listing.is_free,
+              category: listing.category,
+              status: listing.status,
+              sellerId: listing.seller_id,
+              sellerUsername: listing.seller_username,
+              baseId: listing.base_id,
+              baseName: listing.base_name,
+              imageUrls: listing.image_urls,
+              promoted: listing.promoted,
+              createdAt: listing.created_at,
+              updatedAt: listing.updated_at,
+            },
+            reports: reportsResult.rows.map((row: any) => ({
+              id: row.id,
+              type: row.report_type,
+              status: row.status,
+              description: row.description,
+              reportedBy: row.reported_by,
+              createdAt: row.created_at,
+            })),
+            messageThreadCount: parseInt(messagesResult.rows[0]?.count ?? 0),
+          }),
+        };
+      } catch (error) {
+        console.error("Failed to fetch listing detail:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch listing detail" }),
+        };
+      }
+    }
+
     // PATCH /api/admin/listings/:id
     if (method === "PATCH" && path.startsWith("/listings/")) {
       if (!(await isAdmin(auth.userId))) {
