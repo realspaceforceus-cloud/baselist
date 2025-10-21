@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppShell } from "@/components/layout/AppShell";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { BaseListProvider } from "@/context/BaseListContext";
 import { AuthDialogProvider } from "@/context/AuthDialogContext";
 import { SettingsProvider } from "@/context/SettingsContext";
