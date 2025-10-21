@@ -39,12 +39,22 @@ export async function createNotification(
       data = {},
     } = options;
 
+    console.log("[NOTIFICATION_HELPER] Creating notification", {
+      userId,
+      type,
+      title,
+      actorId,
+      targetId,
+      targetType,
+    });
+
+    const notificationId = randomUUID();
     await client.query(
-      `INSERT INTO notifications 
+      `INSERT INTO notifications
        (id, user_id, type, title, description, actor_id, target_id, target_type, data, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())`,
       [
-        randomUUID(),
+        notificationId,
         userId,
         type,
         title,
@@ -55,8 +65,12 @@ export async function createNotification(
         JSON.stringify(data),
       ],
     );
+
+    console.log("[NOTIFICATION_HELPER] Notification created successfully", {
+      notificationId,
+    });
   } catch (err) {
-    console.error("Error creating notification:", err);
+    console.error("[NOTIFICATION_HELPER] Error creating notification:", err);
     throw err;
   } finally {
     client.release();
