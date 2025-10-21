@@ -83,4 +83,29 @@ export const feedApi = {
     );
     if (!response.ok) throw new Error("Failed to dismiss announcement");
   },
+
+  async createAnnouncement(
+    baseId: string,
+    title: string,
+    content: string,
+    imageUrl?: string,
+    isSticky: boolean = false,
+    isDismissible: boolean = true,
+  ): Promise<any> {
+    const response = await fetch("/.netlify/functions/feed/admin/announcements", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        baseId,
+        title,
+        content,
+        imageUrl,
+        isSticky,
+        isDismissible,
+      }),
+    });
+    if (!response.ok) throw new Error("Failed to create announcement");
+    return response.json();
+  },
 };
