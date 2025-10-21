@@ -44,11 +44,15 @@ export const RolesSection = (): JSX.Element => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const loadUsers = async () => {
+    const loadData = async () => {
       setIsLoading(true);
       try {
-        const result = await adminApi.getUsers(1, "");
-        const roleUsers = (result?.users || [])
+        const [usersResult, basesResult] = await Promise.all([
+          adminApi.getUsers(1, ""),
+          adminApi.getBases(),
+        ]);
+
+        const roleUsers = (usersResult?.users || [])
           .filter((u: any) => u.role === "admin" || u.role === "moderator")
           .map((u: any) => ({
             id: u.id,
@@ -59,15 +63,22 @@ export const RolesSection = (): JSX.Element => {
             createdAt: u.createdAt,
           }));
         setUsers(roleUsers);
+
+        const baseOptions = (basesResult?.bases || []).map((b: any) => ({
+          id: b.id,
+          name: b.name,
+        }));
+        setBases(baseOptions);
       } catch (error) {
-        console.error("Failed to load users:", error);
-        toast.error("Failed to load users");
+        console.error("Failed to load data:", error);
+        toast.error("Failed to load users and bases");
         setUsers([]);
+        setBases([]);
       } finally {
         setIsLoading(false);
       }
     };
-    loadUsers();
+    loadData();
   }, []);
 
   const handleEditRole = (user: RoleUser) => {
