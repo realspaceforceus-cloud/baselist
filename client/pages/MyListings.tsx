@@ -110,7 +110,7 @@ export const MyListings = (): JSX.Element => {
     if (listing.pendingOfferId) {
       return { label: "Pending Sale", color: "text-amber-600" };
     }
-    return { label: "Active", color: "text-primary" };
+    return { label: "Active", color: "text-green-600" };
   };
 
   return (
