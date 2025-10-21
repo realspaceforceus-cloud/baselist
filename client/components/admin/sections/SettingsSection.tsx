@@ -220,9 +220,9 @@ export const SettingsSection = (): JSX.Element => {
           </div>
 
           {showPasswordForm ? (
-            <div className="space-y-4 pt-4 border-t">
+            <div className="space-y-4 pt-4 border-t border-border">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Current Password
                 </label>
                 <Input
@@ -237,7 +237,7 @@ export const SettingsSection = (): JSX.Element => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     New Password
                   </label>
                   <Input
@@ -248,11 +248,11 @@ export const SettingsSection = (): JSX.Element => {
                     placeholder="••••••••"
                     className="rounded-lg"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Min 8 characters</p>
+                  <p className="text-xs text-muted-foreground mt-1">Min 8 characters</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Confirm Password
                   </label>
                   <Input
@@ -280,7 +280,7 @@ export const SettingsSection = (): JSX.Element => {
             <Button
               onClick={handleUpdateAdminAccount}
               disabled={isAdminLoading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+              className="flex-1 rounded-lg"
             >
               {isAdminLoading ? "Updating..." : "Update Admin Account"}
             </Button>
@@ -307,12 +307,12 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Website Information */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Website Information
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Website Name
             </label>
             <Input
@@ -323,13 +323,13 @@ export const SettingsSection = (): JSX.Element => {
               placeholder="BaseList"
               className="rounded-lg"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Appears in header and throughout the site
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Website Description
             </label>
             <Textarea
@@ -340,13 +340,13 @@ export const SettingsSection = (): JSX.Element => {
               className="rounded-lg"
               rows={2}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Short tagline or description of your site
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Logo URL
             </label>
             <Input
@@ -357,7 +357,7 @@ export const SettingsSection = (): JSX.Element => {
               placeholder="/logo.png"
               className="rounded-lg"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Path to your website logo image
             </p>
           </div>
@@ -366,13 +366,13 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Contact Information */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Contact Information
         </h3>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Support Email
               </label>
               <Input
@@ -383,13 +383,13 @@ export const SettingsSection = (): JSX.Element => {
                 placeholder="support@yourdomain.com"
                 className="rounded-lg"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 User support email address
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Admin Email
               </label>
               <Input
@@ -400,14 +400,14 @@ export const SettingsSection = (): JSX.Element => {
                 placeholder="admin@yourdomain.com"
                 className="rounded-lg"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Administrator email address
               </p>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Mailing Address
             </label>
             <Textarea
@@ -418,13 +418,13 @@ export const SettingsSection = (): JSX.Element => {
               className="rounded-lg"
               rows={2}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Physical mailing address (shown in footer)
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Phone Number
             </label>
             <Input
@@ -435,7 +435,7 @@ export const SettingsSection = (): JSX.Element => {
               placeholder="+1 (123) 456-7890"
               className="rounded-lg"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Contact phone number (shown in footer)
             </p>
           </div>
@@ -444,13 +444,13 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Social Media */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Social Media Links
         </h3>
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Facebook URL
               </label>
               <Input
@@ -464,7 +464,7 @@ export const SettingsSection = (): JSX.Element => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Twitter URL
               </label>
               <Input
@@ -478,7 +478,7 @@ export const SettingsSection = (): JSX.Element => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Instagram URL
               </label>
               <Input
@@ -491,7 +491,7 @@ export const SettingsSection = (): JSX.Element => {
               />
             </div>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             Leave blank to hide social links in footer
           </p>
         </div>
@@ -499,12 +499,12 @@ export const SettingsSection = (): JSX.Element => {
 
       {/* Footer Settings */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Footer Settings
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Copyright Text
             </label>
             <Input
@@ -515,7 +515,7 @@ export const SettingsSection = (): JSX.Element => {
               placeholder={`© ${new Date().getFullYear()} BaseList. All rights reserved.`}
               className="rounded-lg"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Appears at the bottom of every page
             </p>
           </div>
@@ -534,7 +534,7 @@ export const SettingsSection = (): JSX.Element => {
                 }
                 className="rounded"
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-foreground">
                 Show footer links (Privacy, Terms, Contact, FAQ)
               </span>
             </label>
@@ -543,12 +543,12 @@ export const SettingsSection = (): JSX.Element => {
       </Card>
 
       {/* Save Section */}
-      <div className="flex items-center justify-between pt-6 border-t">
+      <div className="flex items-center justify-between pt-6 border-t border-border">
         <div>
           {isSaved && (
             <div className="flex items-center gap-2 text-green-600">
               <CheckCircle2 className="w-5 h-5" />
-              <span className="text-sm font-medium">All changes saved</span>
+              <span className="text-sm font-medium text-foreground">All changes saved</span>
             </div>
           )}
         </div>
@@ -556,7 +556,7 @@ export const SettingsSection = (): JSX.Element => {
         <Button
           onClick={handleSave}
           disabled={isLoading}
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2"
+          className="rounded-lg flex items-center gap-2"
         >
           <Save className="w-4 h-4" />
           {isLoading ? "Saving..." : "Save Settings"}
@@ -564,9 +564,9 @@ export const SettingsSection = (): JSX.Element => {
       </div>
 
       {/* Info Box */}
-      <div className="flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-blue-800">
+      <div className="flex gap-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+        <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-foreground">
           <p className="font-medium">Changes take effect immediately</p>
           <p>
             All settings are updated across the website as soon as you save.
