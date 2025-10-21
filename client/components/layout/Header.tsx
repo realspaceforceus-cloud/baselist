@@ -10,9 +10,9 @@ import {
   Menu,
   MessageSquare,
   Moon,
-  PlusCircle,
   Search,
   ShieldCheck,
+  ShoppingBag,
   Sun,
   User,
 } from "lucide-react";
