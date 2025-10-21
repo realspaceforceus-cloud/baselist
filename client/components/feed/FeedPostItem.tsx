@@ -61,7 +61,8 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
 
     setIsCommentingLoading(true);
     try {
-      await feedApi.commentOnPost(post.id, commentText);
+      const newComment = await feedApi.commentOnPost(post.id, commentText);
+      setComments([newComment, ...comments]);
       setCommentText("");
       toast.success("Comment added!");
     } catch (error) {
@@ -69,6 +70,81 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
     } finally {
       setIsCommentingLoading(false);
     }
+  };
+
+  const handleDeletePost = async () => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    setIsDeleting(true);
+    try {
+      await feedApi.deletePost(post.id);
+      toast.success("Post deleted");
+      onPostDeleted?.();
+    } catch (error) {
+      toast.error("Failed to delete post");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleReportPost = async () => {
+    if (!user) {
+      toast.error("Please sign in to report");
+      return;
+    }
+
+    const reason = prompt("Why are you reporting this post?");
+    if (!reason) return;
+
+    try {
+      await feedApi.reportPost(post.id, reason);
+      toast.success("Post reported. Thank you for helping keep our community safe.");
+    } catch (error) {
+      toast.error("Failed to report post");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!confirm("Are you sure you want to delete this comment?")) return;
+
+    try {
+      await feedApi.deleteComment(post.id, commentId);
+      setComments(comments.filter(c => c.id !== commentId));
+      toast.success("Comment deleted");
+    } catch (error) {
+      toast.error("Failed to delete comment");
+    }
+  };
+
+  const handleLikeComment = async (commentId: string) => {
+    if (!user) {
+      toast.error("Please sign in to like comments");
+      return;
+    }
+
+    try {
+      await feedApi.likeComment(post.id, commentId);
+      setComments(comments.map(c => {
+        if (c.id === commentId) {
+          const liked = c.userLiked;
+          return {
+            ...c,
+            userLiked: !liked,
+            likes: (c.likes || 0) + (liked ? -1 : 1)
+          };
+        }
+        return c;
+      }));
+    } catch (error) {
+      toast.error("Failed to like comment");
+    }
+  };
+
+  const canDeletePost = user?.id === post.userId || (currentBase && (user?.role === "admin" || user?.role === "moderator"));
+
+  const canDeleteComment = (commentId: string) => {
+    const comment = comments.find(c => c.id === commentId);
+    return user?.id === comment?.userId || (currentBase && (user?.role === "admin" || user?.role === "moderator"));
   };
 
   const handlePollVote = async (optionId: string) => {
