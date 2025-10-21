@@ -161,21 +161,21 @@ export const SettingsSection = (): JSX.Element => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Settings</h2>
+          <p className="text-muted-foreground mt-1">
             Manage your admin account, website information, and contact details
           </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
-          <Info className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">
+        <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
+          <Info className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">
             v{APP_VERSION}
           </span>
         </div>
       </div>
 
       {/* Admin Account Settings */}
-      <Card className="p-6 border-blue-200 bg-blue-50">
+      <Card className="p-6 border-primary/20 bg-primary/5">
         <div className="flex items-center gap-2 mb-4">
           <Lock className="w-5 h-5 text-blue-600" />
           <h3 className="text-lg font-semibold text-gray-900">
