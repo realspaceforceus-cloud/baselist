@@ -155,6 +155,7 @@ type BaseListContextValue = {
   currentBaseId: string;
   currentBase: Base;
   setCurrentBaseId: (baseId: string) => void;
+  refreshBases: () => Promise<void>;
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   clearSearch: () => void;
