@@ -151,7 +151,18 @@ export const handler: Handler = async (event) => {
         console.log("[FEED] GET /posts - Connected to database");
 
         const result = await client.query(
-          `SELECT fp.*,
+          `SELECT
+            fp.id,
+            fp.user_id,
+            fp.base_id,
+            fp.post_type,
+            fp.content,
+            fp.image_urls,
+            fp.poll_options,
+            fp.poll_votes,
+            fp.event_data,
+            fp.created_at,
+            fp.updated_at,
             (SELECT COUNT(*) FROM feed_engagement WHERE post_id = fp.id AND engagement_type = 'like' AND deleted_at IS NULL) as likes,
             (SELECT COUNT(*) FROM feed_engagement WHERE post_id = fp.id AND engagement_type = 'comment' AND deleted_at IS NULL) as comments
            FROM feed_posts fp
