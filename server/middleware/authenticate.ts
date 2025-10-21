@@ -35,26 +35,37 @@ const extractUserIdCookie = (req: Request) => {
 };
 
 export const authenticate = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
+  // First try JWT token (Bearer token or access_token cookie)
   const token = extractBearerToken(req);
-  if (!token) {
-    return next();
-  }
-  const payload = verifyAccessToken(token);
-  if (!payload) {
-    return next();
+  if (token) {
+    const payload = verifyAccessToken(token);
+    if (payload) {
+      const user = store.getUser(payload.sub);
+      if (user) {
+        req.user = {
+          id: user.id,
+          role: user.role,
+          baseId: user.baseId,
+          scope: payload.scope,
+        };
+        return next();
+      }
+    }
   }
 
-  const user = store.getUser(payload.sub);
-  if (!user) {
-    return next();
+  // Fall back to userId cookie (set by auth endpoint)
+  const userId = extractUserIdCookie(req);
+  if (userId) {
+    const user = store.getUser(userId);
+    if (user) {
+      req.user = {
+        id: user.id,
+        role: user.role,
+        baseId: user.baseId,
+      };
+      return next();
+    }
   }
-
-  req.user = {
-    id: user.id,
-    role: user.role,
-    baseId: user.baseId,
-    scope: payload.scope,
-  };
 
   return next();
 };
