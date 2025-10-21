@@ -73,7 +73,10 @@ const Index = (): JSX.Element => {
 
       // Apply vehicle filters only if viewing Vehicles category
       if (activeFilter === "Vehicles" && listing.category === "Vehicles") {
-        if (vehicleFilters.year && listing.vehicleYear !== vehicleFilters.year) {
+        if (
+          vehicleFilters.year &&
+          listing.vehicleYear !== vehicleFilters.year
+        ) {
           return false;
         }
         if (
@@ -94,7 +97,10 @@ const Index = (): JSX.Element => {
         ) {
           return false;
         }
-        if (vehicleFilters.type && listing.vehicleType !== vehicleFilters.type) {
+        if (
+          vehicleFilters.type &&
+          listing.vehicleType !== vehicleFilters.type
+        ) {
           return false;
         }
         if (

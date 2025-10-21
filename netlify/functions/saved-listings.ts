@@ -91,7 +91,8 @@ export const handler: Handler = async (event) => {
       body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : "Internal server error";
+    const errorMsg =
+      err instanceof Error ? err.message : "Internal server error";
     return {
       statusCode: 400,
       body: JSON.stringify({ error: errorMsg }),

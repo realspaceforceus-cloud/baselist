@@ -77,7 +77,9 @@ export const VehicleFilterBar = ({
   return (
     <div className="space-y-4 rounded-3xl border border-border bg-card p-6 shadow-card">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">Vehicle Filters</h3>
+        <h3 className="text-lg font-semibold text-foreground">
+          Vehicle Filters
+        </h3>
         {hasActiveFilters && (
           <button
             type="button"
@@ -91,7 +93,10 @@ export const VehicleFilterBar = ({
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground" htmlFor="filter-year">
+          <label
+            className="text-sm font-medium text-foreground"
+            htmlFor="filter-year"
+          >
             Year
           </label>
           <Input
@@ -107,7 +112,10 @@ export const VehicleFilterBar = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground" htmlFor="filter-make">
+          <label
+            className="text-sm font-medium text-foreground"
+            htmlFor="filter-make"
+          >
             Make
           </label>
           <Input
@@ -122,7 +130,10 @@ export const VehicleFilterBar = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground" htmlFor="filter-model">
+          <label
+            className="text-sm font-medium text-foreground"
+            htmlFor="filter-model"
+          >
             Model
           </label>
           <Input
@@ -137,7 +148,10 @@ export const VehicleFilterBar = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground" htmlFor="filter-type">
+          <label
+            className="text-sm font-medium text-foreground"
+            htmlFor="filter-type"
+          >
             Type
           </label>
           <Select
@@ -161,7 +175,10 @@ export const VehicleFilterBar = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground" htmlFor="filter-color">
+          <label
+            className="text-sm font-medium text-foreground"
+            htmlFor="filter-color"
+          >
             Color
           </label>
           <Select
@@ -185,7 +202,10 @@ export const VehicleFilterBar = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground" htmlFor="filter-miles">
+          <label
+            className="text-sm font-medium text-foreground"
+            htmlFor="filter-miles"
+          >
             Max Miles
           </label>
           <Input

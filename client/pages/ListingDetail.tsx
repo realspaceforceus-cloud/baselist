@@ -225,14 +225,11 @@ const ListingDetail = (): JSX.Element => {
       }
 
       setIsSaved(!isSaved);
-      toast.success(
-        isSaved ? "Listing removed from saves" : "Listing saved!",
-        {
-          description: isSaved
-            ? "You can find it in your saves later."
-            : "Check your saves anytime from your profile.",
-        },
-      );
+      toast.success(isSaved ? "Listing removed from saves" : "Listing saved!", {
+        description: isSaved
+          ? "You can find it in your saves later."
+          : "Check your saves anytime from your profile.",
+      });
     } catch (error) {
       toast.error("Unable to save listing");
     }
@@ -389,7 +386,11 @@ const ListingDetail = (): JSX.Element => {
                     {seller?.name ?? "Member"}
                   </button>
                   {seller?.verified && (
-                    <ShieldCheck className="h-4 w-4 text-green-600" aria-hidden title="Verified DoW Member" />
+                    <ShieldCheck
+                      className="h-4 w-4 text-green-600"
+                      aria-hidden
+                      title="Verified DoW Member"
+                    />
                   )}
                 </div>
                 {seller?.rating ? (

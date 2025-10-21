@@ -36,7 +36,8 @@ const MAX_PHOTOS = 6;
 const Post = (): JSX.Element => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { currentBase, currentBaseId, user, addListing, listings } = useBaseList();
+  const { currentBase, currentBaseId, user, addListing, listings } =
+    useBaseList();
   const editListingId = searchParams.get("edit");
 
   const [photos, setPhotos] = useState<PhotoPreview[]>([]);
@@ -256,7 +257,8 @@ const Post = (): JSX.Element => {
         : null;
 
       // Build title based on category
-      const finalTitle = category === "Vehicles" ? buildVehicleTitle() : title.trim();
+      const finalTitle =
+        category === "Vehicles" ? buildVehicleTitle() : title.trim();
 
       const listingData = {
         title: finalTitle,
@@ -299,7 +301,7 @@ const Post = (): JSX.Element => {
                 id: `listing-${crypto.randomUUID()}`,
                 postedAt: new Date().toISOString(),
                 ...listingData,
-              }
+              },
         ),
       });
 
@@ -611,7 +613,9 @@ const Post = (): JSX.Element => {
 
         {category === "Vehicles" && (
           <section className="space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card">
-            <h3 className="text-lg font-semibold text-foreground">Vehicle Details</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Vehicle Details
+            </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
                 <label
