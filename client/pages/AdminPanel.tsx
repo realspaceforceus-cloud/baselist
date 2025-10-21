@@ -793,8 +793,6 @@ const AdminPanel = (): JSX.Element => {
         if (!active) {
           return;
         }
-        // Debug: log the response structure
-        console.log("getAudit response:", auditResponse);
         const auditLog = Array.isArray(auditResponse)
           ? auditResponse
           : auditResponse?.audit || [];
