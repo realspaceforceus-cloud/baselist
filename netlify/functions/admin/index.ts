@@ -388,12 +388,14 @@ export const handler: Handler = async (event) => {
       if (result.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Listing not found" }),
         };
       }
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           listingId: result.rows[0].id,
           status: result.rows[0].status,
