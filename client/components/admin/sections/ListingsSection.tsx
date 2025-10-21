@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AlertTriangle,
   Flag,
@@ -7,6 +8,7 @@ import {
   Edit2,
   Save,
   X,
+  Eye,
 } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
