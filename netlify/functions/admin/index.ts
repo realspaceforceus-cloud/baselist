@@ -126,7 +126,27 @@ export const handler: Handler = async (event) => {
       query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
       params.push(limit, offset);
 
-      const result = await client.query(query, params);
+      let result: any;
+      try {
+        result = await client.query(query, params);
+      } catch (queryErr) {
+        console.error("Users query error:", queryErr);
+        // Fallback to basic query without extra fields
+        const basicQuery = `SELECT id, username, email, role, status, base_id as "baseId", created_at as "createdAt"
+           FROM users`;
+        const basicParams: any[] = [];
+        let basicSql = basicQuery;
+
+        if (search) {
+          basicSql += ` WHERE (username ILIKE $1 OR email ILIKE $1 OR base_id ILIKE $1)`;
+          basicParams.push(`%${search}%`);
+        }
+
+        basicSql += ` ORDER BY created_at DESC LIMIT $${basicParams.length + 1} OFFSET $${basicParams.length + 2}`;
+        basicParams.push(limit, offset);
+
+        result = await client.query(basicSql, basicParams);
+      }
 
       return {
         statusCode: 200,
