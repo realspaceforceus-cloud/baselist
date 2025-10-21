@@ -20,6 +20,47 @@ interface VehicleFilters {
   maxMiles?: string;
 }
 
+const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
+
+const SellerCacheRenderer = ({
+  listings,
+  children,
+}: {
+  listings: Listing[];
+  children: (sellers: Record<string, Seller>) => JSX.Element;
+}): JSX.Element => {
+  const [sellers, setSellers] = useState<Record<string, Seller>>({});
+
+  useEffect(() => {
+    const uniqueSellerIds = [...new Set(listings.map((l) => l.sellerId))];
+
+    const fetchSellers = async () => {
+      const fetchedSellers: Record<string, Seller> = {};
+      for (const sellerId of uniqueSellerIds) {
+        try {
+          const response = await fetch(
+            `/.netlify/functions/users/${sellerId}`,
+            { credentials: "include" },
+          );
+          if (response.ok) {
+            const data = await response.json();
+            fetchedSellers[sellerId] = data;
+          }
+        } catch (error) {
+          console.error(`Failed to fetch seller ${sellerId}:`, error);
+        }
+      }
+      setSellers(fetchedSellers);
+    };
+
+    if (uniqueSellerIds.length > 0) {
+      fetchSellers();
+    }
+  }, [listings]);
+
+  return children(sellers);
+};
+
 export const Marketplace = (): JSX.Element => {
   const {
     listings,
@@ -33,7 +74,7 @@ export const Marketplace = (): JSX.Element => {
   } = useBaseList();
   const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
   const [vehicleFilters, setVehicleFilters] = useState<VehicleFilters>({});
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(20);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -42,7 +83,7 @@ export const Marketplace = (): JSX.Element => {
   }, [currentBaseId]);
 
   useEffect(() => {
-    setVisibleCount(6);
+    setVisibleCount(20);
   }, [activeFilter, currentBaseId, searchQuery, vehicleFilters]);
 
   const sponsorPlacement = useMemo(
@@ -147,7 +188,7 @@ export const Marketplace = (): JSX.Element => {
       (entries) => {
         if (entries[0]?.isIntersecting) {
           setVisibleCount((previous) =>
-            Math.min(previous + 4, filteredListings.length),
+            Math.min(previous + 10, filteredListings.length),
           );
         }
       },
@@ -211,6 +252,7 @@ export const Marketplace = (): JSX.Element => {
           </div>
         </div>
       ) : null}
+
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <FilterBar
@@ -246,12 +288,15 @@ export const Marketplace = (): JSX.Element => {
         )}
       </div>
 
-      {/* Seller cache for sidebar layout */}
-      <SellerCacheRenderer listings={visibleListings}>
-        {(sellers) => (
-          <MarketplaceSidebar listings={visibleListings} sellers={sellers} />
-        )}
-      </SellerCacheRenderer>
+      {visibleListings.length > 0 ? (
+        <SellerCacheRenderer listings={visibleListings}>
+          {(sellers) => (
+            <MarketplaceSidebar listings={visibleListings} sellers={sellers} />
+          )}
+        </SellerCacheRenderer>
+      ) : (
+        <EmptyState />
+      )}
 
       <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
     </section>
