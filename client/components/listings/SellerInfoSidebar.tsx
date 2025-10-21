@@ -26,6 +26,18 @@ export const SellerInfoSidebar = ({
 }: SellerInfoSidebarProps): JSX.Element => {
   const [isLoadingReport, setIsLoadingReport] = useState(false);
 
+  const sellerLastActive = useMemo(
+    () =>
+      seller?.lastActiveAt
+        ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
+          ? "Active today ✅"
+          : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
+              addSuffix: true,
+            })} 🕓`
+        : undefined,
+    [seller?.lastActiveAt],
+  );
+
   if (!seller) {
     return (
       <aside className="rounded-3xl border border-border bg-card p-6 shadow-card">
