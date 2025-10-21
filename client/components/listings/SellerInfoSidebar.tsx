@@ -99,6 +99,9 @@ export const SellerInfoSidebar = ({
                 ) : (
                   <p className="text-xs text-muted-foreground">No ratings yet</p>
                 )}
+                {sellerLastActive && (
+                  <p className="text-xs text-muted-foreground">{sellerLastActive}</p>
+                )}
               </div>
             </div>
           </div>
