@@ -77,6 +77,46 @@ export const handler: Handler = async (event) => {
         [randomUUID(), userId, listingId],
       );
 
+      // Get listing and seller info for notification
+      try {
+        const listingInfo = await client.query(
+          `SELECT title, seller_id FROM listings WHERE id = $1`,
+          [listingId],
+        );
+
+        if (listingInfo.rows.length > 0) {
+          const { title, seller_id } = listingInfo.rows[0];
+
+          // Get user name for notification to seller
+          const userInfo = await client.query(
+            `SELECT username FROM users WHERE id = $1`,
+            [userId],
+          );
+          const userName = userInfo.rows[0]?.username || "Someone";
+
+          // Create notification for seller that someone favorited their item
+          try {
+            await createNotification({
+              userId: seller_id,
+              type: "item_favorited",
+              title: `${userName} favorited "${title}"`,
+              description: `Someone is interested in your listing. Reach out to them!`,
+              actorId: userId,
+              targetId: listingId,
+              targetType: "listing",
+              data: {
+                listingTitle: title,
+                buyerName: userName,
+              },
+            });
+          } catch (notificationErr) {
+            console.error("Error creating favorite notification:", notificationErr);
+          }
+        }
+      } catch (err) {
+        console.error("Error creating notification for favorite:", err);
+      }
+
       return {
         statusCode: 201,
         headers: { "Content-Type": "application/json" },
