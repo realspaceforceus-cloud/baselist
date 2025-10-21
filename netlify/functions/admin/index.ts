@@ -2040,9 +2040,11 @@ export const handler: Handler = async (event) => {
       } catch (error) {
         console.error("Bases by listings endpoint error:", error);
         return {
-          statusCode: 500,
+          statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Failed to fetch bases by listings" }),
+          body: JSON.stringify({
+            bases: [],
+          }),
         };
       }
     }
