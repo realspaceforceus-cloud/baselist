@@ -526,10 +526,34 @@ export const handler: Handler = async (event) => {
           [engagementId, postId, userId, content],
         );
 
+        const comment = result.rows[0];
+
+        // Fetch author info
+        const authorResult = await client.query(
+          `SELECT id, username as name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id = $1`,
+          [userId],
+        );
+
+        const author = authorResult.rows[0]
+          ? {
+              id: authorResult.rows[0].id,
+              name: authorResult.rows[0].name,
+              verified: !!authorResult.rows[0].verified,
+              memberSince: new Date().toISOString(),
+              avatarUrl: authorResult.rows[0].avatarUrl || "",
+            }
+          : undefined;
+
         return {
           statusCode: 201,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(result.rows[0]),
+          body: JSON.stringify({
+            ...comment,
+            postId,
+            author,
+            likes: 0,
+            userLiked: false,
+          }),
         };
       } finally {
         client.release();
