@@ -125,48 +125,6 @@ const abbreviateBaseName = (value: string): string => {
   return letters.length > 0 ? letters : "BASE";
 };
 
-const QA_CHECKLIST = [
-  {
-    id: "signup",
-    flow: "Sign up / Login",
-    detail: "Username, email, password flow • .mil auto-verify",
-  },
-  {
-    id: "post-listing",
-    flow: "Post listing",
-    detail: "Upload, preview, publish",
-  },
-  {
-    id: "dm-chat",
-    flow: "DM chat",
-    detail: "Real-time send/receive",
-  },
-  {
-    id: "mark-complete",
-    flow: "Mark complete",
-    detail: "Banner appears and both confirm",
-  },
-  {
-    id: "rating",
-    flow: "⭐ rating",
-    detail: "1-tap works and averages update",
-  },
-  {
-    id: "profile",
-    flow: "Profile",
-    detail: "Purchases / Sales tabs",
-  },
-  {
-    id: "report-listing",
-    flow: "Report listing",
-    detail: "Flows to admin resolution",
-  },
-  {
-    id: "verify-manual",
-    flow: "Verify manual",
-    detail: "Upload, auto-delete, status verified",
-  },
-] as const;
 
 const getBaseName = (bases: Base[], baseId?: string): string => {
   if (!baseId) {
