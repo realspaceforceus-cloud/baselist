@@ -167,7 +167,7 @@ export const InvitationCodesSection = ({
             <SelectValue placeholder="Filter by base..." />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All bases</SelectItem>
+            <SelectItem value="all">All bases</SelectItem>
             {bases.map((base) => (
               <SelectItem key={base.id} value={base.id}>
                 {base.name}
