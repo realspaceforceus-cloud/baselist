@@ -174,14 +174,36 @@ export const handler: Handler = async (event) => {
       const id = path.slice(1);
       const updates = JSON.parse(event.body || "{}");
 
-      const setClauses = Object.keys(updates)
+      // Map camelCase field names to snake_case database columns
+      const fieldMapping: Record<string, string> = {
+        isFree: "is_free",
+        imageUrls: "image_urls",
+        sellerId: "seller_id",
+        baseId: "base_id",
+        vehicleYear: "vehicle_year",
+        vehicleMake: "vehicle_make",
+        vehicleModel: "vehicle_model",
+        vehicleType: "vehicle_type",
+        vehicleColor: "vehicle_color",
+        vehicleMiles: "vehicle_miles",
+        postedAt: "created_at",
+      };
+
+      // Transform field names
+      const mappedUpdates: Record<string, any> = {};
+      Object.entries(updates).forEach(([key, value]) => {
+        const dbColumn = fieldMapping[key] || key;
+        mappedUpdates[dbColumn] = value;
+      });
+
+      const setClauses = Object.keys(mappedUpdates)
         .map((key, index) => `${key} = $${index + 1}`)
         .join(", ");
 
-      const values = [...Object.values(updates), id];
+      const values = [...Object.values(mappedUpdates), id];
 
       const result = await client.query(
-        `UPDATE listings SET ${setClauses}, updated_at = NOW() WHERE id = $${Object.keys(updates).length + 1} RETURNING *`,
+        `UPDATE listings SET ${setClauses}, updated_at = NOW() WHERE id = $${Object.keys(mappedUpdates).length + 1} RETURNING *`,
         values,
       );
 
