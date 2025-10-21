@@ -25,6 +25,7 @@ import {
   type AdminNavItem,
 } from "@/components/admin/AdminSidebar";
 import {
+  AnnouncementsSection,
   BasesSection,
   DashboardMetrics,
   DashboardSection,
