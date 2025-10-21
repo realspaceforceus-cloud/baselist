@@ -2170,7 +2170,36 @@ const AdminPanel = (): JSX.Element => {
               onExport={handleExportMetrics}
             />
           ) : null}
-          {activeSection === "roles" ? <RolesSection roles={roles} /> : null}
+          {activeSection === "roles" ? (
+            <RolesEnhanced
+              users={accountList.map((acc) => ({
+                id: acc.id,
+                username: acc.username,
+                email: userDirectoryRef.current.get(acc.id)?.email || "N/A",
+                baseId: acc.baseId,
+                baseName: getBaseName(bases, acc.baseId),
+                role: acc.role,
+                currentRole: acc.role,
+                createdAt: acc.createdAt,
+              }))}
+              onFetchUsers={async () => {
+                const users = await adminApi.getUsers(1, "");
+                return users.users.map((u) => ({
+                  id: u.id,
+                  username: u.username,
+                  email: u.email,
+                  baseId: u.baseId,
+                  baseName: getBaseName(bases, u.baseId),
+                  role: u.role,
+                  currentRole: u.role,
+                  createdAt: u.createdAt,
+                }));
+              }}
+              onUpdateUserRole={async (userId, newRole) => {
+                await adminApi.updateUser(userId, { role: newRole });
+              }}
+            />
+          ) : null}
           {activeSection === "email-templates" ? (
             <EmailTemplatesSection />
           ) : null}
