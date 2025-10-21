@@ -20,16 +20,20 @@ export const BasesSection = () => {
     const loadBases = async () => {
       setIsLoading(true);
       try {
-        const result = await (await import("@/lib/adminApi")).adminApi.getBases();
-        const baseRows: AdminBaseRow[] = (result?.bases || []).map((base: any) => ({
-          id: base.id,
-          name: base.name || "Unknown",
-          region: base.region || "Unknown",
-          moderator: "—",
-          users: 0,
-          activeListings: 0,
-          pendingReports: 0,
-        }));
+        const result = await (
+          await import("@/lib/adminApi")
+        ).adminApi.getBases();
+        const baseRows: AdminBaseRow[] = (result?.bases || []).map(
+          (base: any) => ({
+            id: base.id,
+            name: base.name || "Unknown",
+            region: base.region || "Unknown",
+            moderator: "—",
+            users: 0,
+            activeListings: 0,
+            pendingReports: 0,
+          }),
+        );
         setBases(baseRows);
       } catch (error) {
         console.error("Failed to load bases:", error);

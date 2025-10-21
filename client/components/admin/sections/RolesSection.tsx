@@ -75,8 +75,8 @@ export const RolesSection = (): JSX.Element => {
       await adminApi.updateUser(editingUserId, { role: editingRole as any });
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
-          u.id === editingUserId ? { ...u, role: editingRole as any } : u
-        )
+          u.id === editingUserId ? { ...u, role: editingRole as any } : u,
+        ),
       );
       toast.success("Role updated");
       setEditingUserId(null);
@@ -112,7 +112,9 @@ export const RolesSection = (): JSX.Element => {
         </div>
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="text-sm text-muted-foreground">Moderators</div>
-          <div className="text-2xl font-bold text-success">{moderatorCount}</div>
+          <div className="text-2xl font-bold text-success">
+            {moderatorCount}
+          </div>
         </div>
       </div>
 
@@ -131,7 +133,9 @@ export const RolesSection = (): JSX.Element => {
               <tr>
                 <th className="px-4 py-3 text-left font-semibold">Username</th>
                 <th className="px-4 py-3 text-left font-semibold">Email</th>
-                <th className="px-4 py-3 text-left font-semibold">Current Role</th>
+                <th className="px-4 py-3 text-left font-semibold">
+                  Current Role
+                </th>
                 <th className="px-4 py-3 text-left font-semibold">Base</th>
                 <th className="px-4 py-3 text-center font-semibold">Actions</th>
               </tr>
@@ -145,7 +149,10 @@ export const RolesSection = (): JSX.Element => {
                   </td>
                   <td className="px-4 py-3">
                     {editingUserId === user.id ? (
-                      <Select value={editingRole} onValueChange={setEditingRole}>
+                      <Select
+                        value={editingRole}
+                        onValueChange={setEditingRole}
+                      >
                         <SelectTrigger className="w-32 rounded-xl">
                           <SelectValue />
                         </SelectTrigger>

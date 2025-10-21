@@ -30,13 +30,24 @@ export const VerificationSection = () => {
     const loadVerifications = async () => {
       setIsLoading(true);
       try {
-        const result = await (await import("@/lib/adminApi")).adminApi.getVerifications();
-        const verifications: VerificationDocument[] = (result?.verifications || []).map((v: any) => ({
+        const result = await (
+          await import("@/lib/adminApi")
+        ).adminApi.getVerifications();
+        const verifications: VerificationDocument[] = (
+          result?.verifications || []
+        ).map((v: any) => ({
           id: v.id,
           userId: v.userId,
           name: v.userName || "Unknown",
           method: v.method || "Unknown",
-          submitted: v.submittedAt ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(v.submittedAt)) : "—",
+          submitted: v.submittedAt
+            ? new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }).format(new Date(v.submittedAt))
+            : "—",
         }));
         setDocuments(verifications);
         setQueues([
@@ -50,7 +61,8 @@ export const VerificationSection = () => {
           {
             id: "invite",
             label: "Invite Code",
-            count: verifications.filter((d) => d.method === "Invite Code").length,
+            count: verifications.filter((d) => d.method === "Invite Code")
+              .length,
             description: "Moderator review required",
             icon: (await import("lucide-react")).Users,
           },
