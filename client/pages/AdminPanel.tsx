@@ -718,10 +718,11 @@ const AdminPanel = (): JSX.Element => {
     let active = true;
     const hydrateAdminData = async () => {
       try {
-        const users = await adminApi.getUsers();
+        const response = await adminApi.getUsers();
         if (!active) {
           return;
         }
+        const users = response.users;
         userDirectoryRef.current = new Map<string, AdminUserDTO>(
           users.map((entry) => [entry.id, entry]),
         );
@@ -746,31 +747,35 @@ const AdminPanel = (): JSX.Element => {
         if (!active) {
           return;
         }
+        const snapshot = metricsResponse.snapshot || metricsResponse.totals || metricsResponse;
         setMetrics((prev) =>
           prev.map((card) => {
             if (card.id === "verified") {
               return {
                 ...card,
-                value: `${metricsResponse.snapshot.verifiedMembers}`,
+                value: `${snapshot.verifiedMembers ?? 0}`,
               };
             }
             if (card.id === "listings") {
+              const total = snapshot.totalListings ?? 0;
+              const sold = snapshot.soldListings ?? 0;
               return {
                 ...card,
-                value: `${metricsResponse.snapshot.totalListings} / ${metricsResponse.snapshot.soldListings}`,
+                value: `${total} / ${sold}`,
               };
             }
             if (card.id === "reports") {
+              const openReports = snapshot.openReports ?? 0;
               const resolvedRate =
-                metricsResponse.snapshot.openReports === 0
+                openReports === 0
                   ? "100%"
-                  : `${Math.max(0, 100 - metricsResponse.snapshot.openReports)}%`;
+                  : `${Math.max(0, 100 - openReports)}%`;
               return { ...card, value: resolvedRate };
             }
             if (card.id === "verifications") {
               return {
                 ...card,
-                value: `${metricsResponse.snapshot.manualVerificationBacklog}`,
+                value: `${snapshot.manualVerificationBacklog ?? 0}`,
               };
             }
             return card;
