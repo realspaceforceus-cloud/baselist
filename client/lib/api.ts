@@ -226,4 +226,14 @@ export const notifications = {
       method: "PATCH",
     });
   },
+
+  seedTestNotifications: async (userId: string) => {
+    return apiRequest<{ success: boolean; message: string; count: number }>(
+      "/api/seed-notifications",
+      {
+        method: "POST",
+        body: JSON.stringify({ userId }),
+      },
+    );
+  },
 };
