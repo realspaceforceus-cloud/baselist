@@ -272,7 +272,37 @@ export const AdminUserDetail = () => {
           Back
         </Button>
         <h1 className="text-3xl font-bold">User Details</h1>
-        <div className="w-20" />
+        <div className="flex gap-2">
+          {editMode ? (
+            <>
+              <Button
+                onClick={handleSaveChanges}
+                disabled={isSubmitting}
+                className="rounded-full"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setEditMode(false)}
+                disabled={isSubmitting}
+                className="rounded-full"
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => setEditMode(true)}
+              className="rounded-full"
+            >
+              <Edit2 className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-6 max-w-6xl mx-auto">
