@@ -12,8 +12,10 @@ export const handler: Handler = async (event) => {
   const userId = userIdMatch ? userIdMatch[1] : null;
 
   if (!userId) {
+    // Return 401 for unauthenticated requests
     return {
       statusCode: 401,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Unauthorized" }),
     };
   }
