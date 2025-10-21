@@ -26,6 +26,7 @@ import {
 } from "@/components/admin/AdminSidebar";
 import {
   BasesSection,
+  DashboardMetrics,
   DashboardSection,
   EmailTemplatesSection,
   FamilyVerificationSection,
