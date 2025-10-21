@@ -171,38 +171,45 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
         )}
 
         {/* Poll */}
-        {post.postType === "poll" && post.pollOptions && (
+        {post.postType === "poll" && pollOptions && pollOptions.length > 0 && (
           <div className="space-y-2 rounded-lg bg-accent/50 p-3">
-            {post.pollOptions.map((option) => (
-              <div
-                key={option.id}
-                className="rounded border border-border bg-background p-2 cursor-pointer hover:bg-accent transition"
-              >
-                <div className="flex items-center justify-between text-sm">
-                  <span>{option.text}</span>
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {option.votes || 0}
-                  </span>
-                </div>
-                <div className="mt-1 h-1 rounded-full bg-border overflow-hidden">
-                  <div
-                    className="h-full bg-primary"
-                    style={{
-                      width: `${
-                        post.pollOptions && post.pollOptions.length > 0
-                          ? (option.votes /
-                              Math.max(
-                                ...post.pollOptions.map((o) => o.votes || 0),
-                                1,
-                              )) *
-                            100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
+            {pollOptions.map((option) => {
+              const voteCount = getVoteCount(option);
+              const userVoted = getUserVote() === option.id;
+              const totalVotes = pollOptions.reduce(
+                (sum, opt) => sum + getVoteCount(opt),
+                0,
+              );
+              const percentage = totalVotes > 0 ? (voteCount / totalVotes) * 100 : 0;
+
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => handlePollVote(option.id)}
+                  disabled={isVoting}
+                  className={`w-full rounded border p-2 cursor-pointer transition ${
+                    userVoted
+                      ? "border-primary bg-primary/10 hover:bg-primary/20"
+                      : "border-border bg-background hover:bg-accent"
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-sm">
+                    <span>{option.text}</span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {voteCount}
+                    </span>
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-border overflow-hidden">
+                    <div
+                      className={`h-full transition-all ${
+                        userVoted ? "bg-primary" : "bg-muted"
+                      }`}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
 
