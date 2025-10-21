@@ -477,6 +477,60 @@ const ListingDetail = (): JSX.Element => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
+
+      <Sheet open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+        <SheetContent
+          side="bottom"
+          className="h-auto max-h-[80vh] rounded-t-3xl border border-border bg-card px-6 pb-6 pt-8"
+        >
+          <SheetHeader className="space-y-2 text-left">
+            <SheetTitle className="text-lg font-semibold text-foreground">
+              Report listing
+            </SheetTitle>
+            <p className="text-sm text-muted-foreground">
+              Help us keep the community safe by reporting inappropriate content
+              or suspicious activity.
+            </p>
+          </SheetHeader>
+          <div className="mt-6 space-y-4">
+            <div className="rounded-2xl border border-border bg-background/70 p-4 text-sm text-muted-foreground">
+              <p className="font-semibold text-foreground">{listing.title}</p>
+              <p>{formattedPrice}</p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">
+                Reason for report
+              </label>
+              <Textarea
+                value={reportReason}
+                onChange={(event) => setReportReason(event.target.value)}
+                rows={4}
+                className="rounded-2xl border-border text-sm"
+                aria-label="Report reason"
+                placeholder="Please explain why you're reporting this listing..."
+              />
+            </div>
+          </div>
+          <SheetFooter className="mt-6">
+            <Button
+              variant="outline"
+              className="w-full rounded-full"
+              size="lg"
+              onClick={() => setReportDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="w-full rounded-full"
+              size="lg"
+              onClick={handleReportListing}
+              disabled={!reportReason.trim()}
+            >
+              Submit report
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </section>
   );
 };
