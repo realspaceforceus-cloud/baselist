@@ -2231,32 +2231,52 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const peakHourResult = await client.query(
-        `SELECT EXTRACT(HOUR FROM last_activity)::int as hour, COUNT(*) as count
-         FROM user_sessions
-         WHERE last_activity >= NOW() - INTERVAL '24 hours'
-         GROUP BY hour
-         ORDER BY count DESC
-         LIMIT 1`,
-      );
+      try {
+        let peakHourResult = { rows: [{ hour: null }] };
+        let peakDayResult = { rows: [{ day: null }] };
 
-      const peakDayResult = await client.query(
-        `SELECT TO_CHAR(last_activity, 'Day') as day, COUNT(*) as count
-         FROM user_sessions
-         WHERE last_activity >= NOW() - INTERVAL '7 days'
-         GROUP BY TO_CHAR(last_activity, 'Day')
-         ORDER BY count DESC
-         LIMIT 1`,
-      );
+        try {
+          peakHourResult = await client.query(
+            `SELECT EXTRACT(HOUR FROM last_activity)::int as hour, COUNT(*) as count
+             FROM user_sessions
+             WHERE last_activity >= NOW() - INTERVAL '24 hours'
+             GROUP BY hour
+             ORDER BY count DESC
+             LIMIT 1`,
+          );
+        } catch (err) {
+          console.error("Peak hour query error:", err);
+        }
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          peakHour: peakHourResult.rows[0]?.hour ?? null,
-          peakDay: peakDayResult.rows[0]?.day ?? null,
-        }),
-      };
+        try {
+          peakDayResult = await client.query(
+            `SELECT TO_CHAR(last_activity, 'Day') as day, COUNT(*) as count
+             FROM user_sessions
+             WHERE last_activity >= NOW() - INTERVAL '7 days'
+             GROUP BY TO_CHAR(last_activity, 'Day')
+             ORDER BY count DESC
+             LIMIT 1`,
+          );
+        } catch (err) {
+          console.error("Peak day query error:", err);
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            peakHour: peakHourResult.rows[0]?.hour ?? null,
+            peakDay: peakDayResult.rows[0]?.day ?? null,
+          }),
+        };
+      } catch (error) {
+        console.error("Peak activity endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch peak activity metrics" }),
+        };
+      }
     }
 
     // GET /api/admin/analytics/retention
