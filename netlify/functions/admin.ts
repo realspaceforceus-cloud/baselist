@@ -708,6 +708,13 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/audit
     if (method === "GET" && path === "/audit") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
       const result = await client.query(
         `SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 200`,
       );
@@ -720,6 +727,13 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/threads
     if (method === "GET" && path === "/threads") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
       const result = await client.query(
         `SELECT * FROM message_threads ORDER BY created_at DESC`,
       );
@@ -732,6 +746,13 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/threads/flagged
     if (method === "GET" && path === "/threads/flagged") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
       const result = await client.query(
         `SELECT * FROM message_threads WHERE status = 'active' ORDER BY created_at DESC LIMIT 10`,
       );
