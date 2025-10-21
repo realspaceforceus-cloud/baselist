@@ -31,7 +31,7 @@ export const AnnouncementsSection = (): JSX.Element => {
   const fetchAnnouncements = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/announcements");
+      const response = await fetch("/api/announcements/admin");
       if (!response.ok) throw new Error("Failed to fetch announcements");
       const data = await response.json();
       setAnnouncements(data.announcements || []);
