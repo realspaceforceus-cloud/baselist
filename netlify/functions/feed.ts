@@ -409,6 +409,7 @@ export const handler: Handler = async (event) => {
     const errorMsg = err instanceof Error ? err.message : "Internal server error";
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: errorMsg }),
     };
   }
