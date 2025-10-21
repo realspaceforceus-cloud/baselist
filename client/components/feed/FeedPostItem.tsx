@@ -31,7 +31,9 @@ export function FeedPostItem({
   const [isLiked, setIsLiked] = useState(post.userLiked || false);
   const [likes, setLikes] = useState(post.likes || 0);
   const [isLiking, setIsLiking] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(
+    (post.userComments?.length || 0) > 0,
+  );
   const [commentText, setCommentText] = useState("");
   const [isCommentingLoading, setIsCommentingLoading] = useState(false);
   const [pollOptions, setPollOptions] = useState(post.pollOptions || []);
@@ -41,7 +43,6 @@ export function FeedPostItem({
   );
   const [showAllComments, setShowAllComments] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showMore, setShowMore] = useState<Record<string, boolean>>({});
 
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), {
     addSuffix: true,
