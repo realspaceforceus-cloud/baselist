@@ -474,6 +474,7 @@ const sections: AdminNavItem[] = [
     label: "Family Verification",
     icon: ShieldCheck,
   },
+  { id: "invitation-codes", label: "Invitation Codes", icon: UsersIcon },
   { id: "bases", label: "Bases", icon: Building2 },
   { id: "sponsors", label: "Sponsors", icon: Megaphone },
   { id: "messaging", label: "Messaging", icon: MessageSquareWarning },
@@ -481,7 +482,7 @@ const sections: AdminNavItem[] = [
   { id: "roles", label: "Roles", icon: ShieldCheck },
   { id: "email-templates", label: "Email Templates", icon: MailCheck },
   { id: "seo", label: "SEO & Branding", icon: Search },
-  { id: "security", label: "Security", icon: LockKeyhole },
+  { id: "security", label: "Security & Audit", icon: LockKeyhole },
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
