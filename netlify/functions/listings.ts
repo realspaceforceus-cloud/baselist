@@ -110,6 +110,12 @@ export const handler: Handler = async (event) => {
         imageUrls,
         baseId,
         sellerId,
+        vehicleYear,
+        vehicleMake,
+        vehicleModel,
+        vehicleType,
+        vehicleColor,
+        vehicleMiles,
       } = JSON.parse(event.body || "{}");
 
       if (!title || !category || !baseId || !sellerId) {
@@ -122,8 +128,8 @@ export const handler: Handler = async (event) => {
       const listingId = randomUUID();
 
       const result = await client.query(
-        `INSERT INTO listings (id, title, price, is_free, category, status, seller_id, base_id, description, image_urls)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `INSERT INTO listings (id, title, price, is_free, category, status, seller_id, base_id, description, image_urls, vehicle_year, vehicle_make, vehicle_model, vehicle_type, vehicle_color, vehicle_miles)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
          RETURNING *`,
         [
           listingId,
@@ -136,6 +142,12 @@ export const handler: Handler = async (event) => {
           baseId,
           description,
           imageUrls || [],
+          vehicleYear || null,
+          vehicleMake || null,
+          vehicleModel || null,
+          vehicleType || null,
+          vehicleColor || null,
+          vehicleMiles || null,
         ],
       );
 
