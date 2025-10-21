@@ -698,7 +698,7 @@ export const handler: Handler = async (event) => {
     // GET /api/admin/bases
     if (method === "GET" && path === "/bases") {
       const basesResult = await client.query(
-        `SELECT * FROM bases ORDER BY name ASC`,
+        `SELECT * FROM bases WHERE deleted_at IS NULL ORDER BY name ASC`,
       );
 
       const basesWithCounts = await Promise.all(
