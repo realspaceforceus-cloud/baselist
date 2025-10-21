@@ -783,10 +783,12 @@ const AdminPanel = (): JSX.Element => {
             return card;
           }),
         );
+        setMetricsLoading(false);
       } catch (error) {
         toast.error("Unable to load metrics", {
           description: getApiErrorMessage(error),
         });
+        setMetricsLoading(false);
       }
 
       try {
