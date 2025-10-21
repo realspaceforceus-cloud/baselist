@@ -3,13 +3,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
 import { VehicleFilterBar } from "@/components/listings/VehicleFilterBar";
-import { ListingCard } from "@/components/listings/ListingCard";
+import { MarketplaceSidebar } from "@/components/marketplace/MarketplaceSidebar";
 import { SponsorTile } from "@/components/listings/SponsorTile";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
 import { extractVehicleOptions } from "@/lib/vehicleUtils";
 import { LISTING_CATEGORIES } from "@/data/mock";
-import type { Listing, ListingFilter, UserProfile } from "@/types";
+import type { Listing, ListingFilter, Seller } from "@/types";
 
 interface VehicleFilters {
   year?: string;
@@ -19,39 +19,6 @@ interface VehicleFilters {
   color?: string;
   maxMiles?: string;
 }
-
-const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
-
-const ListingCardWithSeller = ({
-  listing,
-}: {
-  listing: Listing;
-}): JSX.Element => {
-  const [seller, setSeller] = useState<UserProfile | null>(null);
-
-  useEffect(() => {
-    if (!listing.sellerId) return;
-
-    const fetchSeller = async () => {
-      try {
-        const response = await fetch(
-          `/.netlify/functions/users/${listing.sellerId}`,
-          { credentials: "include" },
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setSeller(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch seller:", error);
-      }
-    };
-
-    fetchSeller();
-  }, [listing.sellerId]);
-
-  return <ListingCard listing={listing} seller={seller as any} />;
-};
 
 export const Marketplace = (): JSX.Element => {
   const {
