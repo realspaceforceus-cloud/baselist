@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Heart, MessageCircle, BadgeCheck, AlertCircle, Trash2, Flag, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  BadgeCheck,
+  AlertCircle,
+  Trash2,
+  Flag,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -13,7 +22,10 @@ interface FeedPostItemProps {
   onPostDeleted?: () => void;
 }
 
-export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.Element {
+export function FeedPostItem({
+  post,
+  onPostDeleted,
+}: FeedPostItemProps): JSX.Element {
   const { user } = useAuth();
   const { currentBase } = useBaseList();
   const [isLiked, setIsLiked] = useState(post.userLiked || false);
@@ -24,7 +36,9 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
   const [isCommentingLoading, setIsCommentingLoading] = useState(false);
   const [pollOptions, setPollOptions] = useState(post.pollOptions || []);
   const [isVoting, setIsVoting] = useState(false);
-  const [comments, setComments] = useState<FeedComment[]>(post.userComments || []);
+  const [comments, setComments] = useState<FeedComment[]>(
+    post.userComments || [],
+  );
   const [showAllComments, setShowAllComments] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMore, setShowMore] = useState<Record<string, boolean>>({});
@@ -98,7 +112,9 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
 
     try {
       await feedApi.reportPost(post.id, reason);
-      toast.success("Post reported. Thank you for helping keep our community safe.");
+      toast.success(
+        "Post reported. Thank you for helping keep our community safe.",
+      );
     } catch (error) {
       toast.error("Failed to report post");
     }
@@ -109,7 +125,7 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
 
     try {
       await feedApi.deleteComment(post.id, commentId);
-      setComments(comments.filter(c => c.id !== commentId));
+      setComments(comments.filter((c) => c.id !== commentId));
       toast.success("Comment deleted");
     } catch (error) {
       toast.error("Failed to delete comment");
@@ -124,27 +140,34 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
 
     try {
       await feedApi.likeComment(post.id, commentId);
-      setComments(comments.map(c => {
-        if (c.id === commentId) {
-          const liked = c.userLiked;
-          return {
-            ...c,
-            userLiked: !liked,
-            likes: (c.likes || 0) + (liked ? -1 : 1)
-          };
-        }
-        return c;
-      }));
+      setComments(
+        comments.map((c) => {
+          if (c.id === commentId) {
+            const liked = c.userLiked;
+            return {
+              ...c,
+              userLiked: !liked,
+              likes: (c.likes || 0) + (liked ? -1 : 1),
+            };
+          }
+          return c;
+        }),
+      );
     } catch (error) {
       toast.error("Failed to like comment");
     }
   };
 
-  const canDeletePost = user?.id === post.userId || (currentBase && (user?.role === "admin" || user?.role === "moderator"));
+  const canDeletePost =
+    user?.id === post.userId ||
+    (currentBase && (user?.role === "admin" || user?.role === "moderator"));
 
   const canDeleteComment = (commentId: string) => {
-    const comment = comments.find(c => c.id === commentId);
-    return user?.id === comment?.userId || (currentBase && (user?.role === "admin" || user?.role === "moderator"));
+    const comment = comments.find((c) => c.id === commentId);
+    return (
+      user?.id === comment?.userId ||
+      (currentBase && (user?.role === "admin" || user?.role === "moderator"))
+    );
   };
 
   const handlePollVote = async (optionId: string) => {
@@ -220,7 +243,10 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
           />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <Link to={`/profile/${post.userId}`} className="font-semibold text-sm hover:text-primary transition">
+              <Link
+                to={`/profile/${post.userId}`}
+                className="font-semibold text-sm hover:text-primary transition"
+              >
                 {post.author?.name}
               </Link>
               {post.author?.verified && (
@@ -428,59 +454,64 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
               )}
 
               {/* Display comments */}
-              {(showAllComments ? comments : comments.slice(0, 2)).map((comment) => (
-                <div key={comment.id} className="text-sm bg-background rounded-lg p-2">
-                  <div className="flex items-start gap-2">
-                    <img
-                      src={
-                        comment.author?.avatarUrl ||
-                        "https://api.dicebear.com/7.x/initials/svg?seed=user"
-                      }
-                      alt={comment.author?.name}
-                      className="h-6 w-6 rounded-full object-cover flex-shrink-0 mt-0.5"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          to={`/profile/${comment.userId}`}
-                          className="font-semibold text-xs hover:text-primary transition"
-                        >
-                          {comment.author?.name}
-                        </Link>
-                        {comment.author?.verified && (
-                          <BadgeCheck className="h-3 w-3 text-blue-500" />
-                        )}
-                      </div>
-                      <p className="text-muted-foreground whitespace-pre-wrap">
-                        {comment.content}
-                      </p>
-                      <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
-                        <button
-                          onClick={() => handleLikeComment(comment.id)}
-                          className={`hover:text-primary transition ${
-                            comment.userLiked ? "text-red-500" : ""
-                          }`}
-                        >
-                          <Heart
-                            className="h-3 w-3 inline mr-1"
-                            fill={comment.userLiked ? "currentColor" : "none"}
-                          />
-                          {comment.likes || 0}
-                        </button>
-                        {canDeleteComment(comment.id) && (
-                          <button
-                            onClick={() => handleDeleteComment(comment.id)}
-                            className="hover:text-destructive transition"
+              {(showAllComments ? comments : comments.slice(0, 2)).map(
+                (comment) => (
+                  <div
+                    key={comment.id}
+                    className="text-sm bg-background rounded-lg p-2"
+                  >
+                    <div className="flex items-start gap-2">
+                      <img
+                        src={
+                          comment.author?.avatarUrl ||
+                          "https://api.dicebear.com/7.x/initials/svg?seed=user"
+                        }
+                        alt={comment.author?.name}
+                        className="h-6 w-6 rounded-full object-cover flex-shrink-0 mt-0.5"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to={`/profile/${comment.userId}`}
+                            className="font-semibold text-xs hover:text-primary transition"
                           >
-                            <Trash2 className="h-3 w-3 inline mr-1" />
-                            Delete
+                            {comment.author?.name}
+                          </Link>
+                          {comment.author?.verified && (
+                            <BadgeCheck className="h-3 w-3 text-blue-500" />
+                          )}
+                        </div>
+                        <p className="text-muted-foreground whitespace-pre-wrap">
+                          {comment.content}
+                        </p>
+                        <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
+                          <button
+                            onClick={() => handleLikeComment(comment.id)}
+                            className={`hover:text-primary transition ${
+                              comment.userLiked ? "text-red-500" : ""
+                            }`}
+                          >
+                            <Heart
+                              className="h-3 w-3 inline mr-1"
+                              fill={comment.userLiked ? "currentColor" : "none"}
+                            />
+                            {comment.likes || 0}
                           </button>
-                        )}
+                          {canDeleteComment(comment.id) && (
+                            <button
+                              onClick={() => handleDeleteComment(comment.id)}
+                              className="hover:text-destructive transition"
+                            >
+                              <Trash2 className="h-3 w-3 inline mr-1" />
+                              Delete
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
 
               {/* Show less button */}
               {showAllComments && comments.length > 2 && (

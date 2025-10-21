@@ -706,7 +706,10 @@ export const handler: Handler = async (event) => {
           };
         }
 
-        await client.query("UPDATE feed_posts SET deleted_at = NOW() WHERE id = $1", [postId]);
+        await client.query(
+          "UPDATE feed_posts SET deleted_at = NOW() WHERE id = $1",
+          [postId],
+        );
 
         return {
           statusCode: 200,
@@ -768,7 +771,10 @@ export const handler: Handler = async (event) => {
     }
 
     // DELETE /feed/posts/:postId/comments/:commentId
-    if (method === "DELETE" && path.match(/^\/posts\/[^/]+\/comments\/[^/]+$/)) {
+    if (
+      method === "DELETE" &&
+      path.match(/^\/posts\/[^/]+\/comments\/[^/]+$/)
+    ) {
       const userId = await getUserIdFromAuth(event);
       if (!userId) {
         return {
@@ -836,7 +842,10 @@ export const handler: Handler = async (event) => {
     }
 
     // POST /feed/posts/:postId/comments/:commentId/like
-    if (method === "POST" && path.match(/^\/posts\/[^/]+\/comments\/[^/]+\/like$/)) {
+    if (
+      method === "POST" &&
+      path.match(/^\/posts\/[^/]+\/comments\/[^/]+\/like$/)
+    ) {
       const userId = await getUserIdFromAuth(event);
       if (!userId) {
         return {

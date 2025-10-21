@@ -34,7 +34,7 @@ export function FeedComposer({
   const isFormValid = content.trim().length > 0;
 
   const handlePhotoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
     if (!files) return;
@@ -226,7 +226,9 @@ export function FeedComposer({
                   />
                   <button
                     onClick={() =>
-                      setUploadedImages(uploadedImages.filter((_, i) => i !== idx))
+                      setUploadedImages(
+                        uploadedImages.filter((_, i) => i !== idx),
+                      )
                     }
                     className="absolute top-1 right-1 rounded-full bg-destructive text-destructive-foreground p-1 hover:bg-destructive/90"
                   >

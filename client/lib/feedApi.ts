@@ -127,13 +127,10 @@ export const feedApi = {
   },
 
   async deletePost(postId: string): Promise<void> {
-    const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      },
-    );
+    const response = await fetch(`/.netlify/functions/feed/posts/${postId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (!response.ok) throw new Error("Failed to delete post");
   },
 
