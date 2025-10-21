@@ -158,13 +158,13 @@ export function FeedPostItem({
   };
 
   const canDeletePost =
-    user?.id === post.userId ||
+    user?.userId === post.userId ||
     (currentBase && (user?.role === "admin" || user?.role === "moderator"));
 
   const canDeleteComment = (commentId: string) => {
     const comment = comments.find((c) => c.id === commentId);
     return (
-      user?.id === comment?.userId ||
+      user?.userId === comment?.userId ||
       (currentBase && (user?.role === "admin" || user?.role === "moderator"))
     );
   };
