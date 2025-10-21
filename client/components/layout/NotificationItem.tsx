@@ -189,7 +189,9 @@ export const NotificationItem = ({
       )}
     >
       <div
-        className={cn("p-4 hover:bg-muted/30 transition cursor-pointer active:bg-muted/40")}
+        className={cn(
+          "p-4 hover:bg-muted/30 transition cursor-pointer active:bg-muted/40",
+        )}
         onClick={handleClick}
         role="button"
         tabIndex={0}
