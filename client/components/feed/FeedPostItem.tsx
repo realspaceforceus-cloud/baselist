@@ -209,7 +209,7 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
     <article className="rounded-lg border border-border bg-card p-4 shadow-card transition hover:shadow-md">
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1">
           <img
             src={
               post.author?.avatarUrl ||
@@ -220,7 +220,9 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
           />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-sm">{post.author?.name}</h3>
+              <Link to={`/profile/${post.userId}`} className="font-semibold text-sm hover:text-primary transition">
+                {post.author?.name}
+              </Link>
               {post.author?.verified && (
                 <BadgeCheck className="h-4 w-4 text-blue-500" />
               )}
@@ -228,7 +230,25 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
             <p className="text-xs text-muted-foreground">{timeAgo}</p>
           </div>
         </div>
-        <span className="text-2xl">{getPostIcon()}</span>
+        <div className="flex gap-2">
+          {canDeletePost && (
+            <button
+              onClick={handleDeletePost}
+              disabled={isDeleting}
+              className="rounded p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition"
+              title="Delete post"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+          <button
+            onClick={handleReportPost}
+            className="rounded p-2 text-muted-foreground hover:bg-accent transition"
+            title="Report post"
+          >
+            <Flag className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       {/* Content */}
