@@ -612,17 +612,22 @@ const Post = (): JSX.Element => {
         </section>
 
         {category === "Vehicles" && (
-          <section className="space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card">
-            <h3 className="text-lg font-semibold text-foreground">
-              Vehicle Details
-            </h3>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <section className="space-y-4 rounded-3xl border border-border bg-card/50 p-6">
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-foreground">
+                Vehicle Details
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Provide vehicle information to help buyers find exactly what they're looking for.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
               <div className="space-y-2">
                 <label
-                  className="text-sm font-semibold text-foreground"
+                  className="text-sm font-medium text-foreground"
                   htmlFor="vehicle-year"
                 >
-                  Year
+                  Year <span className="text-destructive">*</span>
                 </label>
                 <Input
                   id="vehicle-year"
@@ -633,15 +638,16 @@ const Post = (): JSX.Element => {
                   type="number"
                   min="1900"
                   max={new Date().getFullYear() + 1}
+                  aria-invalid={Boolean(errors.title)}
                 />
               </div>
 
               <div className="space-y-2">
                 <label
-                  className="text-sm font-semibold text-foreground"
+                  className="text-sm font-medium text-foreground"
                   htmlFor="vehicle-make"
                 >
-                  Make
+                  Make <span className="text-destructive">*</span>
                 </label>
                 <Input
                   id="vehicle-make"
@@ -649,15 +655,16 @@ const Post = (): JSX.Element => {
                   value={vehicleMake}
                   onChange={(event) => setVehicleMake(event.target.value)}
                   className="h-10 rounded-2xl text-base"
+                  aria-invalid={Boolean(errors.title)}
                 />
               </div>
 
               <div className="space-y-2">
                 <label
-                  className="text-sm font-semibold text-foreground"
+                  className="text-sm font-medium text-foreground"
                   htmlFor="vehicle-model"
                 >
-                  Model
+                  Model <span className="text-destructive">*</span>
                 </label>
                 <Input
                   id="vehicle-model"
@@ -665,12 +672,13 @@ const Post = (): JSX.Element => {
                   value={vehicleModel}
                   onChange={(event) => setVehicleModel(event.target.value)}
                   className="h-10 rounded-2xl text-base"
+                  aria-invalid={Boolean(errors.title)}
                 />
               </div>
 
               <div className="space-y-2">
                 <label
-                  className="text-sm font-semibold text-foreground"
+                  className="text-sm font-medium text-foreground"
                   htmlFor="vehicle-type"
                 >
                   Type
@@ -680,6 +688,7 @@ const Post = (): JSX.Element => {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="">None</SelectItem>
                     <SelectItem value="Sedan">Sedan</SelectItem>
                     <SelectItem value="SUV">SUV</SelectItem>
                     <SelectItem value="Truck">Truck</SelectItem>
@@ -696,7 +705,7 @@ const Post = (): JSX.Element => {
 
               <div className="space-y-2">
                 <label
-                  className="text-sm font-semibold text-foreground"
+                  className="text-sm font-medium text-foreground"
                   htmlFor="vehicle-color"
                 >
                   Color
@@ -712,7 +721,7 @@ const Post = (): JSX.Element => {
 
               <div className="space-y-2">
                 <label
-                  className="text-sm font-semibold text-foreground"
+                  className="text-sm font-medium text-foreground"
                   htmlFor="vehicle-miles"
                 >
                   Miles
@@ -728,6 +737,9 @@ const Post = (): JSX.Element => {
                 />
               </div>
             </div>
+            {errors.title ? (
+              <p className="text-sm text-destructive mt-2">{errors.title}</p>
+            ) : null}
           </section>
         )}
 
