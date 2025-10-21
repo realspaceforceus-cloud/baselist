@@ -44,8 +44,14 @@ export const UsersSection = () => {
         console.log("[UsersSection] Loading users...");
         const result = await adminApi.getUsers(1, "");
         console.log("[UsersSection] Got result:", result);
+        console.log("[UsersSection] Result type:", typeof result);
+        console.log("[UsersSection] Result keys:", Object.keys(result || {}));
+        console.log("[UsersSection] Result.users:", result?.users);
+        console.log("[UsersSection] Result.users type:", typeof result?.users);
+        console.log("[UsersSection] Result.users is array:", Array.isArray(result?.users));
         const userList = result?.users || [];
         console.log("[UsersSection] Setting users, count:", userList.length);
+        console.log("[UsersSection] userList:", userList);
         setUsers(userList);
       } catch (error) {
         console.error("[UsersSection] Error loading users:", error);
