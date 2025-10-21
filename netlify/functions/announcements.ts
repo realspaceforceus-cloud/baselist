@@ -39,23 +39,33 @@ export const handler: Handler = async (event) => {
     // GET /api/announcements
     if (method === "GET" && path === "/") {
       try {
-        const result = await client.query(
-          `SELECT 
-            id, 
-            title, 
-            content, 
-            color, 
+        let query = `SELECT
+            id,
+            title,
+            content,
+            color,
             background_color as "backgroundColor",
             text_color as "textColor",
             is_visible as "isVisible",
             created_at as "createdAt",
             updated_at as "updatedAt",
             created_by as "createdBy"
-           FROM announcements 
-           WHERE is_visible = true 
-           ORDER BY created_at DESC 
-           LIMIT 1`,
-        );
+           FROM announcements
+           WHERE is_visible = true`;
+
+        const params: any[] = [];
+
+        // If user is authenticated, exclude announcements they've dismissed
+        if (auth) {
+          query += ` AND id NOT IN (
+            SELECT announcement_id FROM dismissed_announcements WHERE user_id = $1
+          )`;
+          params.push(auth.userId);
+        }
+
+        query += ` ORDER BY created_at DESC LIMIT 1`;
+
+        const result = await client.query(query, params);
 
         if (result.rows.length === 0) {
           return {
@@ -67,27 +77,11 @@ export const handler: Handler = async (event) => {
 
         const announcement = result.rows[0];
 
-        // Check if user has dismissed this announcement
-        let isDismissed = false;
-        if (auth) {
-          const dismissedResult = await client.query(
-            `SELECT id FROM dismissed_announcements 
-             WHERE user_id = $1 AND announcement_id = $2`,
-            [auth.userId, announcement.id],
-          );
-          isDismissed = dismissedResult.rows.length > 0;
-        }
-
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            announcements: [
-              {
-                ...announcement,
-                isDismissed,
-              },
-            ],
+            announcements: [announcement],
           }),
         };
       } catch (err) {
