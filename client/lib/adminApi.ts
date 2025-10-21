@@ -257,6 +257,19 @@ export const adminApi = {
   async getUserDetail(userId: string) {
     return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/detail`);
   },
+  async updateUserProfile(userId: string, updates: {
+    username?: string;
+    email?: string;
+    role?: string;
+    status?: string;
+    baseId?: string;
+    avatarUrl?: string;
+  }) {
+    return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/profile`, {
+      method: "PATCH",
+      body: JSON.stringify(updates),
+    });
+  },
   async resetUserPassword(
     userId: string,
     options: { generateTemp?: boolean; sendEmail?: boolean },
