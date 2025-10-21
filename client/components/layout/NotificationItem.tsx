@@ -165,53 +165,76 @@ export const NotificationItem = ({
   return (
     <div
       className={cn(
-        "p-4 hover:bg-muted/30 transition cursor-pointer border-b border-border last:border-b-0",
+        "border-b border-border last:border-b-0 transition",
         !notification.read && "bg-muted/50",
       )}
-      onClick={handleClick}
     >
-      <div className="flex gap-3">
-        <div
-          className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-full flex-shrink-0",
-            bgColor,
-            textColor,
-          )}
-        >
-          <Icon className="h-5 w-5" aria-hidden />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-semibold text-foreground">
-              {notification.title}
-            </p>
-            {!notification.read && (
-              <span className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
+      <div
+        className={cn(
+          "p-4 hover:bg-muted/30 transition cursor-pointer",
+        )}
+        onClick={handleClick}
+      >
+        <div className="flex gap-3">
+          <div
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full flex-shrink-0",
+              bgColor,
+              textColor,
             )}
+          >
+            <Icon className="h-5 w-5" aria-hidden />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            {notification.description}
-          </p>
-          <div className="flex items-center justify-between mt-2">
-            <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(notification.createdAt), {
-                addSuffix: true,
-              })}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-sm font-semibold text-foreground">
+                {notification.title}
+              </p>
+              {!notification.read && (
+                <span className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {notification.description}
             </p>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={handleDismiss}
-              disabled={isLoading}
-              title="Dismiss notification"
-            >
-              <X className="h-3.5 w-3.5" aria-hidden />
-            </Button>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(notification.createdAt), {
+                  addSuffix: true,
+                })}
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={handleDismiss}
+                disabled={isLoading}
+                title="Dismiss notification"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+      {quickActions.length > 0 && (
+        <div className="flex gap-2 px-4 pb-3 border-t border-border/50">
+          {quickActions.map((action) => (
+            <button
+              key={action.label}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                action.onClick();
+              }}
+              className="flex-1 text-xs px-2 py-1.5 rounded border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition"
+            >
+              {action.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
