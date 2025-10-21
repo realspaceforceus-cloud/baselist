@@ -2,12 +2,22 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
+import { VehicleFilterBar } from "@/components/listings/VehicleFilterBar";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { SponsorTile } from "@/components/listings/SponsorTile";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
 import { LISTING_CATEGORIES } from "@/data/mock";
 import type { ListingFilter } from "@/types";
+
+interface VehicleFilters {
+  year?: string;
+  make?: string;
+  model?: string;
+  type?: string;
+  color?: string;
+  maxMiles?: string;
+}
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
 
