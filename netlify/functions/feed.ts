@@ -251,14 +251,14 @@ export const handler: Handler = async (event) => {
           }
         }
 
-        // Fetch comments for all posts
+        // Fetch comments for all posts (including nested replies)
         console.log("[FEED] GET /posts - Fetching comments");
         const commentsResult = await client.query(
           `SELECT
-            id, post_id, user_id, content, created_at
+            id, post_id, user_id, content, created_at, parent_id
            FROM feed_engagement
            WHERE post_id = ANY($1) AND engagement_type = 'comment' AND deleted_at IS NULL
-           ORDER BY created_at DESC`,
+           ORDER BY created_at ASC`,
           [posts.map((p) => p.id)],
         );
 
@@ -293,24 +293,45 @@ export const handler: Handler = async (event) => {
           });
         }
 
-        // Group comments by post
+        // Build nested comment structure
         const commentsByPost: Record<string, any[]> = {};
+        const commentMap = new Map();
+
         for (const post of posts) {
           commentsByPost[post.id] = [];
         }
 
+        // First pass: create comment objects and index by ID
         for (const comment of commentsResult.rows) {
           const author = commenterMap.get(comment.user_id);
-          commentsByPost[comment.post_id].push({
+          const commentObj = {
             id: comment.id,
             postId: comment.post_id,
             userId: comment.user_id,
             content: comment.content,
             createdAt: comment.created_at,
+            parentCommentId: comment.parent_id,
             author,
+            replies: [],
             likes: 0,
             userLiked: false,
-          });
+          };
+          commentMap.set(comment.id, commentObj);
+        }
+
+        // Second pass: build parent-child relationships and organize by post
+        for (const comment of commentsResult.rows) {
+          const commentObj = commentMap.get(comment.id);
+          if (comment.parent_id) {
+            // This is a reply - add to parent's replies
+            const parent = commentMap.get(comment.parent_id);
+            if (parent) {
+              parent.replies.push(commentObj);
+            }
+          } else {
+            // This is a top-level comment
+            commentsByPost[comment.post_id].push(commentObj);
+          }
         }
 
         // Attach comments to posts
