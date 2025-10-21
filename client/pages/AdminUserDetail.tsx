@@ -603,6 +603,47 @@ export const AdminUserDetail = () => {
           </div>
         </div>
 
+        {/* Account Notes */}
+        <div className="rounded-3xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Admin Notes
+          </h3>
+          {user.strikes.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No admin notes on file</p>
+          ) : (
+            <div className="space-y-3">
+              {user.strikes.map((note: any) => (
+                <div
+                  key={note.id}
+                  className="p-3 rounded-lg border border-border bg-muted/30"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{note.reason || note.type}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{note.description}</p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {formatDate(note.createdAt)}
+                      </p>
+                    </div>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                        note.severity === "critical"
+                          ? "bg-destructive/10 text-destructive"
+                          : note.severity === "warning"
+                            ? "bg-warning/10 text-warning"
+                            : "bg-info/10 text-info"
+                      }`}
+                    >
+                      {note.severity}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Account Strikes */}
         <div className="rounded-3xl border border-border bg-card p-6">
           <div className="flex items-center justify-between mb-4">
