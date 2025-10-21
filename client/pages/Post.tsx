@@ -74,6 +74,19 @@ const Post = (): JSX.Element => {
     setCategory(listingToEdit.category);
     setDescription(listingToEdit.description || "");
 
+    // Load vehicle data if available
+    if (listingToEdit.category === "Vehicles") {
+      const vehicleData = extractVehicleDataFromTitle(listingToEdit.title);
+      if (vehicleData) {
+        setVehicleYear(vehicleData.year);
+        setVehicleMake(vehicleData.make);
+        setVehicleModel(vehicleData.model);
+        setVehicleType(vehicleData.type || "");
+        setVehicleColor(vehicleData.color || "");
+        setVehicleMiles(vehicleData.miles || "");
+      }
+    }
+
     // Load existing images as previews
     if (listingToEdit.imageUrls && listingToEdit.imageUrls.length > 0) {
       const existingPhotos = listingToEdit.imageUrls.map((url) => ({
@@ -84,6 +97,29 @@ const Post = (): JSX.Element => {
       setPhotos(existingPhotos);
     }
   }, [editListingId, listings]);
+
+  const extractVehicleDataFromTitle = (title: string) => {
+    // Simple extraction: "2020 Honda Civic SUV" format
+    const parts = title.split(" ");
+    if (parts.length >= 3) {
+      return {
+        year: parts[0],
+        make: parts[1],
+        model: parts[2],
+        type: parts[3] || "",
+        color: "",
+        miles: "",
+      };
+    }
+    return null;
+  };
+
+  const buildVehicleTitle = () => {
+    if (!vehicleYear || !vehicleMake || !vehicleModel) return "";
+    const parts = [vehicleYear, vehicleMake, vehicleModel];
+    if (vehicleType) parts.push(vehicleType);
+    return parts.join(" ");
+  };
 
   useEffect(() => {
     return () => {
