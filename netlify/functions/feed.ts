@@ -129,11 +129,14 @@ export const handler: Handler = async (event) => {
 
     // GET /feed/posts?baseId=xxx&limit=20&offset=0
     if (method === "GET" && path === "/posts") {
+      console.log("[FEED] GET /posts - Starting request");
       const userId = await getUserIdFromAuth(event);
       const params = new URLSearchParams(event.rawQuery || "");
       const baseId = params.get("baseId");
       const limit = Math.min(parseInt(params.get("limit") || "20"), 100);
       const offset = parseInt(params.get("offset") || "0");
+
+      console.log("[FEED] GET /posts - Params:", { baseId, limit, offset, userId });
 
       if (!baseId) {
         return {
@@ -145,6 +148,8 @@ export const handler: Handler = async (event) => {
 
       const client = await pool.connect();
       try {
+        console.log("[FEED] GET /posts - Connected to database");
+
         const result = await client.query(
           `SELECT fp.*,
             (SELECT COUNT(*) FROM feed_engagement WHERE post_id = fp.id AND engagement_type = 'like' AND deleted_at IS NULL) as likes,
@@ -156,16 +161,31 @@ export const handler: Handler = async (event) => {
           [baseId, limit, offset],
         );
 
-        const posts = result.rows.map(transformFeedPost);
+        console.log("[FEED] GET /posts - Query returned", result.rows.length, "rows");
+
+        const posts = result.rows.map((row) => {
+          try {
+            return transformFeedPost(row);
+          } catch (e) {
+            console.error("[FEED] GET /posts - Error transforming row:", e, row);
+            throw e;
+          }
+        });
+
+        console.log("[FEED] GET /posts - Transformed", posts.length, "posts");
 
         // Fetch author info for all posts in one batch query
         const userIds = [...new Set(posts.map((p) => p.userId))];
+        console.log("[FEED] GET /posts - Fetching authors for", userIds.length, "users");
+
         if (userIds.length > 0) {
           const placeholders = userIds.map((_, i) => `$${i + 1}`).join(",");
           const usersResult = await client.query(
             `SELECT id, username as name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
             userIds,
           );
+
+          console.log("[FEED] GET /posts - Fetched", usersResult.rows.length, "authors");
 
           const usersMap = new Map(
             usersResult.rows.map((user) => [
@@ -187,11 +207,15 @@ export const handler: Handler = async (event) => {
           }
         }
 
+        console.log("[FEED] GET /posts - Success, returning", posts.length, "posts");
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(posts),
         };
+      } catch (e) {
+        console.error("[FEED] GET /posts - Error:", e);
+        throw e;
       } finally {
         client.release();
       }
