@@ -245,6 +245,10 @@ export interface FeedComment {
   content: string;
   author?: Seller;
   createdAt: string;
+  parentCommentId?: string;
+  replies?: FeedComment[];
+  likes?: number;
+  userLiked?: boolean;
 }
 
 export interface FeedAnnouncement {
