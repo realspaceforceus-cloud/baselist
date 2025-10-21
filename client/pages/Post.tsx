@@ -689,7 +689,6 @@ const Post = (): JSX.Element => {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
                     <SelectItem value="Sedan">Sedan</SelectItem>
                     <SelectItem value="SUV">SUV</SelectItem>
                     <SelectItem value="Truck">Truck</SelectItem>
