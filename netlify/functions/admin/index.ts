@@ -597,6 +597,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           codes: result.rows.map((row: any) => ({
             id: row.id,
@@ -618,6 +619,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -629,6 +631,7 @@ export const handler: Handler = async (event) => {
       if (!code || !baseId) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "code and baseId are required" }),
         };
       }
@@ -649,6 +652,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: result.rows[0] }),
       };
     }
@@ -658,6 +662,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -670,6 +675,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ success: true }),
       };
     }
@@ -679,6 +685,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -692,6 +699,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 200,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notes: result.rows }),
       };
     }
