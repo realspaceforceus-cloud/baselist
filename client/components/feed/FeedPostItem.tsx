@@ -65,7 +65,7 @@ export function FeedPostItem({
     }
   };
 
-  const handleComment = async () => {
+  const handleComment = async (parentCommentId?: string) => {
     if (!user) {
       toast.error("Please sign in to comment");
       return;
@@ -75,8 +75,26 @@ export function FeedPostItem({
 
     setIsCommentingLoading(true);
     try {
-      const newComment = await feedApi.commentOnPost(post.id, commentText);
-      setComments([newComment, ...comments]);
+      const newComment = await feedApi.commentOnPost(post.id, commentText, parentCommentId);
+
+      if (parentCommentId) {
+        // Add reply to parent comment
+        setComments(
+          comments.map((c) => {
+            if (c.id === parentCommentId) {
+              return {
+                ...c,
+                replies: [...(c.replies || []), newComment],
+              };
+            }
+            return c;
+          }),
+        );
+      } else {
+        // Add top-level comment
+        setComments([newComment, ...comments]);
+      }
+
       setCommentText("");
       toast.success("Comment added!");
     } catch (error) {
