@@ -374,10 +374,16 @@ const ListingDetail = (): JSX.Element => {
                 </p>
                 <div className="space-y-1 text-xs text-muted-foreground">
                   <p>
-                    Listed <span className="font-medium text-foreground">{listedRelative}</span>
+                    Listed{" "}
+                    <span className="font-medium text-foreground">
+                      {listedRelative}
+                    </span>
                   </p>
                   <p>
-                    Location: <span className="font-medium text-foreground">{listingBase?.name ?? "On-base"}</span>
+                    Location:{" "}
+                    <span className="font-medium text-foreground">
+                      {listingBase?.name ?? "On-base"}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -391,31 +397,41 @@ const ListingDetail = (): JSX.Element => {
                     {listing.vehicleYear && (
                       <div className="rounded-lg bg-muted/50 p-3">
                         <p className="text-xs text-muted-foreground">Year</p>
-                        <p className="font-semibold text-foreground">{listing.vehicleYear}</p>
+                        <p className="font-semibold text-foreground">
+                          {listing.vehicleYear}
+                        </p>
                       </div>
                     )}
                     {listing.vehicleMake && (
                       <div className="rounded-lg bg-muted/50 p-3">
                         <p className="text-xs text-muted-foreground">Make</p>
-                        <p className="font-semibold text-foreground">{listing.vehicleMake}</p>
+                        <p className="font-semibold text-foreground">
+                          {listing.vehicleMake}
+                        </p>
                       </div>
                     )}
                     {listing.vehicleModel && (
                       <div className="rounded-lg bg-muted/50 p-3">
                         <p className="text-xs text-muted-foreground">Model</p>
-                        <p className="font-semibold text-foreground">{listing.vehicleModel}</p>
+                        <p className="font-semibold text-foreground">
+                          {listing.vehicleModel}
+                        </p>
                       </div>
                     )}
                     {listing.vehicleType && (
                       <div className="rounded-lg bg-muted/50 p-3">
                         <p className="text-xs text-muted-foreground">Type</p>
-                        <p className="font-semibold text-foreground">{listing.vehicleType}</p>
+                        <p className="font-semibold text-foreground">
+                          {listing.vehicleType}
+                        </p>
                       </div>
                     )}
                     {listing.vehicleColor && (
                       <div className="rounded-lg bg-muted/50 p-3">
                         <p className="text-xs text-muted-foreground">Color</p>
-                        <p className="font-semibold text-foreground">{listing.vehicleColor}</p>
+                        <p className="font-semibold text-foreground">
+                          {listing.vehicleColor}
+                        </p>
                       </div>
                     )}
                     {listing.vehicleMiles && (
@@ -498,9 +514,7 @@ const ListingDetail = (): JSX.Element => {
                           rating
                         </p>
                       ) : null}
-                      {sellerLastActive ? (
-                        <p>{sellerLastActive}</p>
-                      ) : null}
+                      {sellerLastActive ? <p>{sellerLastActive}</p> : null}
                     </div>
                   </div>
                 </div>

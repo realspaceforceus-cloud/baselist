@@ -1797,7 +1797,8 @@ export const BaseListProvider = ({
 
         return threadFromBackend;
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : "Failed to send message";
+        const errorMsg =
+          error instanceof Error ? error.message : "Failed to send message";
         throw error instanceof Error ? error : new Error(errorMsg);
       }
     },

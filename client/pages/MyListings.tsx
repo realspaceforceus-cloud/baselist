@@ -109,7 +109,8 @@ export const MyListings = (): JSX.Element => {
       toast.success("Listing deleted successfully");
     } catch (error) {
       console.error("Delete listing error:", error);
-      const errorMsg = error instanceof Error ? error.message : "Unable to delete listing";
+      const errorMsg =
+        error instanceof Error ? error.message : "Unable to delete listing";
       toast.error(errorMsg);
       setDeleteConfirm(null);
     }

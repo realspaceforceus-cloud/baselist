@@ -66,9 +66,7 @@ export const ListingCard = ({
             {listing.title}
           </h3>
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-primary">
-              {priceLabel}
-            </span>
+            <span className="text-lg font-bold text-primary">{priceLabel}</span>
             {listing.category === "Vehicles" && listing.vehicleMiles && (
               <span className="text-xs text-muted-foreground">
                 • {Number(listing.vehicleMiles).toLocaleString()} mi
@@ -85,19 +83,25 @@ export const ListingCard = ({
             {listing.vehicleYear && (
               <div className="rounded-lg bg-muted/50 p-2 text-center">
                 <p className="text-xs text-muted-foreground">Year</p>
-                <p className="font-semibold text-foreground">{listing.vehicleYear}</p>
+                <p className="font-semibold text-foreground">
+                  {listing.vehicleYear}
+                </p>
               </div>
             )}
             {listing.vehicleMake && (
               <div className="rounded-lg bg-muted/50 p-2 text-center">
                 <p className="text-xs text-muted-foreground">Make</p>
-                <p className="font-semibold text-foreground text-xs truncate">{listing.vehicleMake}</p>
+                <p className="font-semibold text-foreground text-xs truncate">
+                  {listing.vehicleMake}
+                </p>
               </div>
             )}
             {listing.vehicleType && (
               <div className="rounded-lg bg-muted/50 p-2 text-center">
                 <p className="text-xs text-muted-foreground">Type</p>
-                <p className="font-semibold text-foreground text-xs truncate">{listing.vehicleType}</p>
+                <p className="font-semibold text-foreground text-xs truncate">
+                  {listing.vehicleType}
+                </p>
               </div>
             )}
           </div>
@@ -122,11 +126,15 @@ export const ListingCard = ({
                   {seller?.name ?? "Member"}
                 </span>
                 {seller?.verified ? (
-                  <BadgeCheck className="h-3.5 w-3.5 text-green-600 flex-shrink-0" aria-hidden />
+                  <BadgeCheck
+                    className="h-3.5 w-3.5 text-green-600 flex-shrink-0"
+                    aria-hidden
+                  />
                 ) : null}
               </div>
               <span className="text-xs text-muted-foreground">
-                Since {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
+                Since{" "}
+                {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
               </span>
             </div>
             {seller ? (
@@ -134,9 +142,7 @@ export const ListingCard = ({
                 userId={seller.id}
                 size="sm"
                 initialAverage={seller.rating ?? null}
-                initialCount={
-                  seller.ratingCount ?? seller.completedSales ?? 0
-                }
+                initialCount={seller.ratingCount ?? seller.completedSales ?? 0}
                 label={`${seller.name} rating`}
               />
             ) : null}

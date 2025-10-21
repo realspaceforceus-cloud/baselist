@@ -37,7 +37,13 @@ const AppContent = (): JSX.Element => {
   return (
     <Routes>
       {/* Main app routes */}
-      <Route element={<ErrorBoundary><AppShell /></ErrorBoundary>}>
+      <Route
+        element={
+          <ErrorBoundary>
+            <AppShell />
+          </ErrorBoundary>
+        }
+      >
         {/* Public pages - accessible to all */}
         <Route index element={<Home />} />
         <Route path="listing/:listingSlug" element={<ListingDetail />} />

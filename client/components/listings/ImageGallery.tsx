@@ -7,7 +7,10 @@ interface ImageGalleryProps {
   title: string;
 }
 
-export const ImageGallery = ({ images, title }: ImageGalleryProps): JSX.Element => {
+export const ImageGallery = ({
+  images,
+  title,
+}: ImageGalleryProps): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!images || images.length === 0) {
@@ -61,7 +64,9 @@ export const ImageGallery = ({ images, title }: ImageGalleryProps): JSX.Element 
                   type="button"
                   onClick={() => setCurrentIndex(index)}
                   className={`h-2 rounded-full transition ${
-                    index === currentIndex ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/75"
+                    index === currentIndex
+                      ? "w-6 bg-white"
+                      : "w-2 bg-white/50 hover:bg-white/75"
                   }`}
                   aria-label={`Go to photo ${index + 1}`}
                 />
