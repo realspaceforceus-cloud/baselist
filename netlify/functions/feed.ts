@@ -259,6 +259,7 @@ export const handler: Handler = async (event) => {
             !userResult.rows.length ||
             !["admin", "moderator"].includes(userResult.rows[0].role)
           ) {
+            client.release();
             return {
               statusCode: 403,
               headers: { "Content-Type": "application/json" },
