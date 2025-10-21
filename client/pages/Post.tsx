@@ -213,6 +213,12 @@ const Post = (): JSX.Element => {
     setCategory("");
     setDescription("");
     setErrors({});
+    setVehicleYear("");
+    setVehicleMake("");
+    setVehicleModel("");
+    setVehicleType("");
+    setVehicleColor("");
+    setVehicleMiles("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
