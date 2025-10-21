@@ -72,16 +72,36 @@ export const VehicleFilterBar = ({
           >
             Year
           </label>
-          <Input
-            id="filter-year"
-            type="number"
-            placeholder="e.g., 2020"
-            value={filters.year || ""}
-            onChange={(e) =>
-              onFiltersChange({ ...filters, year: e.target.value })
-            }
-            className="h-10 rounded-2xl"
-          />
+          {availableOptions.years.length > 0 ? (
+            <Select
+              value={filters.year || ""}
+              onValueChange={(value) =>
+                onFiltersChange({ ...filters, year: value })
+              }
+            >
+              <SelectTrigger id="filter-year" className="h-10 rounded-2xl">
+                <SelectValue placeholder="All years" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableOptions.years.map((year) => (
+                  <SelectItem key={year} value={year}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="filter-year"
+              type="number"
+              placeholder="e.g., 2020"
+              value={filters.year || ""}
+              onChange={(e) =>
+                onFiltersChange({ ...filters, year: e.target.value })
+              }
+              className="h-10 rounded-2xl"
+            />
+          )}
         </div>
 
         <div className="space-y-2">
@@ -91,15 +111,35 @@ export const VehicleFilterBar = ({
           >
             Make
           </label>
-          <Input
-            id="filter-make"
-            placeholder="e.g., Honda"
-            value={filters.make || ""}
-            onChange={(e) =>
-              onFiltersChange({ ...filters, make: e.target.value })
-            }
-            className="h-10 rounded-2xl"
-          />
+          {availableOptions.makes.length > 0 ? (
+            <Select
+              value={filters.make || ""}
+              onValueChange={(value) =>
+                onFiltersChange({ ...filters, make: value })
+              }
+            >
+              <SelectTrigger id="filter-make" className="h-10 rounded-2xl">
+                <SelectValue placeholder="All makes" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableOptions.makes.map((make) => (
+                  <SelectItem key={make} value={make}>
+                    {make}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="filter-make"
+              placeholder="e.g., Honda"
+              value={filters.make || ""}
+              onChange={(e) =>
+                onFiltersChange({ ...filters, make: e.target.value })
+              }
+              className="h-10 rounded-2xl"
+            />
+          )}
         </div>
 
         <div className="space-y-2">
@@ -109,15 +149,35 @@ export const VehicleFilterBar = ({
           >
             Model
           </label>
-          <Input
-            id="filter-model"
-            placeholder="e.g., Civic"
-            value={filters.model || ""}
-            onChange={(e) =>
-              onFiltersChange({ ...filters, model: e.target.value })
-            }
-            className="h-10 rounded-2xl"
-          />
+          {availableOptions.models.length > 0 ? (
+            <Select
+              value={filters.model || ""}
+              onValueChange={(value) =>
+                onFiltersChange({ ...filters, model: value })
+              }
+            >
+              <SelectTrigger id="filter-model" className="h-10 rounded-2xl">
+                <SelectValue placeholder="All models" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableOptions.models.map((model) => (
+                  <SelectItem key={model} value={model}>
+                    {model}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="filter-model"
+              placeholder="e.g., Civic"
+              value={filters.model || ""}
+              onChange={(e) =>
+                onFiltersChange({ ...filters, model: e.target.value })
+              }
+              className="h-10 rounded-2xl"
+            />
+          )}
         </div>
 
         <div className="space-y-2">
@@ -137,7 +197,7 @@ export const VehicleFilterBar = ({
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-              {vehicleTypes.map((type) => (
+              {availableOptions.types.map((type) => (
                 <SelectItem key={type} value={type}>
                   {type}
                 </SelectItem>
@@ -163,7 +223,7 @@ export const VehicleFilterBar = ({
               <SelectValue placeholder="All colors" />
             </SelectTrigger>
             <SelectContent>
-              {vehicleColors.map((color) => (
+              {availableOptions.colors.map((color) => (
                 <SelectItem key={color} value={color}>
                   {color}
                 </SelectItem>
