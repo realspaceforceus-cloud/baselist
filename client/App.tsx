@@ -25,6 +25,8 @@ import Privacy from "./pages/Privacy";
 import Guidelines from "./pages/Guidelines";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
+import Feed from "./pages/Feed";
+import Marketplace from "./pages/Marketplace";
 import AdminPanel from "./pages/AdminPanel";
 import { AdminUserDetail } from "./pages/AdminUserDetail";
 import AdminListingDetail from "./pages/AdminListingDetail";
