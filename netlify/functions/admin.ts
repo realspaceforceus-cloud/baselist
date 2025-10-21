@@ -454,6 +454,258 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // GET /api/admin/invitation-codes
+    if (method === "GET" && path === "/invitation-codes") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const baseId = new URLSearchParams(event.rawQueryString).get("baseId") || "";
+      let query = "SELECT * FROM invitation_codes";
+      const params: any[] = [];
+
+      if (baseId) {
+        query += " WHERE base_id = $1";
+        params.push(baseId);
+      }
+
+      query += " ORDER BY created_at DESC";
+
+      const result = await client.query(query, params);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          codes: result.rows.map((row: any) => ({
+            id: row.id,
+            code: row.code,
+            baseId: row.base_id,
+            maxUses: row.max_uses,
+            usesCount: row.uses_count,
+            active: row.active,
+            createdAt: row.created_at,
+            expiresAt: row.expires_at,
+            description: row.description,
+          })),
+        }),
+      };
+    }
+
+    // POST /api/admin/invitation-codes
+    if (method === "POST" && path === "/invitation-codes") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const { code, baseId, maxUses, expiresAt, description } = JSON.parse(
+        event.body || "{}",
+      );
+
+      if (!code || !baseId) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "code and baseId are required" }),
+        };
+      }
+
+      const result = await client.query(
+        `INSERT INTO invitation_codes (id, code, created_by, base_id, max_uses, expires_at, description)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [
+          `code-${Date.now()}`,
+          code,
+          auth.userId,
+          baseId,
+          maxUses || null,
+          expiresAt || null,
+          description || null,
+        ],
+      );
+
+      return {
+        statusCode: 201,
+        body: JSON.stringify({ code: result.rows[0] }),
+      };
+    }
+
+    // DELETE /api/admin/invitation-codes/:id
+    if (method === "DELETE" && path.startsWith("/invitation-codes/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const codeId = path.replace("/invitation-codes/", "");
+
+      await client.query("DELETE FROM invitation_codes WHERE id = $1", [codeId]);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ success: true }),
+      };
+    }
+
+    // GET /api/admin/account-notes/:userId
+    if (method === "GET" && path.startsWith("/account-notes/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/account-notes/", "");
+
+      const result = await client.query(
+        "SELECT * FROM account_notes WHERE user_id = $1 ORDER BY created_at DESC",
+        [userId],
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ notes: result.rows }),
+      };
+    }
+
+    // POST /api/admin/account-notes/:userId
+    if (method === "POST" && path.startsWith("/account-notes/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/account-notes/", "");
+      const { noteType, strikeReason, description, severity } = JSON.parse(
+        event.body || "{}",
+      );
+
+      if (!noteType || !description) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "noteType and description are required" }),
+        };
+      }
+
+      const result = await client.query(
+        `INSERT INTO account_notes (id, user_id, created_by, note_type, strike_reason, description, severity)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [
+          `note-${Date.now()}`,
+          userId,
+          auth.userId,
+          noteType,
+          strikeReason || null,
+          description,
+          severity || "info",
+        ],
+      );
+
+      return {
+        statusCode: 201,
+        body: JSON.stringify({ note: result.rows[0] }),
+      };
+    }
+
+    // GET /api/admin/failed-logins
+    if (method === "GET" && path === "/failed-logins") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const limit = parseInt(new URLSearchParams(event.rawQueryString).get("limit") || "100");
+
+      const result = await client.query(
+        "SELECT * FROM failed_login_attempts ORDER BY attempted_at DESC LIMIT $1",
+        [limit],
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ attempts: result.rows }),
+      };
+    }
+
+    // GET /api/admin/ip-blacklist
+    if (method === "GET" && path === "/ip-blacklist") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const result = await client.query(
+        "SELECT * FROM ip_blacklist WHERE active = true ORDER BY added_at DESC",
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ blacklist: result.rows }),
+      };
+    }
+
+    // POST /api/admin/ip-blacklist
+    if (method === "POST" && path === "/ip-blacklist") {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const { ipAddress, reason, notes } = JSON.parse(event.body || "{}");
+
+      if (!ipAddress || !reason) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "ipAddress and reason are required" }),
+        };
+      }
+
+      const result = await client.query(
+        `INSERT INTO ip_blacklist (id, ip_address, reason, added_by, notes)
+         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [`blacklist-${Date.now()}`, ipAddress, reason, auth.userId, notes || null],
+      );
+
+      return {
+        statusCode: 201,
+        body: JSON.stringify({ entry: result.rows[0] }),
+      };
+    }
+
+    // DELETE /api/admin/ip-blacklist/:id
+    if (method === "DELETE" && path.startsWith("/ip-blacklist/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const entryId = path.replace("/ip-blacklist/", "");
+
+      await client.query("DELETE FROM ip_blacklist WHERE id = $1", [entryId]);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ success: true }),
+      };
+    }
+
     // GET /api/admin/audit
     if (method === "GET" && path === "/audit") {
       const result = await client.query(
