@@ -201,13 +201,7 @@ const ListingDetail = (): JSX.Element => {
     setComposerOpen(false);
     setMessageBody("");
     navigate(`/messages/${thread.id}`);
-  }, [
-    listing,
-    messageBody,
-    navigate,
-    sendMessageToSeller,
-    seller?.name,
-  ]);
+  }, [listing, messageBody, navigate, sendMessageToSeller, seller?.name]);
 
   const handleViewSellerListings = useCallback(() => {
     if (!seller || !listing) {
