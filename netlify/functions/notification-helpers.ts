@@ -12,12 +12,14 @@ export interface CreateNotificationOptions {
     | "offer_received"
     | "offer_accepted"
     | "offer_declined"
-    | "transaction_complete";
+    | "transaction_complete"
+    | "post_commented"
+    | "comment_liked";
   title: string;
   description: string;
   actorId?: string;
   targetId?: string;
-  targetType?: "listing" | "thread" | "user";
+  targetType?: "listing" | "thread" | "user" | "post";
   data?: Record<string, any>;
 }
 
