@@ -77,6 +77,30 @@ export const InvitationCodesSection = ({
     active: true,
   });
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [expandedCodeId, setExpandedCodeId] = useState<string | null>(null);
+  const [codeUsers, setCodeUsers] = useState<Record<string, any[]>>({});
+  const [loadingCodeUsers, setLoadingCodeUsers] = useState<string | null>(null);
+
+  const loadCodeUsers = async (codeId: string) => {
+    if (codeUsers[codeId]) {
+      setExpandedCodeId(expandedCodeId === codeId ? null : codeId);
+      return;
+    }
+
+    setLoadingCodeUsers(codeId);
+    try {
+      const response = await fetch(`/api/admin/invitation-codes/${codeId}/users`);
+      if (!response.ok) throw new Error("Failed to load users");
+      const data = await response.json();
+      setCodeUsers((prev) => ({ ...prev, [codeId]: data.users || [] }));
+      setExpandedCodeId(codeId);
+    } catch (error) {
+      toast.error("Failed to load users for this code");
+      console.error(error);
+    } finally {
+      setLoadingCodeUsers(null);
+    }
+  };
 
   const loadCodes = useCallback(async () => {
     if (!onFetchCodes) return;
