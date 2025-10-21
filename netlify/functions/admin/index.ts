@@ -492,14 +492,51 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/bases
     if (method === "GET" && path === "/bases") {
-      const result = await client.query(
+      const basesResult = await client.query(
         `SELECT * FROM bases ORDER BY name ASC`,
+      );
+
+      const basesWithCounts = await Promise.all(
+        basesResult.rows.map(async (base: any) => {
+          const usersCount = await client.query(
+            `SELECT COUNT(*) as count FROM users WHERE base_id = $1`,
+            [base.id],
+          );
+          const listingsCount = await client.query(
+            `SELECT COUNT(*) as count FROM listings WHERE base_id = $1 AND status = 'active'`,
+            [base.id],
+          );
+          const reportsCount = await client.query(
+            `SELECT COUNT(*) as count FROM reports WHERE base_id = $1 AND status = 'open'`,
+            [base.id],
+          );
+          const moderatorResult = await client.query(
+            `SELECT username FROM users WHERE base_id = $1 AND role = 'moderator' LIMIT 1`,
+            [base.id],
+          );
+
+          return {
+            id: base.id,
+            name: base.name,
+            abbreviation: base.abbreviation,
+            region: base.region,
+            timezone: base.timezone,
+            latitude: base.latitude,
+            longitude: base.longitude,
+            usersCount: parseInt(usersCount.rows[0]?.count ?? 0),
+            listingsCount: parseInt(listingsCount.rows[0]?.count ?? 0),
+            reportsCount: parseInt(reportsCount.rows[0]?.count ?? 0),
+            moderator: moderatorResult.rows[0]?.username || null,
+            createdAt: base.created_at,
+            updatedAt: base.updated_at,
+          };
+        }),
       );
 
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bases: result.rows }),
+        body: JSON.stringify({ bases: basesWithCounts }),
       };
     }
 
