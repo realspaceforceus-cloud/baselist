@@ -2113,17 +2113,15 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "users" ? (
             <UsersSection
-              users={scopedAccounts.map((acc) => ({
-                id: acc.id,
-                username: acc.username,
-                email: userDirectoryRef.current.get(acc.id)?.email || "",
-                role: acc.role,
-                status:
-                  userDirectoryRef.current.get(acc.id)?.status || "active",
-                baseId: acc.baseId,
-                createdAt: acc.createdAt,
-                dowVerifiedAt: userDirectoryRef.current.get(acc.id)
-                  ?.dowVerifiedAt,
+              users={Array.from(userDirectoryRef.current.values()).map((user) => ({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                status: user.status || "active",
+                baseId: user.baseId,
+                createdAt: user.createdAt,
+                dowVerifiedAt: user.dowVerifiedAt,
               }))}
               onUserUpdate={(userId, updates) =>
                 adminApi.updateUser(userId, updates)
