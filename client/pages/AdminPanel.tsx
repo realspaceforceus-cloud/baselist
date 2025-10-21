@@ -40,6 +40,8 @@ import {
   SponsorsSection,
   UsersSection,
   VerificationSection,
+  InvitationCodesSection,
+  SecurityAuditSection,
   type AdminAuditEntry,
   type AdminBaseRow,
   type AdminFlaggedThread,
