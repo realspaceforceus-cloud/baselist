@@ -2048,40 +2048,55 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period =
-        new URLSearchParams(event.rawQueryString).get("period") || "7d";
-      let dateFilter = "1=1";
+      try {
+        const period =
+          new URLSearchParams(event.rawQueryString).get("period") || "7d";
+        let dateFilter = "1=1";
 
-      if (period === "24h") {
-        dateFilter = `u.created_at >= NOW() - INTERVAL '24 hours'`;
-      } else if (period === "7d") {
-        dateFilter = `u.created_at >= NOW() - INTERVAL '7 days'`;
-      } else if (period === "30d") {
-        dateFilter = `u.created_at >= NOW() - INTERVAL '30 days'`;
-      } else if (period === "90d") {
-        dateFilter = `u.created_at >= NOW() - INTERVAL '90 days'`;
+        if (period === "24h") {
+          dateFilter = `u.created_at >= NOW() - INTERVAL '24 hours'`;
+        } else if (period === "7d") {
+          dateFilter = `u.created_at >= NOW() - INTERVAL '7 days'`;
+        } else if (period === "30d") {
+          dateFilter = `u.created_at >= NOW() - INTERVAL '30 days'`;
+        } else if (period === "90d") {
+          dateFilter = `u.created_at >= NOW() - INTERVAL '90 days'`;
+        }
+
+        let result = { rows: [] };
+
+        try {
+          result = await client.query(
+            `SELECT b.name, COUNT(u.id) as count
+             FROM users u
+             JOIN bases b ON u.base_id = b.id
+             WHERE ${dateFilter}
+             GROUP BY b.name, b.id
+             ORDER BY count DESC
+             LIMIT 5`,
+          );
+        } catch (err) {
+          console.error("Bases by signups query error:", err);
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bases: result.rows.map((row: any) => ({
+              name: row.name,
+              count: parseInt(row.count),
+            })),
+          }),
+        };
+      } catch (error) {
+        console.error("Bases by signups endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch bases by signups" }),
+        };
       }
-
-      const result = await client.query(
-        `SELECT b.name, COUNT(u.id) as count
-         FROM users u
-         JOIN bases b ON u.base_id = b.id
-         WHERE ${dateFilter}
-         GROUP BY b.name, b.id
-         ORDER BY count DESC
-         LIMIT 5`,
-      );
-
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bases: result.rows.map((row: any) => ({
-            name: row.name,
-            count: parseInt(row.count),
-          })),
-        }),
-      };
     }
 
     // GET /api/admin/analytics/moderation
