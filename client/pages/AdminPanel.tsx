@@ -797,7 +797,9 @@ const AdminPanel = (): JSX.Element => {
         }
         // Debug: log the response structure
         console.log("getAudit response:", auditResponse);
-        const auditLog = Array.isArray(auditResponse) ? auditResponse : auditResponse?.audit || [];
+        const auditLog = Array.isArray(auditResponse)
+          ? auditResponse
+          : auditResponse?.audit || [];
         const directory = userDirectoryRef.current;
         setAuditEntries(
           auditLog.map((entry) => ({
