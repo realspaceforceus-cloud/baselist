@@ -61,51 +61,24 @@ export const ListingCard = ({
         ) : null}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <div className="space-y-2">
+        <div className="space-y-3">
           <h3 className="text-base font-semibold text-foreground line-clamp-2">
             {listing.title}
           </h3>
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-primary">{priceLabel}</span>
+          <div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-primary">{priceLabel}</span>
+            </div>
             {listing.category === "Vehicles" && listing.vehicleMiles && (
-              <span className="text-xs text-muted-foreground">
-                • {Number(listing.vehicleMiles).toLocaleString()} mi
-              </span>
+              <p className="text-sm font-semibold text-muted-foreground mt-1">
+                {Number(listing.vehicleMiles).toLocaleString()} miles
+              </p>
             )}
           </div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
             {listing.category} • {timeAgo}
           </div>
         </div>
-
-        {listing.category === "Vehicles" && (
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            {listing.vehicleYear && (
-              <div className="rounded-lg bg-muted/50 p-2 text-center">
-                <p className="text-xs text-muted-foreground">Year</p>
-                <p className="font-semibold text-foreground">
-                  {listing.vehicleYear}
-                </p>
-              </div>
-            )}
-            {listing.vehicleMake && (
-              <div className="rounded-lg bg-muted/50 p-2 text-center">
-                <p className="text-xs text-muted-foreground">Make</p>
-                <p className="font-semibold text-foreground text-xs truncate">
-                  {listing.vehicleMake}
-                </p>
-              </div>
-            )}
-            {listing.vehicleType && (
-              <div className="rounded-lg bg-muted/50 p-2 text-center">
-                <p className="text-xs text-muted-foreground">Type</p>
-                <p className="font-semibold text-foreground text-xs truncate">
-                  {listing.vehicleType}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
         <div className="mt-auto border-t border-border pt-3">
           <div className="flex items-center gap-2.5">
             {seller?.avatarUrl ? (
