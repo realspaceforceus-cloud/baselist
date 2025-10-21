@@ -16,6 +16,7 @@ import { feedApi } from "@/lib/feedApi";
 import { useAuth } from "@/context/AuthContext";
 import { useBaseList } from "@/context/BaseListContext";
 import { FeedCommentItem } from "./FeedCommentItem";
+import { MentionAutocomplete } from "./MentionAutocomplete";
 import type { FeedPost, FeedComment } from "@/types";
 
 interface FeedPostItemProps {
