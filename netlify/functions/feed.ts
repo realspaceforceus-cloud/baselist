@@ -928,6 +928,36 @@ export const handler: Handler = async (event) => {
              VALUES ($1, $2, $3, NOW())`,
             [likeId, commentId, userId],
           );
+
+          // Notify comment author
+          const commentResult = await client.query(
+            "SELECT user_id, post_id FROM feed_engagement WHERE id = $1 AND engagement_type = 'comment'",
+            [commentId],
+          );
+
+          if (commentResult.rows[0] && commentResult.rows[0].user_id !== userId) {
+            const liker = await client.query(
+              "SELECT username FROM users WHERE id = $1",
+              [userId],
+            );
+            const likerName = liker.rows[0]?.username || "Someone";
+            const postId = commentResult.rows[0].post_id;
+
+            try {
+              await createNotification({
+                userId: commentResult.rows[0].user_id,
+                type: "comment_liked",
+                title: `${likerName} liked your comment`,
+                description: "Your comment received a like",
+                actorId: userId,
+                targetId: postId,
+                targetType: "post",
+                data: { commentId },
+              });
+            } catch (err) {
+              console.error("[FEED] Error creating like notification:", err);
+            }
+          }
         }
 
         return {
