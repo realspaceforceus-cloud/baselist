@@ -1914,9 +1914,11 @@ export const handler: Handler = async (event) => {
       } catch (error) {
         console.error("Live users endpoint error:", error);
         return {
-          statusCode: 500,
+          statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Failed to fetch live users" }),
+          body: JSON.stringify({
+            activeUsers: 0,
+          }),
         };
       }
     }
