@@ -1,5 +1,6 @@
 import { Heart, MessageCircle, Flag, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { differenceInHours, formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
