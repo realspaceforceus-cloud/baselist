@@ -261,7 +261,8 @@ export const Marketplace = (): JSX.Element => {
             onFilterChange={setActiveFilter}
           />
           <div className="text-sm text-muted-foreground">
-            {resultSummary} listings{currentBase ? ` at ${currentBase.name}` : ""}
+            {resultSummary} listings
+            {currentBase ? ` at ${currentBase.name}` : ""}
             {searchQuery ? (
               <>
                 <span className="px-1">•</span>
