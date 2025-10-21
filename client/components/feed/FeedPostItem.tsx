@@ -232,8 +232,23 @@ export function FeedPostItem({
     user?.userId === post.userId ||
     (currentBase && (user?.role === "admin" || user?.role === "moderator"));
 
+  // Recursively find a comment at any nesting level
+  const findComment = (
+    commentList: FeedComment[],
+    commentId: string,
+  ): FeedComment | undefined => {
+    for (const c of commentList) {
+      if (c.id === commentId) return c;
+      if (c.replies && c.replies.length > 0) {
+        const found = findComment(c.replies, commentId);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  };
+
   const canDeleteComment = (commentId: string) => {
-    const comment = comments.find((c) => c.id === commentId);
+    const comment = findComment(comments, commentId);
     return (
       user?.userId === comment?.userId ||
       (currentBase && (user?.role === "admin" || user?.role === "moderator"))
