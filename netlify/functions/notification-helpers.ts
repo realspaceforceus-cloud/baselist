@@ -14,7 +14,8 @@ export interface CreateNotificationOptions {
     | "offer_declined"
     | "transaction_complete"
     | "post_commented"
-    | "comment_liked";
+    | "comment_liked"
+    | "comment_replied";
   title: string;
   description: string;
   actorId?: string;
