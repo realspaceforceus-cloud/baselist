@@ -4,6 +4,7 @@ import {
   Flag,
   MessageCircle,
   ShieldCheck,
+  Check,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
@@ -11,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ImageGallery } from "@/components/listings/ImageGallery";
 import {
   Sheet,
   SheetContent,
