@@ -2179,14 +2179,12 @@ const AdminPanel = (): JSX.Element => {
             <EmailTemplatesSection />
           ) : null}
           {activeSection === "invitation-codes" ? (
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-card text-center">
-              <p className="text-sm text-muted-foreground">
-                Invitation codes management initializing...
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">
-                Create and manage join codes from here when system is ready.
-              </p>
-            </div>
+            <InvitationCodesSection
+              bases={bases}
+              onFetchCodes={adminApi.getInvitationCodes}
+              onCreateCode={adminApi.createInvitationCode}
+              onDeleteCode={adminApi.deleteInvitationCode}
+            />
           ) : null}
           {activeSection === "security" ? (
             <SecuritySection
