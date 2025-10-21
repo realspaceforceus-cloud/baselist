@@ -10,10 +10,12 @@ import type { FeedPost, FeedComment } from "@/types";
 
 interface FeedPostItemProps {
   post: FeedPost;
+  onPostDeleted?: () => void;
 }
 
-export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
+export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.Element {
   const { user } = useAuth();
+  const { currentBase } = useBaseList();
   const [isLiked, setIsLiked] = useState(post.userLiked || false);
   const [likes, setLikes] = useState(post.likes || 0);
   const [isLiking, setIsLiking] = useState(false);
@@ -22,6 +24,10 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
   const [isCommentingLoading, setIsCommentingLoading] = useState(false);
   const [pollOptions, setPollOptions] = useState(post.pollOptions || []);
   const [isVoting, setIsVoting] = useState(false);
+  const [comments, setComments] = useState<FeedComment[]>(post.userComments || []);
+  const [showAllComments, setShowAllComments] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showMore, setShowMore] = useState<Record<string, boolean>>({});
 
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), {
     addSuffix: true,
