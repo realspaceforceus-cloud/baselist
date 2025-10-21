@@ -78,7 +78,8 @@ export const handler: Handler = async (event) => {
 
       return json({
         notifications: result.rows,
-        unreadCount: countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0,
+        unreadCount:
+          countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0,
         total: result.rows.length,
       });
     }
@@ -135,7 +136,8 @@ export const handler: Handler = async (event) => {
 
     return json({ error: "Not found" }, 404);
   } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : "Internal server error";
+    const errorMsg =
+      err instanceof Error ? err.message : "Internal server error";
     console.error("Notifications error:", errorMsg);
     return json({ error: errorMsg }, 500);
   } finally {

@@ -1,7 +1,7 @@
 import { apiRequest } from "./apiClient";
 
 // Safe array utility - always returns an array
-export const asArray = <T,>(v: T[] | undefined | null): T[] =>
+export const asArray = <T>(v: T[] | undefined | null): T[] =>
   Array.isArray(v) ? v : [];
 
 // Auth endpoints
@@ -209,12 +209,9 @@ export const notifications = {
 
   getUnreadCount: async () => {
     try {
-      const data = await apiRequest<any>(
-        "/api/notifications/count",
-        {
-          method: "GET",
-        },
-      );
+      const data = await apiRequest<any>("/api/notifications/count", {
+        method: "GET",
+      });
       return { unreadCount: Number(data?.unreadCount ?? 0) };
     } catch (error) {
       // Always return a valid response even on error
