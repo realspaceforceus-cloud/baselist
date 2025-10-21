@@ -193,6 +193,42 @@ export const AdminUserDetail = () => {
     }
   };
 
+  const handleSaveChanges = async () => {
+    setIsSubmitting(true);
+    try {
+      const updatePayload: any = {};
+      if (editData.username !== user.user.username) updatePayload.username = editData.username;
+      if (editData.email !== user.user.email) updatePayload.email = editData.email;
+      if (editData.role !== user.user.role) updatePayload.role = editData.role;
+      if (editData.status !== user.user.status) updatePayload.status = editData.status;
+      if (editData.baseId !== user.user.baseId) updatePayload.baseId = editData.baseId;
+      if (editData.avatarUrl !== (user.user.avatarUrl || "")) updatePayload.avatarUrl = editData.avatarUrl;
+
+      if (Object.keys(updatePayload).length === 0) {
+        toast.info("No changes made");
+        setEditMode(false);
+        return;
+      }
+
+      await adminApi.updateUserProfile(userId!, updatePayload);
+      setUser((prev: any) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          ...updatePayload,
+          baseId: updatePayload.baseId || prev.user.baseId,
+        },
+      }));
+      toast.success("User profile updated");
+      setEditMode(false);
+    } catch (error) {
+      console.error("Failed to save changes:", error);
+      toast.error("Failed to save changes");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
