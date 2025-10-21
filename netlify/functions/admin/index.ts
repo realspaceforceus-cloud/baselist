@@ -2289,37 +2289,57 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const thirtyDaysAgo = new Date(
-        Date.now() - 30 * 24 * 60 * 60 * 1000,
-      ).toISOString();
+      try {
+        const thirtyDaysAgo = new Date(
+          Date.now() - 30 * 24 * 60 * 60 * 1000,
+        ).toISOString();
 
-      const totalUsersOldResult = await client.query(
-        `SELECT COUNT(*) as count FROM users WHERE created_at < $1`,
-        [thirtyDaysAgo],
-      );
+        let totalUsersOldResult = { rows: [{ count: 0 }] };
+        let activeOldUsersResult = { rows: [{ count: 0 }] };
 
-      const activeOldUsersResult = await client.query(
-        `SELECT COUNT(DISTINCT u.id) as count
-         FROM users u
-         JOIN user_sessions us ON u.id = us.user_id
-         WHERE u.created_at < $1 AND us.last_activity >= NOW() - INTERVAL '7 days'`,
-        [thirtyDaysAgo],
-      );
+        try {
+          totalUsersOldResult = await client.query(
+            `SELECT COUNT(*) as count FROM users WHERE created_at < $1`,
+            [thirtyDaysAgo],
+          );
+        } catch (err) {
+          console.error("Total old users query error:", err);
+        }
 
-      const totalOld = parseInt(totalUsersOldResult.rows[0]?.count ?? 0);
-      const activeOld = parseInt(activeOldUsersResult.rows[0]?.count ?? 0);
-      const retention =
-        totalOld > 0 ? ((activeOld / totalOld) * 100).toFixed(2) : "0.00";
+        try {
+          activeOldUsersResult = await client.query(
+            `SELECT COUNT(DISTINCT u.id) as count
+             FROM users u
+             JOIN user_sessions us ON u.id = us.user_id
+             WHERE u.created_at < $1 AND us.last_activity >= NOW() - INTERVAL '7 days'`,
+            [thirtyDaysAgo],
+          );
+        } catch (err) {
+          console.error("Active old users query error:", err);
+        }
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          retentionRate: parseFloat(retention),
-          retainingUsers: activeOld,
-          totalEligible: totalOld,
-        }),
-      };
+        const totalOld = parseInt(totalUsersOldResult.rows[0]?.count ?? 0);
+        const activeOld = parseInt(activeOldUsersResult.rows[0]?.count ?? 0);
+        const retention =
+          totalOld > 0 ? ((activeOld / totalOld) * 100).toFixed(2) : "0.00";
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            retentionRate: parseFloat(retention),
+            retainingUsers: activeOld,
+            totalEligible: totalOld,
+          }),
+        };
+      } catch (error) {
+        console.error("Retention endpoint error:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch retention metrics" }),
+        };
+      }
     }
 
     return {
