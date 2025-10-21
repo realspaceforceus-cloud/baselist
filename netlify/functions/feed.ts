@@ -158,21 +158,32 @@ export const handler: Handler = async (event) => {
 
         const posts = result.rows.map(transformFeedPost);
 
-        // Fetch author info for each post
-        for (const post of posts) {
-          const userResult = await client.query(
-            `SELECT id, username as name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id = $1`,
-            [post.userId],
+        // Fetch author info for all posts in one batch query
+        const userIds = [...new Set(posts.map((p) => p.userId))];
+        if (userIds.length > 0) {
+          const placeholders = userIds.map((_, i) => `$${i + 1}`).join(",");
+          const usersResult = await client.query(
+            `SELECT id, username as name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
+            userIds,
           );
-          if (userResult.rows.length > 0) {
-            const user = userResult.rows[0];
-            post.author = {
-              id: user.id,
-              name: user.name,
-              verified: !!user.verified,
-              memberSince: new Date().toISOString(),
-              avatarUrl: user.avatarUrl || "",
-            };
+
+          const usersMap = new Map(
+            usersResult.rows.map((user) => [
+              user.id,
+              {
+                id: user.id,
+                name: user.name,
+                verified: !!user.verified,
+                memberSince: new Date().toISOString(),
+                avatarUrl: user.avatarUrl || "",
+              },
+            ]),
+          );
+
+          for (const post of posts) {
+            if (usersMap.has(post.userId)) {
+              post.author = usersMap.get(post.userId);
+            }
           }
         }
 
