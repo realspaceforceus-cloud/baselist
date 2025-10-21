@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { VehicleOptions } from "@/lib/vehicleUtils";
 
 interface VehicleFilters {
   year?: string;
@@ -19,36 +20,8 @@ interface VehicleFilters {
 interface VehicleFilterBarProps {
   filters: VehicleFilters;
   onFiltersChange: (filters: VehicleFilters) => void;
+  availableOptions: VehicleOptions;
 }
-
-const vehicleTypes = [
-  "Sedan",
-  "SUV",
-  "Truck",
-  "Van",
-  "Coupe",
-  "Hatchback",
-  "Wagon",
-  "Convertible",
-  "Minivan",
-  "Other",
-];
-
-const vehicleColors = [
-  "Black",
-  "White",
-  "Silver",
-  "Gray",
-  "Red",
-  "Blue",
-  "Brown",
-  "Green",
-  "Gold",
-  "Beige",
-  "Orange",
-  "Purple",
-  "Other",
-];
 
 export const VehicleFilterBar = ({
   filters,
