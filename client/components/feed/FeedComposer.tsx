@@ -208,42 +208,55 @@ export function FeedComposer({
         </div>
       )}
 
-      {showOptions && mode === "event" && (
+      {showOptions && mode === "photo" && (
         <div className="mb-4 space-y-3 rounded-lg bg-accent/50 p-3">
           <input
-            type="text"
-            value={eventData.title}
-            onChange={(e) =>
-              setEventData({ ...eventData, title: e.target.value })
-            }
-            placeholder="Event title"
-            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="hidden"
           />
-          <textarea
-            value={eventData.description}
-            onChange={(e) =>
-              setEventData({ ...eventData, description: e.target.value })
-            }
-            placeholder="Event description"
-            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
-          />
-          <input
-            type="datetime-local"
-            value={eventData.startDate}
-            onChange={(e) =>
-              setEventData({ ...eventData, startDate: e.target.value })
-            }
-            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
-          />
-          <input
-            type="text"
-            value={eventData.endDate}
-            onChange={(e) =>
-              setEventData({ ...eventData, endDate: e.target.value })
-            }
-            placeholder="End date (optional)"
-            className="w-full rounded border border-border bg-background px-2 py-1 text-sm focus:border-primary focus:outline-none"
-          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploadingPhoto}
+            className="w-full flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-accent transition disabled:opacity-50"
+          >
+            {isUploadingPhoto ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Image className="h-4 w-4" />
+                Choose photos
+              </>
+            )}
+          </button>
+
+          {uploadedImages.length > 0 && (
+            <div className="grid grid-cols-2 gap-2">
+              {uploadedImages.map((url, idx) => (
+                <div key={idx} className="relative">
+                  <img
+                    src={url}
+                    alt="Uploaded"
+                    className="rounded-lg object-cover w-full aspect-square"
+                  />
+                  <button
+                    onClick={() =>
+                      setUploadedImages(uploadedImages.filter((_, i) => i !== idx))
+                    }
+                    className="absolute top-1 right-1 rounded-full bg-destructive text-destructive-foreground p-1 hover:bg-destructive/90"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -251,7 +264,11 @@ export function FeedComposer({
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           {mode === "photo" && (
-            <button className="rounded p-2 text-muted-foreground hover:bg-accent">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingPhoto}
+              className="rounded p-2 text-muted-foreground hover:bg-accent transition"
+            >
               <Image className="h-4 w-4" />
             </button>
           )}
@@ -259,7 +276,7 @@ export function FeedComposer({
 
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid || isSubmitting}
+          disabled={!isFormValid || isSubmitting || isUploadingPhoto}
           className="rounded-full px-6"
         >
           {isSubmitting ? "Posting..." : "Post"}
