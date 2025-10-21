@@ -163,7 +163,6 @@ export const VehicleFilterBar = ({
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All types</SelectItem>
               {vehicleTypes.map((type) => (
                 <SelectItem key={type} value={type}>
                   {type}
