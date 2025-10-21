@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
 import { extractVehicleOptions } from "@/lib/vehicleUtils";
 import { LISTING_CATEGORIES } from "@/data/mock";
-import type { ListingFilter } from "@/types";
+import type { Listing, ListingFilter, UserProfile } from "@/types";
 
 interface VehicleFilters {
   year?: string;
