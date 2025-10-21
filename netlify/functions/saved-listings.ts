@@ -6,9 +6,12 @@ export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/saved-listings", "");
 
-  // Get userId from headers (set by proxy)
-  const userIdHeader = event.headers["x-user-id"];
-  if (!userIdHeader) {
+  // Get userId from cookies
+  const cookies = event.headers.cookie || "";
+  const userIdMatch = cookies.match(/userId=([^;]+)/);
+  const userId = userIdMatch ? userIdMatch[1] : null;
+
+  if (!userId) {
     return {
       statusCode: 401,
       body: JSON.stringify({ error: "Unauthorized" }),
