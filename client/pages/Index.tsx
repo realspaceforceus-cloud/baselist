@@ -33,16 +33,18 @@ const Index = (): JSX.Element => {
     sponsorPlacements,
   } = useBaseList();
   const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
+  const [vehicleFilters, setVehicleFilters] = useState<VehicleFilters>({});
   const [visibleCount, setVisibleCount] = useState(6);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setActiveFilter("All");
+    setVehicleFilters({});
   }, [currentBaseId]);
 
   useEffect(() => {
     setVisibleCount(6);
-  }, [activeFilter, currentBaseId, searchQuery]);
+  }, [activeFilter, currentBaseId, searchQuery, vehicleFilters]);
 
   const sponsorPlacement = useMemo(
     () =>
