@@ -2294,9 +2294,12 @@ export const handler: Handler = async (event) => {
       } catch (error) {
         console.error("Peak activity endpoint error:", error);
         return {
-          statusCode: 500,
+          statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Failed to fetch peak activity metrics" }),
+          body: JSON.stringify({
+            peakHour: null,
+            peakDay: null,
+          }),
         };
       }
     }
