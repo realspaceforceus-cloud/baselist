@@ -272,6 +272,14 @@ const Post = (): JSX.Element => {
             ? `\n\nVehicle Details:\n- Color: ${vehicleColor || "Not specified"}\n- Mileage: ${vehicleMiles ? vehicleMiles.toLocaleString() + " miles" : "Not specified"}`
             : ""
         }`,
+        ...(category === "Vehicles" && {
+          vehicleYear: vehicleYear || null,
+          vehicleMake: vehicleMake || null,
+          vehicleModel: vehicleModel || null,
+          vehicleType: vehicleType || null,
+          vehicleColor: vehicleColor || null,
+          vehicleMiles: vehicleMiles || null,
+        }),
       };
 
       // For editing, use PUT; for creating, use POST
