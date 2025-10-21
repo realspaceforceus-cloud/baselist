@@ -93,9 +93,9 @@ export const MyListings = (): JSX.Element => {
     });
   };
 
-  const handleDeleteListing = (listingId: string) => {
+  const handleDeleteListing = async (listingId: string) => {
     try {
-      removeListing(listingId);
+      await removeListing(listingId);
       setDeleteConfirm(null);
       toast.success("Listing deleted");
     } catch (error) {
