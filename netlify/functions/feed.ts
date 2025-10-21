@@ -507,7 +507,7 @@ export const handler: Handler = async (event) => {
       }
 
       const postId = path.split("/")[2];
-      const { content } = JSON.parse(event.body || "{}");
+      const { content, parentCommentId } = JSON.parse(event.body || "{}");
 
       if (!content) {
         return {
@@ -519,7 +519,26 @@ export const handler: Handler = async (event) => {
 
       const client = await pool.connect();
       try {
-        // Get post info first to notify the post author
+        // If replying to a comment, verify the parent comment exists and belongs to this post
+        let parentAuthorId: string | null = null;
+        if (parentCommentId) {
+          const parentResult = await client.query(
+            "SELECT user_id FROM feed_engagement WHERE id = $1 AND post_id = $2 AND engagement_type = 'comment'",
+            [parentCommentId, postId],
+          );
+
+          if (parentResult.rows.length === 0) {
+            return {
+              statusCode: 400,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ error: "Parent comment not found" }),
+            };
+          }
+
+          parentAuthorId = parentResult.rows[0].user_id;
+        }
+
+        // Get post info first
         const postResult = await client.query(
           "SELECT user_id FROM feed_posts WHERE id = $1",
           [postId],
@@ -527,10 +546,10 @@ export const handler: Handler = async (event) => {
 
         const engagementId = randomUUID();
         const result = await client.query(
-          `INSERT INTO feed_engagement (id, post_id, user_id, engagement_type, content, created_at)
-           VALUES ($1, $2, $3, 'comment', $4, NOW())
+          `INSERT INTO feed_engagement (id, post_id, user_id, engagement_type, content, parent_id, created_at)
+           VALUES ($1, $2, $3, 'comment', $4, $5, NOW())
            RETURNING id, user_id as "userId", content, created_at as "createdAt"`,
-          [engagementId, postId, userId, content],
+          [engagementId, postId, userId, content, parentCommentId || null],
         );
 
         const comment = result.rows[0];
