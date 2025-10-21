@@ -1,5 +1,12 @@
 import { formatDistanceToNow } from "date-fns";
-import { MessageSquare, Check, AlertTriangle, Heart, Trash2, X } from "lucide-react";
+import {
+  MessageSquare,
+  Check,
+  AlertTriangle,
+  Heart,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -58,9 +65,7 @@ export const NotificationItem = ({
     }
   };
 
-  const { icon: Icon, bgColor, textColor } = getIconAndColor(
-    notification.type,
-  );
+  const { icon: Icon, bgColor, textColor } = getIconAndColor(notification.type);
 
   const handleClick = async () => {
     setIsLoading(true);
@@ -73,7 +78,10 @@ export const NotificationItem = ({
       // Navigate based on notification type
       if (notification.targetType === "thread" && notification.targetId) {
         navigate(`/messages/${notification.targetId}`);
-      } else if (notification.targetType === "listing" && notification.targetId) {
+      } else if (
+        notification.targetType === "listing" &&
+        notification.targetId
+      ) {
         navigate(`/listings/${notification.targetId}`);
       }
     } catch (error) {
@@ -170,9 +178,7 @@ export const NotificationItem = ({
       )}
     >
       <div
-        className={cn(
-          "p-4 hover:bg-muted/30 transition cursor-pointer",
-        )}
+        className={cn("p-4 hover:bg-muted/30 transition cursor-pointer")}
         onClick={handleClick}
       >
         <div className="flex gap-3">

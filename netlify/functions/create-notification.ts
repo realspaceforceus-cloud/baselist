@@ -34,7 +34,12 @@ export const handler: Handler = async (event) => {
   try {
     const payload: CreateNotificationPayload = JSON.parse(event.body || "{}");
 
-    if (!payload.userId || !payload.type || !payload.title || !payload.description) {
+    if (
+      !payload.userId ||
+      !payload.type ||
+      !payload.title ||
+      !payload.description
+    ) {
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },

@@ -140,7 +140,9 @@ export const Header = (): JSX.Element => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
-  const [notificationFilter, setNotificationFilter] = useState<"all" | Notification["type"]>("all");
+  const [notificationFilter, setNotificationFilter] = useState<
+    "all" | Notification["type"]
+  >("all");
 
   useEffect(() => {
     const html = document.documentElement;
@@ -399,7 +401,9 @@ export const Header = (): JSX.Element => {
                     />
                     {unreadNotificationCount > 0 && (
                       <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[0.6rem] font-bold text-background shadow-sm">
-                        {unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}
+                        {unreadNotificationCount > 9
+                          ? "9+"
+                          : unreadNotificationCount}
                       </span>
                     )}
                     <span className="sr-only">Notifications</span>
@@ -629,7 +633,9 @@ export const Header = (): JSX.Element => {
                   key={category}
                   type="button"
                   onClick={() =>
-                    setNotificationFilter(category as "all" | Notification["type"])
+                    setNotificationFilter(
+                      category as "all" | Notification["type"],
+                    )
                   }
                   className={cn(
                     "text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition",

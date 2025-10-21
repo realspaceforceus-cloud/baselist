@@ -238,7 +238,11 @@ export const notifications = {
   },
 
   triggerNotification: async (payload: {
-    type: "offer_received" | "offer_accepted" | "offer_declined" | "transaction_complete";
+    type:
+      | "offer_received"
+      | "offer_accepted"
+      | "offer_declined"
+      | "transaction_complete";
     recipientId: string;
     actorId?: string;
     actorName?: string;

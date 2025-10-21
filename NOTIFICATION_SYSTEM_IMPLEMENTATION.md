@@ -1,11 +1,13 @@
 # Notification System Implementation Summary
 
 ## Overview
+
 A complete, functional notification system has been implemented to replace the mock notification data in the application. The system provides real-time notifications for various user interactions and admin actions.
 
 ## Database Schema
 
 ### Notifications Table
+
 ```sql
 CREATE TABLE notifications (
   id TEXT PRIMARY KEY,
@@ -26,6 +28,7 @@ CREATE TABLE notifications (
 ```
 
 Indexes:
+
 - `idx_notifications_user_id` - for filtering by user
 - `idx_notifications_user_id_read` - for unread counts
 - `idx_notifications_user_id_created_at` - for sorting by time
@@ -34,14 +37,17 @@ Indexes:
 ## API Endpoints
 
 ### `/api/notifications` (GET)
+
 Fetches notifications for the current user.
 
 **Query Parameters:**
+
 - `limit` (optional, default 50) - number of notifications to fetch
 - `offset` (optional, default 0) - pagination offset
 - `unread` (optional) - if "true", returns only unread notifications
 
 **Response:**
+
 ```json
 {
   "notifications": [...],
@@ -51,9 +57,11 @@ Fetches notifications for the current user.
 ```
 
 ### `/api/notifications/count` (GET)
+
 Gets the unread notification count for the current user.
 
 **Response:**
+
 ```json
 {
   "unreadCount": 5
@@ -61,20 +69,25 @@ Gets the unread notification count for the current user.
 ```
 
 ### `/api/notifications/:id/read` (PATCH)
+
 Marks a specific notification as read.
 
 ### `/api/notifications/:id/dismiss` (PATCH)
+
 Dismisses a notification (hides it from the list).
 
 ### `/api/notifications/read-all` (PATCH)
+
 Marks all unread notifications as read.
 
 ### `/api/create-notification` (POST) - Internal
+
 Internal endpoint for creating notifications from other services.
 
 ## Notification Types
 
 ### 1. **Message** (`message`)
+
 - **Triggered:** When a user receives a message
 - **Recipients:** Recipient of the message
 - **Icon:** MessageSquare (Blue)
@@ -82,6 +95,7 @@ Internal endpoint for creating notifications from other services.
 - **Action:** Click to navigate to the message thread
 
 ### 2. **Item Favorited** (`item_favorited`)
+
 - **Triggered:** When someone saves/favorites an item
 - **Recipients:** Seller of the item
 - **Icon:** Heart (Rose)
@@ -89,6 +103,7 @@ Internal endpoint for creating notifications from other services.
 - **Action:** Click to view the listing
 
 ### 3. **Listing Removed** (`listing_removed`)
+
 - **Triggered:** When an admin removes a listing
 - **Recipients:** Seller of the listing
 - **Icon:** AlertTriangle (Amber)
@@ -96,29 +111,34 @@ Internal endpoint for creating notifications from other services.
 - **Action:** View the notification for details
 
 ### 4. **Item Sold** (`item_sold`)
+
 - **Triggered:** When a listing status changes to sold
 - **Recipients:** Seller of the item
 - **Icon:** Check (Green)
 - **Example:** "Your 'Furniture Set' has been sold!"
 
 ### 5. **Verification Needed** (`verification_needed`)
+
 - **Triggered:** When a user needs to complete verification
 - **Recipients:** User
 - **Icon:** AlertTriangle (Amber)
 - **Example:** "Complete your DoD verification to continue selling"
 
 ### 6. **Offer Received** (`offer_received`)
+
 - **Triggered:** When someone makes an offer on an item
 - **Recipients:** Seller
 - **Icon:** MessageSquare (Blue)
 - **Example:** "John Smith made an offer on 'Furniture Set'"
 
 ### 7. **Offer Accepted/Declined** (`offer_accepted`, `offer_declined`)
+
 - **Triggered:** When an offer is accepted or declined
 - **Recipients:** Offer maker
 - **Icon:** Check (Green) / AlertTriangle (Amber)
 
 ### 8. **Transaction Complete** (`transaction_complete`)
+
 - **Triggered:** When a transaction is completed
 - **Recipients:** Both buyer and seller
 - **Icon:** Check (Green)
@@ -127,9 +147,11 @@ Internal endpoint for creating notifications from other services.
 ## Frontend Components
 
 ### NotificationItem Component
+
 **File:** `client/components/layout/NotificationItem.tsx`
 
 Displays individual notifications with:
+
 - Dynamic icon and color based on notification type
 - Title and description
 - Timestamp (relative, e.g., "2 hours ago")
@@ -138,6 +160,7 @@ Displays individual notifications with:
 - Automatic marking as read on click
 
 **Props:**
+
 ```typescript
 interface NotificationItemProps {
   notification: Notification;
@@ -146,9 +169,11 @@ interface NotificationItemProps {
 ```
 
 ### Header Component Updates
+
 **File:** `client/components/layout/Header.tsx`
 
 Enhanced with:
+
 - Real notification loading via API
 - Dynamic notification badge count
 - Notification sidebar showing real notifications
@@ -157,6 +182,7 @@ Enhanced with:
 - Loading state while fetching
 
 **Features:**
+
 - Auto-refresh notification count every 30 seconds
 - Lazy-load notifications when sidebar opens
 - Navigate to related content on notification click
@@ -165,6 +191,7 @@ Enhanced with:
 ## Helper Functions
 
 ### createNotification
+
 **File:** `netlify/functions/notification-helpers.ts`
 
 Creates a notification in the database.
@@ -178,19 +205,22 @@ await createNotification({
   actorId: "john-id",
   targetId: "thread-id",
   targetType: "thread",
-  data: { listingId: "listing-id" }
+  data: { listingId: "listing-id" },
 });
 ```
 
 ### getActorName
+
 Fetches the username of the actor for notification display.
 
 ### getListingTitle
+
 Fetches the title of a listing for notification context.
 
 ## Implementation in Existing Endpoints
 
 ### 1. Messages (`netlify/functions/messages.ts`)
+
 When a message is sent, a notification is created for the recipient.
 
 ```typescript
@@ -202,11 +232,12 @@ await createNotification({
   actorId: authorId,
   targetId: threadId,
   targetType: "thread",
-  data: { listingId, messagePreview: body.substring(0, 100) }
+  data: { listingId, messagePreview: body.substring(0, 100) },
 });
 ```
 
 ### 2. Saved Listings (`netlify/functions/saved-listings.ts`)
+
 When an item is favorited, a notification is created for the seller.
 
 ```typescript
@@ -218,11 +249,12 @@ await createNotification({
   actorId: userId,
   targetId: listingId,
   targetType: "listing",
-  data: { listingTitle: title, buyerName: userName }
+  data: { listingTitle: title, buyerName: userName },
 });
 ```
 
 ### 3. Listings (`netlify/functions/listings.ts`)
+
 When a listing is deleted, a notification is created for the seller.
 
 ```typescript
@@ -233,7 +265,7 @@ await createNotification({
   description: `Your listing "${title}" has been removed. Reason: ${reason}`,
   targetId: id,
   targetType: "listing",
-  data: { listingTitle: title, reason }
+  data: { listingTitle: title, reason },
 });
 ```
 
@@ -242,7 +274,7 @@ await createNotification({
 **File:** `client/types.ts`
 
 ```typescript
-export type NotificationType = 
+export type NotificationType =
   | "message"
   | "item_sold"
   | "item_favorited"

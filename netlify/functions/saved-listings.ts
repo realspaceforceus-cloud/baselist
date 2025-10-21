@@ -110,7 +110,10 @@ export const handler: Handler = async (event) => {
               },
             });
           } catch (notificationErr) {
-            console.error("Error creating favorite notification:", notificationErr);
+            console.error(
+              "Error creating favorite notification:",
+              notificationErr,
+            );
           }
         }
       } catch (err) {

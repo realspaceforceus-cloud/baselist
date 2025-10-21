@@ -64,9 +64,10 @@ export async function createNotification(
 export async function getActorName(userId: string): Promise<string> {
   const client = await pool.connect();
   try {
-    const result = await client.query(`SELECT username FROM users WHERE id = $1`, [
-      userId,
-    ]);
+    const result = await client.query(
+      `SELECT username FROM users WHERE id = $1`,
+      [userId],
+    );
     return result.rows[0]?.username || "Someone";
   } catch (err) {
     console.error("Error getting actor name:", err);

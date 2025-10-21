@@ -25,9 +25,7 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const payload: TriggerNotificationPayload = JSON.parse(
-      event.body || "{}",
-    );
+    const payload: TriggerNotificationPayload = JSON.parse(event.body || "{}");
 
     const {
       type,

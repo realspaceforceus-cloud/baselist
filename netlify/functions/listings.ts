@@ -251,7 +251,8 @@ export const handler: Handler = async (event) => {
       // Create notification for seller about listing removal
       try {
         const reasonFromBody = event.body
-          ? JSON.parse(event.body).reason || "Listing violates community guidelines"
+          ? JSON.parse(event.body).reason ||
+            "Listing violates community guidelines"
           : "Listing violates community guidelines";
 
         await createNotification({
@@ -267,7 +268,10 @@ export const handler: Handler = async (event) => {
           },
         });
       } catch (notificationErr) {
-        console.error("Error creating listing removal notification:", notificationErr);
+        console.error(
+          "Error creating listing removal notification:",
+          notificationErr,
+        );
       }
 
       return {

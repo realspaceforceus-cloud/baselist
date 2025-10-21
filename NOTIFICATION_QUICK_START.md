@@ -40,8 +40,8 @@ await createNotification({
   targetType: "thread",
   data: {
     listingId: "listing-123",
-    messagePreview: "Are you still selling this?"
-  }
+    messagePreview: "Are you still selling this?",
+  },
 });
 ```
 
@@ -52,7 +52,7 @@ import { notifications } from "@/lib/api";
 
 const response = await notifications.getNotifications(50, 0);
 console.log(response.notifications); // Array of notifications
-console.log(response.unreadCount);   // Number of unread
+console.log(response.unreadCount); // Number of unread
 ```
 
 #### Mark Notification as Read
@@ -70,21 +70,22 @@ console.log(count.unreadCount); // e.g., 5
 
 ## Available Notification Types
 
-| Type | Icon | Color | Triggered When | Goes To |
-|------|------|-------|-----------------|---------|
-| `message` | 💬 | Blue | New message received | Message thread |
-| `item_favorited` | ❤️ | Rose | Someone saves your item | Listing detail |
-| `item_sold` | ✓ | Green | Your item is sold | Listing detail |
-| `listing_removed` | ⚠️ | Amber | Admin removes listing | - |
-| `verification_needed` | ⚠️ | Amber | Account needs verification | Settings |
-| `offer_received` | 💬 | Blue | Someone makes offer | Message thread |
-| `offer_accepted` | ✓ | Green | Your offer was accepted | Transaction |
-| `offer_declined` | ⚠️ | Amber | Your offer was declined | Listing |
-| `transaction_complete` | ✓ | Green | Transaction completed | Ratings |
+| Type                   | Icon | Color | Triggered When             | Goes To        |
+| ---------------------- | ---- | ----- | -------------------------- | -------------- |
+| `message`              | 💬   | Blue  | New message received       | Message thread |
+| `item_favorited`       | ❤️   | Rose  | Someone saves your item    | Listing detail |
+| `item_sold`            | ✓    | Green | Your item is sold          | Listing detail |
+| `listing_removed`      | ⚠️   | Amber | Admin removes listing      | -              |
+| `verification_needed`  | ⚠️   | Amber | Account needs verification | Settings       |
+| `offer_received`       | 💬   | Blue  | Someone makes offer        | Message thread |
+| `offer_accepted`       | ✓    | Green | Your offer was accepted    | Transaction    |
+| `offer_declined`       | ⚠️   | Amber | Your offer was declined    | Listing        |
+| `transaction_complete` | ✓    | Green | Transaction completed      | Ratings        |
 
 ## Integration Points
 
 ### Messages Endpoint
+
 When a message is sent, the **recipient automatically receives** a notification.
 
 ```typescript
@@ -93,6 +94,7 @@ When a message is sent, the **recipient automatically receives** a notification.
 ```
 
 ### Saved Listings Endpoint
+
 When an item is favorited, the **seller automatically receives** a notification.
 
 ```typescript
@@ -101,6 +103,7 @@ When an item is favorited, the **seller automatically receives** a notification.
 ```
 
 ### Listings Endpoint
+
 When a listing is deleted, the **seller automatically receives** a notification.
 
 ```typescript
@@ -111,6 +114,7 @@ When a listing is deleted, the **seller automatically receives** a notification.
 ## Database Structure
 
 ### Notifications Table
+
 - **id**: Unique identifier (UUID)
 - **user_id**: Who receives the notification
 - **type**: Type of notification (message, item_favorited, etc.)
@@ -129,23 +133,27 @@ When a listing is deleted, the **seller automatically receives** a notification.
 ## Key Features
 
 ✨ **Smart Styling**
+
 - Each notification type has its own color and icon
 - Dark mode support built-in
 - Responsive design
 
 📱 **User-Friendly**
+
 - Click to navigate to related content
 - Dismiss individual notifications
 - Mark all as read at once
 - Empty state message when no notifications
 
 ⚡ **Performance**
+
 - Efficient database queries with proper indexes
 - Lazy loading when sidebar opens
 - Auto-refresh every 30 seconds
 - Only fetch unread count periodically
 
 🔒 **Secure**
+
 - All notifications are user-specific
 - Authentication required
 - No data leakage between users
@@ -153,6 +161,7 @@ When a listing is deleted, the **seller automatically receives** a notification.
 ## Files Modified/Created
 
 ### New Files
+
 - `supabase/migrations/011_add_notifications.sql` - Database schema
 - `netlify/functions/notifications.ts` - API endpoints
 - `netlify/functions/notification-helpers.ts` - Helper functions
@@ -162,6 +171,7 @@ When a listing is deleted, the **seller automatically receives** a notification.
 - `NOTIFICATION_QUICK_START.md` - This file
 
 ### Modified Files
+
 - `client/components/layout/Header.tsx` - Integrated real notifications
 - `client/types.ts` - Added Notification types
 - `client/lib/api.ts` - Added notification API methods
@@ -172,6 +182,7 @@ When a listing is deleted, the **seller automatically receives** a notification.
 ## Testing Scenarios
 
 ### Test 1: Send a Message
+
 1. Log in as User A
 2. Create a message thread with User B
 3. Send a message
@@ -181,6 +192,7 @@ When a listing is deleted, the **seller automatically receives** a notification.
 7. **Click it:** Should navigate to the message thread
 
 ### Test 2: Favorite an Item
+
 1. Log in as User A (seller with a listing)
 2. Log in as User B (buyer, different browser/session)
 3. Navigate to User A's listing
@@ -191,6 +203,7 @@ When a listing is deleted, the **seller automatically receives** a notification.
 8. **Click it:** Should navigate to the listing detail
 
 ### Test 3: Listing Removal
+
 1. Log in as Admin
 2. Go to admin panel
 3. Remove a listing for violating guidelines
@@ -199,11 +212,13 @@ When a listing is deleted, the **seller automatically receives** a notification.
 6. **Expected:** See "Your listing was removed" notification with reason
 
 ### Test 4: Mark All as Read
+
 1. Have multiple unread notifications
 2. Click "Mark all as read" in notification header
 3. **Expected:** All notifications marked as read, count badge removed
 
 ### Test 5: Dismiss Notification
+
 1. Have an open notification
 2. Click the X button
 3. **Expected:** Notification disappears from list
@@ -222,6 +237,7 @@ POST  /api/create-notification (internal)
 ## Environment & Dependencies
 
 No new npm packages required. Uses existing dependencies:
+
 - `date-fns` - Already in project (for time formatting)
 - `lucide-react` - Already in project (for icons)
 - `react` & `react-router-dom` - Core dependencies
@@ -230,22 +246,26 @@ No new npm packages required. Uses existing dependencies:
 ## Troubleshooting
 
 ### Notifications not appearing?
+
 1. Check browser console for errors
 2. Verify notifications table exists in database
 3. Check that user is authenticated (userId in cookies)
 4. Ensure notification API endpoints are accessible
 
 ### Wrong notification count?
+
 1. Clear browser cache
 2. Refresh the page
 3. Check that dismissed notifications are not being counted
 
 ### Notifications not auto-updating?
+
 1. The system refreshes every 30 seconds
 2. Or when you open the notification sidebar
 3. For real-time, WebSocket integration can be added
 
 ### Performance issues?
+
 1. Check database indexes are created
 2. Verify pagination is working (limit/offset)
 3. Consider archiving old notifications if DB grows large
@@ -264,6 +284,7 @@ No new npm packages required. Uses existing dependencies:
 ## Support
 
 For questions or issues:
+
 1. Check the full documentation: `NOTIFICATION_SYSTEM_IMPLEMENTATION.md`
 2. Review the code in the files listed above
 3. Check the database migration for schema details
@@ -272,6 +293,7 @@ For questions or issues:
 ## Summary
 
 The notification system is now:
+
 - ✅ **Fully functional** with real data
 - ✅ **User-friendly** with beautiful UI
 - ✅ **Performance-optimized** with proper indexing
