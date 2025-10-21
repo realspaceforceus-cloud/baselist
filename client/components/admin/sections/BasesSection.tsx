@@ -40,9 +40,7 @@ export const BasesSection = () => {
   const loadBases = async () => {
     setIsLoading(true);
     try {
-      const result = await (
-        await import("@/lib/adminApi")
-      ).adminApi.getBases();
+      const result = await (await import("@/lib/adminApi")).adminApi.getBases();
       const baseRows: AdminBaseRow[] = (result?.bases || []).map(
         (base: any) => ({
           id: base.id,
@@ -91,7 +89,12 @@ export const BasesSection = () => {
   };
 
   const handleSaveBase = async () => {
-    if (!formData.name || !formData.abbreviation || !formData.region || !formData.timezone) {
+    if (
+      !formData.name ||
+      !formData.abbreviation ||
+      !formData.region ||
+      !formData.timezone
+    ) {
       toast.error("All fields are required");
       return;
     }

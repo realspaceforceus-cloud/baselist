@@ -257,16 +257,22 @@ export const adminApi = {
   async getUserDetail(userId: string) {
     return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/detail`);
   },
-  async resetUserPassword(userId: string, options: { generateTemp?: boolean; sendEmail?: boolean }) {
+  async resetUserPassword(
+    userId: string,
+    options: { generateTemp?: boolean; sendEmail?: boolean },
+  ) {
     return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/password-reset`, {
       method: "POST",
       body: JSON.stringify(options),
     });
   },
   async removeStrike(userId: string, strikeId: string): Promise<void> {
-    await apiRequest<void>(`${ADMIN_BASE}/users/${userId}/strikes/${strikeId}`, {
-      method: "DELETE",
-    });
+    await apiRequest<void>(
+      `${ADMIN_BASE}/users/${userId}/strikes/${strikeId}`,
+      {
+        method: "DELETE",
+      },
+    );
   },
   async addStrike(
     userId: string,

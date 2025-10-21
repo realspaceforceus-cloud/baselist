@@ -206,7 +206,9 @@ export const UsersSection = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => navigate(`/admin/user-detail/${user.id}`)}
+                        onClick={() =>
+                          navigate(`/admin/user-detail/${user.id}`)
+                        }
                         className="h-8 w-8 p-0 rounded-lg text-primary hover:bg-primary/10"
                       >
                         <Eye className="h-4 w-4" />

@@ -1,5 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
-import { AlertTriangle, Flag, RefreshCcw, ShieldOff, Edit2, Save, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Flag,
+  RefreshCcw,
+  ShieldOff,
+  Edit2,
+  Save,
+  X,
+} from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,7 +141,9 @@ export const ListingsSection = () => {
       await adminApi.hideListing(listingId, { reason: "Admin removed" });
       setListings((prev) =>
         prev.map((l) =>
-          l.id === listingId ? { ...l, status: "Removed" as AdminListingStatus } : l,
+          l.id === listingId
+            ? { ...l, status: "Removed" as AdminListingStatus }
+            : l,
         ),
       );
       toast.success("Listing hidden");
@@ -148,7 +158,9 @@ export const ListingsSection = () => {
       await adminApi.restoreListing(listingId);
       setListings((prev) =>
         prev.map((l) =>
-          l.id === listingId ? { ...l, status: "Active" as AdminListingStatus } : l,
+          l.id === listingId
+            ? { ...l, status: "Active" as AdminListingStatus }
+            : l,
         ),
       );
       toast.success("Listing restored");

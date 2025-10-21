@@ -229,7 +229,10 @@ export const AdminUserDetail = () => {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
+                  <Dialog
+                    open={showPasswordModal}
+                    onOpenChange={setShowPasswordModal}
+                  >
                     <DialogTrigger asChild>
                       <Button className="rounded-full">
                         <Lock className="h-4 w-4 mr-2" />
@@ -669,7 +672,9 @@ export const AdminUserDetail = () => {
           <div className="rounded-3xl border border-border bg-card p-6">
             <h3 className="text-lg font-semibold mb-4">Failed Logins</h3>
             {user.failedLogins.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No failed attempts</p>
+              <p className="text-sm text-muted-foreground">
+                No failed attempts
+              </p>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {user.failedLogins.map((login: any) => (

@@ -201,7 +201,10 @@ export const RolesSection = (): JSX.Element => {
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
                     {editingUserId === user.id ? (
-                      <Select value={editingBaseId} onValueChange={setEditingBaseId}>
+                      <Select
+                        value={editingBaseId}
+                        onValueChange={setEditingBaseId}
+                      >
                         <SelectTrigger className="w-40 rounded-xl">
                           <SelectValue placeholder="Select base" />
                         </SelectTrigger>

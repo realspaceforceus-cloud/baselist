@@ -200,8 +200,15 @@ export const handler: Handler = async (event) => {
       }
 
       const userId = path.replace("/users/", "");
-      const { status, role, baseId, verify, reason, strikeType, strikeDescription } =
-        JSON.parse(event.body || "{}");
+      const {
+        status,
+        role,
+        baseId,
+        verify,
+        reason,
+        strikeType,
+        strikeDescription,
+      } = JSON.parse(event.body || "{}");
 
       const user = await client.query("SELECT * FROM users WHERE id = $1", [
         userId,
@@ -1082,7 +1089,11 @@ export const handler: Handler = async (event) => {
     }
 
     // GET /api/admin/users/:id/detail
-    if (method === "GET" && path.startsWith("/users/") && path.includes("/detail")) {
+    if (
+      method === "GET" &&
+      path.startsWith("/users/") &&
+      path.includes("/detail")
+    ) {
       const userId = path.replace("/users/", "").replace("/detail", "");
 
       const userResult = await client.query(
@@ -1133,8 +1144,10 @@ export const handler: Handler = async (event) => {
       const avgRating =
         ratingsResult.rows.length > 0
           ? (
-              ratingsResult.rows.reduce((sum: number, r: any) => sum + r.score, 0) /
-              ratingsResult.rows.length
+              ratingsResult.rows.reduce(
+                (sum: number, r: any) => sum + r.score,
+                0,
+              ) / ratingsResult.rows.length
             ).toFixed(2)
           : null;
 
@@ -1240,7 +1253,11 @@ export const handler: Handler = async (event) => {
     }
 
     // POST /api/admin/users/:id/password-reset
-    if (method === "POST" && path.startsWith("/users/") && path.includes("/password-reset")) {
+    if (
+      method === "POST" &&
+      path.startsWith("/users/") &&
+      path.includes("/password-reset")
+    ) {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
@@ -1252,9 +1269,10 @@ export const handler: Handler = async (event) => {
       const userId = path.replace("/users/", "").replace("/password-reset", "");
       const { generateTemp, sendEmail } = JSON.parse(event.body || "{}");
 
-      const userResult = await client.query("SELECT * FROM users WHERE id = $1", [
-        userId,
-      ]);
+      const userResult = await client.query(
+        "SELECT * FROM users WHERE id = $1",
+        [userId],
+      );
 
       if (userResult.rows.length === 0) {
         return {
@@ -1269,10 +1287,10 @@ export const handler: Handler = async (event) => {
       if (generateTemp) {
         const tempPassword = Math.random().toString(36).substring(2, 10);
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
-        await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
-          hashedPassword,
-          userId,
-        ]);
+        await client.query(
+          "UPDATE users SET password_hash = $1 WHERE id = $2",
+          [hashedPassword, userId],
+        );
         response.tempPassword = tempPassword;
         response.message =
           "Temporary password generated. Share this with the user.";
