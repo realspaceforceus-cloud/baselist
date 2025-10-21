@@ -236,4 +236,19 @@ export const notifications = {
       },
     );
   },
+
+  triggerNotification: async (payload: {
+    type: "offer_received" | "offer_accepted" | "offer_declined" | "transaction_complete";
+    recipientId: string;
+    actorId?: string;
+    actorName?: string;
+    itemTitle?: string;
+    threadId?: string;
+    data?: Record<string, any>;
+  }) => {
+    return apiRequest<{ success: boolean }>("/api/trigger-notification", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
 };
