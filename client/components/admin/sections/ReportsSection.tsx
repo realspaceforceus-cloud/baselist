@@ -21,10 +21,29 @@ export const ReportsSection = () => {
   const [activeFilter, setActiveFilter] = useState<string>("All");
 
   useEffect(() => {
-    setIsLoading(true);
-    // TODO: Fetch from API when endpoint is ready
-    setReports([]);
-    setIsLoading(false);
+    const loadReports = async () => {
+      setIsLoading(true);
+      try {
+        const result = await (await import("@/lib/adminApi")).adminApi.getReports();
+        const reportRecords: AdminReportRecord[] = (result?.reports || []).map((report: any) => ({
+          id: report.id,
+          type: report.type || "Unknown",
+          reporter: report.reportedBy || "Unknown",
+          targetType: report.targetType || "listing",
+          targetId: report.targetId || "",
+          targetLabel: report.targetLabel || "Unknown",
+          base: report.baseId || "Unknown",
+          time: report.createdAt ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(report.createdAt)) : "—",
+        }));
+        setReports(reportRecords);
+      } catch (error) {
+        console.error("Failed to load reports:", error);
+        setReports([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadReports();
   }, []);
 
   const reportTypes = useMemo(() => {
