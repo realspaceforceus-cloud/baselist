@@ -182,6 +182,11 @@ const ListingDetail = (): JSX.Element => {
   }, [defaultMessage]);
 
   const handleSendMessage = useCallback(() => {
+    if (!listing) {
+      toast.error("Listing not found");
+      return;
+    }
+
     const trimmed = messageBody.trim();
     if (!trimmed) {
       return;
@@ -197,8 +202,7 @@ const ListingDetail = (): JSX.Element => {
     setMessageBody("");
     navigate(`/messages/${thread.id}`);
   }, [
-    listing.id,
-    listing.sellerId,
+    listing,
     messageBody,
     navigate,
     sendMessageToSeller,
