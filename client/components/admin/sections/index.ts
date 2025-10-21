@@ -1,4 +1,5 @@
 export { DashboardSection } from "./DashboardSection";
+export { DashboardMetrics } from "./DashboardMetrics";
 export type { DashboardCard } from "./DashboardSection";
 export { SettingsSection } from "./SettingsSection";
 export { UsersSection } from "./UsersSection";
