@@ -127,6 +127,7 @@ export const Header = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isBaseSwitchOpen, setIsBaseSwitchOpen] = useState(false);
   const [baseSearch, setBaseSearch] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(() => {
