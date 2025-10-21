@@ -2112,32 +2112,7 @@ const AdminPanel = (): JSX.Element => {
             </>
           ) : null}
           {activeSection === "users" ? (
-            <UsersSection
-              users={Array.from(userDirectoryRef.current.values()).map(
-                (user) => ({
-                  id: user.id,
-                  username: user.username,
-                  email: user.email,
-                  role: user.role,
-                  status: user.status || "active",
-                  baseId: user.baseId,
-                  createdAt: user.createdAt,
-                  dowVerifiedAt: user.dowVerifiedAt,
-                }),
-              )}
-              onUserUpdate={(userId, updates) =>
-                adminApi.updateUser(userId, updates)
-              }
-              onAddStrike={(userId, strikeType, description) =>
-                adminApi.addAccountNote(
-                  userId,
-                  "strike",
-                  description,
-                  strikeType,
-                  "critical",
-                )
-              }
-            />
+            <UsersSection />
           ) : null}
           {activeSection === "listings" ? (
             <ListingsSection
