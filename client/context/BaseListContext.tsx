@@ -1688,8 +1688,24 @@ export const BaseListProvider = ({
     [markTransactionComplete],
   );
 
-  const removeListing = useCallback((listingId: string) => {
-    setListings((prev) => prev.filter((listing) => listing.id !== listingId));
+  const removeListing = useCallback(async (listingId: string) => {
+    try {
+      // Delete from backend first
+      const response = await fetch(`/.netlify/functions/listings/${listingId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete listing");
+      }
+
+      // Then update local state
+      setListings((prev) => prev.filter((listing) => listing.id !== listingId));
+    } catch (error) {
+      console.error("Error deleting listing:", error);
+      throw error;
+    }
   }, []);
 
   const addSponsorPlacement = useCallback((placement: SponsorPlacement) => {
