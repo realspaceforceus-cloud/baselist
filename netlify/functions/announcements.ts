@@ -1,0 +1,407 @@
+import { Handler } from "@netlify/functions";
+import { pool } from "./db";
+import { randomUUID } from "crypto";
+
+function verifyAuth(event: any): { userId: string } | null {
+  const cookies = event.headers.cookie || "";
+  const userIdMatch = cookies.match(/userId=([^;]+)/);
+  const userId = userIdMatch ? userIdMatch[1] : null;
+
+  if (!userId) {
+    return null;
+  }
+
+  return { userId };
+}
+
+async function isAdmin(client: any, userId: string): Promise<boolean> {
+  const result = await client.query(
+    "SELECT role FROM users WHERE id = $1",
+    [userId],
+  );
+  return result.rows.length > 0 && result.rows[0].role === "admin";
+}
+
+export const handler: Handler = async (event) => {
+  const method = event.httpMethod;
+  let path = event.path;
+
+  if (path.startsWith("/api/announcements")) {
+    path = path.replace("/api/announcements", "");
+  } else if (path.startsWith("/.netlify/functions/announcements")) {
+    path = path.replace("/.netlify/functions/announcements", "");
+  }
+  path = path || "/";
+
+  const auth = verifyAuth(event);
+  const client = await pool.connect();
+
+  try {
+    // GET /api/announcements
+    if (method === "GET" && path === "/") {
+      try {
+        const result = await client.query(
+          `SELECT 
+            id, 
+            title, 
+            content, 
+            color, 
+            background_color as "backgroundColor",
+            text_color as "textColor",
+            is_visible as "isVisible",
+            created_at as "createdAt",
+            updated_at as "updatedAt",
+            created_by as "createdBy"
+           FROM announcements 
+           WHERE is_visible = true 
+           ORDER BY created_at DESC 
+           LIMIT 1`,
+        );
+
+        if (result.rows.length === 0) {
+          return {
+            statusCode: 200,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ announcements: [] }),
+          };
+        }
+
+        const announcement = result.rows[0];
+
+        // Check if user has dismissed this announcement
+        let isDismissed = false;
+        if (auth) {
+          const dismissedResult = await client.query(
+            `SELECT id FROM dismissed_announcements 
+             WHERE user_id = $1 AND announcement_id = $2`,
+            [auth.userId, announcement.id],
+          );
+          isDismissed = dismissedResult.rows.length > 0;
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            announcements: [
+              {
+                ...announcement,
+                isDismissed,
+              },
+            ],
+          }),
+        };
+      } catch (err) {
+        console.error("Error fetching announcements:", err);
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ announcements: [] }),
+        };
+      }
+    }
+
+    // GET /api/announcements/admin (admin only - get all)
+    if (method === "GET" && path === "/admin") {
+      if (!auth) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      if (!(await isAdmin(client, auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const result = await client.query(
+          `SELECT 
+            id, 
+            title, 
+            content, 
+            color, 
+            background_color as "backgroundColor",
+            text_color as "textColor",
+            is_visible as "isVisible",
+            created_at as "createdAt",
+            updated_at as "updatedAt",
+            created_by as "createdBy"
+           FROM announcements 
+           ORDER BY created_at DESC`,
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ announcements: result.rows }),
+        };
+      } catch (err) {
+        console.error("Error fetching admin announcements:", err);
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ announcements: [] }),
+        };
+      }
+    }
+
+    // POST /api/announcements (create)
+    if (method === "POST" && path === "/") {
+      if (!auth) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      if (!(await isAdmin(client, auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const { title, content, color, backgroundColor, textColor, isVisible } =
+          JSON.parse(event.body || "{}");
+
+        if (!title || !content) {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Missing required fields" }),
+          };
+        }
+
+        const id = randomUUID();
+        const result = await client.query(
+          `INSERT INTO announcements (id, title, content, color, background_color, text_color, is_visible, created_by)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           RETURNING id, title, content, color, background_color as "backgroundColor",
+                     text_color as "textColor", is_visible as "isVisible",
+                     created_at as "createdAt", updated_at as "updatedAt", created_by as "createdBy"`,
+          [
+            id,
+            title,
+            content,
+            color || "#3b82f6",
+            backgroundColor || "#dbeafe",
+            textColor || "#1e40af",
+            isVisible !== false,
+            auth.userId,
+          ],
+        );
+
+        return {
+          statusCode: 201,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ announcement: result.rows[0] }),
+        };
+      } catch (err) {
+        console.error("Error creating announcement:", err);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to create announcement" }),
+        };
+      }
+    }
+
+    // PATCH /api/announcements/:id (update)
+    if (method === "PATCH" && path.startsWith("/") && path !== "/") {
+      if (!auth) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      if (!(await isAdmin(client, auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const announcementId = path.slice(1);
+        const { title, content, color, backgroundColor, textColor, isVisible } =
+          JSON.parse(event.body || "{}");
+
+        const updates: Record<string, any> = {};
+        const values: any[] = [];
+        let paramCount = 1;
+
+        if (title !== undefined) {
+          updates.title = `$${paramCount++}`;
+          values.push(title);
+        }
+        if (content !== undefined) {
+          updates.content = `$${paramCount++}`;
+          values.push(content);
+        }
+        if (color !== undefined) {
+          updates.color = `$${paramCount++}`;
+          values.push(color);
+        }
+        if (backgroundColor !== undefined) {
+          updates.background_color = `$${paramCount++}`;
+          values.push(backgroundColor);
+        }
+        if (textColor !== undefined) {
+          updates.text_color = `$${paramCount++}`;
+          values.push(textColor);
+        }
+        if (isVisible !== undefined) {
+          updates.is_visible = `$${paramCount++}`;
+          values.push(isVisible);
+        }
+
+        if (Object.keys(updates).length === 0) {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "No fields to update" }),
+          };
+        }
+
+        updates.updated_at = `NOW()`;
+        values.push(announcementId);
+
+        const setClauses = Object.entries(updates)
+          .map(([key, val]) => `${key} = ${val}`)
+          .join(", ");
+
+        const result = await client.query(
+          `UPDATE announcements 
+           SET ${setClauses}
+           WHERE id = $${paramCount}
+           RETURNING id, title, content, color, background_color as "backgroundColor",
+                     text_color as "textColor", is_visible as "isVisible",
+                     created_at as "createdAt", updated_at as "updatedAt", created_by as "createdBy"`,
+          values,
+        );
+
+        if (result.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Announcement not found" }),
+          };
+        }
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ announcement: result.rows[0] }),
+        };
+      } catch (err) {
+        console.error("Error updating announcement:", err);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to update announcement" }),
+        };
+      }
+    }
+
+    // DELETE /api/announcements/:id
+    if (method === "DELETE" && path.startsWith("/") && path !== "/") {
+      if (!auth) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      if (!(await isAdmin(client, auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      try {
+        const announcementId = path.slice(1);
+
+        await client.query(
+          "DELETE FROM announcements WHERE id = $1",
+          [announcementId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } catch (err) {
+        console.error("Error deleting announcement:", err);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to delete announcement" }),
+        };
+      }
+    }
+
+    // POST /api/announcements/:id/dismiss
+    if (
+      method === "POST" &&
+      path.includes("/") &&
+      path.endsWith("/dismiss")
+    ) {
+      if (!auth) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      try {
+        const announcementId = path.replace("/dismiss", "").slice(1);
+
+        // Insert dismiss record (ignore if already exists due to unique constraint)
+        await client.query(
+          `INSERT INTO dismissed_announcements (id, user_id, announcement_id)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (user_id, announcement_id) DO NOTHING`,
+          [randomUUID(), auth.userId, announcementId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success: true }),
+        };
+      } catch (err) {
+        console.error("Error dismissing announcement:", err);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to dismiss announcement" }),
+        };
+      }
+    }
+
+    return {
+      statusCode: 404,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Not found" }),
+    };
+  } finally {
+    client.release();
+  }
+};
