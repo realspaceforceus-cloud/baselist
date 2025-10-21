@@ -374,9 +374,11 @@ export const Header = (): JSX.Element => {
                       className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground"
                       aria-hidden
                     />
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[0.6rem] font-bold text-background shadow-sm">
-                      3
-                    </span>
+                    {unreadNotificationCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[0.6rem] font-bold text-background shadow-sm">
+                        {unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}
+                      </span>
+                    )}
                     <span className="sr-only">Notifications</span>
                   </button>
                   <SheetTrigger asChild>
