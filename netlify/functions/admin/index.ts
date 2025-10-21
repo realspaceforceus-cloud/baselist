@@ -709,6 +709,7 @@ export const handler: Handler = async (event) => {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Forbidden" }),
         };
       }
@@ -721,6 +722,7 @@ export const handler: Handler = async (event) => {
       if (!noteType || !description) {
         return {
           statusCode: 400,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             error: "noteType and description are required",
           }),
@@ -743,6 +745,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ note: result.rows[0] }),
       };
     }
