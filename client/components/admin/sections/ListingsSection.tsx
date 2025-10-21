@@ -38,45 +38,54 @@ export const ListingsSection = () => {
   const [activeFilter, setActiveFilter] = useState<AdminListingStatus | "All">(
     "Active",
   );
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
+  const [editingPrice, setEditingPrice] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const loadListings = async () => {
+    setIsLoading(true);
+    try {
+      const result = await (
+        await import("@/lib/adminApi")
+      ).adminApi.getListings();
+      const listingRows: AdminListingRow[] = (result?.listings || []).map(
+        (listing: any) => ({
+          id: listing.id,
+          item: listing.title || "Untitled",
+          base: listing.baseName || listing.baseId || "Unknown",
+          price: listing.price ? `$${listing.price}` : "N/A",
+          seller: listing.sellerUsername || listing.sellerId || "Unknown",
+          date: listing.createdAt
+            ? new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+              }).format(new Date(listing.createdAt))
+            : "—",
+          status: (listing.status === "active"
+            ? "Active"
+            : listing.status === "sold"
+              ? "Sold"
+              : listing.status === "hidden"
+                ? "Removed"
+                : "Active") as AdminListingStatus,
+          reports: listing.reportCount || 0,
+          rawPrice: listing.price,
+          sellerUsername: listing.sellerUsername,
+          baseName: listing.baseName,
+        }),
+      );
+      setListings(listingRows);
+    } catch (error) {
+      console.error("Failed to load listings:", error);
+      toast.error("Failed to load listings");
+      setListings([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadListings = async () => {
-      setIsLoading(true);
-      try {
-        const result = await (
-          await import("@/lib/adminApi")
-        ).adminApi.getListings();
-        const listingRows: AdminListingRow[] = (result?.listings || []).map(
-          (listing: any) => ({
-            id: listing.id,
-            item: listing.title || "Untitled",
-            base: listing.baseId || "Unknown",
-            price: listing.price ? `$${listing.price}` : "N/A",
-            seller: listing.sellerId || "Unknown",
-            date: listing.createdAt
-              ? new Intl.DateTimeFormat("en-US", {
-                  month: "short",
-                  day: "numeric",
-                }).format(new Date(listing.createdAt))
-              : "—",
-            status: (listing.status === "active"
-              ? "Active"
-              : listing.status === "sold"
-                ? "Sold"
-                : listing.status === "hidden"
-                  ? "Removed"
-                  : "Active") as AdminListingStatus,
-            reports: 0,
-          }),
-        );
-        setListings(listingRows);
-      } catch (error) {
-        console.error("Failed to load listings:", error);
-        setListings([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadListings();
   }, []);
 
