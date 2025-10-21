@@ -1,5 +1,5 @@
 import { Eye, MapPin, BadgeCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { generateSlug } from "@/lib/slugUtils";
 import type { Listing, Seller } from "@/types";
 
