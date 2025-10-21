@@ -176,7 +176,7 @@ export const Header = (): JSX.Element => {
     loadNotifications();
   }, [isNotificationsOpen, isAuthenticated]);
 
-  // Load initial unread count
+  // Load initial unread count with faster polling for instant notifications
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -192,8 +192,11 @@ export const Header = (): JSX.Element => {
       }
     };
 
+    // Load immediately
     loadUnreadCount();
-    const interval = setInterval(loadUnreadCount, 30000); // Refresh every 30 seconds
+
+    // Refresh every 5 seconds for instant notifications
+    const interval = setInterval(loadUnreadCount, 5000);
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
