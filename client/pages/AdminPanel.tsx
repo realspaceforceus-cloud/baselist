@@ -2034,15 +2034,9 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "users" ? (
             <UsersSection
-              users={userRecords}
-              onVerify={handleVerifyUser}
-              onSuspend={handleSuspendUser}
-              onReinstate={handleReinstateUser}
-              onResetVerification={handleResetVerification}
-              onViewActivity={handleViewActivity}
-              onIssueStrike={handleIssueStrike}
-              onApprovePendingEmail={handleApprovePendingEmail}
-              onRejectPendingEmail={handleRejectPendingEmail}
+              onUserUpdate={adminApi.updateUser}
+              onAddStrike={adminApi.addAccountNote}
+              onFetchUsers={adminApi.getUsers}
             />
           ) : null}
           {activeSection === "listings" ? (
