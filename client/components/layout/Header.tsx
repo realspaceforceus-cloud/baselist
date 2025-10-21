@@ -315,10 +315,32 @@ export const Header = (): JSX.Element => {
                       <Moon className="h-3.5 md:h-4 w-3.5 md:w-4" />
                     )}
                   </Button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsNotificationsOpen(!isNotificationsOpen);
+                      if (isMenuOpen) {
+                        setMenuOpen(false);
+                      }
+                    }}
+                    className="relative flex h-9 md:h-11 w-9 md:w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    title="Notifications"
+                  >
+                    <Bell className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground" aria-hidden />
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[0.6rem] font-bold text-background shadow-sm">
+                      3
+                    </span>
+                    <span className="sr-only">Notifications</span>
+                  </button>
                   <SheetTrigger asChild>
                     <button
                       type="button"
                       className="relative flex h-9 md:h-11 w-9 md:w-11 items-center justify-center rounded-full border border-border bg-background shadow-soft transition hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      onClick={() => {
+                        if (isNotificationsOpen) {
+                          setIsNotificationsOpen(false);
+                        }
+                      }}
                     >
                       <Avatar className="h-7 md:h-9 w-7 md:w-9">
                         {user.avatarUrl ? (
