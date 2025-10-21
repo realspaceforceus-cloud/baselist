@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Announcement } from "@/types";
 
