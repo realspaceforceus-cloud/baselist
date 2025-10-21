@@ -17,7 +17,7 @@ function verifyAdminAuth(event: any): { userId: string } | null {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  
+
   // Fix path parsing to handle both direct calls and redirected requests
   // Direct: /.netlify/functions/admin/users -> /users
   // Redirect: /api/admin/users -> /users
