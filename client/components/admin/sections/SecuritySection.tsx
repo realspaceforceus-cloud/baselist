@@ -38,18 +38,9 @@ export const SecuritySection = ({ auditEntries = [] }: SecuritySectionProps): JS
         </article>
       </div>
       <div className="rounded-3xl border border-border bg-card/90 p-4 shadow-soft">
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <History className="h-4 w-4 text-primary" aria-hidden />
-            Latest audit entries
-          </div>
-          <button
-            type="button"
-            className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-            onClick={onClearAudit}
-          >
-            Clear log
-          </button>
+        <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+          <History className="h-4 w-4 text-primary" aria-hidden />
+          Latest audit entries
         </div>
         <ul className="space-y-2 text-sm text-muted-foreground">
           {auditEntries.map((entry) => (
