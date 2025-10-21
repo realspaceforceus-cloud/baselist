@@ -62,9 +62,7 @@ export const handler: Handler = async (event) => {
       let transactionsResult: any = { rows: [{ count: 0 }] };
 
       try {
-        usersResult = await client.query(
-          "SELECT COUNT(*) as count FROM users",
-        );
+        usersResult = await client.query("SELECT COUNT(*) as count FROM users");
       } catch (err) {
         console.error("Users count error:", err);
       }

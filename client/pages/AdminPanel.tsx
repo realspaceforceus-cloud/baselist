@@ -2194,9 +2194,7 @@ const AdminPanel = (): JSX.Element => {
             />
           ) : null}
           {activeSection === "roles" ? (
-            <RolesSection
-              roles={createInitialRoles()}
-            />
+            <RolesSection roles={createInitialRoles()} />
           ) : null}
           {activeSection === "email-templates" ? (
             <EmailTemplatesSection />
