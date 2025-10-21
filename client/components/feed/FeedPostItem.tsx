@@ -83,8 +83,8 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
 
   const getUserVote = (): string | null => {
     if (!user || !pollOptions) return null;
-    const votedOption = pollOptions.find((option) =>
-      Array.isArray(option.votes) && option.votes.includes(user.id),
+    const votedOption = pollOptions.find(
+      (option) => Array.isArray(option.votes) && option.votes.includes(user.id),
     );
     return votedOption?.id || null;
   };
@@ -180,7 +180,8 @@ export function FeedPostItem({ post }: FeedPostItemProps): JSX.Element {
                 (sum, opt) => sum + getVoteCount(opt),
                 0,
               );
-              const percentage = totalVotes > 0 ? (voteCount / totalVotes) * 100 : 0;
+              const percentage =
+                totalVotes > 0 ? (voteCount / totalVotes) * 100 : 0;
 
               return (
                 <button

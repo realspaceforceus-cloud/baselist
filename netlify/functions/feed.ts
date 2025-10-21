@@ -462,7 +462,9 @@ export const handler: Handler = async (event) => {
         });
 
         // Add vote to selected option
-        const selectedOption = pollOptions.find((opt: any) => opt.id === optionId);
+        const selectedOption = pollOptions.find(
+          (opt: any) => opt.id === optionId,
+        );
         if (selectedOption) {
           if (!Array.isArray(selectedOption.votes)) {
             selectedOption.votes = [];
