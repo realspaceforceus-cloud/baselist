@@ -255,7 +255,6 @@ const Post = (): JSX.Element => {
         }),
       );
 
-      const isEditing = !!editListingId;
       const existingListing = isEditing
         ? listings.find((l) => l.id === editListingId)
         : null;
