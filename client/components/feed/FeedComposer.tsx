@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { feedApi } from "@/lib/feedApi";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuth } from "@/context/AuthContext";
-import { cloudinaryClient } from "@/lib/cloudinaryClient";
+import { uploadImageToCloudinary } from "@/lib/cloudinaryClient";
 import type { FeedPost } from "@/types";
 
 interface FeedComposerProps {
