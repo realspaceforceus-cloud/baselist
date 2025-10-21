@@ -3,21 +3,38 @@ import { pool } from "./db";
 import { randomUUID } from "crypto";
 import { getUserIdFromAuth } from "./auth";
 
-const transformFeedPost = (row: any) => ({
-  id: row.id,
-  userId: row.user_id,
-  baseId: row.base_id,
-  postType: row.post_type,
-  content: row.content,
-  imageUrls: Array.isArray(row.image_urls) ? row.image_urls : [],
-  pollOptions: row.poll_options || undefined,
-  pollVotes: row.poll_votes || undefined,
-  eventData: row.event_data || undefined,
-  createdAt: row.created_at,
-  updatedAt: row.updated_at,
-  likes: row.likes || 0,
-  comments: row.comments || 0,
-});
+const transformFeedPost = (row: any) => {
+  let pollOptions = undefined;
+  let eventData = undefined;
+
+  if (row.poll_options) {
+    pollOptions = typeof row.poll_options === 'string'
+      ? JSON.parse(row.poll_options)
+      : row.poll_options;
+  }
+
+  if (row.event_data) {
+    eventData = typeof row.event_data === 'string'
+      ? JSON.parse(row.event_data)
+      : row.event_data;
+  }
+
+  return {
+    id: row.id,
+    userId: row.user_id,
+    baseId: row.base_id,
+    postType: row.post_type,
+    content: row.content,
+    imageUrls: Array.isArray(row.image_urls) ? row.image_urls : [],
+    pollOptions: pollOptions,
+    pollVotes: row.poll_votes || undefined,
+    eventData: eventData,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    likes: row.likes || 0,
+    comments: row.comments || 0,
+  };
+};
 
 const transformAnnouncement = (row: any) => ({
   id: row.id,
