@@ -167,7 +167,9 @@ export const InvitationCodesSection = ({
       const updateFn = onUpdateCode || adminApi.updateInvitationCode;
       await updateFn(editingId, {
         code: editFormData.code,
-        maxUses: editFormData.maxUses ? parseInt(editFormData.maxUses) : undefined,
+        maxUses: editFormData.maxUses
+          ? parseInt(editFormData.maxUses)
+          : undefined,
         expiresAt: editFormData.expiresAt || undefined,
         description: editFormData.description || undefined,
         active: editFormData.active,
@@ -466,9 +468,7 @@ export const InvitationCodesSection = ({
       {/* Edit Modal */}
       {editingId && (
         <div className="rounded-3xl border border-border bg-card p-6 shadow-soft space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">
-            Edit Code
-          </h3>
+          <h3 className="text-lg font-semibold text-foreground">Edit Code</h3>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">

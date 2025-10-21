@@ -104,7 +104,12 @@ export const AdminUserDetail = () => {
 
         // Load bases for dropdown
         const basesResult = await adminApi.getBases();
-        setBases((basesResult?.bases || []).map((b: any) => ({ id: b.id, name: b.name })));
+        setBases(
+          (basesResult?.bases || []).map((b: any) => ({
+            id: b.id,
+            name: b.name,
+          })),
+        );
       } catch (error) {
         console.error("Failed to load user detail:", error);
         toast.error("Failed to load user details");
@@ -197,12 +202,17 @@ export const AdminUserDetail = () => {
     setIsSubmitting(true);
     try {
       const updatePayload: any = {};
-      if (editData.username !== user.user.username) updatePayload.username = editData.username;
-      if (editData.email !== user.user.email) updatePayload.email = editData.email;
+      if (editData.username !== user.user.username)
+        updatePayload.username = editData.username;
+      if (editData.email !== user.user.email)
+        updatePayload.email = editData.email;
       if (editData.role !== user.user.role) updatePayload.role = editData.role;
-      if (editData.status !== user.user.status) updatePayload.status = editData.status;
-      if (editData.baseId !== user.user.baseId) updatePayload.baseId = editData.baseId;
-      if (editData.avatarUrl !== (user.user.avatarUrl || "")) updatePayload.avatarUrl = editData.avatarUrl;
+      if (editData.status !== user.user.status)
+        updatePayload.status = editData.status;
+      if (editData.baseId !== user.user.baseId)
+        updatePayload.baseId = editData.baseId;
+      if (editData.avatarUrl !== (user.user.avatarUrl || ""))
+        updatePayload.avatarUrl = editData.avatarUrl;
 
       if (Object.keys(updatePayload).length === 0) {
         toast.info("No changes made");
@@ -310,8 +320,17 @@ export const AdminUserDetail = () => {
         <div className="rounded-3xl border border-border bg-card p-8 space-y-6">
           <div className="flex items-start gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={editMode ? editData.avatarUrl || userInfo.avatarUrl : userInfo.avatarUrl} alt={userInfo.username} />
-              <AvatarFallback>{(editMode ? editData.username : userInfo.username).charAt(0)}</AvatarFallback>
+              <AvatarImage
+                src={
+                  editMode
+                    ? editData.avatarUrl || userInfo.avatarUrl
+                    : userInfo.avatarUrl
+                }
+                alt={userInfo.username}
+              />
+              <AvatarFallback>
+                {(editMode ? editData.username : userInfo.username).charAt(0)}
+              </AvatarFallback>
             </Avatar>
 
             <div className="flex-1">
@@ -320,19 +339,33 @@ export const AdminUserDetail = () => {
                   {editMode ? (
                     <div className="space-y-3">
                       <div>
-                        <Label className="text-xs font-semibold uppercase">Username</Label>
+                        <Label className="text-xs font-semibold uppercase">
+                          Username
+                        </Label>
                         <Input
                           value={editData.username}
-                          onChange={(e) => setEditData({ ...editData, username: e.target.value })}
+                          onChange={(e) =>
+                            setEditData({
+                              ...editData,
+                              username: e.target.value,
+                            })
+                          }
                           className="rounded-lg mt-1"
                           disabled={isSubmitting}
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-semibold uppercase">Avatar URL</Label>
+                        <Label className="text-xs font-semibold uppercase">
+                          Avatar URL
+                        </Label>
                         <Input
                           value={editData.avatarUrl}
-                          onChange={(e) => setEditData({ ...editData, avatarUrl: e.target.value })}
+                          onChange={(e) =>
+                            setEditData({
+                              ...editData,
+                              avatarUrl: e.target.value,
+                            })
+                          }
                           className="rounded-lg mt-1"
                           placeholder="https://..."
                           disabled={isSubmitting}
@@ -341,7 +374,9 @@ export const AdminUserDetail = () => {
                     </div>
                   ) : (
                     <>
-                      <h2 className="text-2xl font-bold">{userInfo.username}</h2>
+                      <h2 className="text-2xl font-bold">
+                        {userInfo.username}
+                      </h2>
                       <p className="text-sm text-muted-foreground">
                         ID: {userInfo.id}
                       </p>
@@ -402,18 +437,29 @@ export const AdminUserDetail = () => {
                 {editMode ? (
                   <>
                     <div>
-                      <Label className="text-xs font-semibold uppercase">Email</Label>
+                      <Label className="text-xs font-semibold uppercase">
+                        Email
+                      </Label>
                       <Input
                         value={editData.email}
-                        onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, email: e.target.value })
+                        }
                         className="rounded-lg mt-1"
                         type="email"
                         disabled={isSubmitting}
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-semibold uppercase">Status</Label>
-                      <Select value={editData.status} onValueChange={(value) => setEditData({ ...editData, status: value })}>
+                      <Label className="text-xs font-semibold uppercase">
+                        Status
+                      </Label>
+                      <Select
+                        value={editData.status}
+                        onValueChange={(value) =>
+                          setEditData({ ...editData, status: value })
+                        }
+                      >
                         <SelectTrigger className="mt-1 rounded-lg">
                           <SelectValue />
                         </SelectTrigger>
@@ -425,8 +471,15 @@ export const AdminUserDetail = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-xs font-semibold uppercase">Role</Label>
-                      <Select value={editData.role} onValueChange={(value) => setEditData({ ...editData, role: value })}>
+                      <Label className="text-xs font-semibold uppercase">
+                        Role
+                      </Label>
+                      <Select
+                        value={editData.role}
+                        onValueChange={(value) =>
+                          setEditData({ ...editData, role: value })
+                        }
+                      >
                         <SelectTrigger className="mt-1 rounded-lg">
                           <SelectValue />
                         </SelectTrigger>
@@ -438,8 +491,15 @@ export const AdminUserDetail = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-xs font-semibold uppercase">Base</Label>
-                      <Select value={editData.baseId} onValueChange={(value) => setEditData({ ...editData, baseId: value })}>
+                      <Label className="text-xs font-semibold uppercase">
+                        Base
+                      </Label>
+                      <Select
+                        value={editData.baseId}
+                        onValueChange={(value) =>
+                          setEditData({ ...editData, baseId: value })
+                        }
+                      >
                         <SelectTrigger className="mt-1 rounded-lg">
                           <SelectValue placeholder="Select a base" />
                         </SelectTrigger>
@@ -497,7 +557,9 @@ export const AdminUserDetail = () => {
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         Role
                       </p>
-                      <p className="mt-1 capitalize font-medium">{userInfo.role}</p>
+                      <p className="mt-1 capitalize font-medium">
+                        {userInfo.role}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -610,7 +672,9 @@ export const AdminUserDetail = () => {
             Admin Notes
           </h3>
           {user.strikes.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No admin notes on file</p>
+            <p className="text-sm text-muted-foreground">
+              No admin notes on file
+            </p>
           ) : (
             <div className="space-y-3">
               {user.strikes.map((note: any) => (
@@ -620,8 +684,12 @@ export const AdminUserDetail = () => {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{note.reason || note.type}</p>
-                      <p className="text-sm text-muted-foreground mt-1">{note.description}</p>
+                      <p className="text-sm font-medium">
+                        {note.reason || note.type}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {note.description}
+                      </p>
                       <p className="text-xs text-muted-foreground mt-2">
                         {formatDate(note.createdAt)}
                       </p>

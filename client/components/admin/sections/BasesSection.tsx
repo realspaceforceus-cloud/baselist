@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Building2, AlertCircle, Edit2, Plus, Trash2, RotateCcw } from "lucide-react";
+import {
+  Building2,
+  AlertCircle,
+  Edit2,
+  Plus,
+  Trash2,
+  RotateCcw,
+} from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
@@ -18,80 +25,80 @@ import { Label } from "@/components/ui/label";
 // Mapping of regions to timezones
 const REGION_TIMEZONE_MAP: Record<string, string> = {
   // US States
-  "Alabama": "America/Chicago",
-  "Alaska": "America/Anchorage",
-  "Arizona": "America/Phoenix",
-  "Arkansas": "America/Chicago",
-  "California": "America/Los_Angeles",
-  "Colorado": "America/Denver",
-  "Connecticut": "America/New_York",
-  "Delaware": "America/New_York",
-  "Florida": "America/New_York",
-  "Georgia": "America/New_York",
-  "Hawaii": "Pacific/Honolulu",
-  "Idaho": "America/Boise",
-  "Illinois": "America/Chicago",
-  "Indiana": "America/Indiana/Indianapolis",
-  "Iowa": "America/Chicago",
-  "Kansas": "America/Chicago",
-  "Kentucky": "America/Kentucky/Louisville",
-  "Louisiana": "America/Chicago",
-  "Maine": "America/New_York",
-  "Maryland": "America/New_York",
-  "Massachusetts": "America/New_York",
-  "Michigan": "America/Detroit",
-  "Minnesota": "America/Chicago",
-  "Mississippi": "America/Chicago",
-  "Missouri": "America/Chicago",
-  "Montana": "America/Denver",
-  "Nebraska": "America/Chicago",
-  "Nevada": "America/Los_Angeles",
+  Alabama: "America/Chicago",
+  Alaska: "America/Anchorage",
+  Arizona: "America/Phoenix",
+  Arkansas: "America/Chicago",
+  California: "America/Los_Angeles",
+  Colorado: "America/Denver",
+  Connecticut: "America/New_York",
+  Delaware: "America/New_York",
+  Florida: "America/New_York",
+  Georgia: "America/New_York",
+  Hawaii: "Pacific/Honolulu",
+  Idaho: "America/Boise",
+  Illinois: "America/Chicago",
+  Indiana: "America/Indiana/Indianapolis",
+  Iowa: "America/Chicago",
+  Kansas: "America/Chicago",
+  Kentucky: "America/Kentucky/Louisville",
+  Louisiana: "America/Chicago",
+  Maine: "America/New_York",
+  Maryland: "America/New_York",
+  Massachusetts: "America/New_York",
+  Michigan: "America/Detroit",
+  Minnesota: "America/Chicago",
+  Mississippi: "America/Chicago",
+  Missouri: "America/Chicago",
+  Montana: "America/Denver",
+  Nebraska: "America/Chicago",
+  Nevada: "America/Los_Angeles",
   "New Hampshire": "America/New_York",
   "New Jersey": "America/New_York",
   "New Mexico": "America/Denver",
   "New York": "America/New_York",
   "North Carolina": "America/New_York",
   "North Dakota": "America/Chicago",
-  "Ohio": "America/New_York",
-  "Oklahoma": "America/Chicago",
-  "Oregon": "America/Los_Angeles",
-  "Pennsylvania": "America/New_York",
+  Ohio: "America/New_York",
+  Oklahoma: "America/Chicago",
+  Oregon: "America/Los_Angeles",
+  Pennsylvania: "America/New_York",
   "Rhode Island": "America/New_York",
   "South Carolina": "America/New_York",
   "South Dakota": "America/Chicago",
-  "Tennessee": "America/Chicago",
-  "Texas": "America/Chicago",
-  "Utah": "America/Denver",
-  "Vermont": "America/New_York",
-  "Virginia": "America/New_York",
-  "Washington": "America/Los_Angeles",
+  Tennessee: "America/Chicago",
+  Texas: "America/Chicago",
+  Utah: "America/Denver",
+  Vermont: "America/New_York",
+  Virginia: "America/New_York",
+  Washington: "America/Los_Angeles",
   "West Virginia": "America/New_York",
-  "Wisconsin": "America/Chicago",
-  "Wyoming": "America/Denver",
+  Wisconsin: "America/Chicago",
+  Wyoming: "America/Denver",
   // International Regions
-  "Germany": "Europe/Berlin",
+  Germany: "Europe/Berlin",
   "United Kingdom": "Europe/London",
-  "Italy": "Europe/Rome",
-  "Spain": "Europe/Madrid",
-  "France": "Europe/Paris",
-  "Japan": "Asia/Tokyo",
+  Italy: "Europe/Rome",
+  Spain: "Europe/Madrid",
+  France: "Europe/Paris",
+  Japan: "Asia/Tokyo",
   "South Korea": "Asia/Seoul",
-  "Qatar": "Asia/Qatar",
+  Qatar: "Asia/Qatar",
   "United Arab Emirates": "Asia/Dubai",
-  "Turkey": "Europe/Istanbul",
+  Turkey: "Europe/Istanbul",
   "Saudi Arabia": "Asia/Riyadh",
-  "Kuwait": "Asia/Kuwait",
-  "Bahrain": "Asia/Bahrain",
-  "Oman": "Asia/Muscat",
-  "Jordan": "Asia/Amman",
-  "Iraq": "Asia/Baghdad",
-  "Afghanistan": "Asia/Kabul",
-  "India": "Asia/Kolkata",
-  "Philippines": "Asia/Manila",
-  "Thailand": "Asia/Bangkok",
-  "Singapore": "Asia/Singapore",
-  "Australia": "Australia/Sydney",
-  "Guam": "Pacific/Guam",
+  Kuwait: "Asia/Kuwait",
+  Bahrain: "Asia/Bahrain",
+  Oman: "Asia/Muscat",
+  Jordan: "Asia/Amman",
+  Iraq: "Asia/Baghdad",
+  Afghanistan: "Asia/Kabul",
+  India: "Asia/Kolkata",
+  Philippines: "Asia/Manila",
+  Thailand: "Asia/Bangkok",
+  Singapore: "Asia/Singapore",
+  Australia: "Australia/Sydney",
+  Guam: "Pacific/Guam",
   "Puerto Rico": "America/Puerto_Rico",
   "Diego Garcia": "Indian/Chagos",
 };
@@ -249,7 +256,11 @@ export const BasesSection = () => {
   };
 
   const handleDeleteBase = async (baseId: string, baseName: string) => {
-    if (!confirm(`Are you sure you want to delete "${baseName}"? This action moves the base to deleted bases and can be revived later.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${baseName}"? This action moves the base to deleted bases and can be revived later.`,
+      )
+    ) {
       return;
     }
 
@@ -321,9 +332,7 @@ export const BasesSection = () => {
                 <Input
                   id="region"
                   value={formData.region}
-                  onChange={(e) =>
-                    handleRegionChange(e.target.value)
-                  }
+                  onChange={(e) => handleRegionChange(e.target.value)}
                   placeholder="e.g., Oklahoma or Germany"
                   list="regions"
                 />

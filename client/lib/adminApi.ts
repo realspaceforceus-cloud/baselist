@@ -217,16 +217,19 @@ export const adminApi = {
       },
     );
   },
-  async updateListing(listingId: string, updates: {
-    title?: string;
-    description?: string;
-    price?: number;
-    isFree?: boolean;
-    category?: string;
-    baseId?: string;
-    imageUrls?: string[];
-    promoted?: boolean;
-  }) {
+  async updateListing(
+    listingId: string,
+    updates: {
+      title?: string;
+      description?: string;
+      price?: number;
+      isFree?: boolean;
+      category?: string;
+      baseId?: string;
+      imageUrls?: string[];
+      promoted?: boolean;
+    },
+  ) {
     return apiRequest<any>(`${ADMIN_BASE}/listings/${listingId}`, {
       method: "PATCH",
       body: JSON.stringify(updates),
@@ -361,14 +364,17 @@ export const adminApi = {
   async getUserDetail(userId: string) {
     return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/detail`);
   },
-  async updateUserProfile(userId: string, updates: {
-    username?: string;
-    email?: string;
-    role?: string;
-    status?: string;
-    baseId?: string;
-    avatarUrl?: string;
-  }) {
+  async updateUserProfile(
+    userId: string,
+    updates: {
+      username?: string;
+      email?: string;
+      role?: string;
+      status?: string;
+      baseId?: string;
+      avatarUrl?: string;
+    },
+  ) {
     return apiRequest<any>(`${ADMIN_BASE}/users/${userId}/profile`, {
       method: "PATCH",
       body: JSON.stringify(updates),

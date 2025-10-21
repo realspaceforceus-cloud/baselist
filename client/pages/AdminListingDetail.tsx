@@ -6,9 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Textarea,
-} from "@/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { adminApi } from "@/lib/adminApi";
 
 interface ListingDetail {
@@ -211,10 +209,7 @@ export default function AdminListingDetail() {
           </Button>
 
           {!isEditing && (
-            <Button
-              onClick={() => setIsEditing(true)}
-              className="gap-2"
-            >
+            <Button onClick={() => setIsEditing(true)} className="gap-2">
               <Edit className="h-4 w-4" />
               Edit Listing
             </Button>
@@ -530,8 +525,8 @@ export default function AdminListingDetail() {
               Message Threads ({messageThreadCount})
             </h3>
             <p className="text-muted-foreground">
-              {messageThreadCount} conversation{messageThreadCount !== 1 ? "s" : ""}{" "}
-              about this listing
+              {messageThreadCount} conversation
+              {messageThreadCount !== 1 ? "s" : ""} about this listing
             </p>
           </div>
         )}

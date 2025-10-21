@@ -14,10 +14,9 @@ function verifyAdminAuth(event: any): { userId: string } | null {
 }
 
 async function isAdmin(client: any, userId: string): Promise<boolean> {
-  const result = await client.query(
-    "SELECT role FROM users WHERE id = $1",
-    [userId],
-  );
+  const result = await client.query("SELECT role FROM users WHERE id = $1", [
+    userId,
+  ]);
   return result.rows.length > 0 && result.rows[0].role === "admin";
 }
 
@@ -82,12 +81,22 @@ export const handler: Handler = async (event) => {
 
       const totalRequests = parseInt(totalRequestsResult.rows[0]?.count ?? 0);
       const failedRequests = parseInt(failedRequestsResult.rows[0]?.count ?? 0);
-      const errorRate = totalRequests > 0 ? ((failedRequests / totalRequests) * 100).toFixed(2) : "0.00";
-      const avgResponseTime = Math.round(parseFloat(avgResponseTimeResult.rows[0]?.avg_time ?? 0));
-      const failedTransactions = parseInt(failedTransactionsResult.rows[0]?.count ?? 0);
+      const errorRate =
+        totalRequests > 0
+          ? ((failedRequests / totalRequests) * 100).toFixed(2)
+          : "0.00";
+      const avgResponseTime = Math.round(
+        parseFloat(avgResponseTimeResult.rows[0]?.avg_time ?? 0),
+      );
+      const failedTransactions = parseInt(
+        failedTransactionsResult.rows[0]?.count ?? 0,
+      );
 
       // Uptime: assume 99.9% if no data
-      const uptime = totalRequests > 0 ? (100 - parseFloat(errorRate as string)).toFixed(2) : "99.90";
+      const uptime =
+        totalRequests > 0
+          ? (100 - parseFloat(errorRate as string)).toFixed(2)
+          : "99.90";
 
       return {
         statusCode: 200,
@@ -137,7 +146,8 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period = new URLSearchParams(event.rawQueryString).get("period") || "7d";
+      const period =
+        new URLSearchParams(event.rawQueryString).get("period") || "7d";
       let dateFilter = "1=1";
 
       if (period === "24h") {
@@ -182,7 +192,8 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period = new URLSearchParams(event.rawQueryString).get("period") || "7d";
+      const period =
+        new URLSearchParams(event.rawQueryString).get("period") || "7d";
       let dateFilter = "1=1";
 
       if (period === "24h") {
@@ -227,7 +238,8 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period = new URLSearchParams(event.rawQueryString).get("period") || "7d";
+      const period =
+        new URLSearchParams(event.rawQueryString).get("period") || "7d";
       let dateFilter = "1=1";
 
       if (period === "24h") {
@@ -290,7 +302,9 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({
           openReports: parseInt(openReportsResult.rows[0]?.count ?? 0),
           flaggedContent: parseInt(flaggedThreadsResult.rows[0]?.count ?? 0),
-          pendingVerifications: parseInt(pendingVerificationsResult.rows[0]?.count ?? 0),
+          pendingVerifications: parseInt(
+            pendingVerificationsResult.rows[0]?.count ?? 0,
+          ),
         }),
       };
     }
@@ -305,7 +319,8 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const period = new URLSearchParams(event.rawQueryString).get("period") || "24h";
+      const period =
+        new URLSearchParams(event.rawQueryString).get("period") || "24h";
       let dateFilter = "1=1";
 
       if (period === "24h") {
@@ -384,7 +399,9 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const thirtyDaysAgo = new Date(
+        Date.now() - 30 * 24 * 60 * 60 * 1000,
+      ).toISOString();
 
       // Users created 30+ days ago
       const totalUsersOldResult = await client.query(
@@ -403,7 +420,8 @@ export const handler: Handler = async (event) => {
 
       const totalOld = parseInt(totalUsersOldResult.rows[0]?.count ?? 0);
       const activeOld = parseInt(activeOldUsersResult.rows[0]?.count ?? 0);
-      const retention = totalOld > 0 ? ((activeOld / totalOld) * 100).toFixed(2) : "0.00";
+      const retention =
+        totalOld > 0 ? ((activeOld / totalOld) * 100).toFixed(2) : "0.00";
 
       return {
         statusCode: 200,

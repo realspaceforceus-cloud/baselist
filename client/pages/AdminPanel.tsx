@@ -126,7 +126,6 @@ const abbreviateBaseName = (value: string): string => {
   return letters.length > 0 ? letters : "BASE";
 };
 
-
 const getBaseName = (bases: Base[], baseId?: string): string => {
   if (!baseId) {
     return "Unknown base";
@@ -692,7 +691,6 @@ const AdminPanel = (): JSX.Element => {
           description: getApiErrorMessage(error),
         });
       }
-
 
       try {
         const auditResponse = await adminApi.getAudit(20);
@@ -1762,7 +1760,6 @@ const AdminPanel = (): JSX.Element => {
       : queueHealthLabel === "Healthy"
         ? "text-success"
         : "text-warning";
-
 
   const roles = useMemo(() => createInitialRoles(), []);
 

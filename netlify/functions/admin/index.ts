@@ -836,7 +836,10 @@ export const handler: Handler = async (event) => {
         const baseId = path.replace("/bases/", "");
 
         // Check if base exists
-        const baseCheck = await client.query("SELECT id FROM bases WHERE id = $1", [baseId]);
+        const baseCheck = await client.query(
+          "SELECT id FROM bases WHERE id = $1",
+          [baseId],
+        );
         if (baseCheck.rows.length === 0) {
           return {
             statusCode: 404,
@@ -854,7 +857,10 @@ export const handler: Handler = async (event) => {
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ base: result.rows[0], message: "Base deleted successfully" }),
+          body: JSON.stringify({
+            base: result.rows[0],
+            message: "Base deleted successfully",
+          }),
         };
       } catch (error) {
         console.error("Failed to delete base:", error);
@@ -867,7 +873,11 @@ export const handler: Handler = async (event) => {
     }
 
     // PATCH /api/admin/bases/:id/restore (restore soft-deleted base)
-    if (method === "PATCH" && path.includes("/bases/") && path.includes("/restore")) {
+    if (
+      method === "PATCH" &&
+      path.includes("/bases/") &&
+      path.includes("/restore")
+    ) {
       if (!(await isAdmin(auth.userId))) {
         return {
           statusCode: 403,
@@ -880,7 +890,10 @@ export const handler: Handler = async (event) => {
         const baseId = path.replace("/bases/", "").replace("/restore", "");
 
         // Check if base exists (including deleted ones)
-        const baseCheck = await client.query("SELECT id FROM bases WHERE id = $1", [baseId]);
+        const baseCheck = await client.query(
+          "SELECT id FROM bases WHERE id = $1",
+          [baseId],
+        );
         if (baseCheck.rows.length === 0) {
           return {
             statusCode: 404,
@@ -898,7 +911,10 @@ export const handler: Handler = async (event) => {
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ base: result.rows[0], message: "Base restored successfully" }),
+          body: JSON.stringify({
+            base: result.rows[0],
+            message: "Base restored successfully",
+          }),
         };
       } catch (error) {
         console.error("Failed to restore base:", error);
@@ -1073,7 +1089,8 @@ export const handler: Handler = async (event) => {
         if (code !== undefined) updates.code = code;
         if (maxUses !== undefined) updates.max_uses = maxUses || null;
         if (expiresAt !== undefined) updates.expires_at = expiresAt || null;
-        if (description !== undefined) updates.description = description || null;
+        if (description !== undefined)
+          updates.description = description || null;
         if (active !== undefined) updates.active = active;
 
         if (Object.keys(updates).length === 0) {
