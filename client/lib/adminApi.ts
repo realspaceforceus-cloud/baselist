@@ -117,6 +117,25 @@ export const adminApi = {
     );
     return newCode;
   },
+  async updateInvitationCode(
+    codeId: string,
+    updates: {
+      code?: string;
+      maxUses?: number;
+      expiresAt?: string;
+      description?: string;
+      active?: boolean;
+    },
+  ): Promise<any> {
+    const { code } = await apiRequest<{ code: any }>(
+      `${ADMIN_BASE}/invitation-codes/${codeId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(updates),
+      },
+    );
+    return code;
+  },
   async deleteInvitationCode(codeId: string): Promise<void> {
     await apiRequest<void>(`${ADMIN_BASE}/invitation-codes/${codeId}`, {
       method: "DELETE",
