@@ -215,9 +215,19 @@ export const NotificationItem = ({
             </p>
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(notification.createdAt), {
-                  addSuffix: true,
-                })}
+                {(() => {
+                  try {
+                    const date = new Date(notification.createdAt);
+                    if (isNaN(date.getTime())) {
+                      return "just now";
+                    }
+                    return formatDistanceToNow(date, {
+                      addSuffix: true,
+                    });
+                  } catch (error) {
+                    return "just now";
+                  }
+                })()}
               </p>
               <Button
                 type="button"
