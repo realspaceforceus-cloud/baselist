@@ -140,6 +140,7 @@ export const Header = (): JSX.Element => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
+  const [notificationFilter, setNotificationFilter] = useState<"all" | Notification["type"]>("all");
 
   useEffect(() => {
     const html = document.documentElement;
