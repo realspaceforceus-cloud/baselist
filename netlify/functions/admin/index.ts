@@ -1059,6 +1059,222 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // GET /api/admin/users/:id/detail
+    if (method === "GET" && path.startsWith("/users/") && path.includes("/detail")) {
+      const userId = path.replace("/users/", "").replace("/detail", "");
+
+      const userResult = await client.query(
+        `SELECT u.*, b.name as base_name FROM users u
+         LEFT JOIN bases b ON u.base_id = b.id
+         WHERE u.id = $1`,
+        [userId],
+      );
+
+      if (userResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "User not found" }),
+        };
+      }
+
+      const user = userResult.rows[0];
+
+      // Get account strikes
+      const strikesResult = await client.query(
+        `SELECT * FROM account_notes WHERE user_id = $1 ORDER BY created_at DESC`,
+        [userId],
+      );
+
+      // Get user listings
+      const listingsResult = await client.query(
+        `SELECT id, title, price, status, created_at FROM listings WHERE seller_id = $1 ORDER BY created_at DESC`,
+        [userId],
+      );
+
+      // Get sold items count
+      const soldResult = await client.query(
+        `SELECT COUNT(*) as count FROM listings WHERE seller_id = $1 AND status = 'sold'`,
+        [userId],
+      );
+
+      // Get user ratings
+      const ratingsResult = await client.query(
+        `SELECT r.*, t.seller_id, t.buyer_id FROM ratings r
+         JOIN transactions t ON r.transaction_id = t.id
+         WHERE (t.seller_id = $1 OR t.buyer_id = $1)
+         ORDER BY r.created_at DESC`,
+        [userId],
+      );
+
+      // Calculate average rating
+      const avgRating =
+        ratingsResult.rows.length > 0
+          ? (
+              ratingsResult.rows.reduce((sum: number, r: any) => sum + r.score, 0) /
+              ratingsResult.rows.length
+            ).toFixed(2)
+          : null;
+
+      // Get failed login attempts
+      const failedLoginsResult = await client.query(
+        `SELECT * FROM failed_login_attempts WHERE identifier IN ($1, $2) ORDER BY attempted_at DESC LIMIT 50`,
+        [user.email, user.username],
+      );
+
+      // Get successful logins
+      const successfulLoginsResult = await client.query(
+        `SELECT * FROM successful_login_attempts WHERE user_id = $1 ORDER BY logged_in_at DESC LIMIT 50`,
+        [userId],
+      );
+
+      // Get sponsor info if joined via sponsor
+      let sponsorInfo = null;
+      if (user.join_method === "sponsor") {
+        const familyLinkResult = await client.query(
+          `SELECT fl.sponsor_id, u.username, u.id FROM family_links fl
+           JOIN users u ON fl.sponsor_id = u.id
+           WHERE fl.family_member_id = $1 AND fl.status = 'active'`,
+          [userId],
+        );
+        if (familyLinkResult.rows.length > 0) {
+          sponsorInfo = {
+            sponsorId: familyLinkResult.rows[0].sponsor_id,
+            sponsorUsername: familyLinkResult.rows[0].username,
+          };
+        }
+      }
+
+      // Get unique IPs from both failed and successful logins
+      const allIps = new Set<string>();
+      failedLoginsResult.rows.forEach((row: any) => {
+        if (row.ip_address) allIps.add(row.ip_address);
+      });
+      successfulLoginsResult.rows.forEach((row: any) => {
+        if (row.ip_address) allIps.add(row.ip_address);
+      });
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+            baseId: user.base_id,
+            baseName: user.base_name,
+            avatarUrl: user.avatar_url,
+            createdAt: user.created_at,
+            lastLoginAt: user.last_login_at,
+            dowVerifiedAt: user.dow_verified_at,
+            joinMethod: user.join_method,
+            sponsorInfo,
+          },
+          strikes: strikesResult.rows.map((row: any) => ({
+            id: row.id,
+            type: row.note_type,
+            reason: row.strike_reason,
+            description: row.description,
+            severity: row.severity,
+            createdAt: row.created_at,
+            expiresAt: row.expires_at,
+            createdBy: row.created_by,
+          })),
+          listings: listingsResult.rows.map((row: any) => ({
+            id: row.id,
+            title: row.title,
+            price: row.price,
+            status: row.status,
+            createdAt: row.created_at,
+          })),
+          soldCount: parseInt(soldResult.rows[0]?.count ?? 0),
+          ratings: ratingsResult.rows.map((row: any) => ({
+            id: row.id,
+            score: row.score,
+            comment: row.comment,
+            createdAt: row.created_at,
+            isFromSeller: row.seller_id === userId,
+          })),
+          avgRating,
+          failedLogins: failedLoginsResult.rows.map((row: any) => ({
+            id: row.id,
+            ipAddress: row.ip_address,
+            userAgent: row.user_agent,
+            attemptedAt: row.attempted_at,
+            reason: row.reason,
+          })),
+          successfulLogins: successfulLoginsResult.rows.map((row: any) => ({
+            id: row.id,
+            ipAddress: row.ip_address,
+            userAgent: row.user_agent,
+            loggedInAt: row.logged_in_at,
+          })),
+          uniqueIps: Array.from(allIps),
+        }),
+      };
+    }
+
+    // POST /api/admin/users/:id/password-reset
+    if (method === "POST" && path.startsWith("/users/") && path.includes("/password-reset")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/users/", "").replace("/password-reset", "");
+      const { generateTemp, sendEmail } = JSON.parse(event.body || "{}");
+
+      const userResult = await client.query("SELECT * FROM users WHERE id = $1", [
+        userId,
+      ]);
+
+      if (userResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "User not found" }),
+        };
+      }
+
+      let response: any = { success: true };
+
+      if (generateTemp) {
+        const tempPassword = Math.random().toString(36).substring(2, 10);
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
+          hashedPassword,
+          userId,
+        ]);
+        response.tempPassword = tempPassword;
+        response.message =
+          "Temporary password generated. Share this with the user.";
+      }
+
+      if (sendEmail) {
+        const resetToken = randomUUID();
+        await client.query(
+          `INSERT INTO refresh_tokens (id, user_id, device_id, token_hash, expires_at)
+           VALUES ($1, $2, $3, $4, NOW() + INTERVAL '24 hours')`,
+          [resetToken, userId, "admin-reset", resetToken],
+        );
+        response.resetLink = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
+        response.message =
+          "Password reset link generated. Share this link with the user.";
+      }
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(response),
+      };
+    }
+
     return {
       statusCode: 404,
       headers: { "Content-Type": "application/json" },
