@@ -108,11 +108,7 @@ export const AnnouncementBanner = ({
             size="sm"
             onClick={handleDismiss}
             disabled={isLoading}
-            className="flex-shrink-0 h-8 px-3 text-xs font-medium"
-            style={{
-              borderColor: announcement.textColor,
-              color: announcement.textColor,
-            }}
+            className="flex-shrink-0 h-8 px-3 text-xs font-medium text-white border-white hover:bg-white/20"
             aria-label="Dismiss announcement"
           >
             {isLoading ? "Dismissing..." : "Dismiss"}
