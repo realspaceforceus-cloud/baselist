@@ -10,11 +10,10 @@ export interface AdminAuditEntry {
 }
 
 interface SecuritySectionProps {
-  auditEntries: AdminAuditEntry[];
-  onClearAudit: () => void;
+  auditEntries?: AdminAuditEntry[];
 }
 
-export const SecuritySection = ({ auditEntries, onClearAudit }: SecuritySectionProps): JSX.Element => {
+export const SecuritySection = ({ auditEntries = [] }: SecuritySectionProps): JSX.Element => {
   return (
     <section className="space-y-4">
       <AdminSectionHeader title="Security & Audit" subtitle="Security" accent="2FA" />
