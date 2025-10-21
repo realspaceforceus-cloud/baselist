@@ -1951,7 +1951,9 @@ const AdminPanel = (): JSX.Element => {
       try {
         const reportsData = await adminApi.getReports();
         if (!active) return;
-        const reports = Array.isArray(reportsData) ? reportsData : reportsData?.reports || [];
+        const reports = Array.isArray(reportsData)
+          ? reportsData
+          : reportsData?.reports || [];
         if (Array.isArray(reports)) {
           setReports(
             reports.map((r: any) => ({
@@ -1984,7 +1986,9 @@ const AdminPanel = (): JSX.Element => {
       try {
         const verificationsData = await adminApi.getVerifications();
         if (!active) return;
-        const verifications = Array.isArray(verificationsData) ? verificationsData : verificationsData?.verifications || [];
+        const verifications = Array.isArray(verificationsData)
+          ? verificationsData
+          : verificationsData?.verifications || [];
         if (Array.isArray(verifications)) {
           setVerificationDocs(
             verifications.map((v: any) => ({
