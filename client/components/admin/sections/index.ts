@@ -29,3 +29,4 @@ export { FamilyVerificationSection } from "./FamilyVerificationSection";
 export { SEOSection } from "./SEOSection";
 export { InvitationCodesSection } from "./InvitationCodesSection";
 export { SecurityAuditSection } from "./SecurityAuditSection";
+export { AnnouncementsSection } from "./AnnouncementsSection";
