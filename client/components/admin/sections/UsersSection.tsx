@@ -1,17 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Ban, Edit2, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { adminApi } from "@/lib/adminApi";
 
 export interface AdminUserRecord {
   id: string;
@@ -22,33 +17,16 @@ export interface AdminUserRecord {
   baseId: string;
   createdAt: string;
   dowVerifiedAt?: string;
-  lastLoginAt?: string;
-  avatarUrl?: string;
-  joinMethod?: "email" | "code" | "sponsor";
-}
-
-interface UsersSectionProps {
-  users: AdminUserRecord[];
-  onUserUpdate?: (userId: string, updates: any) => Promise<void>;
-  onAddStrike?: (
-    userId: string,
-    type: string,
-    description: string,
-  ) => Promise<void>;
 }
 
 const ITEMS_PER_PAGE = 25;
 
-export const UsersSection = ({
-  users = [],
-  onUserUpdate,
-  onAddStrike,
-}: UsersSectionProps) => {
+export const UsersSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
-    null,
-  );
+  const [users, setUsers] = useState<AdminUserRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
   const [showModal, setShowModal] = useState<"edit" | "strike" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editRole, setEditRole] = useState("");
@@ -56,8 +34,28 @@ export const UsersSection = ({
   const [strikeReason, setStrikeReason] = useState("");
   const [strikeDescription, setStrikeDescription] = useState("");
 
-  // Filter users by search
+  // Load users from API
+  useEffect(() => {
+    const loadUsers = async () => {
+      setIsLoading(true);
+      try {
+        const result = await adminApi.getUsers(currentPage, searchQuery);
+        setUsers(result.users || []);
+      } catch (error) {
+        console.error("Error loading users:", error);
+        toast.error("Failed to load users");
+        setUsers([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUsers();
+  }, [currentPage, searchQuery]);
+
+  // Filter and paginate
   const filteredUsers = useMemo(() => {
+    if (!Array.isArray(users)) return [];
     if (!searchQuery.trim()) return users;
     const q = searchQuery.toLowerCase();
     return users.filter(
@@ -68,16 +66,11 @@ export const UsersSection = ({
     );
   }, [users, searchQuery]);
 
-  // Paginate
-  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
   const paginatedUsers = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredUsers, currentPage]);
-
-  const handleSearch = () => {
-    setCurrentPage(1);
-  };
 
   const openEditModal = (user: AdminUserRecord) => {
     setSelectedUser(user);
@@ -87,16 +80,16 @@ export const UsersSection = ({
   };
 
   const saveEdit = async () => {
-    if (!selectedUser || !onUserUpdate) return;
+    if (!selectedUser) return;
     setIsSubmitting(true);
     try {
-      await onUserUpdate(selectedUser.id, {
-        role: editRole,
-        status: editStatus,
-      });
+      await adminApi.updateUser(selectedUser.id, { role: editRole, status: editStatus });
       toast.success("User updated");
       setShowModal(null);
       setSelectedUser(null);
+      // Refresh
+      const result = await adminApi.getUsers(currentPage, searchQuery);
+      setUsers(result.users || []);
     } catch (error) {
       toast.error("Failed to update user");
     } finally {
@@ -112,13 +105,13 @@ export const UsersSection = ({
   };
 
   const saveStrike = async () => {
-    if (!selectedUser || !onAddStrike || !strikeReason || !strikeDescription) {
+    if (!selectedUser || !strikeReason || !strikeDescription) {
       toast.error("Fill in all fields");
       return;
     }
     setIsSubmitting(true);
     try {
-      await onAddStrike(selectedUser.id, strikeReason, strikeDescription);
+      await adminApi.addAccountNote(selectedUser.id, "strike", strikeDescription, strikeReason, "critical");
       toast.success("Strike recorded");
       setShowModal(null);
       setSelectedUser(null);
@@ -130,10 +123,11 @@ export const UsersSection = ({
   };
 
   const quickBan = async (user: AdminUserRecord) => {
-    if (!onUserUpdate) return;
     try {
-      await onUserUpdate(user.id, { status: "banned" });
+      await adminApi.updateUser(user.id, { status: "banned" });
       toast.success(`${user.username} banned`);
+      const result = await adminApi.getUsers(currentPage, searchQuery);
+      setUsers(result.users || []);
     } catch (error) {
       toast.error("Failed to ban user");
     }
@@ -141,39 +135,36 @@ export const UsersSection = ({
 
   const formatDate = (date?: string) => {
     if (!date) return "—";
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "2-digit",
-    }).format(new Date(date));
+    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "2-digit" }).format(
+      new Date(date),
+    );
   };
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader
-        title="Users"
-        subtitle="Manage"
-        accent={`${filteredUsers.length} found`}
-      />
+      <AdminSectionHeader title="Users" subtitle="Manage" accent={`${filteredUsers.length} found`} />
 
       {/* Search */}
       <div className="flex gap-2 rounded-3xl border border-border bg-card p-4">
         <Input
           placeholder="Search username, email..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setCurrentPage(1);
+          }}
           className="flex-1"
         />
-        <Button onClick={handleSearch} variant="outline" className="rounded-xl">
-          <Search className="h-4 w-4 mr-2" />
-          Search
-        </Button>
       </div>
 
       {/* Table */}
-      {filteredUsers.length === 0 ? (
+      {isLoading ? (
+        <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+          Loading...
+        </div>
+      ) : filteredUsers.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
-          {searchQuery ? "No users match your search" : "No users found"}
+          No users found
         </div>
       ) : (
         <div className="overflow-x-auto rounded-3xl border border-border bg-card">
@@ -192,9 +183,7 @@ export const UsersSection = ({
               {paginatedUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-muted/20 transition">
                   <td className="px-4 py-3 font-medium">{user.username}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {user.email || "—"}
-                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email || "—"}</td>
                   <td className="px-4 py-3">
                     <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 capitalize">
                       {user.role}
@@ -213,9 +202,7 @@ export const UsersSection = ({
                       {user.status || "active"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {formatDate(user.createdAt)}
-                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(user.createdAt)}</td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
                       <Button
@@ -232,7 +219,7 @@ export const UsersSection = ({
                         size="sm"
                         onClick={() => openStrikeModal(user)}
                         className="h-8 w-8 p-0 rounded-lg text-warning hover:text-warning"
-                        title="Add strike/warning"
+                        title="Add strike"
                       >
                         ⚠
                       </Button>
@@ -242,7 +229,7 @@ export const UsersSection = ({
                           size="sm"
                           onClick={() => quickBan(user)}
                           className="h-8 w-8 p-0 rounded-lg text-destructive hover:text-destructive"
-                          title="Ban user"
+                          title="Ban"
                         >
                           <Ban className="h-4 w-4" />
                         </Button>
@@ -260,7 +247,7 @@ export const UsersSection = ({
       {totalPages > 1 && (
         <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
           <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages} ({filteredUsers.length} total)
+            Page {currentPage} of {totalPages}
           </span>
           <div className="flex gap-2">
             <Button
@@ -274,9 +261,7 @@ export const UsersSection = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setCurrentPage(Math.min(totalPages, currentPage + 1))
-              }
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
               <ChevronRight className="h-4 w-4" />
@@ -289,9 +274,7 @@ export const UsersSection = ({
       {showModal === "edit" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              Edit {selectedUser.username}
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Edit {selectedUser.username}</h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Role</label>
@@ -321,18 +304,10 @@ export const UsersSection = ({
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setShowModal(null)}
-                className="rounded-xl"
-              >
+              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
                 Cancel
               </Button>
-              <Button
-                onClick={saveEdit}
-                disabled={isSubmitting}
-                className="rounded-xl"
-              >
+              <Button onClick={saveEdit} disabled={isSubmitting} className="rounded-xl">
                 {isSubmitting ? "Saving..." : "Save"}
               </Button>
             </div>
@@ -344,9 +319,7 @@ export const UsersSection = ({
       {showModal === "strike" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              Add Strike: {selectedUser.username}
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Add Strike: {selectedUser.username}</h2>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Reason</label>
@@ -358,9 +331,7 @@ export const UsersSection = ({
                     <SelectItem value="spam">Spam</SelectItem>
                     <SelectItem value="fraud">Fraud</SelectItem>
                     <SelectItem value="harassment">Harassment</SelectItem>
-                    <SelectItem value="inappropriate">
-                      Inappropriate content
-                    </SelectItem>
+                    <SelectItem value="inappropriate">Inappropriate</SelectItem>
                     <SelectItem value="policy">Policy violation</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
@@ -369,7 +340,7 @@ export const UsersSection = ({
               <div>
                 <label className="text-sm font-medium mb-2 block">Notes</label>
                 <Textarea
-                  placeholder="Describe the issue..."
+                  placeholder="Describe..."
                   value={strikeDescription}
                   onChange={(e) => setStrikeDescription(e.target.value)}
                   className="rounded-xl min-h-[80px]"
@@ -377,19 +348,11 @@ export const UsersSection = ({
               </div>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setShowModal(null)}
-                className="rounded-xl"
-              >
+              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
                 Cancel
               </Button>
-              <Button
-                onClick={saveStrike}
-                disabled={isSubmitting}
-                className="rounded-xl bg-warning text-warning-foreground"
-              >
-                {isSubmitting ? "Saving..." : "Record Strike"}
+              <Button onClick={saveStrike} disabled={isSubmitting} className="rounded-xl bg-warning text-warning-foreground">
+                Record
               </Button>
             </div>
           </div>
