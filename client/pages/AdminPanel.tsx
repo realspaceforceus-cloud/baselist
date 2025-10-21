@@ -2114,10 +2114,20 @@ const AdminPanel = (): JSX.Element => {
           {activeSection === "email-templates" ? (
             <EmailTemplatesSection />
           ) : null}
+          {activeSection === "invitation-codes" ? (
+            <InvitationCodesSection
+              bases={bases}
+              onFetchCodes={adminApi.getInvitationCodes}
+              onCreateCode={adminApi.createInvitationCode}
+              onDeleteCode={adminApi.deleteInvitationCode}
+            />
+          ) : null}
           {activeSection === "security" ? (
-            <SecuritySection
-              auditEntries={auditEntries}
-              onClearAudit={handleClearAudit}
+            <SecurityAuditSection
+              onFetchFailedLogins={adminApi.getFailedLogins}
+              onFetchIPBlacklist={adminApi.getIPBlacklist}
+              onAddIPToBlacklist={adminApi.addIPToBlacklist}
+              onRemoveIPFromBlacklist={adminApi.removeIPFromBlacklist}
             />
           ) : null}
           {activeSection === "settings" ? <SettingsSection /> : null}
