@@ -246,15 +246,12 @@ export const Marketplace = (): JSX.Element => {
         )}
       </div>
 
-      {visibleListings.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {visibleListings.map((listing) => (
-            <ListingCardWithSeller key={listing.id} listing={listing} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState />
-      )}
+      {/* Seller cache for sidebar layout */}
+      <SellerCacheRenderer listings={visibleListings}>
+        {(sellers) => (
+          <MarketplaceSidebar listings={visibleListings} sellers={sellers} />
+        )}
+      </SellerCacheRenderer>
 
       <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
     </section>
