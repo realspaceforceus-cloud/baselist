@@ -2,6 +2,7 @@ import { Outlet as RouterOutlet } from "react-router-dom";
 
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { BottomNav } from "@/components/navigation/BottomNav";
 import { useBaseList } from "@/context/BaseListContext";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ export const AppShell = (): JSX.Element => {
         </div>
       </main>
       <Footer />
+      <BottomNav />
     </div>
   );
 };
