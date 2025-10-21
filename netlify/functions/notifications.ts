@@ -4,7 +4,15 @@ import { randomUUID } from "crypto";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/notifications", "");
+
+  // Fix path parsing to handle both direct calls and redirected requests
+  let path = event.path;
+  if (path.startsWith("/api/notifications")) {
+    path = path.replace("/api/notifications", "");
+  } else if (path.startsWith("/.netlify/functions/notifications")) {
+    path = path.replace("/.netlify/functions/notifications", "");
+  }
+  path = path || "/";
 
   // Get userId from cookies
   const cookies = event.headers.cookie || "";
