@@ -78,11 +78,12 @@ export const UsersSection = ({
     setIsLoading(true);
     try {
       const result = await onFetchUsers(currentPage, searchQuery);
-      setUsers(result.users);
-      setPagination(result.pagination);
+      setUsers(asArray(result?.users));
+      setPagination(result?.pagination || null);
     } catch (error) {
       toast.error("Failed to load users");
       console.error(error);
+      setUsers([]); // Ensure users is always an array
     } finally {
       setIsLoading(false);
     }
