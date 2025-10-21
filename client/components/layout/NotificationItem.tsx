@@ -96,6 +96,72 @@ export const NotificationItem = ({
     }
   };
 
+  // Get quick action buttons based on notification type
+  const getQuickActions = (): Array<{
+    label: string;
+    onClick: () => void;
+    variant?: "default" | "outline" | "destructive";
+  }> => {
+    switch (notification.type) {
+      case "item_favorited":
+        return [
+          {
+            label: "View item",
+            onClick: () => {
+              if (notification.targetId) {
+                navigate(`/listings/${notification.targetId}`);
+              }
+            },
+          },
+          {
+            label: "View profile",
+            onClick: () => {
+              if (notification.actorId) {
+                navigate(`/profile/${notification.actorId}`);
+              }
+            },
+          },
+        ];
+      case "offer_received":
+      case "offer_accepted":
+      case "offer_declined":
+        return [
+          {
+            label: "View offer",
+            onClick: () => {
+              if (notification.targetId) {
+                navigate(`/messages/${notification.targetId}`);
+              }
+            },
+          },
+        ];
+      case "transaction_complete":
+        return [
+          {
+            label: "Rate transaction",
+            onClick: () => {
+              if (notification.targetId) {
+                navigate(`/messages/${notification.targetId}`);
+              }
+            },
+          },
+        ];
+      case "listing_removed":
+        return [
+          {
+            label: "View help",
+            onClick: () => {
+              navigate("/guidelines");
+            },
+          },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const quickActions = getQuickActions();
+
   return (
     <div
       className={cn(
