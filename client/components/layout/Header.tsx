@@ -516,6 +516,66 @@ export const Header = (): JSX.Element => {
         </SheetContent>
       </Sheet>
 
+      <Sheet open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
+        <SheetContent
+          side="right"
+          className="flex h-full w-full max-w-sm flex-col gap-0 bg-background p-0"
+        >
+          <SheetHeader className="border-b border-border px-6 py-4">
+            <SheetTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5" aria-hidden />
+              Notifications
+            </SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto">
+            <div className="divide-y divide-border">
+              <div className="p-4 hover:bg-muted/30 transition cursor-pointer">
+                <div className="flex gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 text-destructive flex-shrink-0">
+                    <MessageSquare className="h-5 w-5" aria-hidden />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Your listing was removed</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Your PS5 listing was removed for violating community guidelines.
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">2 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 hover:bg-muted/30 transition cursor-pointer">
+                <div className="flex gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary flex-shrink-0">
+                    <Check className="h-5 w-5" aria-hidden />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">New message from Capt Monroe</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Interested in the motorcycle you posted?
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">5 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 hover:bg-muted/30 transition cursor-pointer">
+                <div className="flex gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-warning/10 text-warning flex-shrink-0">
+                    <MessageSquare className="h-5 w-5" aria-hidden />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Account verification needed</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Complete your DoD verification to continue selling.
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">1 day ago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <Dialog open={isBaseSwitchOpen} onOpenChange={setIsBaseSwitchOpen}>
         <DialogContent className="rounded-2xl max-w-sm max-h-[90vh] flex flex-col overflow-hidden p-0">
           <DialogHeader className="border-b border-border px-6 py-4">
