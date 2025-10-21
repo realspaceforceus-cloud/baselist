@@ -139,7 +139,7 @@ export function FeedComposer({
 
       {/* Mode Tabs */}
       <div className="mb-4 flex flex-wrap gap-2 border-b border-border pb-3">
-        {(["text", "photo", "poll", "event"] as ComposerMode[]).map((m) => (
+        {(["text", "photo", "poll"] as ComposerMode[]).map((m) => (
           <button
             key={m}
             onClick={() => {
