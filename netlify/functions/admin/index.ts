@@ -2103,9 +2103,11 @@ export const handler: Handler = async (event) => {
       } catch (error) {
         console.error("Bases by signups endpoint error:", error);
         return {
-          statusCode: 500,
+          statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Failed to fetch bases by signups" }),
+          body: JSON.stringify({
+            bases: [],
+          }),
         };
       }
     }
