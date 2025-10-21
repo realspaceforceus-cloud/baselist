@@ -26,6 +26,14 @@ const extractBearerToken = (req: Request) => {
   return null;
 };
 
+const extractUserIdCookie = (req: Request) => {
+  const userId = req.cookies?.userId;
+  if (typeof userId === "string" && userId.length > 0) {
+    return userId;
+  }
+  return null;
+};
+
 export const authenticate = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
   const token = extractBearerToken(req);
   if (!token) {
