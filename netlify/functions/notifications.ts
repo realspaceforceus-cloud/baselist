@@ -51,7 +51,8 @@ export const handler: Handler = async (event) => {
              WHERE user_id = $1 AND read = false AND dismissed = false`,
             [userId],
           );
-          const count = result.rows.length > 0 ? parseInt(result.rows[0].count) : 0;
+          const count =
+            result.rows.length > 0 ? parseInt(result.rows[0].count) : 0;
           return json({ unreadCount: count });
         } finally {
           client.release();
@@ -105,7 +106,10 @@ export const handler: Handler = async (event) => {
 
         return json({
           notifications: result.rows,
-          unreadCount: countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0,
+          unreadCount:
+            countResult.rows.length > 0
+              ? parseInt(countResult.rows[0].count)
+              : 0,
           total: result.rows.length,
         });
       }
