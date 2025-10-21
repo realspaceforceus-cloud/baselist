@@ -570,9 +570,35 @@ export const handler: Handler = async (event) => {
             }
           : undefined;
 
-        // Notify post author if they're not the commenter
-        if (postResult.rows[0] && postResult.rows[0].user_id !== userId) {
-          const commenterName = author?.name || "Someone";
+        const commenterName = author?.name || "Someone";
+
+        // Notify: either parent comment author (if reply) or post author (if top-level comment)
+        if (parentCommentId && parentAuthorId && parentAuthorId !== userId) {
+          // This is a reply - notify the parent comment author
+          console.log("[FEED] Creating comment_reply notification", {
+            parentAuthorId,
+            replierId: userId,
+            replierName: commenterName,
+            parentCommentId,
+            postId,
+          });
+          try {
+            await createNotification({
+              userId: parentAuthorId,
+              type: "comment_replied",
+              title: `${commenterName} replied to your comment`,
+              description: content.substring(0, 100),
+              actorId: userId,
+              targetId: postId,
+              targetType: "post",
+              data: { commentId: engagementId, parentCommentId },
+            });
+            console.log("[FEED] Reply notification created successfully");
+          } catch (err) {
+            console.error("[FEED] Error creating reply notification:", err);
+          }
+        } else if (!parentCommentId && postResult.rows[0] && postResult.rows[0].user_id !== userId) {
+          // This is a top-level comment - notify the post author
           console.log("[FEED] Creating post_commented notification", {
             postAuthorId: postResult.rows[0].user_id,
             commenterId: userId,
@@ -595,9 +621,9 @@ export const handler: Handler = async (event) => {
             console.error("[FEED] Error creating notification:", err);
           }
         } else {
-          console.log("[FEED] Skipping notification - post author or commenter issue", {
-            hasPost: !!postResult.rows[0],
-            isSameUser: postResult.rows[0]?.user_id === userId,
+          console.log("[FEED] Skipping notification - self-comment or no parent", {
+            isReply: !!parentCommentId,
+            isSameUser: parentAuthorId === userId || postResult.rows[0]?.user_id === userId,
           });
         }
 
