@@ -107,11 +107,18 @@ export const handler: Handler = async (event) => {
       }
 
       const countQuery = query.replace(
-        /SELECT.*FROM/,
+        /SELECT id,.*FROM/,
         "SELECT COUNT(*) as count FROM",
       );
-      const countResult = await client.query(countQuery, params);
-      const total = parseInt(countResult.rows[0].count);
+      let total = 0;
+      try {
+        const countResult = await client.query(countQuery, params);
+        total = countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0;
+      } catch (countErr) {
+        // If count query fails, just continue without pagination
+        console.error("Count query error:", countErr);
+        total = 0;
+      }
 
       query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
       params.push(limit, offset);
