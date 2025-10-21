@@ -53,30 +53,39 @@ export const MyListings = (): JSX.Element => {
   } | null>(null);
 
   const myListings = useMemo<ListingWithOffers[]>(() => {
-    return listings
-      .filter((listing) => listing.sellerId === user.id)
-      .map((listing) => {
-        const offers = messageThreads.filter(
-          (thread) =>
-            thread.listingId === listing.id &&
-            thread.participants.includes(user.id),
-        );
+    if (!user?.id) {
+      return [];
+    }
 
-        // Find if there's a pending transaction
-        const pendingThread = offers.find(
-          (thread) =>
-            thread.transaction?.status === "pending_complete" ||
-            thread.transaction?.status === "pending_confirmation" ||
-            thread.status === "completed",
-        );
+    try {
+      return listings
+        .filter((listing) => listing.sellerId === user.id)
+        .map((listing) => {
+          const offers = messageThreads.filter(
+            (thread) =>
+              thread.listingId === listing.id &&
+              thread.participants.includes(user.id),
+          );
 
-        return {
-          ...listing,
-          offers,
-          pendingOfferId: pendingThread?.id,
-        };
-      });
-  }, [listings, messageThreads, user.id]);
+          // Find if there's a pending transaction
+          const pendingThread = offers.find(
+            (thread) =>
+              thread.transaction?.status === "pending_complete" ||
+              thread.transaction?.status === "pending_confirmation" ||
+              thread.status === "completed",
+          );
+
+          return {
+            ...listing,
+            offers,
+            pendingOfferId: pendingThread?.id,
+          };
+        });
+    } catch (error) {
+      console.error("Error processing listings:", error);
+      return [];
+    }
+  }, [listings, messageThreads, user?.id]);
 
   const handleAcceptOffer = (listingId: string, threadId: string) => {
     try {
