@@ -93,6 +93,18 @@ export const AdminUserDetail = () => {
       try {
         const result = await adminApi.getUserDetail(userId);
         setUser(result);
+        setEditData({
+          username: result.user.username,
+          email: result.user.email,
+          role: result.user.role,
+          status: result.user.status,
+          baseId: result.user.baseId,
+          avatarUrl: result.user.avatarUrl || "",
+        });
+
+        // Load bases for dropdown
+        const basesResult = await adminApi.getBases();
+        setBases((basesResult?.bases || []).map((b: any) => ({ id: b.id, name: b.name })));
       } catch (error) {
         console.error("Failed to load user detail:", error);
         toast.error("Failed to load user details");
