@@ -2124,11 +2124,9 @@ const AdminPanel = (): JSX.Element => {
             </div>
           ) : null}
           {activeSection === "security" ? (
-            <SecurityAuditSection
-              onFetchFailedLogins={adminApi.getFailedLogins}
-              onFetchIPBlacklist={adminApi.getIPBlacklist}
-              onAddIPToBlacklist={adminApi.addIPToBlacklist}
-              onRemoveIPFromBlacklist={adminApi.removeIPFromBlacklist}
+            <SecuritySection
+              auditEntries={auditEntries}
+              onClearAudit={handleClearAudit}
             />
           ) : null}
           {activeSection === "settings" ? <SettingsSection /> : null}
