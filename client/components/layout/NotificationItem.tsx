@@ -50,6 +50,7 @@ export const NotificationItem = ({
           textColor: "text-rose-600 dark:text-rose-400",
         };
       case "post_commented":
+      case "comment_replied":
         return {
           icon: MessageSquare,
           bgColor: "bg-purple-50 dark:bg-purple-950",
