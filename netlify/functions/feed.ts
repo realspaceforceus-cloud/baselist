@@ -662,6 +662,43 @@ export const handler: Handler = async (event) => {
           );
         }
 
+        // Handle tag mentions in comment
+        try {
+          const mentions = extractMentions(content);
+          if (mentions.length > 0) {
+            const mentionedUsers = await getMentionedUserIds(mentions);
+
+            for (const mentionedUser of mentionedUsers) {
+              // Don't notify the commenter about their own tag
+              if (mentionedUser.id === userId) continue;
+
+              const notificationType = parentCommentId
+                ? "tagged_in_comment"
+                : "tagged_in_comment";
+
+              try {
+                await createNotification({
+                  userId: mentionedUser.id,
+                  type: notificationType,
+                  title: `${commenterName} tagged you in a comment`,
+                  description: content.substring(0, 100),
+                  actorId: userId,
+                  targetId: postId,
+                  targetType: "post",
+                  data: { commentId: engagementId },
+                });
+              } catch (err) {
+                console.error(
+                  `[FEED] Error creating tag notification for ${mentionedUser.username}:`,
+                  err,
+                );
+              }
+            }
+          }
+        } catch (err) {
+          console.error("[FEED] Error processing mentions:", err);
+        }
+
         return {
           statusCode: 201,
           headers: { "Content-Type": "application/json" },
