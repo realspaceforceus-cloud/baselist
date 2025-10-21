@@ -294,7 +294,6 @@ export const BasesSection = () => {
                     })
                   }
                   placeholder="e.g., AFB"
-                  disabled={!!editingBase}
                 />
               </div>
               <div className="grid gap-2">
@@ -303,10 +302,16 @@ export const BasesSection = () => {
                   id="region"
                   value={formData.region}
                   onChange={(e) =>
-                    setFormData({ ...formData, region: e.target.value })
+                    handleRegionChange(e.target.value)
                   }
-                  placeholder="e.g., Oklahoma"
+                  placeholder="e.g., Oklahoma or Germany"
+                  list="regions"
                 />
+                <datalist id="regions">
+                  {Object.keys(REGION_TIMEZONE_MAP).map((region) => (
+                    <option key={region} value={region} />
+                  ))}
+                </datalist>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="timezone">Timezone</Label>
@@ -316,7 +321,7 @@ export const BasesSection = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, timezone: e.target.value })
                   }
-                  placeholder="e.g., America/Chicago"
+                  placeholder="e.g., America/Chicago (auto-filled from region)"
                 />
               </div>
             </div>
