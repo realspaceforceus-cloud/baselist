@@ -210,13 +210,13 @@ const ListingDetail = (): JSX.Element => {
   ]);
 
   const handleViewSellerListings = useCallback(() => {
-    if (!seller) {
+    if (!seller || !listing) {
       return;
     }
     setCurrentBaseId(listing.baseId);
     setSearchQuery(seller.name);
     navigate("/");
-  }, [navigate, seller, setCurrentBaseId, setSearchQuery, listing.baseId]);
+  }, [navigate, seller, listing, setCurrentBaseId, setSearchQuery]);
 
   const handleSaveListing = useCallback(async () => {
     try {
