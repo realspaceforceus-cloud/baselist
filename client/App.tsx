@@ -123,6 +123,14 @@ const AppContent = (): JSX.Element => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="admin/user-detail/:userId"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminUserDetail />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route path="*" element={<NotFound />} />
