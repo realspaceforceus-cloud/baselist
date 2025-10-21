@@ -25,32 +25,7 @@ export const handler: Handler = async (event) => {
   const userIdMatch = cookies.match(/userId=([^;]+)/);
   const userId = userIdMatch ? userIdMatch[1] : null;
 
-  // Special case: /count endpoint ALWAYS returns a valid count (even for unauthenticated)
-  // This endpoint MUST NEVER return 500
-  if (method === "GET" && path === "/count") {
-    if (!userId) {
-      return json({ unreadCount: 0 });
-    }
-
-    const client = await pool.connect();
-    try {
-      const result = await client.query(
-        `SELECT COUNT(*) as count FROM notifications 
-         WHERE user_id = $1 AND read = false AND dismissed = false`,
-        [userId],
-      );
-      const count = result.rows.length > 0 ? parseInt(result.rows[0].count) : 0;
-      return json({ unreadCount: count });
-    } catch (err) {
-      console.error("Count query error:", err);
-      // Always return 200 with count 0 on any error
-      return json({ unreadCount: 0 });
-    } finally {
-      client.release();
-    }
-  }
-
-  // All other endpoints require auth
+  // Require auth for all endpoints
   if (!userId) {
     return json({ error: "Unauthorized" }, 401);
   }
