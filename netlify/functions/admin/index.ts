@@ -831,6 +831,28 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // DELETE /api/admin/users/:userId/strikes/:strikeId
+    if (method === "DELETE" && path.includes("/strikes/")) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const parts = path.split("/");
+      const strikeId = parts[parts.length - 1];
+
+      await client.query("DELETE FROM account_notes WHERE id = $1", [strikeId]);
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ success: true }),
+      };
+    }
+
     // GET /api/admin/failed-logins
     if (method === "GET" && path === "/failed-logins") {
       if (!(await isAdmin(auth.userId))) {
