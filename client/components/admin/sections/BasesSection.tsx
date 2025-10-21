@@ -124,6 +124,7 @@ export interface AdminBaseRow {
 }
 
 export const BasesSection = () => {
+  const { refreshBases: refreshBasesContext } = useBaseList();
   const [bases, setBases] = useState<AdminBaseRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
