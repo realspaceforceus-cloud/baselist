@@ -135,6 +135,7 @@ export const handler: Handler = async (event) => {
 
       return {
         statusCode: 201,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: messageResult.rows[0],
           thread: threadResult.rows[0],
@@ -145,6 +146,7 @@ export const handler: Handler = async (event) => {
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
