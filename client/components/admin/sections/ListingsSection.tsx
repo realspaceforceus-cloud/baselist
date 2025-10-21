@@ -1,7 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
-import { AlertTriangle, Flag, RefreshCcw, ShieldOff } from "lucide-react";
+import { AlertTriangle, Flag, RefreshCcw, ShieldOff, Edit2, Save, X } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { adminApi } from "@/lib/adminApi";
 
 export type AdminListingStatus = "Active" | "Sold" | "Flagged" | "Removed";
 
@@ -14,6 +17,9 @@ export interface AdminListingRow {
   date: string;
   status: AdminListingStatus;
   reports: number;
+  rawPrice?: number;
+  sellerUsername?: string;
+  baseName?: string;
 }
 
 const statusClassName: Record<AdminListingStatus, string> = {
