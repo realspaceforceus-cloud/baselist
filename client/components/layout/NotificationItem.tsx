@@ -82,7 +82,7 @@ export const NotificationItem = ({
         await notificationsApi.markAsRead(notification.id);
       }
 
-      // Navigate based on notification type
+      // Navigate based on notification type and target type
       if (notification.targetType === "thread" && notification.targetId) {
         navigate(`/messages/${notification.targetId}`);
       } else if (
@@ -90,6 +90,11 @@ export const NotificationItem = ({
         notification.targetId
       ) {
         navigate(`/listings/${notification.targetId}`);
+      } else if (
+        notification.targetType === "post" &&
+        notification.targetId
+      ) {
+        navigate(`/feed#post-${notification.targetId}`);
       }
     } catch (error) {
       console.error("Error handling notification click:", error);
