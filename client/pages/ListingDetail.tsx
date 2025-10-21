@@ -39,6 +39,9 @@ const ListingDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
   const [isComposerOpen, setComposerOpen] = useState(false);
   const [messageBody, setMessageBody] = useState("");
+  const [isSaved, setIsSaved] = useState(false);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   // Extract actual ID from slug (slug format: "title-slug-12345678")
   const actualListingId = useMemo(() => {
