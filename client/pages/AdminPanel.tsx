@@ -1854,11 +1854,10 @@ const AdminPanel = (): JSX.Element => {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="space-y-1.5">
             <h1 className="text-3xl font-semibold text-foreground">
-              BaseList Admin Panel
+              {settings.website_name || "TrustyPCS"} Admin Panel
             </h1>
             <p className="text-sm text-muted-foreground">
-              Simple, fast, auditable controls for every base. All actions are
-              logged for 90 days.
+              Simple, fast, auditable controls for every base.
             </p>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-primary">
@@ -1888,7 +1887,7 @@ const AdminPanel = (): JSX.Element => {
               Listings sold: {soldListingCount}
             </span>
             <span className="text-muted-foreground/70">
-              Verified members: {analytics?.verifiedMembers ?? 0}
+              Verified members: {accountList.filter((a) => a.isDowVerified).length} / {accountList.length}
             </span>
           </div>
         </div>
