@@ -337,21 +337,85 @@ const ListingDetail = (): JSX.Element => {
 
         <aside className="space-y-4">
           <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
-            <div className="space-y-3">
-              <h1 className="text-2xl font-semibold text-foreground md:text-3xl">
-                {listing.title}
-              </h1>
+            <div className="space-y-4">
               <div>
-                <p className="text-xl font-semibold text-primary md:text-2xl">
+                <h1 className="text-2xl font-semibold text-foreground md:text-3xl">
+                  {listing.title}
+                </h1>
+              </div>
+
+              <div className="space-y-2 border-t border-border pt-4">
+                <p className="text-2xl font-bold text-primary">
                   {formattedPrice}
                 </p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Listed {listedRelative} · {listingBase?.name ?? "On-base"}
-                </p>
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <p>
+                    Listed <span className="font-medium text-foreground">{listedRelative}</span>
+                  </p>
+                  <p>
+                    Location: <span className="font-medium text-foreground">{listingBase?.name ?? "On-base"}</span>
+                  </p>
+                </div>
               </div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {listing.description}
-              </p>
+
+              {listing.category === "Vehicles" && (
+                <div className="space-y-2 border-t border-border pt-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Vehicle Details
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {listing.vehicleYear && (
+                      <div className="rounded-lg bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground">Year</p>
+                        <p className="font-semibold text-foreground">{listing.vehicleYear}</p>
+                      </div>
+                    )}
+                    {listing.vehicleMake && (
+                      <div className="rounded-lg bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground">Make</p>
+                        <p className="font-semibold text-foreground">{listing.vehicleMake}</p>
+                      </div>
+                    )}
+                    {listing.vehicleModel && (
+                      <div className="rounded-lg bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground">Model</p>
+                        <p className="font-semibold text-foreground">{listing.vehicleModel}</p>
+                      </div>
+                    )}
+                    {listing.vehicleType && (
+                      <div className="rounded-lg bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground">Type</p>
+                        <p className="font-semibold text-foreground">{listing.vehicleType}</p>
+                      </div>
+                    )}
+                    {listing.vehicleColor && (
+                      <div className="rounded-lg bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground">Color</p>
+                        <p className="font-semibold text-foreground">{listing.vehicleColor}</p>
+                      </div>
+                    )}
+                    {listing.vehicleMiles && (
+                      <div className="rounded-lg bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground">Miles</p>
+                        <p className="font-semibold text-foreground">
+                          {Number(listing.vehicleMiles).toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {listing.description && (
+                <div className="border-t border-border pt-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                    Description
+                  </p>
+                  <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                    {listing.description}
+                  </p>
+                </div>
+              )}
             </div>
           </article>
 
