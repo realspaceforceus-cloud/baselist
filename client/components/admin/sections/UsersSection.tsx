@@ -25,6 +25,7 @@ export interface AdminUserRecord {
 }
 
 export const UsersSection = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
