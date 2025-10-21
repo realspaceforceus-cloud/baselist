@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
-import { AlertTriangle, CheckCircle2, Trash2 } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { CheckCircle2, Trash2 } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export interface AdminReportRecord {
   id: string;
@@ -14,18 +15,17 @@ export interface AdminReportRecord {
   time: string;
 }
 
-interface ReportsSectionProps {
-  reports: AdminReportRecord[];
-  onApprove?: (reportId: string) => void;
-  onDismiss?: (reportId: string) => void;
-}
-
-export const ReportsSection = ({
-  reports = [],
-  onApprove,
-  onDismiss,
-}: ReportsSectionProps) => {
+export const ReportsSection = () => {
+  const [reports, setReports] = useState<AdminReportRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>("All");
+
+  useEffect(() => {
+    setIsLoading(true);
+    // TODO: Fetch from API when endpoint is ready
+    setReports([]);
+    setIsLoading(false);
+  }, []);
 
   const reportTypes = useMemo(() => {
     const types = new Set<string>(reports.map((r) => r.type));
@@ -39,11 +39,7 @@ export const ReportsSection = ({
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader
-        title="Reports"
-        subtitle="Manage"
-        accent={`${reports.length} total`}
-      />
+      <AdminSectionHeader title="Reports" subtitle="Manage" accent={`${reports.length} total`} />
 
       {/* Filter */}
       <div className="flex gap-2 flex-wrap">
@@ -61,7 +57,11 @@ export const ReportsSection = ({
       </div>
 
       {/* Table */}
-      {filteredReports.length === 0 ? (
+      {isLoading ? (
+        <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+          Loading...
+        </div>
+      ) : filteredReports.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
           No reports
         </div>
@@ -81,47 +81,21 @@ export const ReportsSection = ({
             <tbody className="divide-y divide-border">
               {filteredReports.map((report) => (
                 <tr key={report.id} className="hover:bg-muted/20">
-                  <td className="px-4 py-3 font-medium capitalize">
-                    {report.type}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {report.reporter}
-                  </td>
+                  <td className="px-4 py-3 font-medium capitalize">{report.type}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.reporter}</td>
                   <td className="px-4 py-3 text-xs">
-                    <span className="inline-flex rounded bg-muted px-2 py-1">
-                      {report.targetLabel}
-                    </span>
+                    <span className="inline-flex rounded bg-muted px-2 py-1">{report.targetLabel}</span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {report.base}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {report.time}
-                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.base}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{report.time}</td>
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
-                      {onApprove && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => onApprove(report.id)}
-                          className="h-8 w-8 p-0 rounded-lg text-green-600"
-                          title="Approve"
-                        >
-                          <CheckCircle2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {onDismiss && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => onDismiss(report.id)}
-                          className="h-8 w-8 p-0 rounded-lg text-destructive"
-                          title="Dismiss"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-green-600">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
