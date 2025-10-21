@@ -1,19 +1,8 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
-import {
-  Ban,
-  Check,
-  Gavel,
-  Search,
-  ShieldCheck,
-  Edit2,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-
+import { useState, useCallback, useEffect } from "react";
+import { Ban, Edit2, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -21,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { asArray } from "@/lib/api";
 
@@ -40,15 +30,8 @@ export interface AdminUserRecord {
 
 interface UsersSectionProps {
   onUserUpdate?: (userId: string, updates: any) => Promise<void>;
-  onAddStrike?: (
-    userId: string,
-    type: string,
-    description: string,
-  ) => Promise<void>;
-  onFetchUsers?: (
-    page: number,
-    search: string,
-  ) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
+  onAddStrike?: (userId: string, type: string, description: string) => Promise<void>;
+  onFetchUsers?: (page: number, search: string) => Promise<{ users: AdminUserRecord[]; pagination: any }>;
 }
 
 export const UsersSection = ({
@@ -61,29 +44,31 @@ export const UsersSection = ({
   const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [pagination, setPagination] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(
-    null,
-  );
-  const [isEditingModal, setIsEditingModal] = useState(false);
-  const [editFormData, setEditFormData] = useState<Partial<AdminUserRecord>>(
-    {},
-  );
-  const [strikeForm, setStrikeForm] = useState({ type: "", description: "" });
+  
+  // Modal state
+  const [selectedUser, setSelectedUser] = useState<AdminUserRecord | null>(null);
+  const [showModal, setShowModal] = useState<"edit" | "strike" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Edit form
+  const [editRole, setEditRole] = useState("");
+  const [editStatus, setEditStatus] = useState("");
+  
+  // Strike form
+  const [strikeReason, setStrikeReason] = useState("");
+  const [strikeDescription, setStrikeDescription] = useState("");
 
-  // Fetch users with pagination
+  // Load users
   const loadUsers = useCallback(async () => {
     if (!onFetchUsers) return;
-
     setIsLoading(true);
     try {
       const result = await onFetchUsers(currentPage, searchQuery);
-      setUsers(asArray(result?.users));
+      setUsers(asArray(result?.users) || []);
       setPagination(result?.pagination || null);
     } catch (error) {
       toast.error("Failed to load users");
-      console.error(error);
-      setUsers([]); // Ensure users is always an array
+      setUsers([]);
     } finally {
       setIsLoading(false);
     }
@@ -93,168 +78,129 @@ export const UsersSection = ({
     loadUsers();
   }, [loadUsers]);
 
-  const handleSearch = useCallback((value: string) => {
-    setSearchQuery(value);
+  // Search handler
+  const handleSearch = () => {
     setCurrentPage(1);
-  }, []);
-
-  const handleEditUser = (user: AdminUserRecord) => {
-    setSelectedUser(user);
-    setEditFormData({
-      role: user.role,
-      status: user.status,
-    });
-    setIsEditingModal(true);
   };
 
-  const handleSaveChanges = async () => {
-    if (!selectedUser || !onUserUpdate) return;
+  // Edit user
+  const openEditModal = (user: AdminUserRecord) => {
+    setSelectedUser(user);
+    setEditRole(user.role);
+    setEditStatus(user.status);
+    setShowModal("edit");
+  };
 
+  const saveEdit = async () => {
+    if (!selectedUser || !onUserUpdate) return;
     setIsSubmitting(true);
     try {
-      await onUserUpdate(selectedUser.id, editFormData);
-      toast.success("User updated successfully");
-      setIsEditingModal(false);
-      await loadUsers();
+      await onUserUpdate(selectedUser.id, {
+        role: editRole,
+        status: editStatus,
+      });
+      toast.success("User updated");
+      setShowModal(null);
+      setSelectedUser(null);
+      loadUsers();
     } catch (error) {
       toast.error("Failed to update user");
-      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleAddStrike = async () => {
-    if (
-      !selectedUser ||
-      !onAddStrike ||
-      !strikeForm.type ||
-      !strikeForm.description
-    ) {
-      toast.error("Please fill in all strike fields");
+  // Add strike
+  const openStrikeModal = (user: AdminUserRecord) => {
+    setSelectedUser(user);
+    setStrikeReason("");
+    setStrikeDescription("");
+    setShowModal("strike");
+  };
+
+  const saveStrike = async () => {
+    if (!selectedUser || !onAddStrike || !strikeReason || !strikeDescription) {
+      toast.error("Fill in all fields");
       return;
     }
-
     setIsSubmitting(true);
     try {
-      await onAddStrike(
-        selectedUser.id,
-        strikeForm.type,
-        strikeForm.description,
-      );
+      await onAddStrike(selectedUser.id, strikeReason, strikeDescription);
       toast.success("Strike recorded");
-      setStrikeForm({ type: "", description: "" });
-      await loadUsers();
+      setShowModal(null);
+      setSelectedUser(null);
+      loadUsers();
     } catch (error) {
       toast.error("Failed to record strike");
-      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Never";
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(new Date(dateString));
+  // Quick ban
+  const quickBan = async (user: AdminUserRecord) => {
+    if (!onUserUpdate) return;
+    try {
+      await onUserUpdate(user.id, { status: "banned" });
+      toast.success(`${user.username} banned`);
+      loadUsers();
+    } catch (error) {
+      toast.error("Failed to ban user");
+    }
   };
 
-  const getJoinMethodLabel = (method?: string) => {
-    switch (method) {
-      case "code":
-        return "Invitation code";
-      case "sponsor":
-        return "Sponsor verified";
-      default:
-        return "Email verification";
-    }
+  const formatDate = (date?: string) => {
+    if (!date) return "—";
+    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "2-digit" }).format(new Date(date));
   };
 
   return (
     <section className="space-y-4">
-      <AdminSectionHeader
-        title="User Controls"
-        subtitle="Manage users"
-        accent="25 per page"
-      />
+      <AdminSectionHeader title="Users" subtitle="Manage" accent="25 per page" />
 
-      {/* Search Bar */}
-      <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-4 shadow-soft md:flex-row md:items-center md:justify-between">
-        <label className="flex w-full items-center gap-3 rounded-2xl border border-border bg-background px-3 py-2 md:max-w-md">
-          <Search className="h-4 w-4 text-muted-foreground" aria-hidden />
-          <input
-            type="search"
-            placeholder="Search username, email, or base"
-            className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </label>
-        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 text-success">
-            <Check className="h-3 w-3" aria-hidden />
-            Verified
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-1 text-warning">
-            Active
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-1 text-destructive">
-            <Ban className="h-3 w-3" aria-hidden />
-            Suspended
-          </span>
-        </div>
+      {/* Search */}
+      <div className="flex gap-2 rounded-3xl border border-border bg-card p-4">
+        <Input
+          placeholder="Search username, email..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1"
+        />
+        <Button onClick={handleSearch} variant="outline" className="rounded-xl">
+          <Search className="h-4 w-4 mr-2" />
+          Search
+        </Button>
       </div>
 
-      {/* Users Table */}
+      {/* Table */}
       {isLoading ? (
-        <div className="rounded-3xl border border-border bg-card p-6 text-center text-muted-foreground">
-          Loading users...
+        <div className="rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+          Loading...
         </div>
-      ) : users.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border bg-background/50 p-6 text-center text-muted-foreground">
+      ) : !users || users.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-border bg-background/50 p-8 text-center text-muted-foreground">
           No users found
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-3xl border border-border bg-card shadow-soft">
+        <div className="overflow-x-auto rounded-3xl border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">
-                  User
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">
-                  Email
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">
-                  Role
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-foreground">
-                  Joined
-                </th>
-                <th className="px-4 py-3 text-center font-semibold text-foreground">
-                  Actions
-                </th>
+                <th className="px-4 py-3 text-left font-semibold">Username</th>
+                <th className="px-4 py-3 text-left font-semibold">Email</th>
+                <th className="px-4 py-3 text-left font-semibold">Role</th>
+                <th className="px-4 py-3 text-left font-semibold">Status</th>
+                <th className="px-4 py-3 text-left font-semibold">Joined</th>
+                <th className="px-4 py-3 text-center font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-muted/20">
+                <tr key={user.id} className="hover:bg-muted/20 transition">
+                  <td className="px-4 py-3 font-medium">{user.username}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{user.email}</td>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-foreground">
-                      {user.username}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {user.email}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary capitalize">
+                    <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 capitalize">
                       {user.role}
                     </span>
                   </td>
@@ -262,25 +208,48 @@ export const UsersSection = ({
                     <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${
                         user.status === "active"
-                          ? "bg-success/10 text-success"
-                          : "bg-destructive/10 text-destructive"
+                          ? "bg-green-100 text-green-800"
+                          : user.status === "suspended"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
                       }`}
                     >
                       {user.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {formatDate(user.createdAt)}
-                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(user.createdAt)}</td>
                   <td className="px-4 py-3 text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditUser(user)}
-                      className="rounded-full"
-                    >
-                      <Edit2 className="h-4 w-4" aria-hidden />
-                    </Button>
+                    <div className="flex justify-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEditModal(user)}
+                        className="h-8 w-8 p-0 rounded-lg"
+                        title="Edit"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openStrikeModal(user)}
+                        className="h-8 w-8 p-0 rounded-lg text-warning hover:text-warning"
+                        title="Add strike/warning"
+                      >
+                        ⚠
+                      </Button>
+                      {user.status !== "banned" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => quickBan(user)}
+                          className="h-8 w-8 p-0 rounded-lg text-destructive hover:text-destructive"
+                          title="Ban user"
+                        >
+                          <Ban className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -291,10 +260,9 @@ export const UsersSection = ({
 
       {/* Pagination */}
       {pagination && pagination.pages > 1 && (
-        <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-soft">
+        <div className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
           <span className="text-sm text-muted-foreground">
-            Page {pagination.page} of {pagination.pages} ({pagination.total}{" "}
-            total users)
+            Page {pagination.page} of {pagination.pages} ({pagination.total} total)
           </span>
           <div className="flex gap-2">
             <Button
@@ -302,77 +270,30 @@ export const UsersSection = ({
               size="sm"
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="rounded-full"
             >
-              <ChevronLeft className="h-4 w-4" aria-hidden />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setCurrentPage(Math.min(pagination.pages, currentPage + 1))
-              }
+              onClick={() => setCurrentPage(Math.min(pagination.pages, currentPage + 1))}
               disabled={currentPage === pagination.pages}
-              className="rounded-full"
             >
-              <ChevronRight className="h-4 w-4" aria-hidden />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Edit User Modal */}
-      {isEditingModal && selectedUser && (
+      {/* Edit Modal */}
+      {showModal === "edit" && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border bg-card p-6 shadow-xl">
-            <h2 className="text-xl font-semibold text-foreground mb-4">
-              Edit User: {selectedUser.username}
-            </h2>
-
+          <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
+            <h2 className="text-lg font-semibold mb-4">Edit {selectedUser.username}</h2>
             <div className="space-y-4 mb-6">
-              {/* User Info */}
-              <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Email:</span>{" "}
-                  {selectedUser.email}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    Member since:
-                  </span>{" "}
-                  {formatDate(selectedUser.createdAt)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    Last active:
-                  </span>{" "}
-                  {formatDate(selectedUser.lastLoginAt)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">Verified:</span>{" "}
-                  {selectedUser.dowVerifiedAt
-                    ? formatDate(selectedUser.dowVerifiedAt)
-                    : "Not verified"}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    Joined via:
-                  </span>{" "}
-                  {getJoinMethodLabel(selectedUser.joinMethod)}
-                </p>
-              </div>
-
-              {/* Role */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  Role
-                </label>
-                <Select
-                  value={editFormData.role || ""}
-                  onValueChange={(val) =>
-                    setEditFormData({ ...editFormData, role: val as any })
-                  }
-                >
+              <div>
+                <label className="text-sm font-medium mb-2 block">Role</label>
+                <Select value={editRole} onValueChange={setEditRole}>
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
@@ -383,18 +304,9 @@ export const UsersSection = ({
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* Status */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  Status
-                </label>
-                <Select
-                  value={editFormData.status || ""}
-                  onValueChange={(val) =>
-                    setEditFormData({ ...editFormData, status: val as any })
-                  }
-                >
+              <div>
+                <label className="text-sm font-medium mb-2 block">Status</label>
+                <Select value={editStatus} onValueChange={setEditStatus}>
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
@@ -405,81 +317,57 @@ export const UsersSection = ({
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* Add Strike */}
-              <div className="rounded-2xl border border-warning/20 bg-warning/5 p-4 space-y-3">
-                <h3 className="font-semibold text-warning">Add Strike</h3>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Reason
-                  </label>
-                  <Select
-                    value={strikeForm.type}
-                    onValueChange={(val) =>
-                      setStrikeForm({ ...strikeForm, type: val })
-                    }
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select reason" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="spam">Spam</SelectItem>
-                      <SelectItem value="fraud">Fraud</SelectItem>
-                      <SelectItem value="harassment">Harassment</SelectItem>
-                      <SelectItem value="inappropriate_content">
-                        Inappropriate content
-                      </SelectItem>
-                      <SelectItem value="policy_violation">
-                        Policy violation
-                      </SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Description
-                  </label>
-                  <Textarea
-                    placeholder="Document the behavior and any references..."
-                    value={strikeForm.description}
-                    onChange={(e) =>
-                      setStrikeForm({
-                        ...strikeForm,
-                        description: e.target.value,
-                      })
-                    }
-                    className="rounded-xl min-h-[80px]"
-                  />
-                </div>
-                <Button
-                  onClick={handleAddStrike}
-                  disabled={
-                    isSubmitting || !strikeForm.type || !strikeForm.description
-                  }
-                  className="w-full bg-warning text-warning-foreground rounded-xl"
-                >
-                  <Gavel className="h-4 w-4 mr-2" aria-hidden />
-                  Record Strike
-                </Button>
-              </div>
             </div>
-
-            {/* Modal Actions */}
             <div className="flex gap-2 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditingModal(false)}
-                className="rounded-xl"
-              >
+              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
                 Cancel
               </Button>
-              <Button
-                onClick={handleSaveChanges}
-                disabled={isSubmitting}
-                className="rounded-xl"
-              >
-                {isSubmitting ? "Saving..." : "Save Changes"}
+              <Button onClick={saveEdit} disabled={isSubmitting} className="rounded-xl">
+                {isSubmitting ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Strike Modal */}
+      {showModal === "strike" && selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6">
+            <h2 className="text-lg font-semibold mb-4">Add Strike: {selectedUser.username}</h2>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Reason</label>
+                <Select value={strikeReason} onValueChange={setStrikeReason}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="Select reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="spam">Spam</SelectItem>
+                    <SelectItem value="fraud">Fraud</SelectItem>
+                    <SelectItem value="harassment">Harassment</SelectItem>
+                    <SelectItem value="inappropriate">Inappropriate content</SelectItem>
+                    <SelectItem value="policy">Policy violation</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Notes</label>
+                <Textarea
+                  placeholder="Describe the issue..."
+                  value={strikeDescription}
+                  onChange={(e) => setStrikeDescription(e.target.value)}
+                  className="rounded-xl min-h-[80px]"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowModal(null)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button onClick={saveStrike} disabled={isSubmitting} className="rounded-xl bg-warning text-warning-foreground">
+                {isSubmitting ? "Saving..." : "Record Strike"}
               </Button>
             </div>
           </div>
