@@ -2175,7 +2175,7 @@ export const BaseListProvider = ({
     });
   }, [isAuthenticated, listings, messageThreads, navigate, user.id]);
 
-  const currentBase = useMemo<Base>(() => {
+  const currentBase = useMemo<Base | undefined>(() => {
     return bases.find((base) => base.id === currentBaseId) ?? bases[0];
   }, [currentBaseId, bases]);
 
