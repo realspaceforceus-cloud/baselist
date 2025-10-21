@@ -152,6 +152,44 @@ export const Header = (): JSX.Element => {
     }
   }, [isDarkMode]);
 
+  // Load notifications when sidebar is opened
+  useEffect(() => {
+    if (!isNotificationsOpen || !isAuthenticated) return;
+
+    const loadNotifications = async () => {
+      setIsLoadingNotifications(true);
+      try {
+        const response = await notificationsApi.getNotifications(50, 0);
+        setNotifications(response.notifications);
+        setUnreadNotificationCount(response.unreadCount);
+      } catch (error) {
+        console.error("Error loading notifications:", error);
+      } finally {
+        setIsLoadingNotifications(false);
+      }
+    };
+
+    loadNotifications();
+  }, [isNotificationsOpen, isAuthenticated]);
+
+  // Load initial unread count
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const loadUnreadCount = async () => {
+      try {
+        const response = await notificationsApi.getUnreadCount();
+        setUnreadNotificationCount(response.unreadCount);
+      } catch (error) {
+        console.error("Error loading notification count:", error);
+      }
+    };
+
+    loadUnreadCount();
+    const interval = setInterval(loadUnreadCount, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
+
   const showAdminLink = user.role === "admin";
   const avatarInitials = getAvatarInitials(user.name);
   const verificationLabel = isDowVerified
