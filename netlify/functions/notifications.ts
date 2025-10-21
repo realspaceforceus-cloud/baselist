@@ -2,6 +2,12 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
 
+const json = (body: any, status = 200) => ({
+  statusCode: status,
+  headers: { "Content-Type": "application/json", "cache-control": "no-store" },
+  body: JSON.stringify(body),
+});
+
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
 
@@ -19,24 +25,34 @@ export const handler: Handler = async (event) => {
   const userIdMatch = cookies.match(/userId=([^;]+)/);
   const userId = userIdMatch ? userIdMatch[1] : null;
 
-  // Special case: /count endpoint can return 0 for unauthenticated users
-  if (method === "GET" && path === "/count" && !userId) {
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "cache-control": "no-store",
-      },
-      body: JSON.stringify({ unreadCount: 0 }),
-    };
+  // Special case: /count endpoint ALWAYS returns a valid count (even for unauthenticated)
+  // This endpoint MUST NEVER return 500
+  if (method === "GET" && path === "/count") {
+    if (!userId) {
+      return json({ unreadCount: 0 });
+    }
+
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        `SELECT COUNT(*) as count FROM notifications 
+         WHERE user_id = $1 AND read = false AND dismissed = false`,
+        [userId],
+      );
+      const count = result.rows.length > 0 ? parseInt(result.rows[0].count) : 0;
+      return json({ unreadCount: count });
+    } catch (err) {
+      console.error("Count query error:", err);
+      // Always return 200 with count 0 on any error
+      return json({ unreadCount: 0 });
+    } finally {
+      client.release();
+    }
   }
 
+  // All other endpoints require auth
   if (!userId) {
-    return {
-      statusCode: 401,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Unauthorized" }),
-    };
+    return json({ error: "Unauthorized" }, 401);
   }
 
   const client = await pool.connect();
@@ -74,52 +90,11 @@ export const handler: Handler = async (event) => {
         [userId],
       );
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          notifications: result.rows,
-          unreadCount: parseInt(countResult.rows[0].count),
-          total: result.rows.length,
-        }),
-      };
-    }
-
-    // GET /api/notifications/count - get unread notification count
-    if (method === "GET" && path === "/count") {
-      try {
-        const result = await client.query(
-          `SELECT COUNT(*) as count FROM notifications
-           WHERE user_id = $1 AND read = false AND dismissed = false`,
-          [userId],
-        );
-
-        return {
-          statusCode: 200,
-          headers: {
-            "Content-Type": "application/json",
-            "cache-control": "no-store",
-          },
-          body: JSON.stringify({
-            unreadCount:
-              result.rows.length > 0 ? parseInt(result.rows[0].count) : 0,
-          }),
-        };
-      } catch (countErr) {
-        console.error("Error getting notification count:", countErr);
-        // Always return a valid response even on error
-        return {
-          statusCode: 200,
-          headers: {
-            "Content-Type": "application/json",
-            "cache-control": "no-store",
-          },
-          body: JSON.stringify({
-            unreadCount: 0,
-            error: "temporary_unavailable",
-          }),
-        };
-      }
+      return json({
+        notifications: result.rows,
+        unreadCount: countResult.rows.length > 0 ? parseInt(countResult.rows[0].count) : 0,
+        total: result.rows.length,
+      });
     }
 
     // PATCH /api/notifications/:id/read - mark notification as read
@@ -135,18 +110,10 @@ export const handler: Handler = async (event) => {
       );
 
       if (result.rows.length === 0) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Notification not found" }),
-        };
+        return json({ error: "Notification not found" }, 404);
       }
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.rows[0]),
-      };
+      return json(result.rows[0]);
     }
 
     // PATCH /api/notifications/:id/dismiss - dismiss notification
@@ -162,18 +129,10 @@ export const handler: Handler = async (event) => {
       );
 
       if (result.rows.length === 0) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Notification not found" }),
-        };
+        return json({ error: "Notification not found" }, 404);
       }
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.rows[0]),
-      };
+      return json(result.rows[0]);
     }
 
     // PATCH /api/notifications/read-all - mark all notifications as read
@@ -185,27 +144,14 @@ export const handler: Handler = async (event) => {
         [userId],
       );
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ success: true }),
-      };
+      return json({ success: true });
     }
 
-    return {
-      statusCode: 404,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Not found" }),
-    };
+    return json({ error: "Not found" }, 404);
   } catch (err) {
-    const errorMsg =
-      err instanceof Error ? err.message : "Internal server error";
+    const errorMsg = err instanceof Error ? err.message : "Internal server error";
     console.error("Notifications error:", errorMsg);
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: errorMsg }),
-    };
+    return json({ error: errorMsg }, 500);
   } finally {
     client.release();
   }
