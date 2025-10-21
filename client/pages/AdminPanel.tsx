@@ -791,10 +791,13 @@ const AdminPanel = (): JSX.Element => {
       }
 
       try {
-        const auditLog = await adminApi.getAudit(20);
+        const auditResponse = await adminApi.getAudit(20);
         if (!active) {
           return;
         }
+        // Debug: log the response structure
+        console.log("getAudit response:", auditResponse);
+        const auditLog = Array.isArray(auditResponse) ? auditResponse : auditResponse?.audit || [];
         const directory = userDirectoryRef.current;
         setAuditEntries(
           auditLog.map((entry) => ({
