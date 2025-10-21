@@ -315,23 +315,24 @@ const ListingDetail = (): JSX.Element => {
                 </span>
               )}
               <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={handleViewSellerListings}
-                  className="flex items-center gap-2 text-sm font-semibold text-foreground transition hover:text-primary hover:underline"
-                >
-                  <span>{seller?.name ?? "Verified member"}</span>
-                  {seller?.rating ? (
-                    <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-                      <span aria-hidden>⭐</span>
-                      {seller.rating.toFixed(1)}
-                    </span>
-                  ) : null}
-                  <ShieldCheck className="h-4 w-4 text-verified" aria-hidden />
-                </button>
-                <p className="text-xs text-muted-foreground">
-                  Verified DoW Member
-                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleViewSellerListings}
+                    className="text-sm font-semibold text-foreground transition hover:text-primary hover:underline"
+                  >
+                    {seller?.name ?? "Member"}
+                  </button>
+                  {seller?.verified && (
+                    <ShieldCheck className="h-4 w-4 text-green-600" aria-hidden title="Verified DoW Member" />
+                  )}
+                </div>
+                {seller?.rating ? (
+                  <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                    <span aria-hidden>⭐</span>
+                    {seller.rating.toFixed(1)}
+                  </div>
+                ) : null}
                 <p className="text-xs text-muted-foreground">
                   Member since{" "}
                   {seller ? new Date(seller.memberSince).getFullYear() : "2020"}
