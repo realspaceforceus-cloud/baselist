@@ -439,6 +439,7 @@ export const handler: Handler = async (event) => {
       if (result.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Report not found" }),
         };
       }
@@ -477,6 +478,7 @@ export const handler: Handler = async (event) => {
       if (result.rows.length === 0) {
         return {
           statusCode: 404,
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Verification not found" }),
         };
       }
