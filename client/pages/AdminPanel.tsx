@@ -1988,13 +1988,10 @@ const AdminPanel = (): JSX.Element => {
       try {
         const verificationsData = await adminApi.getVerifications();
         if (!active) return;
-        if (
-          verificationsData &&
-          "verifications" in verificationsData &&
-          Array.isArray(verificationsData.verifications)
-        ) {
+        const verifications = Array.isArray(verificationsData) ? verificationsData : verificationsData?.verifications || [];
+        if (Array.isArray(verifications)) {
           setVerificationDocs(
-            verificationsData.verifications.map((v: any) => ({
+            verifications.map((v: any) => ({
               id: v.id,
               userId: v.user_id,
               name: v.user_name || "Unknown",
