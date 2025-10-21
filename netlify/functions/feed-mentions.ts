@@ -44,7 +44,7 @@ export const handler: Handler = async (event) => {
           u.username ASC
         LIMIT 10
         `,
-        [userId, `${q}%`]
+        [userId, `${q}%`],
       );
 
       return {

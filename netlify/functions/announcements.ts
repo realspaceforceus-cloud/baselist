@@ -15,10 +15,9 @@ function verifyAuth(event: any): { userId: string } | null {
 }
 
 async function isAdmin(client: any, userId: string): Promise<boolean> {
-  const result = await client.query(
-    "SELECT role FROM users WHERE id = $1",
-    [userId],
-  );
+  const result = await client.query("SELECT role FROM users WHERE id = $1", [
+    userId,
+  ]);
   return result.rows.length > 0 && result.rows[0].role === "admin";
 }
 
@@ -336,10 +335,9 @@ export const handler: Handler = async (event) => {
       try {
         const announcementId = path.slice(1);
 
-        await client.query(
-          "DELETE FROM announcements WHERE id = $1",
-          [announcementId],
-        );
+        await client.query("DELETE FROM announcements WHERE id = $1", [
+          announcementId,
+        ]);
 
         return {
           statusCode: 200,
@@ -357,11 +355,7 @@ export const handler: Handler = async (event) => {
     }
 
     // POST /api/announcements/:id/dismiss
-    if (
-      method === "POST" &&
-      path.includes("/") &&
-      path.endsWith("/dismiss")
-    ) {
+    if (method === "POST" && path.includes("/") && path.endsWith("/dismiss")) {
       if (!auth) {
         return {
           statusCode: 401,

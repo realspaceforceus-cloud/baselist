@@ -37,7 +37,9 @@ export const AnnouncementsSection = (): JSX.Element => {
       setAnnouncements(data.announcements || []);
     } catch (error) {
       const errorMsg =
-        error instanceof Error ? error.message : "Failed to fetch announcements";
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch announcements";
       toast.error(errorMsg);
     } finally {
       setIsLoading(false);
@@ -51,8 +53,7 @@ export const AnnouncementsSection = (): JSX.Element => {
     const inputElement = e.target as HTMLInputElement;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox" ? inputElement.checked : value,
+      [name]: type === "checkbox" ? inputElement.checked : value,
     }));
   };
 
@@ -122,7 +123,9 @@ export const AnnouncementsSection = (): JSX.Element => {
       fetchAnnouncements();
     } catch (error) {
       const errorMsg =
-        error instanceof Error ? error.message : "Failed to delete announcement";
+        error instanceof Error
+          ? error.message
+          : "Failed to delete announcement";
       toast.error(errorMsg);
     }
   };
@@ -175,9 +178,7 @@ export const AnnouncementsSection = (): JSX.Element => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium">
-                Title *
-              </label>
+              <label className="mb-2 block text-sm font-medium">Title *</label>
               <Input
                 type="text"
                 name="title"
@@ -334,7 +335,8 @@ export const AnnouncementsSection = (): JSX.Element => {
                       </span>
                     )}
                     <span className="text-muted-foreground">
-                      Created {new Date(announcement.createdAt).toLocaleDateString()}
+                      Created{" "}
+                      {new Date(announcement.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>

@@ -27,9 +27,7 @@ export async function getMentionedUserIds(
 
   const client = await pool.connect();
   try {
-    const placeholders = usernames
-      .map((_, i) => `$${i + 1}`)
-      .join(",");
+    const placeholders = usernames.map((_, i) => `$${i + 1}`).join(",");
     const result = await client.query(
       `SELECT id, username FROM users 
        WHERE LOWER(username) IN (${placeholders}) AND allow_tagging = true`,

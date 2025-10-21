@@ -73,7 +73,7 @@ export function MentionAutocomplete({
       try {
         const response = await fetch(
           `/.netlify/functions/feed/mentions?q=${encodeURIComponent(mention.word)}&userId=${userId}`,
-          { credentials: "include" }
+          { credentials: "include" },
         );
         if (response.ok) {
           const data = await response.json();
@@ -120,7 +120,7 @@ export function MentionAutocomplete({
         case "ArrowDown":
           e.preventDefault();
           setSelectedIndex((prev) =>
-            prev < suggestions.length - 1 ? prev + 1 : prev
+            prev < suggestions.length - 1 ? prev + 1 : prev,
           );
           return;
         case "ArrowUp":
@@ -187,9 +187,7 @@ export function MentionAutocomplete({
               />
               <span className="flex-1">@{suggestion.username}</span>
               {suggestion.lastInteracted && (
-                <span className="text-xs text-muted-foreground">
-                  recent
-                </span>
+                <span className="text-xs text-muted-foreground">recent</span>
               )}
             </button>
           ))}
