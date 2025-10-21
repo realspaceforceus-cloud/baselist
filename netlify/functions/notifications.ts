@@ -31,7 +31,7 @@ export const handler: Handler = async (event) => {
 
   try {
     // GET /api/notifications - get user's notifications
-    if (method === "GET" && path === "") {
+    if (method === "GET" && (path === "" || path === "/")) {
       const query = event.queryStringParameters || {};
       const limit = parseInt(query.limit as string) || 50;
       const offset = parseInt(query.offset as string) || 0;
