@@ -2116,17 +2116,8 @@ const AdminPanel = (): JSX.Element => {
           ) : null}
           {activeSection === "listings" ? <ListingsSection /> : null}
           {activeSection === "reports" ? <ReportsSection /> : null}
-          {activeSection === "verification" ? (
-            <VerificationSection
-              queues={visibleVerificationQueues}
-              documents={visibleVerificationDocs}
-              onApprove={handleApproveVerification}
-              onDeny={handleDenyVerification}
-            />
-          ) : null}
-          {activeSection === "bases" ? (
-            <BasesSection bases={visibleBaseRows} />
-          ) : null}
+          {activeSection === "verification" ? <VerificationSection /> : null}
+          {activeSection === "bases" ? <BasesSection /> : null}
           {activeSection === "family-verification" ? (
             <FamilyVerificationSection userId={user.id} />
           ) : null}
