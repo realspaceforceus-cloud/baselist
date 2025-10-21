@@ -16,7 +16,7 @@ export const handler: Handler = async (event) => {
 
   console.log("[BASES] Normalized path:", path);
 
-  // GET /api/bases - get all bases
+  // GET /api/bases - get all active bases (excluding soft-deleted ones)
   if (method === "GET" && (!path || path === "" || path === "/")) {
     let client;
     try {
@@ -25,12 +25,12 @@ export const handler: Handler = async (event) => {
       console.log("[BASES] Connected to database, querying bases...");
 
       const result = await client.query(
-        "SELECT * FROM bases ORDER BY name ASC",
+        "SELECT * FROM bases WHERE deleted_at IS NULL ORDER BY name ASC",
       );
       console.log(
         "[BASES] Query successful, returning",
         result.rows.length,
-        "bases",
+        "active bases",
       );
 
       return {
