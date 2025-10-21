@@ -77,7 +77,6 @@ export const VerificationSection = () => {
         ]);
       } catch (error) {
         console.error("Failed to load verifications:", error);
-        const { toast } = await import("sonner");
         toast.error("Failed to load verifications");
         setQueues([]);
         setDocuments([]);
