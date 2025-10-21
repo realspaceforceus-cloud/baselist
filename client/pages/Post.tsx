@@ -583,6 +583,124 @@ const Post = (): JSX.Element => {
           </div>
         </section>
 
+        {category === "Vehicles" && (
+          <section className="space-y-6 rounded-3xl border border-border bg-card p-6 shadow-card">
+            <h3 className="text-lg font-semibold text-foreground">Vehicle Details</h3>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-semibold text-foreground"
+                  htmlFor="vehicle-year"
+                >
+                  Year
+                </label>
+                <Input
+                  id="vehicle-year"
+                  placeholder="2020"
+                  value={vehicleYear}
+                  onChange={(event) => setVehicleYear(event.target.value)}
+                  className="h-10 rounded-2xl text-base"
+                  type="number"
+                  min="1900"
+                  max={new Date().getFullYear() + 1}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-semibold text-foreground"
+                  htmlFor="vehicle-make"
+                >
+                  Make
+                </label>
+                <Input
+                  id="vehicle-make"
+                  placeholder="Honda"
+                  value={vehicleMake}
+                  onChange={(event) => setVehicleMake(event.target.value)}
+                  className="h-10 rounded-2xl text-base"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-semibold text-foreground"
+                  htmlFor="vehicle-model"
+                >
+                  Model
+                </label>
+                <Input
+                  id="vehicle-model"
+                  placeholder="Civic"
+                  value={vehicleModel}
+                  onChange={(event) => setVehicleModel(event.target.value)}
+                  className="h-10 rounded-2xl text-base"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-semibold text-foreground"
+                  htmlFor="vehicle-type"
+                >
+                  Type
+                </label>
+                <Select value={vehicleType} onValueChange={setVehicleType}>
+                  <SelectTrigger id="vehicle-type" className="h-10 rounded-2xl">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Sedan">Sedan</SelectItem>
+                    <SelectItem value="SUV">SUV</SelectItem>
+                    <SelectItem value="Truck">Truck</SelectItem>
+                    <SelectItem value="Van">Van</SelectItem>
+                    <SelectItem value="Coupe">Coupe</SelectItem>
+                    <SelectItem value="Hatchback">Hatchback</SelectItem>
+                    <SelectItem value="Wagon">Wagon</SelectItem>
+                    <SelectItem value="Convertible">Convertible</SelectItem>
+                    <SelectItem value="Minivan">Minivan</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-semibold text-foreground"
+                  htmlFor="vehicle-color"
+                >
+                  Color
+                </label>
+                <Input
+                  id="vehicle-color"
+                  placeholder="Blue"
+                  value={vehicleColor}
+                  onChange={(event) => setVehicleColor(event.target.value)}
+                  className="h-10 rounded-2xl text-base"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-semibold text-foreground"
+                  htmlFor="vehicle-miles"
+                >
+                  Miles
+                </label>
+                <Input
+                  id="vehicle-miles"
+                  placeholder="45000"
+                  value={vehicleMiles}
+                  onChange={(event) => setVehicleMiles(event.target.value)}
+                  className="h-10 rounded-2xl text-base"
+                  type="number"
+                  min="0"
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
         <footer className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-6 shadow-card md:flex-row md:items-center md:justify-between">
           <div className="text-sm text-muted-foreground">
             Posting as{" "}
