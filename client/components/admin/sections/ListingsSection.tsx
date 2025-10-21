@@ -312,6 +312,15 @@ export const ListingsSection = () => {
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 p-0 rounded-lg"
+                          onClick={() => navigate(`/admin/listing-detail/${listing.id}`)}
+                          title="View and edit full listing details"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-lg"
                           onClick={() => handleEditListing(listing)}
                         >
                           <Edit2 className="h-3.5 w-3.5" />
