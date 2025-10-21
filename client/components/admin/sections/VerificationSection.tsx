@@ -27,11 +27,50 @@ export const VerificationSection = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    // TODO: Fetch from API when endpoint is ready
-    setQueues([]);
-    setDocuments([]);
-    setIsLoading(false);
+    const loadVerifications = async () => {
+      setIsLoading(true);
+      try {
+        const result = await (await import("@/lib/adminApi")).adminApi.getVerifications();
+        const verifications: VerificationDocument[] = (result?.verifications || []).map((v: any) => ({
+          id: v.id,
+          userId: v.userId,
+          name: v.userName || "Unknown",
+          method: v.method || "Unknown",
+          submitted: v.submittedAt ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(v.submittedAt)) : "—",
+        }));
+        setDocuments(verifications);
+        setQueues([
+          {
+            id: "auto",
+            label: ".mil Verified",
+            count: verifications.filter((d) => d.method === ".mil").length,
+            description: "Auto-approved via allow list",
+            icon: (await import("lucide-react")).MailCheck,
+          },
+          {
+            id: "invite",
+            label: "Invite Code",
+            count: verifications.filter((d) => d.method === "Invite Code").length,
+            description: "Moderator review required",
+            icon: (await import("lucide-react")).Users,
+          },
+          {
+            id: "id",
+            label: "ID Review",
+            count: verifications.filter((d) => d.method === "ID Review").length,
+            description: "Manual review required",
+            icon: (await import("lucide-react")).FileX,
+          },
+        ]);
+      } catch (error) {
+        console.error("Failed to load verifications:", error);
+        setQueues([]);
+        setDocuments([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadVerifications();
   }, []);
 
   return (
