@@ -14,9 +14,12 @@ export const handler: Handler = async (event) => {
         event.body || "{}",
       );
 
-      // Get userId from cookies (passed by the proxy)
-      const userIdHeader = event.headers["x-user-id"];
-      if (!userIdHeader) {
+      // Get userId from cookies
+      const cookies = event.headers.cookie || "";
+      const userIdMatch = cookies.match(/userId=([^;]+)/);
+      const userId = userIdMatch ? userIdMatch[1] : null;
+
+      if (!userId) {
         return {
           statusCode: 401,
           body: JSON.stringify({ error: "Unauthorized" }),
