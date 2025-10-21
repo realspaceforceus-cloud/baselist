@@ -693,53 +693,6 @@ const AdminPanel = (): JSX.Element => {
         });
       }
 
-      try {
-        const metricsResponse = await adminApi.getMetrics();
-        if (!active) {
-          return;
-        }
-        const snapshot =
-          metricsResponse.snapshot || metricsResponse.totals || metricsResponse;
-        setMetrics((prev) =>
-          prev.map((card) => {
-            if (card.id === "verified") {
-              return {
-                ...card,
-                value: `${snapshot.verifiedMembers ?? 0}`,
-              };
-            }
-            if (card.id === "listings") {
-              const total = snapshot.totalListings ?? 0;
-              const sold = snapshot.soldListings ?? 0;
-              return {
-                ...card,
-                value: `${total} / ${sold}`,
-              };
-            }
-            if (card.id === "reports") {
-              const openReports = snapshot.openReports ?? 0;
-              const resolvedRate =
-                openReports === 0
-                  ? "100%"
-                  : `${Math.max(0, 100 - openReports)}%`;
-              return { ...card, value: resolvedRate };
-            }
-            if (card.id === "verifications") {
-              return {
-                ...card,
-                value: `${snapshot.manualVerificationBacklog ?? 0}`,
-              };
-            }
-            return card;
-          }),
-        );
-        setMetricsLoading(false);
-      } catch (error) {
-        toast.error("Unable to load metrics", {
-          description: getApiErrorMessage(error),
-        });
-        setMetricsLoading(false);
-      }
 
       try {
         const auditResponse = await adminApi.getAudit(20);
