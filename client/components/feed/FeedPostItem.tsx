@@ -381,37 +381,117 @@ export function FeedPostItem({ post, onPostDeleted }: FeedPostItemProps): JSX.El
       {showComments && (
         <div className="mt-4 border-t border-border pt-4 space-y-3">
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Add a comment..."
-              className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              onKeyPress={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleComment();
-                }
-              }}
+            <img
+              src={
+                user?.avatarUrl ||
+                "https://api.dicebear.com/7.x/initials/svg?seed=user"
+              }
+              alt={user?.name}
+              className="h-8 w-8 rounded-full object-cover flex-shrink-0"
             />
-            <button
-              onClick={handleComment}
-              disabled={!commentText.trim() || isCommentingLoading}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            >
-              Post
-            </button>
+            <div className="flex-1 flex gap-2">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Add a comment..."
+                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleComment();
+                  }
+                }}
+              />
+              <button
+                onClick={handleComment}
+                disabled={!commentText.trim() || isCommentingLoading}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              >
+                {isCommentingLoading ? "..." : "Post"}
+              </button>
+            </div>
           </div>
 
-          {/* Existing comments */}
-          {post.userComments && post.userComments.length > 0 && (
-            <div className="space-y-2 rounded-lg bg-accent/50 p-3">
-              {post.userComments.map((comment) => (
-                <div key={comment.id} className="text-sm">
-                  <p className="font-medium">{comment.author?.name}</p>
-                  <p className="text-muted-foreground">{comment.content}</p>
+          {/* Comments section */}
+          {comments.length > 0 && (
+            <div className="space-y-3 rounded-lg bg-accent/30 p-3">
+              {/* View all comments button */}
+              {comments.length > 2 && !showAllComments && (
+                <button
+                  onClick={() => setShowAllComments(true)}
+                  className="flex items-center gap-2 text-xs text-primary hover:underline w-full justify-center py-1"
+                >
+                  <ChevronDown className="h-3 w-3" />
+                  View all {comments.length} comments
+                </button>
+              )}
+
+              {/* Display comments */}
+              {(showAllComments ? comments : comments.slice(0, 2)).map((comment) => (
+                <div key={comment.id} className="text-sm bg-background rounded-lg p-2">
+                  <div className="flex items-start gap-2">
+                    <img
+                      src={
+                        comment.author?.avatarUrl ||
+                        "https://api.dicebear.com/7.x/initials/svg?seed=user"
+                      }
+                      alt={comment.author?.name}
+                      className="h-6 w-6 rounded-full object-cover flex-shrink-0 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          to={`/profile/${comment.userId}`}
+                          className="font-semibold text-xs hover:text-primary transition"
+                        >
+                          {comment.author?.name}
+                        </Link>
+                        {comment.author?.verified && (
+                          <BadgeCheck className="h-3 w-3 text-blue-500" />
+                        )}
+                      </div>
+                      <p className="text-muted-foreground whitespace-pre-wrap">
+                        {comment.content}
+                      </p>
+                      <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
+                        <button
+                          onClick={() => handleLikeComment(comment.id)}
+                          className={`hover:text-primary transition ${
+                            comment.userLiked ? "text-red-500" : ""
+                          }`}
+                        >
+                          <Heart
+                            className="h-3 w-3 inline mr-1"
+                            fill={comment.userLiked ? "currentColor" : "none"}
+                          />
+                          {comment.likes || 0}
+                        </button>
+                        {canDeleteComment(comment.id) && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="hover:text-destructive transition"
+                          >
+                            <Trash2 className="h-3 w-3 inline mr-1" />
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
+
+              {/* Show less button */}
+              {showAllComments && comments.length > 2 && (
+                <button
+                  onClick={() => setShowAllComments(false)}
+                  className="flex items-center gap-2 text-xs text-primary hover:underline w-full justify-center py-1"
+                >
+                  <ChevronUp className="h-3 w-3" />
+                  Show less
+                </button>
+              )}
             </div>
           )}
         </div>
