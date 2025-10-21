@@ -244,6 +244,22 @@ export const BasesSection = () => {
     }
   };
 
+  const handleDeleteBase = async (baseId: string, baseName: string) => {
+    if (!confirm(`Are you sure you want to delete "${baseName}"? This action moves the base to deleted bases and can be revived later.`)) {
+      return;
+    }
+
+    try {
+      const adminApi = (await import("@/lib/adminApi")).adminApi;
+      await adminApi.deleteBase(baseId);
+      toast.success("Base deleted successfully");
+      await loadBases();
+    } catch (error) {
+      console.error("Failed to delete base:", error);
+      toast.error("Failed to delete base");
+    }
+  };
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
