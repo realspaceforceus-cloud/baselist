@@ -98,6 +98,24 @@ export const ListingCard = ({
     }
   };
 
+  const handleShare = async () => {
+    const slug = generateSlug(listing.title, listing.id);
+    const shareUrl = generateListingShareUrl(listing.id, slug);
+    const success = await shareContent({
+      title: listing.title,
+      text: `Check out this listing: ${listing.title}`,
+      url: shareUrl,
+    });
+
+    if (success) {
+      if (navigator.share) {
+        toast.success("Listing shared!");
+      } else {
+        toast.success("Link copied to clipboard!");
+      }
+    }
+  };
+
   return (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition hover:-translate-y-1 hover:shadow-xl">
       <Link
