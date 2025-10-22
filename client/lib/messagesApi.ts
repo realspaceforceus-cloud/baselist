@@ -29,16 +29,15 @@ export interface MessagesResponse {
 /**
  * Fetch user's message threads with pagination
  */
-export async function getThreads(options?: {
-  limit?: number;
-  offset?: number;
-}): Promise<ThreadsResponse> {
+export async function getThreads(
+  limit: number = 50,
+  offset: number = 0,
+): Promise<ThreadsResponse> {
   const params = new URLSearchParams();
-  if (options?.limit) params.append("limit", options.limit.toString());
-  if (options?.offset !== undefined)
-    params.append("offset", options.offset.toString());
+  params.append("limit", limit.toString());
+  params.append("offset", offset.toString());
 
-  const url = `/.netlify/functions/messages/threads${params.toString() ? "?" + params.toString() : ""}`;
+  const url = `/.netlify/functions/messages?${params.toString()}`;
   const response = await fetch(url, {
     credentials: "include",
   });
