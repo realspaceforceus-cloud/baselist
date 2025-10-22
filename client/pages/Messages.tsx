@@ -177,7 +177,7 @@ const Messages = (): JSX.Element => {
           seller?.name || (partnerId ? getMemberName(partnerId) : "Member");
 
         const lastMessage =
-          thread.messages[thread.messages.length - 1] ?? undefined;
+          thread.messages?.[thread.messages.length - 1] ?? undefined;
         const lastUpdated = lastMessage
           ? formatDistanceToNow(new Date(lastMessage.sentAt), {
               addSuffix: true,

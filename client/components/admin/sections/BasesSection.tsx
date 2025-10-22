@@ -211,7 +211,7 @@ export const BasesSection = () => {
       return;
     }
 
-    if (!formData.latitude || !formData.longitude) {
+    if (!formData.latitude) {
       toast.error(
         "Latitude and longitude are required for accurate distance calculations",
       );

@@ -1943,7 +1943,7 @@ export const BaseListProvider = ({
             return thread;
           }
 
-          const lastMessage = thread.messages[thread.messages.length - 1];
+          const lastMessage = thread.messages?.[thread.messages?.length - 1];
 
           if (!lastMessage) {
             return thread;
