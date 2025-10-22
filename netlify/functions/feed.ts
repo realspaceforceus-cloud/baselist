@@ -425,6 +425,14 @@ export const handler: Handler = async (event) => {
     if (method === "POST" && path === "/posts") {
       const userId = await getUserIdFromAuth(event);
       if (!userId) {
+        recordMetric(pool, {
+          endpoint: "/feed/posts",
+          method: "POST",
+          statusCode: 401,
+          responseTimeMs: Date.now() - startTime,
+          errorMessage: "Unauthorized",
+        }).catch(() => {});
+
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
@@ -436,6 +444,14 @@ export const handler: Handler = async (event) => {
         JSON.parse(event.body || "{}");
 
       if (!baseId || !postType || !content) {
+        recordMetric(pool, {
+          endpoint: "/feed/posts",
+          method: "POST",
+          statusCode: 400,
+          responseTimeMs: Date.now() - startTime,
+          errorMessage: "Missing required fields",
+        }).catch(() => {});
+
         return {
           statusCode: 400,
           headers: { "Content-Type": "application/json" },
