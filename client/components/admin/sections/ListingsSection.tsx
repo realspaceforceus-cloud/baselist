@@ -328,24 +328,24 @@ export const ListingsSection = () => {
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          className="rounded-full border-destructive text-destructive"
+                          className="h-8 w-8 p-0 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
                           disabled={listing.status === "Removed"}
                           onClick={() => handleHideListing(listing.id)}
+                          title="Hide listing"
                         >
-                          <ShieldOff className="h-3.5 w-3.5 mr-1" />
-                          Remove
+                          <ShieldOff className="h-3.5 w-3.5" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          className="rounded-full"
+                          className="h-8 w-8 p-0 rounded-lg"
                           disabled={listing.status !== "Removed"}
                           onClick={() => handleRestoreListing(listing.id)}
+                          title="Restore listing"
                         >
-                          <RefreshCcw className="h-3.5 w-3.5 mr-1" />
-                          Restore
+                          <RefreshCcw className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     )}
