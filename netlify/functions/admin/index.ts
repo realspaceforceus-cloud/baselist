@@ -204,6 +204,7 @@ export const handler: Handler = async (event) => {
         status,
         role,
         baseId,
+        baseIds,
         verify,
         reason,
         strikeType,
@@ -224,7 +225,13 @@ export const handler: Handler = async (event) => {
       const updates: Record<string, any> = {};
       if (status) updates.status = status;
       if (role) updates.role = role;
-      if (baseId) updates.base_id = baseId;
+      // For admins, always set baseId to null (they have access to all bases)
+      if (role === "admin") {
+        updates.base_id = null;
+      } else if (baseId) {
+        // For other roles, set the baseId if provided (backwards compatibility)
+        updates.base_id = baseId;
+      }
       if (verify) updates.dow_verified_at = new Date().toISOString();
 
       const setClauses = Object.keys(updates)
@@ -237,6 +244,28 @@ export const handler: Handler = async (event) => {
           `UPDATE users SET ${setClauses}, updated_at = NOW() WHERE id = $${values.length + 1}`,
           [...values, userId],
         );
+      }
+
+      // Handle moderator base assignments
+      if (role === "moderator" && baseIds && Array.isArray(baseIds)) {
+        // Delete existing base assignments
+        await client.query(
+          "DELETE FROM moderator_bases WHERE moderator_id = $1",
+          [userId],
+        );
+
+        // Insert new base assignments
+        for (const bid of baseIds) {
+          await client.query(
+            `INSERT INTO moderator_bases (id, moderator_id, base_id)
+             VALUES ($1, $2, $3)`,
+            [
+              `mb-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+              userId,
+              bid,
+            ],
+          );
+        }
       }
 
       if (strikeType && strikeDescription) {
