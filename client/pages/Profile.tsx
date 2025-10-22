@@ -318,7 +318,7 @@ const Profile = (): JSX.Element => {
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <p className="flex items-center gap-2">
                       <span className="font-semibold text-foreground">
-                        {viewingOwnProfile
+                        {isViewingOwnProfile
                           ? "You rated"
                           : `${profileFirstName} rated`}
                       </span>
@@ -326,7 +326,7 @@ const Profile = (): JSX.Element => {
                     </p>
                     <p className="flex items-center gap-2">
                       <span className="font-semibold text-foreground">
-                        {viewingOwnProfile
+                        {isViewingOwnProfile
                           ? "They rated you"
                           : `${partnerName} rated ${profileFirstName}`}
                       </span>
