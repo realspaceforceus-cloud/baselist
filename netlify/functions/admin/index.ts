@@ -1403,10 +1403,20 @@ export const handler: Handler = async (event) => {
         [limit],
       );
 
+      // Transform snake_case to camelCase
+      const transformedAttempts = result.rows.map((row: any) => ({
+        id: row.id,
+        identifier: row.identifier,
+        ipAddress: row.ip_address,
+        userAgent: row.user_agent,
+        attemptedAt: row.attempted_at,
+        reason: row.reason,
+      }));
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ attempts: result.rows }),
+        body: JSON.stringify({ attempts: transformedAttempts }),
       };
     }
 
