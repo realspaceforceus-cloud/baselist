@@ -137,11 +137,24 @@ export const handler: Handler = async (event) => {
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
-      return {
+      const errorResponse = {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
+
+      // Record metric for error
+      recordMetric(pool, {
+        endpoint: "/listings",
+        method: "GET",
+        statusCode: 400,
+        responseTimeMs: Date.now() - startTime,
+        errorMessage: errorMsg,
+      }).catch(() => {
+        // Ignore errors
+      });
+
+      return errorResponse;
     } finally {
       client.release();
     }
