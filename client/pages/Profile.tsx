@@ -78,7 +78,7 @@ const Profile = (): JSX.Element => {
 
   // Determine viewing own profile (must come before other hooks)
   // Safe boolean: don't read currentUser.id unless it exists
-  const isViewingOwnProfile = !memberId || (currentUser?.id === memberId);
+  const isViewingOwnProfile = !memberId || currentUser?.id === memberId;
 
   const profileUser = useMemo(() => {
     if (isViewingOwnProfile) {
@@ -98,14 +98,11 @@ const Profile = (): JSX.Element => {
     }
     if (!profileUser) return currentBase ?? null;
     return (
-      bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase ?? null
+      bases.find((base) => base.id === profileUser.currentBaseId) ??
+      currentBase ??
+      null
     );
-  }, [
-    bases,
-    currentBase,
-    profileUser,
-    isViewingOwnProfile,
-  ]);
+  }, [bases, currentBase, profileUser, isViewingOwnProfile]);
 
   // Define all hooks BEFORE any early returns (required by React rules of hooks)
   const profileFirstName = useMemo(() => {
