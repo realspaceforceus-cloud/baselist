@@ -8,6 +8,7 @@ import {
   Flag,
   ChevronDown,
   ChevronUp,
+  Share2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useBaseList } from "@/context/BaseListContext";
 import { FeedCommentItem } from "./FeedCommentItem";
 import { MentionAutocomplete } from "./MentionAutocomplete";
+import { shareContent, generatePostShareUrl } from "@/lib/shareUtils";
 import type { FeedPost, FeedComment } from "@/types";
 
 interface FeedPostItemProps {
