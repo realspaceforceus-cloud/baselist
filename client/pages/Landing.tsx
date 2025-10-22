@@ -173,6 +173,20 @@ const Landing = (): JSX.Element => {
     setHasShownSuccessNotification(false);
   };
 
+  // Load closest bases for signup
+  useEffect(() => {
+    if (joinStage === "account") {
+      const initLocation = async () => {
+        const location = await getUserLocation();
+        if (location) {
+          const closest = getClosestBases(location, bases as BaseWithDistance[]);
+          setClosestBasesSignup(closest);
+        }
+      };
+      initLocation();
+    }
+  }, [joinStage, bases]);
+
   const handleAccountSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAccountError(null);
