@@ -9,21 +9,63 @@ export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/messages", "");
 
-  // GET /api/messages/thread/:threadId
-  if (method === "GET" && path.includes("/thread/")) {
+  // GET /api/messages/threads/:threadId - get messages in a thread
+  if (method === "GET" && path.includes("/threads/")) {
     const client = await pool.connect();
     try {
-      const threadId = path.split("/thread/")[1];
+      const threadId = path.split("/threads/")[1];
+      const userId = await getUserIdFromAuth(event);
 
-      const result = await client.query(
-        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      // Verify user is participant in thread
+      const threadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1 AND $2 = ANY(participants)",
+        [threadId, userId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      // Parse pagination params
+      const url = new URL(event.rawUrl || `http://localhost${event.path}`);
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
+      const offset = parseInt(url.searchParams.get("offset") || "0");
+
+      // Get total count
+      const countResult = await client.query(
+        "SELECT COUNT(*) as count FROM messages WHERE thread_id = $1",
         [threadId],
+      );
+      const total = parseInt(countResult.rows[0]?.count || "0");
+
+      // Get messages with pagination
+      const result = await client.query(
+        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC LIMIT $2 OFFSET $3",
+        [threadId, limit, offset],
       );
 
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.rows),
+        body: JSON.stringify({
+          messages: result.rows,
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total,
+        }),
       };
     } catch (err) {
       const errorMsg =
