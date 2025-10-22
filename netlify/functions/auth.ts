@@ -107,7 +107,9 @@ const isValidUsername = (username: string): boolean => {
 // POST /api/auth/signup
 // Creates a new user account and sends verification code
 const handleSignup = async (event: any) => {
-  const { username, email, password, baseId } = JSON.parse(event.body || "{}");
+  const { username, email, password, baseId, invitationCode } = JSON.parse(
+    event.body || "{}",
+  );
 
   if (!username || !email || !password || !baseId) {
     return {
@@ -119,6 +121,7 @@ const handleSignup = async (event: any) => {
   const trimmedUsername = username.trim().toLowerCase();
   const trimmedEmail = email.trim().toLowerCase();
   const trimmedPassword = password.trim();
+  const trimmedCode = invitationCode ? invitationCode.trim() : null;
 
   if (!isValidUsername(trimmedUsername)) {
     return {
@@ -130,7 +133,41 @@ const handleSignup = async (event: any) => {
     };
   }
 
-  if (!isDowEmail(trimmedEmail)) {
+  // If using invitation code, validate it instead of requiring military email
+  let hasValidCode = false;
+  let codeUsedByUser: string | null = null;
+
+  if (trimmedCode) {
+    const client = await pool.connect();
+    try {
+      const codeResult = await client.query(
+        `SELECT id, email FROM invitation_codes
+         WHERE code = $1 AND used_at IS NULL AND expires_at > NOW()`,
+        [trimmedCode],
+      );
+
+      if (codeResult.rows.length === 0) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            error: "Invalid or expired invitation code",
+          }),
+        };
+      }
+
+      hasValidCode = true;
+      codeUsedByUser = codeResult.rows[0].email || null;
+    } catch (error) {
+      console.error("Code validation error:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Failed to validate invitation code" }),
+      };
+    } finally {
+      client.release();
+    }
+  } else if (!isDowEmail(trimmedEmail)) {
+    // Only require military email if not using invitation code
     return {
       statusCode: 400,
       body: JSON.stringify({
