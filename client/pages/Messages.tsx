@@ -213,7 +213,7 @@ const Messages = (): JSX.Element => {
 
         const transaction = thread.transaction;
         const awaitingUserConfirmation = Boolean(
-          transaction?.status === "pending_complete" &&
+          transaction?.status === "pending_confirmation" &&
             transaction.markedCompleteBy &&
             transaction.markedCompleteBy !== user.id,
         );
