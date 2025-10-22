@@ -345,10 +345,9 @@ export const Header = (): JSX.Element => {
             <div className="flex flex-col gap-2 md:gap-4">
               <div className="flex items-center justify-between gap-2 md:gap-4">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-lg md:text-2xl font-semibold tracking-tight text-foreground flex-shrink-0">
-                    <span className="font-normal">trusty</span>
-                    <span className="font-bold">PCS</span>
-                  </span>
+                  <div className="flex-shrink-0">
+                    <Logo />
+                  </div>
                   <div className="hidden md:flex flex-col gap-0">
                     <span className="text-[0.65rem] text-muted-foreground">
                       {settings.website_description ||
