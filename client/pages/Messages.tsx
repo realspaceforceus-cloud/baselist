@@ -481,6 +481,27 @@ const Messages = (): JSX.Element => {
     deleteThread(summary.thread.id);
   };
 
+  const handleDismissListing = () => {
+    if (!activeSummary) {
+      return;
+    }
+    setDismissedThreadIds((prev) => {
+      const next = new Set(prev);
+      next.add(activeSummary.thread.id);
+      return next;
+    });
+    // Navigate to next active thread
+    const nextThread = filteredSummaries.find(
+      (s) => s.thread.id !== activeSummary.thread.id,
+    );
+    if (nextThread) {
+      navigate(`/messages/${nextThread.thread.id}`);
+    } else {
+      navigate("/messages");
+    }
+    toast.success("Conversation dismissed");
+  };
+
   const handleFilterSelect = (nextFilter: ThreadFilter) => {
     setThreadFilter(nextFilter);
   };
