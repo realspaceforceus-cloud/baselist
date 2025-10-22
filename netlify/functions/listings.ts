@@ -29,21 +29,96 @@ export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/listings", "");
 
-  // GET /api/listings
+  // GET /api/listings?baseId=&category=&search=&limit=&offset=
   if (method === "GET" && path === "") {
     const client = await pool.connect();
     try {
-      const result = await client.query(
-        "SELECT * FROM listings WHERE status = $1 ORDER BY created_at DESC",
-        ["active"],
-      );
+      const query = event.queryStringParameters || {};
+      const baseId = query.baseId || null;
+      const category = query.category || null;
+      const search = query.search || null;
+      const limit = Math.min(parseInt(query.limit || "20"), 100);
+      const offset = parseInt(query.offset || "0");
 
-      const transformedListings = result.rows.map(transformListing);
+      let sql = `
+        SELECT
+          l.*,
+          u.username as seller_name,
+          u.avatar_url as seller_avatar,
+          u.dow_verified_at as seller_verified_at,
+          u.last_login_at as seller_last_active
+        FROM listings l
+        LEFT JOIN users u ON l.seller_id = u.id
+        WHERE l.status = $1
+      `;
+      const params: any[] = ["active"];
+
+      if (baseId) {
+        sql += ` AND l.base_id = $${params.length + 1}`;
+        params.push(baseId);
+      }
+
+      if (category) {
+        sql += ` AND l.category = $${params.length + 1}`;
+        params.push(category);
+      }
+
+      if (search) {
+        sql += ` AND (l.title ILIKE $${params.length + 1} OR l.description ILIKE $${params.length + 1})`;
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm);
+      }
+
+      sql += ` ORDER BY l.promoted DESC, l.created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(limit, offset);
+
+      const result = await client.query(sql, params);
+
+      const listings = result.rows.map((row) => ({
+        ...transformListing(row),
+        seller: {
+          id: row.seller_id,
+          name: row.seller_name || "Member",
+          username: row.seller_name,
+          avatarUrl: row.seller_avatar,
+          verified: !!row.seller_verified_at,
+          lastActiveAt: row.seller_last_active,
+        },
+      }));
+
+      // Get total count for pagination
+      let countSql = "SELECT COUNT(*) as count FROM listings WHERE status = $1";
+      const countParams: any[] = ["active"];
+
+      if (baseId) {
+        countSql += ` AND base_id = $${countParams.length + 1}`;
+        countParams.push(baseId);
+      }
+
+      if (category) {
+        countSql += ` AND category = $${countParams.length + 1}`;
+        countParams.push(category);
+      }
+
+      if (search) {
+        countSql += ` AND (title ILIKE $${countParams.length + 1} OR description ILIKE $${countParams.length + 1})`;
+        const searchTerm = `%${search}%`;
+        countParams.push(searchTerm, searchTerm);
+      }
+
+      const countResult = await client.query(countSql, countParams);
+      const total = parseInt(countResult.rows[0].count);
 
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(transformedListings),
+        body: JSON.stringify({
+          listings,
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total,
+        }),
       };
     } catch (err) {
       const errorMsg =
