@@ -231,6 +231,27 @@ export function FeedPostItem({
     }
   };
 
+  const handleShare = async () => {
+    const shareUrl = generatePostShareUrl(post.id);
+    const success = await shareContent({
+      title: "Check out this post",
+      text: post.content.substring(0, 100),
+      url: shareUrl,
+    });
+
+    if (success) {
+      if (navigator.share) {
+        // Native share was used
+        toast.success("Post shared!");
+      } else {
+        // Fallback copy to clipboard
+        toast.success("Link copied to clipboard!");
+      }
+    } else {
+      toast.error("Failed to share post");
+    }
+  };
+
   const canDeletePost =
     user?.userId === post.userId ||
     (currentBase && (user?.role === "admin" || user?.role === "moderator"));
