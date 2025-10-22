@@ -83,11 +83,10 @@ const Profile = (): JSX.Element => {
     if (isViewingOwnProfile) {
       return currentUser;
     }
-    // Try local context first, then fetched user
-    return getMemberProfile(memberId) ?? fetchedUser ?? null;
+    // Use fetched user when viewing another profile
+    return fetchedUser ?? null;
   }, [
     currentUser,
-    getMemberProfile,
     memberId,
     fetchedUser,
     isViewingOwnProfile,
