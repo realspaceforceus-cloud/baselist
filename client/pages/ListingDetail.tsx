@@ -514,14 +514,24 @@ const ListingDetail = (): JSX.Element => {
               )}
 
               <div className="space-y-2 border-t border-border pt-4">
-                <Button
-                  className="w-full rounded-full"
-                  onClick={handleOpenComposer}
-                  disabled={!seller}
-                >
-                  <MessageCircle className="h-4 w-4" aria-hidden />
-                  Message seller
-                </Button>
+                {currentUser?.userId === listing.sellerId ? (
+                  <Button
+                    className="w-full rounded-full"
+                    onClick={() => navigate(`/edit-listing/${listing.id}`)}
+                  >
+                    <Edit2 className="h-4 w-4" aria-hidden />
+                    Edit listing
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full rounded-full"
+                    onClick={handleOpenComposer}
+                    disabled={!seller}
+                  >
+                    <MessageCircle className="h-4 w-4" aria-hidden />
+                    Message seller
+                  </Button>
+                )}
                 <Button
                   variant={isSaved ? "default" : "outline"}
                   className="w-full rounded-full"
