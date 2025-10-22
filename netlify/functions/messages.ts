@@ -102,12 +102,45 @@ export const handler: Handler = async (event) => {
         };
       }
 
+      // If listing specified, check if it's sold or removed
+      if (listingId) {
+        const listingStatusResult = await client.query(
+          "SELECT status FROM listings WHERE id = $1",
+          [listingId],
+        );
+
+        if (listingStatusResult.rows.length === 0) {
+          // Listing doesn't exist
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              error:
+                "This listing no longer exists. You cannot send new messages about it.",
+            }),
+          };
+        }
+
+        const listingStatus = listingStatusResult.rows[0].status;
+        if (listingStatus === "sold") {
+          return {
+            statusCode: 400,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              error:
+                "This listing has been sold. You cannot send new messages about it.",
+            }),
+          };
+        }
+      }
+
       // Check if thread already exists (listingId is optional for direct messages)
       let threadCheckResult;
       if (listingId) {
         threadCheckResult = await client.query(
           `SELECT id FROM message_threads
            WHERE listing_id = $1 AND $2 = ANY(participants) AND $3 = ANY(participants)
+           ORDER BY status DESC
            LIMIT 1`,
           [listingId, authorId, recipientId],
         );
@@ -116,6 +149,7 @@ export const handler: Handler = async (event) => {
         threadCheckResult = await client.query(
           `SELECT id FROM message_threads
            WHERE listing_id IS NULL AND $1 = ANY(participants) AND $2 = ANY(participants)
+           ORDER BY status DESC
            LIMIT 1`,
           [authorId, recipientId],
         );
@@ -124,15 +158,20 @@ export const handler: Handler = async (event) => {
       let threadId: string;
 
       if (threadCheckResult.rows.length > 0) {
-        // Use existing thread
+        // Use existing thread (can reopen archived threads)
         threadId = threadCheckResult.rows[0].id;
+        // If thread was archived by this user, unarchive it
+        await client.query(
+          "UPDATE message_threads SET archived_by = array_remove(archived_by, $1), status = 'active' WHERE id = $2",
+          [authorId, threadId],
+        );
       } else {
         // Create new thread
         threadId = randomUUID();
         await client.query(
           `INSERT INTO message_threads (id, listing_id, participants, status, archived_by, deleted_by, created_at, updated_at)
            VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`,
-          [threadId, listingId, [authorId, recipientId], "active", [], []],
+          [threadId, listingId || null, [authorId, recipientId], "active", [], []],
         );
       }
 
