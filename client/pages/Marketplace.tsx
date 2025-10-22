@@ -41,14 +41,57 @@ export const Marketplace = (): JSX.Element => {
   const [vehicleFilters, setVehicleFilters] = useState<VehicleFilters>({});
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // Fetch listings when filters change
   useEffect(() => {
-    setActiveFilter("All");
-    setVehicleFilters({});
-  }, [currentBaseId]);
+    const fetchListingsData = async () => {
+      setIsLoading(true);
+      try {
+        const category = activeFilter !== "All" ? activeFilter : undefined;
+        const response = await getListings({
+          baseId: currentBaseId || undefined,
+          category,
+          search: searchQuery || undefined,
+          limit: 20,
+          offset: 0,
+        });
+        setListings(response.listings);
+        setHasMore(response.hasMore);
+        setOffset(0);
+      } catch (error) {
+        console.error("Failed to fetch listings:", error);
+        setListings([]);
+        setHasMore(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchListingsData();
+  }, [currentBaseId, activeFilter, searchQuery]);
+
+  // Load more when offset changes
   useEffect(() => {
-    setVisibleCount(20);
-  }, [activeFilter, currentBaseId, searchQuery, vehicleFilters]);
+    if (offset === 0) return;
+
+    const fetchMore = async () => {
+      try {
+        const category = activeFilter !== "All" ? activeFilter : undefined;
+        const response = await getListings({
+          baseId: currentBaseId || undefined,
+          category,
+          search: searchQuery || undefined,
+          limit: 20,
+          offset,
+        });
+        setListings((prev) => [...prev, ...response.listings]);
+        setHasMore(response.hasMore);
+      } catch (error) {
+        console.error("Failed to fetch more listings:", error);
+      }
+    };
+
+    fetchMore();
+  }, [offset, currentBaseId, activeFilter, searchQuery]);
 
   const sponsorPlacement = useMemo(
     () =>
