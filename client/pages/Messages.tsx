@@ -774,7 +774,22 @@ const Messages = (): JSX.Element => {
                   : "Listing marked sold and history updated."}
               </p>
             </div>
-          ) : activeSummary.listing?.status === "sold" ? (
+          ) : !activeSummary.listing ? (
+            <div className="border-b border-red-200 bg-red-50 px-6 py-3 text-xs text-red-700">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-semibold">This listing has been removed.</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-full px-2 py-1 text-xs"
+                  onClick={handleDismissListing}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+          ) : activeSummary.listing.status === "sold" ? (
             <div className="border-b border-border bg-muted/40 px-6 py-3 text-xs text-muted-foreground">
               This item is marked sold. You can still view the conversation.
             </div>
