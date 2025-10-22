@@ -1067,16 +1067,27 @@ const Messages = (): JSX.Element => {
                       className="rounded-full px-4 text-xs font-semibold"
                       onClick={handleQuickOffer}
                       disabled={
-                        !activeSummary?.listing || activeSummary.listing.isFree
+                        !activeSummary?.listing ||
+                        activeSummary.listing.isFree ||
+                        !activeSummary.listing.price
                       }
                     >
-                      {activeSummary?.listing && !activeSummary.listing.isFree
-                        ? `Offer ${new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                            maximumFractionDigits:
-                              activeSummary.listing.price % 1 === 0 ? 0 : 2,
-                          }).format(activeSummary.listing.price)}`
+                      {activeSummary?.listing &&
+                      !activeSummary.listing.isFree &&
+                      activeSummary.listing.price
+                        ? (() => {
+                            const price = Number(
+                              activeSummary.listing.price,
+                            );
+                            return isNaN(price)
+                              ? "Quick offer"
+                              : `Offer ${new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                  maximumFractionDigits:
+                                    price % 1 === 0 ? 0 : 2,
+                                }).format(price)}`;
+                          })()
                         : "Quick offer"}
                     </Button>
                     {canMarkComplete ? (
