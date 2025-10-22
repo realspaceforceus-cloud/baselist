@@ -1272,7 +1272,7 @@ const Landing = (): JSX.Element => {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   You're all set. Start browsing, posting, and messaging on
-                  BaseList.
+                  {" "}{settings.website_name || "trustyPCS"}.
                 </p>
               </div>
 
