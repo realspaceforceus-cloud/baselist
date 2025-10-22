@@ -73,12 +73,55 @@ export const ReportsSection = () => {
     return reports.filter((r) => r.type === activeFilter);
   }, [activeFilter, reports]);
 
+  const handleReportResolved = () => {
+    setShowDetailModal(false);
+    setSelectedReport(null);
+    // Reload reports
+    const loadReports = async () => {
+      try {
+        const result = await (
+          await import("@/lib/adminApi")
+        ).adminApi.getReports();
+        const reportRecords: AdminReportRecord[] = (result?.reports || []).map(
+          (report: any) => ({
+            id: report.id,
+            type: report.type || "Unknown",
+            reporter: report.reportedBy || "Unknown",
+            targetType: report.targetType || "listing",
+            targetId: report.targetId || "",
+            targetLabel: report.targetLabel || "Unknown",
+            base: report.baseId || "Unknown",
+            time: report.createdAt
+              ? new Intl.DateTimeFormat("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date(report.createdAt))
+              : "—",
+          }),
+        );
+        setReports(reportRecords);
+      } catch (error) {
+        console.error("Failed to reload reports:", error);
+      }
+    };
+    loadReports();
+  };
+
   return (
     <section className="space-y-4">
       <AdminSectionHeader
         title="Reports"
         subtitle="Manage"
         accent={`${reports.length} total`}
+      />
+
+      <ReportDetailModal
+        report={selectedReport}
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        onResolved={handleReportResolved}
       />
 
       {/* Filter */}
