@@ -788,77 +788,88 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/reports
     if (method === "GET" && path === "/reports") {
-      const result = await client.query(
-        `SELECT r.*, u.username as reporter_username, u.avatar_url as reporter_avatar
-         FROM reports r
-         LEFT JOIN users u ON r.reported_by = u.id
-         ORDER BY r.created_at DESC`,
-      );
+      try {
+        const result = await client.query(
+          `SELECT r.*, u.username as reporter_username, u.avatar_url as reporter_avatar
+           FROM reports r
+           LEFT JOIN users u ON r.reporter_id = u.id
+           ORDER BY r.created_at DESC`,
+        );
 
-      // Transform snake_case to camelCase and fetch target info
-      const transformedReports = await Promise.all(
-        result.rows.map(async (report: any) => {
-          let targetLabel = "Unknown";
-          let targetUsername = "Unknown";
+        // Transform snake_case to camelCase and fetch target info
+        const transformedReports = await Promise.all(
+          result.rows.map(async (report: any) => {
+            let targetLabel = "Unknown";
+            let targetUsername = "Unknown";
 
-          // Fetch target label based on target_type
-          if (report.target_type === "listing") {
-            try {
-              const listingResult = await client.query(
-                "SELECT title FROM listings WHERE id = $1",
-                [report.target_id],
-              );
-              if (listingResult.rows.length > 0) {
-                targetLabel = listingResult.rows[0].title;
+            // Fetch target label based on target_type
+            if (report.target_type === "listing") {
+              try {
+                const listingResult = await client.query(
+                  "SELECT title FROM listings WHERE id = $1",
+                  [report.target_id],
+                );
+                if (listingResult.rows.length > 0) {
+                  targetLabel = listingResult.rows[0].title;
+                }
+              } catch (e) {
+                console.error("Failed to fetch listing:", e);
               }
-            } catch (e) {
-              console.error("Failed to fetch listing:", e);
-            }
-          } else if (
-            report.target_type === "user" ||
-            report.target_type === "thread"
-          ) {
-            try {
-              const userResult = await client.query(
-                "SELECT username FROM users WHERE id = $1",
-                [report.target_id],
-              );
-              if (userResult.rows.length > 0) {
-                targetLabel = userResult.rows[0].username;
-                targetUsername = userResult.rows[0].username;
+            } else if (
+              report.target_type === "user" ||
+              report.target_type === "thread"
+            ) {
+              try {
+                const userResult = await client.query(
+                  "SELECT username FROM users WHERE id = $1",
+                  [report.target_id],
+                );
+                if (userResult.rows.length > 0) {
+                  targetLabel = userResult.rows[0].username;
+                  targetUsername = userResult.rows[0].username;
+                }
+              } catch (e) {
+                console.error("Failed to fetch user:", e);
               }
-            } catch (e) {
-              console.error("Failed to fetch user:", e);
             }
-          }
 
-          return {
-            id: report.id,
-            type: report.report_type || report.type,
-            status: report.status,
-            notes: report.notes || "",
-            description: report.notes || "",
-            reportedBy: report.reporter_username || "Unknown",
-            reporterId: report.reported_by,
-            reporterAvatar: report.reporter_avatar,
-            targetType: report.target_type,
-            targetId: report.target_id,
-            targetLabel,
-            targetUsername,
-            baseId: report.base_id,
-            createdAt: report.created_at,
-            updatedAt: report.updated_at,
-            resolvedAt: report.resolved_at,
-            resolverId: report.resolver_id,
-          };
-        }),
-      );
+            return {
+              id: report.id,
+              type: report.type,
+              status: report.status,
+              notes: report.notes || "",
+              description: report.notes || "",
+              reportedBy: report.reporter_username || "Unknown",
+              reporterId: report.reporter_id,
+              reporterAvatar: report.reporter_avatar,
+              targetType: report.target_type,
+              targetId: report.target_id,
+              targetLabel,
+              targetUsername,
+              baseId: report.base_id,
+              createdAt: report.created_at,
+              updatedAt: report.updated_at,
+              resolvedAt: report.resolved_at,
+              resolverId: report.resolver_id,
+            };
+          }),
+        );
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reports: transformedReports }),
-      };
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reports: transformedReports }),
+        };
+      } catch (err) {
+        console.error("Failed to fetch reports:", err);
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to fetch reports";
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: errorMsg }),
+        };
+      }
     }
 
     // POST /api/admin/reports/:id/resolve
