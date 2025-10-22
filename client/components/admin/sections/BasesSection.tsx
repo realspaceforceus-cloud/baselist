@@ -141,8 +141,11 @@ export const BasesSection = () => {
   const [formData, setFormData] = useState({
     name: "",
     abbreviation: "",
-    region: "",
-    timezone: "",
+    state: "",
+    country: "",
+    city: "",
+    latitude: "",
+    longitude: "",
   });
 
   const loadBases = async () => {
