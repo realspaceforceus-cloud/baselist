@@ -162,6 +162,7 @@ export default function AdminListingDetail() {
         isFree: listing.isFree || false,
         category: listing.category || "",
         baseId: listing.baseId || "",
+        imageUrls: listing.imageUrls || [],
         promoted: listing.promoted || false,
       });
     }
