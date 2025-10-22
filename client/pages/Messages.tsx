@@ -409,15 +409,20 @@ const Messages = (): JSX.Element => {
   };
 
   const handleQuickOffer = () => {
-    if (!activeSummary?.listing || activeSummary.listing.isFree) {
+    if (!activeSummary?.listing || activeSummary.listing.isFree || !activeSummary.listing.price) {
+      return;
+    }
+
+    const price = Number(activeSummary.listing.price);
+    if (isNaN(price)) {
       return;
     }
 
     const formatted = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
-      maximumFractionDigits: activeSummary.listing.price % 1 === 0 ? 0 : 2,
-    }).format(activeSummary.listing.price);
+      maximumFractionDigits: price % 1 === 0 ? 0 : 2,
+    }).format(price);
 
     setComposerMessage(`Offer ${formatted}`);
   };
