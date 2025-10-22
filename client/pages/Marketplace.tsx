@@ -25,48 +25,8 @@ interface VehicleFilters {
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
 
-const SellerCacheRenderer = ({
-  listings,
-  children,
-}: {
-  listings: Listing[];
-  children: (sellers: Record<string, Seller>) => JSX.Element;
-}): JSX.Element => {
-  const [sellers, setSellers] = useState<Record<string, Seller>>({});
-
-  useEffect(() => {
-    const uniqueSellerIds = [...new Set(listings.map((l) => l.sellerId))];
-
-    const fetchSellers = async () => {
-      const fetchedSellers: Record<string, Seller> = {};
-      for (const sellerId of uniqueSellerIds) {
-        try {
-          const response = await fetch(
-            `/.netlify/functions/users/${sellerId}`,
-            { credentials: "include" },
-          );
-          if (response.ok) {
-            const data = await response.json();
-            fetchedSellers[sellerId] = data;
-          }
-        } catch (error) {
-          console.error(`Failed to fetch seller ${sellerId}:`, error);
-        }
-      }
-      setSellers(fetchedSellers);
-    };
-
-    if (uniqueSellerIds.length > 0) {
-      fetchSellers();
-    }
-  }, [listings]);
-
-  return children(sellers);
-};
-
 export const Marketplace = (): JSX.Element => {
   const {
-    listings,
     currentBaseId,
     currentBase,
     searchQuery,
@@ -75,9 +35,12 @@ export const Marketplace = (): JSX.Element => {
     beginVerification,
     sponsorPlacements,
   } = useBaseList();
+  const [listings, setListings] = useState<ListingWithSeller[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
   const [vehicleFilters, setVehicleFilters] = useState<VehicleFilters>({});
-  const [visibleCount, setVisibleCount] = useState(20);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
