@@ -173,7 +173,7 @@ const Profile = (): JSX.Element => {
 
   const userNotices = useMemo(
     () =>
-      viewingOwnProfile
+      isViewingOwnProfile && profileUser
         ? notices
             .filter(
               (notice) =>
@@ -186,7 +186,7 @@ const Profile = (): JSX.Element => {
                 new Date(a.createdAt).getTime(),
             )
         : [],
-    [notices, profileUser.id, viewingOwnProfile],
+    [notices, profileUser?.id, isViewingOwnProfile, profileUser],
   );
 
   const noticeSeverityClass: Record<string, string> = {
