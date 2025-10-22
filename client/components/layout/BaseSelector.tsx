@@ -63,7 +63,7 @@ export const BaseSelector = (): JSX.Element => {
           <ChevronDown className="ml-auto h-4 w-4 text-muted-foreground/80 transition group-hover:text-foreground" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 p-0 shadow-card">
+      <PopoverContent align="end" className="w-80 p-0 shadow-card">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>
             <p className="text-sm font-semibold text-foreground">Switch base</p>
@@ -72,7 +72,57 @@ export const BaseSelector = (): JSX.Element => {
             </p>
           </div>
         </div>
-        <ul className="max-h-72 overflow-y-auto py-2">
+
+        {/* Closest Bases Suggestions */}
+        {closestBases.length > 0 && (
+          <div className="border-b border-border px-4 py-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1">
+              <Navigation className="h-3 w-3" />
+              Closest bases
+            </p>
+            <div className="space-y-1">
+              {closestBases.map((base) => {
+                const isActive = base.id === currentBase.id;
+                const distance = base.distance ? Math.round(base.distance) : 0;
+                return (
+                  <button
+                    key={base.id}
+                    type="button"
+                    onClick={() => handleSelect(base.id)}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-xs rounded-lg transition",
+                      isActive
+                        ? "bg-primary/10 font-semibold text-primary"
+                        : "text-foreground hover:bg-muted/60",
+                    )}
+                  >
+                    <span className="font-medium uppercase tracking-wide text-muted-foreground flex-shrink-0">
+                      {base.abbreviation}
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block font-medium truncate">
+                        {base.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {distance} mi
+                      </span>
+                    </span>
+                    <Check
+                      className={cn(
+                        "h-4 w-4 text-primary transition flex-shrink-0",
+                        isActive ? "opacity-100" : "opacity-0",
+                      )}
+                      aria-hidden
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* All Bases */}
+        <ul className="max-h-56 overflow-y-auto py-2">
           {bases.map((base) => {
             const isActive = base.id === currentBase.id;
             return (
