@@ -75,6 +75,7 @@ const transformAnnouncement = (row: any) => ({
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/feed", "");
+  const startTime = Date.now();
 
   try {
     // POST /feed/admin/announcements (admin only)
