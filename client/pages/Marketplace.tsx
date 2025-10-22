@@ -43,9 +43,9 @@ export const Marketplace = (): JSX.Element => {
     beginVerification,
   } = useBaseList();
 
-  const [offset, setOffset] = React.useState(0);
-  const [activeFilter, setActiveFilter] = React.useState<ListingFilter>("All");
-  const [vehicleFilters, setVehicleFilters] = React.useState<VehicleFilters>({});
+  const [offset, setOffset] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
+  const [vehicleFilters, setVehicleFilters] = useState<VehicleFilters>({});
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch listings using React Query hook
