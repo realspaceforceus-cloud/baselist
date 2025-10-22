@@ -8,6 +8,7 @@ import {
   getMentionedUserIds,
   trackInteraction,
 } from "./tag-parser";
+import { recordMetric } from "./lib/metrics";
 
 const transformFeedPost = (row: any) => {
   let pollOptions = undefined;
