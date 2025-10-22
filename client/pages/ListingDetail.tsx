@@ -1,4 +1,11 @@
-import { ArrowLeft, MessageCircle, ShieldCheck, Flag, Check, Heart } from "lucide-react";
+import {
+  ArrowLeft,
+  MessageCircle,
+  ShieldCheck,
+  Flag,
+  Check,
+  Heart,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
 import { useNavigate, useParams } from "react-router-dom";
@@ -341,7 +348,8 @@ const ListingDetail = (): JSX.Element => {
   );
 
   const sellerYear = useMemo(
-    () => (seller?.memberSince ? new Date(seller.memberSince).getFullYear() : null),
+    () =>
+      seller?.memberSince ? new Date(seller.memberSince).getFullYear() : null,
     [seller?.memberSince],
   );
 
@@ -435,7 +443,10 @@ const ListingDetail = (): JSX.Element => {
                     aria-label="Report listing"
                     title="Report this listing"
                   >
-                    <Flag className="h-5 w-5 text-red-600 dark:text-red-400" aria-hidden />
+                    <Flag
+                      className="h-5 w-5 text-red-600 dark:text-red-400"
+                      aria-hidden
+                    />
                   </button>
                 </div>
               )}
