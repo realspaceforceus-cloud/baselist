@@ -1072,12 +1072,16 @@ const Messages = (): JSX.Element => {
                 "border-b px-6 py-3 text-xs",
                 activeTransaction.status === "completed"
                   ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                  : "border-blue-200 bg-blue-50 text-blue-700",
+                  : activeTransaction.offer?.status === "accepted"
+                    ? "border-green-200 bg-green-50 text-green-700"
+                    : "border-blue-200 bg-blue-50 text-blue-700",
               )}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   {activeTransaction.status === "completed" ? (
+                    <CheckCircle2 className="h-4 w-4" aria-hidden />
+                  ) : activeTransaction.offer?.status === "accepted" ? (
                     <CheckCircle2 className="h-4 w-4" aria-hidden />
                   ) : (
                     <Clock3 className="h-4 w-4" aria-hidden />
@@ -1085,7 +1089,9 @@ const Messages = (): JSX.Element => {
                   <span className="text-[0.65rem] font-semibold uppercase tracking-wide">
                     {activeTransaction.status === "completed"
                       ? "Transaction completed"
-                      : "Awaiting confirmation"}
+                      : activeTransaction.offer?.status === "accepted"
+                        ? "Pending meetup location"
+                        : "Awaiting confirmation"}
                   </span>
                 </div>
                 {activeTransaction.status === "pending_confirmation" ? (
@@ -1110,11 +1116,13 @@ const Messages = (): JSX.Element => {
                 ) : null}
               </div>
               <p className="mt-2 text-[0.7rem]">
-                {activeTransaction.status === "pending_confirmation"
-                  ? `This transaction has been marked complete by ${getMemberName(
-                      activeTransaction.initiatedBy,
-                    )}. Confirm to lock it in.`
-                  : "Transaction details available."}
+                {activeTransaction.offer?.status === "accepted"
+                  ? "Both parties have accepted. Plan to meet on base or a safe location. When ready, both click 'Mark complete'."
+                  : activeTransaction.status === "pending_confirmation"
+                    ? `This transaction has been marked complete by ${getMemberName(
+                        activeTransaction.initiatedBy,
+                      )}. Confirm to lock it in.`
+                    : "Transaction details available."}
               </p>
             </div>
           ) : !activeSummary.listing ? (
