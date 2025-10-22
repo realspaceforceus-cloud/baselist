@@ -479,9 +479,7 @@ const Messages = (): JSX.Element => {
 
       // Reconcile optimistic message with real one
       setMessageThreads((prev) => {
-        const existingIndex = prev.findIndex(
-          (t) => t.id === updatedThread.id,
-        );
+        const existingIndex = prev.findIndex((t) => t.id === updatedThread.id);
         if (existingIndex !== -1) {
           // Update existing thread - use all messages from server
           const remaining = prev.filter((_, i) => i !== existingIndex);

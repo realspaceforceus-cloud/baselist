@@ -87,7 +87,9 @@ export const handler: Handler = async (event) => {
   if (method === "POST" && path === "") {
     const client = await pool.connect();
     try {
-      const { listingId, recipientId, body, clientId } = JSON.parse(event.body || "{}");
+      const { listingId, recipientId, body, clientId } = JSON.parse(
+        event.body || "{}",
+      );
 
       // Get userId from auth
       const authorId = await getUserIdFromAuth(event);
