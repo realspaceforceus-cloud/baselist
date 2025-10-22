@@ -347,6 +347,15 @@ export const handler: Handler = async (event) => {
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
+
+      recordMetric(pool, {
+        endpoint: "/listings",
+        method: "POST",
+        statusCode: 400,
+        responseTimeMs: Date.now() - startTime,
+        errorMessage: errorMsg,
+      }).catch(() => {});
+
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
