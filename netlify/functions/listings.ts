@@ -111,7 +111,7 @@ export const handler: Handler = async (event) => {
       const countResult = await client.query(countSql, countParams);
       const total = parseInt(countResult.rows[0].count);
 
-      return {
+      const response = {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -122,6 +122,18 @@ export const handler: Handler = async (event) => {
           hasMore: offset + limit < total,
         }),
       };
+
+      // Record metric asynchronously (don't wait)
+      recordMetric(pool, {
+        endpoint: "/listings",
+        method: "GET",
+        statusCode: 200,
+        responseTimeMs: Date.now() - startTime,
+      }).catch(() => {
+        // Ignore errors
+      });
+
+      return response;
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
