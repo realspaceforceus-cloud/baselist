@@ -2,15 +2,14 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
 import { createNotification } from "./notification-helpers";
+import { getUserIdFromAuth } from "./auth";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/saved-listings", "");
 
-  // Get userId from cookies
-  const cookies = event.headers.cookie || "";
-  const userIdMatch = cookies.match(/userId=([^;]+)/);
-  const userId = userIdMatch ? userIdMatch[1] : null;
+  // Get userId from auth
+  const userId = await getUserIdFromAuth(event);
 
   if (!userId) {
     // Return 401 for unauthenticated requests
