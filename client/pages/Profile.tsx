@@ -348,9 +348,17 @@ const Profile = (): JSX.Element => {
     <section className="space-y-6">
       <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between md:gap-8">
         <div className="flex items-center gap-4">
-          <span className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary">
-            <BadgeCheck className="h-7 w-7" aria-hidden />
-          </span>
+          {profileUser?.avatarUrl ? (
+            <img
+              src={profileUser.avatarUrl}
+              alt={profileUser.name}
+              className="h-14 w-14 rounded-3xl object-cover border border-border"
+            />
+          ) : (
+            <span className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary">
+              <BadgeCheck className="h-7 w-7" aria-hidden />
+            </span>
+          )}
           <div className="space-y-1">
             <h1 className="text-3xl font-semibold text-foreground">
               {profileUser.name}
