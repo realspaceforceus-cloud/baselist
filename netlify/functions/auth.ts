@@ -245,10 +245,11 @@ const handleSignup = async (event: any) => {
 
     // If using invitation code, automatically verify the user
     const dowVerifiedAt = hasValidCode ? now : null;
+    const joinMethod = hasValidCode ? "code" : "email";
 
     await client.query(
-      `INSERT INTO users (id, username, email, password_hash, role, status, base_id, avatar_url, dow_verified_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      `INSERT INTO users (id, username, email, password_hash, role, status, base_id, avatar_url, dow_verified_at, join_method, join_code_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [
         userId,
         trimmedUsername,
@@ -259,6 +260,8 @@ const handleSignup = async (event: any) => {
         baseId,
         avatarUrl,
         dowVerifiedAt,
+        joinMethod,
+        codeId,
       ],
     );
 
