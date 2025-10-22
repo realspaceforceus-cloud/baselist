@@ -218,8 +218,21 @@ export const BasesSection = () => {
       return;
     }
 
-    const latitude = parseFloat(formData.latitude);
-    const longitude = parseFloat(formData.longitude);
+    // Support both individual coords and comma-separated format (lat, lon)
+    let latStr = formData.latitude.trim();
+    let lonStr = formData.longitude.trim();
+
+    // If latitude contains a comma, split it
+    if (latStr.includes(",")) {
+      const parts = latStr.split(",").map((p) => p.trim());
+      if (parts.length === 2) {
+        latStr = parts[0];
+        lonStr = parts[1];
+      }
+    }
+
+    const latitude = parseFloat(latStr);
+    const longitude = parseFloat(lonStr);
 
     if (isNaN(latitude) || isNaN(longitude)) {
       toast.error("Latitude and longitude must be valid numbers");
