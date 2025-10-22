@@ -135,7 +135,6 @@ const handleSignup = async (event: any) => {
 
   // If using invitation code, validate it instead of requiring military email
   let hasValidCode = false;
-  let codeUsedByUser: string | null = null;
 
   if (trimmedCode) {
     const client = await pool.connect();
