@@ -5,6 +5,7 @@ import {
   Flag,
   Check,
   Heart,
+  Edit2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { differenceInHours, formatDistanceToNow } from "date-fns";
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
+import { useAuth } from "@/context/AuthContext";
 import { extractIdFromSlug, generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
 import type { UserProfile } from "@/types";
