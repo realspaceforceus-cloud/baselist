@@ -23,6 +23,8 @@ const ADMIN_BASE = "/api/admin";
 export type UpdateUserPayload = {
   status?: "active" | "suspended" | "banned";
   role?: "member" | "moderator" | "admin";
+  baseId?: string;
+  baseIds?: string[];
   verify?: boolean;
   reason?: string;
 };
