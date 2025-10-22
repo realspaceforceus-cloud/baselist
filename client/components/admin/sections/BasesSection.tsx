@@ -129,6 +129,8 @@ export interface AdminBaseRow {
   users: number;
   activeListings: number;
   pendingReports: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 export const BasesSection = () => {
