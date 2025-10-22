@@ -461,7 +461,7 @@ const Profile = (): JSX.Element => {
             </span>
             <div className="space-y-1">
               <h2 className="text-lg font-semibold text-foreground">
-                {viewingOwnProfile
+                {isViewingOwnProfile
                   ? "My transactions"
                   : `${profileFirstName}'s transactions`}
               </h2>
