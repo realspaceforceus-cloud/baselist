@@ -1399,51 +1399,77 @@ export const BaseListProvider = ({
 
   // Raise or clear dispute
   const raiseDispute = useCallback(
-    (threadId: string, userId: string, reason?: string) => {
+    async (threadId: string, userId: string, reason?: string) => {
       const now = new Date().toISOString();
       const userName = resolveDisplayName(userId);
 
-      setMessageThreads((prev) =>
-        prev.map((thread) => {
-          if (thread.id !== threadId) {
-            return thread;
-          }
+      try {
+        // Save dispute to backend
+        const response = await fetch(
+          `/.netlify/functions/messages/threads/${threadId}/dispute`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              reason: reason || "",
+              baseId: currentBaseId || "default",
+            }),
+          },
+        );
 
-          const transaction = thread.transaction;
-          if (!transaction) {
-            return thread;
-          }
+        if (!response.ok) {
+          throw new Error("Failed to raise dispute");
+        }
 
-          transaction.status = "disputed";
-          transaction.dispute = {
-            raisedBy: userId,
-            reason,
-            raisedAt: now,
-          };
+        // Update local state
+        setMessageThreads((prev) =>
+          prev.map((thread) => {
+            if (thread.id !== threadId) {
+              return thread;
+            }
 
-          return {
-            ...thread,
-            status: "disputed",
-            transaction,
-            messages: [
-              ...thread.messages,
-              {
-                id: `msg-${crypto.randomUUID()}`,
-                authorId: "system",
-                body: `${userName} disputed this transaction. Moderators will review.${reason ? ` Reason: ${reason}` : ""}`,
-                sentAt: now,
-                type: "system",
-              },
-            ],
-          };
-        }),
-      );
+            const transaction = thread.transaction;
+            if (!transaction) {
+              return thread;
+            }
 
-      toast.info("Dispute raised", {
-        description: "Moderators will review this transaction.",
-      });
+            transaction.status = "disputed";
+            transaction.dispute = {
+              raisedBy: userId,
+              reason,
+              raisedAt: now,
+            };
+
+            return {
+              ...thread,
+              status: "disputed",
+              transaction,
+              messages: [
+                ...thread.messages,
+                {
+                  id: `msg-${crypto.randomUUID()}`,
+                  authorId: "system",
+                  body: `${userName} disputed this transaction. Moderators will review.${reason ? ` Reason: ${reason}` : ""}`,
+                  sentAt: now,
+                  type: "system",
+                },
+              ],
+            };
+          }),
+        );
+
+        toast.info("Dispute raised", {
+          description: "Moderators will review this transaction.",
+        });
+      } catch (error) {
+        toast.error("Failed to raise dispute", {
+          description:
+            error instanceof Error ? error.message : "Please try again",
+        });
+      }
     },
-    [resolveDisplayName],
+    [resolveDisplayName, currentBaseId],
   );
 
   // Resolve dispute (used by moderators or when auto-resolved after review)
