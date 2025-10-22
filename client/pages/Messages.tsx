@@ -612,14 +612,18 @@ const Messages = (): JSX.Element => {
       }
 
       const data = await response.json();
-      setMessageThreads((prev) =>
-        prev.map((t) => ({
-          ...t,
-          ...(t.id === activeSummary.thread.id && {
-            transaction: data.transaction,
-          }),
-        })),
-      );
+
+      // Update thread with full response including all messages
+      setMessageThreads((prev) => {
+        const existingIndex = prev.findIndex(
+          (t) => t.id === activeSummary.thread.id,
+        );
+        if (existingIndex !== -1) {
+          const remaining = prev.filter((_, i) => i !== existingIndex);
+          return [data.thread, ...remaining];
+        }
+        return prev;
+      });
 
       toast.success("Offer accepted");
     } catch (error) {
