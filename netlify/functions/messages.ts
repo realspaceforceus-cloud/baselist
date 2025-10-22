@@ -597,6 +597,14 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(transaction), threadId],
       );
 
+      // Create offer message
+      const messageId = randomUUID();
+      await client.query(
+        `INSERT INTO messages (id, thread_id, author_id, body, sent_at, type)
+         VALUES ($1, $2, $3, $4, NOW(), $5)`,
+        [messageId, threadId, userId, String(amount), "offer"],
+      );
+
       // Fetch updated thread with all data
       const updatedThreadResult = await client.query(
         "SELECT * FROM message_threads WHERE id = $1",
