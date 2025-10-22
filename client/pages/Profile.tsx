@@ -78,6 +78,29 @@ const Profile = (): JSX.Element => {
     fetchUser();
   }, [memberId, currentUser.id, getMemberProfile]);
 
+  // Fetch user's listings from API
+  useEffect(() => {
+    if (!profileUser?.id) {
+      setUserListings([]);
+      return;
+    }
+
+    const fetchUserListings = async () => {
+      setIsLoadingListings(true);
+      try {
+        const response = await getUserListings(profileUser.id);
+        setUserListings(response.listings);
+      } catch (error) {
+        console.error("Failed to fetch user listings:", error);
+        setUserListings([]);
+      } finally {
+        setIsLoadingListings(false);
+      }
+    };
+
+    fetchUserListings();
+  }, [profileUser?.id]);
+
   // Show a message if guest tries to view their own profile without memberId
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
   if (!isAuthenticated && isViewingOwnProfile) {
