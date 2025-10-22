@@ -1176,6 +1176,63 @@ const Messages = (): JSX.Element => {
                     );
                   }
 
+                  if (message.type === "offer") {
+                    const isOwn = message.authorId === user.id;
+                    const offerAmount = Number(message.body) || 0;
+                    const offerStatus = activeSummary?.thread?.transaction?.offer?.status || "pending";
+                    const canAccept = !isOwn && offerStatus === "pending";
+                    const canDecline = !isOwn && offerStatus === "pending";
+                    const canRetract = isOwn && offerStatus === "pending";
+
+                    return (
+                      <div key={message.id} className="flex flex-col gap-2">
+                        <div className={cn("flex", isOwn ? "justify-end" : "justify-start")}>
+                          <div className="max-w-[80%] rounded-2xl bg-blue-500/20 px-4 py-3 text-sm border border-blue-500/30">
+                            <p className="font-semibold text-blue-600">
+                              Offer: ${offerAmount.toFixed(2)}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {timestamp}
+                            </p>
+                          </div>
+                        </div>
+                        {activeSummary.isMarketplace && (
+                          <div className="flex gap-2 justify-center">
+                            {canAccept && (
+                              <Button
+                                size="sm"
+                                onClick={handleAcceptOffer}
+                                className="text-xs"
+                              >
+                                Accept
+                              </Button>
+                            )}
+                            {canDecline && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={handleDeclineOffer}
+                                className="text-xs"
+                              >
+                                Decline
+                              </Button>
+                            )}
+                            {canRetract && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleRetractOffer}
+                                className="text-xs"
+                              >
+                                Retract
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
                   const isOwn = message.authorId === user.id;
 
                   return (
