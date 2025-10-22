@@ -85,7 +85,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/announcements/admin (admin only - get all)
     if (method === "GET" && path === "/admin") {
-      if (!auth) {
+      if (!userId) {
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
