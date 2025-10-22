@@ -1372,8 +1372,13 @@ const Messages = (): JSX.Element => {
                   }
 
                   const isOwn = message.authorId === user.id;
-                  const authorUsername = isOwn ? user.username : (activeSummary.seller?.username ?? activeSummary.partnerName);
-                  const authorAvatar = isOwn ? user.avatarUrl : activeSummary.seller?.avatarUrl;
+                  const authorUsername = isOwn
+                    ? user.username
+                    : (activeSummary.seller?.username ??
+                      activeSummary.partnerName);
+                  const authorAvatar = isOwn
+                    ? user.avatarUrl
+                    : activeSummary.seller?.avatarUrl;
 
                   return (
                     <div

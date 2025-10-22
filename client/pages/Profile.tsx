@@ -85,12 +85,7 @@ const Profile = (): JSX.Element => {
     }
     // Use fetched user when viewing another profile
     return fetchedUser ?? null;
-  }, [
-    currentUser,
-    memberId,
-    fetchedUser,
-    isViewingOwnProfile,
-  ]);
+  }, [currentUser, memberId, fetchedUser, isViewingOwnProfile]);
 
   // Fetch user's listings using React Query hook (only fetch when we have a valid user)
   const { data: listingsResponse, isLoading: isLoadingListings } =
