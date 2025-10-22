@@ -615,6 +615,39 @@ export const handler: Handler = async (event) => {
           },
         }),
       };
+
+      // Create notification for other party
+      try {
+        const partnerId = threadData.participants.find(
+          (p: string) => p !== userId,
+        );
+        if (partnerId) {
+          const amount = Number(amount);
+          const formatted = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
+          }).format(amount);
+
+          await createNotification(client, {
+            userId: partnerId,
+            type: "offer_received",
+            title: "New Offer Received",
+            description: `${partner?.username || "Someone"} offered ${formatted} for ${listing?.title || "an item"}`,
+            actorId: userId,
+            targetId: threadId,
+            targetType: "thread",
+            data: {
+              amount,
+              listingTitle: listing?.title,
+              bidderName: partner?.username,
+              threadId,
+            },
+          });
+        }
+      } catch (notifErr) {
+        console.error("Failed to create notification:", notifErr);
+      }
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
