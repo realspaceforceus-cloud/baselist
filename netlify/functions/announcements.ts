@@ -299,7 +299,7 @@ export const handler: Handler = async (event) => {
 
     // DELETE /api/announcements/:id
     if (method === "DELETE" && path.startsWith("/") && path !== "/") {
-      if (!auth) {
+      if (!userId) {
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
