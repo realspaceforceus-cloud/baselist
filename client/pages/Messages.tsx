@@ -83,7 +83,6 @@ interface ThreadSummary {
 const Messages = (): JSX.Element => {
   const {
     listings,
-    messageThreads,
     user,
     markThreadAsRead,
     sendMessageToSeller,
@@ -108,12 +107,31 @@ const Messages = (): JSX.Element => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const lastThreadIdRef = useRef<string | null>(null);
 
+  const [messageThreads, setMessageThreads] = useState<MessageThread[]>([]);
+  const [isLoadingThreads, setIsLoadingThreads] = useState(true);
   const [composerMessage, setComposerMessage] = useState<string>("");
   const [threadFilter, setThreadFilter] = useState<ThreadFilter>("active");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [disputeReason, setDisputeReason] = useState<string>("");
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
+
+  // Fetch threads from API on mount
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        setIsLoadingThreads(true);
+        const response = await messagesApi.getThreads(50, 0);
+        setMessageThreads(response.threads || []);
+      } catch (error) {
+        console.error("Failed to fetch message threads:", error);
+      } finally {
+        setIsLoadingThreads(false);
+      }
+    };
+
+    fetchThreads();
+  }, [user?.id]);
 
   const threadSummaries = useMemo<ThreadSummary[]>(() => {
     return messageThreads
