@@ -13,11 +13,16 @@ export interface AdminReportRecord {
   id: string;
   type: string;
   reporter: string;
-  targetType: "listing" | "user";
+  reporterId: string;
+  reporterAvatar?: string;
+  notes: string;
+  targetType: "listing" | "user" | "thread";
   targetId: string;
   targetLabel: string;
+  targetUsername?: string;
   base: string;
   time: string;
+  createdAt: string;
 }
 
 export const ReportsSection = () => {
