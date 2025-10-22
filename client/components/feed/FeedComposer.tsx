@@ -168,7 +168,7 @@ export function FeedComposer({
             {m}
           </button>
         ))}
-        {isAdmin && (
+        {canPostPSA && (
           <button
             onClick={() => {
               setMode("psa");
