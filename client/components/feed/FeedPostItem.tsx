@@ -520,6 +520,15 @@ export function FeedPostItem({
           <MessageCircle className="h-4 w-4" />
           Comment
         </button>
+
+        <button
+          onClick={handleShare}
+          className="flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium text-muted-foreground hover:bg-accent transition"
+          title="Share post"
+        >
+          <Share2 className="h-4 w-4" />
+          Share
+        </button>
       </div>
 
       {/* Comments section - always show if there are comments or if comment box is open */}
