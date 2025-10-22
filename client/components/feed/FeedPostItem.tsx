@@ -133,7 +133,7 @@ export function FeedPostItem({
     try {
       await feedApi.deletePost(post.id);
       toast.success("Post deleted");
-      onPostDeleted?.();
+      onPostDeleted?.(post.id);
     } catch (error) {
       toast.error("Failed to delete post");
     } finally {
