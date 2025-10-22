@@ -115,6 +115,7 @@ const Messages = (): JSX.Element => {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [disputeReason, setDisputeReason] = useState<string>("");
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
+  const [dismissedThreadIds, setDismissedThreadIds] = useState<Set<string>>(new Set());
 
   // Fetch threads from API on mount
   useEffect(() => {
