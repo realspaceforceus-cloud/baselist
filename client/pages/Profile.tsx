@@ -40,6 +40,8 @@ const Profile = (): JSX.Element => {
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
+  console.log("[Profile] Rendering with memberId:", memberId, "currentUser.id:", currentUser?.id, "fetchedUser:", fetchedUser?.id);
+
   // Clear fetched user when navigating to own profile
   useEffect(() => {
     if (!memberId || (currentUser && memberId === currentUser.id)) {
@@ -78,14 +80,13 @@ const Profile = (): JSX.Element => {
 
   // Determine viewing own profile (must come before other hooks)
   // Safe boolean: don't read currentUser.id unless it exists
-  const isViewingOwnProfile = !memberId || currentUser?.id === memberId;
+  const isViewingOwnProfile = !memberId || (currentUser && currentUser.id === memberId);
+  console.log("[Profile] isViewingOwnProfile:", isViewingOwnProfile);
 
   const profileUser = useMemo(() => {
-    if (isViewingOwnProfile) {
-      return currentUser ?? null;
-    }
-    // Use fetched user when viewing another profile
-    return fetchedUser ?? null;
+    const result = isViewingOwnProfile ? (currentUser ?? null) : (fetchedUser ?? null);
+    console.log("[Profile] useMemo profileUser:", result?.id, "dependencies: isViewingOwnProfile=", isViewingOwnProfile);
+    return result;
   }, [isViewingOwnProfile, currentUser, fetchedUser]);
 
   // Fetch user's listings using React Query hook (only fetch when we have a valid user)
@@ -97,11 +98,10 @@ const Profile = (): JSX.Element => {
       return currentBase ?? null;
     }
     if (!profileUser) return currentBase ?? null;
-    return (
-      bases.find((base) => base.id === profileUser.currentBaseId) ??
-      currentBase ??
-      null
-    );
+    const found = bases.find((base) => base.id === profileUser.currentBaseId);
+    const result = found ?? currentBase ?? null;
+    console.log("[Profile] useMemo profileBase:", result?.id);
+    return result;
   }, [bases, currentBase, profileUser, isViewingOwnProfile]);
 
   // Define all hooks BEFORE any early returns (required by React rules of hooks)
@@ -186,8 +186,8 @@ const Profile = (): JSX.Element => {
     profileUser.ratingCount ?? profileUser.completedSales ?? 0;
 
   const userNotices = useMemo(
-    () =>
-      isViewingOwnProfile && profileUser
+    () => {
+      const result = isViewingOwnProfile && profileUser
         ? notices
             .filter(
               (notice) =>
@@ -199,7 +199,10 @@ const Profile = (): JSX.Element => {
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime(),
             )
-        : [],
+        : [];
+      console.log("[Profile] useMemo userNotices count:", result.length);
+      return result;
+    },
     [notices, profileUser?.id, isViewingOwnProfile, profileUser],
   );
 
