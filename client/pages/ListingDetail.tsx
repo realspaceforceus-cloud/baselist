@@ -24,7 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuth } from "@/context/AuthContext";
-import { getListing } from "@/lib/listingsApi";
+import { useListing } from "@/hooks/useListings";
 import { extractIdFromSlug, generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
 import type { UserProfile } from "@/types";
