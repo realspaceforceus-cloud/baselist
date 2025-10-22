@@ -73,10 +73,6 @@ const Profile = (): JSX.Element => {
     fetchUser();
   }, [memberId, currentUser.id, getMemberProfile]);
 
-  // Fetch user's listings using React Query hook
-  const { data: listingsResponse, isLoading: isLoadingListings } =
-    useUserListings(profileUser?.id || null);
-
   // Show a message if guest tries to view their own profile without memberId
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
   if (!isAuthenticated && isViewingOwnProfile) {
