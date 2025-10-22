@@ -260,11 +260,11 @@ const handleSignup = async (event: any) => {
       ],
     );
 
-    // If invitation code was used, mark it as used
+    // If invitation code was used, increment uses_count
     if (hasValidCode && trimmedCode) {
       await client.query(
-        "UPDATE invitation_codes SET used_at = $1, used_by = $2 WHERE code = $3",
-        [now, userId, trimmedCode],
+        "UPDATE invitation_codes SET uses_count = uses_count + 1 WHERE code = $1",
+        [trimmedCode],
       );
     }
 
