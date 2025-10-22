@@ -1,6 +1,7 @@
 import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
+import { getUserIdFromAuth } from "./auth";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
@@ -8,16 +9,12 @@ export const handler: Handler = async (event) => {
 
   // POST /api/reports - user submits a report
   if (method === "POST" && path === "") {
+    const userId = await getUserIdFromAuth(event);
     const client = await pool.connect();
     try {
       const { targetType, targetId, type, notes } = JSON.parse(
         event.body || "{}",
       );
-
-      // Get userId from cookies
-      const cookies = event.headers.cookie || "";
-      const userIdMatch = cookies.match(/userId=([^;]+)/);
-      const userId = userIdMatch ? userIdMatch[1] : null;
 
       if (!userId) {
         return {
