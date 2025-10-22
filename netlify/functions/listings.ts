@@ -133,8 +133,71 @@ export const handler: Handler = async (event) => {
     }
   }
 
+  // GET /api/listings/user/:userId?status=&limit=&offset=
+  if (method === "GET" && path.includes("/user/")) {
+    const client = await pool.connect();
+    try {
+      const userId = path.split("/user/")[1];
+      const query = event.queryStringParameters || {};
+      const status = query.status || null;
+      const limit = Math.min(parseInt(query.limit || "50"), 100);
+      const offset = parseInt(query.offset || "0");
+
+      let sql = `
+        SELECT * FROM listings
+        WHERE seller_id = $1
+      `;
+      const params: any[] = [userId];
+
+      if (status) {
+        sql += ` AND status = $${params.length + 1}`;
+        params.push(status);
+      }
+
+      sql += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(limit, offset);
+
+      const result = await client.query(sql, params);
+      const listings = result.rows.map(transformListing);
+
+      // Get total count
+      let countSql = "SELECT COUNT(*) as count FROM listings WHERE seller_id = $1";
+      const countParams: any[] = [userId];
+
+      if (status) {
+        countSql += ` AND status = $${countParams.length + 1}`;
+        countParams.push(status);
+      }
+
+      const countResult = await client.query(countSql, countParams);
+      const total = parseInt(countResult.rows[0].count);
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listings,
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total,
+        }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   // GET /api/listings/:id
-  if (method === "GET" && path.startsWith("/")) {
+  if (method === "GET" && path.startsWith("/") && !path.includes("/user/")) {
     const client = await pool.connect();
     try {
       const id = path.slice(1);
