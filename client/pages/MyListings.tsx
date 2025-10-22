@@ -110,7 +110,8 @@ export const MyListings = (): JSX.Element => {
 
   const handleDeleteListing = async (listingId: string) => {
     try {
-      await removeListing(listingId);
+      await deleteListing(listingId);
+      setMyListings((prev) => prev.filter((l) => l.id !== listingId));
       setDeleteConfirm(null);
       toast.success("Listing deleted successfully");
     } catch (error) {
