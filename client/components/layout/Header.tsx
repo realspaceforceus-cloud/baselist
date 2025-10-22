@@ -692,6 +692,12 @@ export const Header = (): JSX.Element => {
                   <NotificationItem
                     key={notification.id}
                     notification={notification}
+                    onClick={() => {
+                      if (notification.targetType === "thread") {
+                        navigate(`/messages/${notification.targetId}`);
+                        setNotificationsOpen(false);
+                      }
+                    }}
                     onDismiss={(id) => {
                       setNotifications(
                         notifications.filter((n) => n.id !== id),
