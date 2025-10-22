@@ -43,7 +43,9 @@ export const MyListings = (): JSX.Element => {
   const { user } = useAuth();
   const { messageThreads, initiateTransaction } = useBaseList();
 
-  const [expandedListingId, setExpandedListingId] = useState<string | null>(null);
+  const [expandedListingId, setExpandedListingId] = useState<string | null>(
+    null,
+  );
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [acceptOfferDialog, setAcceptOfferDialog] = useState<{
     listingId: string;
@@ -51,31 +53,33 @@ export const MyListings = (): JSX.Element => {
   } | null>(null);
 
   // Fetch user's listings using React Query hook
-  const { data: listingsResponse, isLoading } = useUserListings(user?.userId || null);
+  const { data: listingsResponse, isLoading } = useUserListings(
+    user?.userId || null,
+  );
 
   // Transform listings to include offers
-  const myListings: ListingWithOffers[] = (listingsResponse?.listings || []).map(
-    (listing) => {
-      const offers = messageThreads.filter(
-        (thread) =>
-          thread.listingId === listing.id &&
-          thread.participants.includes(user?.userId || ""),
-      );
+  const myListings: ListingWithOffers[] = (
+    listingsResponse?.listings || []
+  ).map((listing) => {
+    const offers = messageThreads.filter(
+      (thread) =>
+        thread.listingId === listing.id &&
+        thread.participants.includes(user?.userId || ""),
+    );
 
-      const pendingThread = offers.find(
-        (thread) =>
-          thread.transaction?.status === "pending_complete" ||
-          thread.transaction?.status === "pending_confirmation" ||
-          thread.status === "completed",
-      );
+    const pendingThread = offers.find(
+      (thread) =>
+        thread.transaction?.status === "pending_complete" ||
+        thread.transaction?.status === "pending_confirmation" ||
+        thread.status === "completed",
+    );
 
-      return {
-        ...listing,
-        offers,
-        pendingOfferId: pendingThread?.id,
-      };
-    },
-  );
+    return {
+      ...listing,
+      offers,
+      pendingOfferId: pendingThread?.id,
+    };
+  });
 
   const deleteListingMutation = useDeleteListing();
 

@@ -161,7 +161,8 @@ export const handler: Handler = async (event) => {
       const listings = result.rows.map(transformListing);
 
       // Get total count
-      let countSql = "SELECT COUNT(*) as count FROM listings WHERE seller_id = $1";
+      let countSql =
+        "SELECT COUNT(*) as count FROM listings WHERE seller_id = $1";
       const countParams: any[] = [userId];
 
       if (status) {

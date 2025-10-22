@@ -59,7 +59,12 @@ export function useUserListings(
   options?: { status?: string; limit?: number; offset?: number },
 ) {
   return useQuery({
-    queryKey: [...USER_LISTINGS_QUERY_KEY, userId, options?.status, options?.offset],
+    queryKey: [
+      ...USER_LISTINGS_QUERY_KEY,
+      userId,
+      options?.status,
+      options?.offset,
+    ],
     queryFn: () => getUserListings(userId!, options),
     enabled: !!userId,
     staleTime: 1000 * 60 * 5,
@@ -84,7 +89,8 @@ export function useCreateListing() {
       return newListing;
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Failed to create listing";
+      const message =
+        error instanceof Error ? error.message : "Failed to create listing";
       toast.error(message);
     },
   });
@@ -108,7 +114,8 @@ export function useUpdateListing() {
       return updatedListing;
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Failed to update listing";
+      const message =
+        error instanceof Error ? error.message : "Failed to update listing";
       toast.error(message);
     },
   });
@@ -129,7 +136,8 @@ export function useDeleteListing() {
       toast.success("Listing deleted successfully");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Failed to delete listing";
+      const message =
+        error instanceof Error ? error.message : "Failed to delete listing";
       toast.error(message);
     },
   });

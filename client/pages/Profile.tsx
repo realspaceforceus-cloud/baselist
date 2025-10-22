@@ -56,12 +56,9 @@ const Profile = (): JSX.Element => {
     const fetchUser = async () => {
       setIsLoadingUser(true);
       try {
-        const response = await fetch(
-          `/.netlify/functions/users/${memberId}`,
-          {
-            credentials: "include",
-          },
-        );
+        const response = await fetch(`/.netlify/functions/users/${memberId}`, {
+          credentials: "include",
+        });
         if (response.ok) {
           const data = await response.json();
           setFetchedUser(data);
@@ -77,9 +74,8 @@ const Profile = (): JSX.Element => {
   }, [memberId, currentUser.id, getMemberProfile]);
 
   // Fetch user's listings using React Query hook
-  const { data: listingsResponse, isLoading: isLoadingListings } = useUserListings(
-    profileUser?.id || null,
-  );
+  const { data: listingsResponse, isLoading: isLoadingListings } =
+    useUserListings(profileUser?.id || null);
 
   // Show a message if guest tries to view their own profile without memberId
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;

@@ -47,8 +47,14 @@ export const Marketplace = (): JSX.Element => {
     offset,
   });
 
-  const listings = useMemo(() => listingsResponse?.listings || [], [listingsResponse]);
-  const hasMore = useMemo(() => listingsResponse?.hasMore || false, [listingsResponse]);
+  const listings = useMemo(
+    () => listingsResponse?.listings || [],
+    [listingsResponse],
+  );
+  const hasMore = useMemo(
+    () => listingsResponse?.hasMore || false,
+    [listingsResponse],
+  );
 
   const vehicleOptions = useMemo(() => {
     return extractVehicleOptions(listings);

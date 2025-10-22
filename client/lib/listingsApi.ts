@@ -35,7 +35,8 @@ export async function getListings(options: {
   if (options.category) params.append("category", options.category);
   if (options.search) params.append("search", options.search);
   if (options.limit) params.append("limit", options.limit.toString());
-  if (options.offset !== undefined) params.append("offset", options.offset.toString());
+  if (options.offset !== undefined)
+    params.append("offset", options.offset.toString());
 
   const response = await fetch(`/.netlify/functions/listings?${params}`, {
     credentials: "include",
@@ -73,7 +74,8 @@ export async function getUserListings(
   const params = new URLSearchParams();
   if (options?.status) params.append("status", options.status);
   if (options?.limit) params.append("limit", options.limit.toString());
-  if (options?.offset !== undefined) params.append("offset", options.offset.toString());
+  if (options?.offset !== undefined)
+    params.append("offset", options.offset.toString());
 
   const url = `/.netlify/functions/listings/user/${userId}${params.toString() ? "?" + params.toString() : ""}`;
   const response = await fetch(url, {

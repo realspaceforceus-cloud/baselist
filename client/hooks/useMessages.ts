@@ -15,7 +15,10 @@ const MESSAGES_QUERY_KEY = ["messages"];
 /**
  * Hook to fetch user's message threads with pagination
  */
-export function useMessageThreads(options?: { limit?: number; offset?: number }) {
+export function useMessageThreads(options?: {
+  limit?: number;
+  offset?: number;
+}) {
   return useQuery({
     queryKey: [...THREADS_QUERY_KEY, options?.offset],
     queryFn: () => getThreads(options),
@@ -57,7 +60,8 @@ export function useSendMessage() {
       return data;
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Failed to send message";
+      const message =
+        error instanceof Error ? error.message : "Failed to send message";
       toast.error(message);
     },
   });
@@ -93,7 +97,8 @@ export function useArchiveThread() {
       toast.success("Thread archived");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Failed to archive thread";
+      const message =
+        error instanceof Error ? error.message : "Failed to archive thread";
       toast.error(message);
     },
   });
@@ -112,7 +117,8 @@ export function useDeleteThread() {
       toast.success("Thread deleted");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "Failed to delete thread";
+      const message =
+        error instanceof Error ? error.message : "Failed to delete thread";
       toast.error(message);
     },
   });

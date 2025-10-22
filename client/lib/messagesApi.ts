@@ -35,7 +35,8 @@ export async function getThreads(options?: {
 }): Promise<ThreadsResponse> {
   const params = new URLSearchParams();
   if (options?.limit) params.append("limit", options.limit.toString());
-  if (options?.offset !== undefined) params.append("offset", options.offset.toString());
+  if (options?.offset !== undefined)
+    params.append("offset", options.offset.toString());
 
   const url = `/.netlify/functions/messages/threads${params.toString() ? "?" + params.toString() : ""}`;
   const response = await fetch(url, {
@@ -58,7 +59,8 @@ export async function getMessages(
 ): Promise<MessagesResponse> {
   const params = new URLSearchParams();
   if (options?.limit) params.append("limit", options.limit.toString());
-  if (options?.offset !== undefined) params.append("offset", options.offset.toString());
+  if (options?.offset !== undefined)
+    params.append("offset", options.offset.toString());
 
   const url = `/.netlify/functions/messages/threads/${threadId}${params.toString() ? "?" + params.toString() : ""}`;
   const response = await fetch(url, {

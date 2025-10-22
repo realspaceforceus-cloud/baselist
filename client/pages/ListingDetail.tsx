@@ -57,7 +57,8 @@ const ListingDetail = (): JSX.Element => {
   }, [listingSlug]);
 
   // Fetch listing using React Query hook
-  const { data: queryListing, isLoading: isLoadingQuery } = useListing(actualListingId);
+  const { data: queryListing, isLoading: isLoadingQuery } =
+    useListing(actualListingId);
 
   const listing = useMemo(() => {
     if (!actualListingId) return null;
@@ -66,7 +67,9 @@ const ListingDetail = (): JSX.Element => {
       listings.find(
         (item) =>
           item.id === actualListingId || item.id.includes(actualListingId),
-      ) || queryListing || fetchedListing
+      ) ||
+      queryListing ||
+      fetchedListing
     );
   }, [listings, actualListingId, queryListing, fetchedListing]);
 
