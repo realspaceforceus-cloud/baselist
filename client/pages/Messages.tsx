@@ -124,6 +124,8 @@ const Messages = (): JSX.Element => {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [disputeReason, setDisputeReason] = useState<string>("");
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
+  const [showOfferDialog, setShowOfferDialog] = useState(false);
+  const [offerAmount, setOfferAmount] = useState<string>("");
   const [dismissedThreadIds, setDismissedThreadIds] = useState<Set<string>>(
     new Set(),
   );
