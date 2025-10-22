@@ -6,11 +6,13 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { BottomNav } from "@/components/navigation/BottomNav";
 import { useBaseList } from "@/context/BaseListContext";
+import { useSettings } from "@/context/SettingsContext";
 import { cn } from "@/lib/utils";
 import type { Announcement } from "@/types";
 
 export const AppShell = (): JSX.Element => {
   const { isAuthenticated } = useBaseList();
+  const { settings } = useSettings();
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,6 +39,16 @@ export const AppShell = (): JSX.Element => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Update favicon based on settings
+  useEffect(() => {
+    if (settings.favicon_url) {
+      const faviconLink = document.getElementById("favicon-link") as HTMLLinkElement;
+      if (faviconLink) {
+        faviconLink.href = settings.favicon_url;
+      }
+    }
+  }, [settings.favicon_url]);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background text-foreground">
