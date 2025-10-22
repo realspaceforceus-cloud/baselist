@@ -59,7 +59,14 @@ const formatDate = (dateString: string | null | undefined) => {
 export const AdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>({
+    successfulLogins: [],
+    failedLogins: [],
+    uniqueIps: [],
+    strikes: [],
+    listings: [],
+    ratings: [],
+  });
   const [bases, setBases] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
