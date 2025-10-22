@@ -169,6 +169,13 @@ export default function AdminListingDetail() {
     setIsEditing(false);
   };
 
+  const handleRemoveImage = (indexToRemove: number) => {
+    setEditData({
+      ...editData,
+      imageUrls: editData.imageUrls.filter((_, index) => index !== indexToRemove),
+    });
+  };
+
   const handleHideListing = async () => {
     if (!listingId) return;
 
