@@ -40,7 +40,10 @@ export const handler: Handler = async (event) => {
 
       // Parse pagination params
       const url = new URL(event.rawUrl || `http://localhost${event.path}`);
-      const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
+      const limit = Math.min(
+        parseInt(url.searchParams.get("limit") || "50"),
+        100,
+      );
       const offset = parseInt(url.searchParams.get("offset") || "0");
 
       // Get total count
@@ -227,7 +230,10 @@ export const handler: Handler = async (event) => {
 
       // Parse pagination params
       const url = new URL(event.rawUrl || `http://localhost${event.path}`);
-      const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
+      const limit = Math.min(
+        parseInt(url.searchParams.get("limit") || "50"),
+        100,
+      );
       const offset = parseInt(url.searchParams.get("offset") || "0");
 
       // Get total count

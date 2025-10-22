@@ -1648,13 +1648,7 @@ export const handler: Handler = async (event) => {
       const result = await client.query(
         `INSERT INTO ip_blacklist (id, ip_address, reason, added_by, notes)
          VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [
-          `blacklist-${Date.now()}`,
-          ipAddress,
-          reason,
-          userId,
-          notes || null,
-        ],
+        [`blacklist-${Date.now()}`, ipAddress, reason, userId, notes || null],
       );
 
       return {
