@@ -351,6 +351,14 @@ export const handler: Handler = async (event) => {
           posts.length,
           "posts",
         );
+
+        recordMetric(pool, {
+          endpoint: "/feed/posts",
+          method: "GET",
+          statusCode: 200,
+          responseTimeMs: Date.now() - startTime,
+        }).catch(() => {});
+
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
