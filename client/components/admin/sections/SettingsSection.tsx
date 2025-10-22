@@ -368,6 +368,23 @@ export const SettingsSection = (): JSX.Element => {
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">
+              Favicon URL
+            </label>
+            <Input
+              type="text"
+              name="favicon_url"
+              value={formData.favicon_url}
+              onChange={handleChange}
+              placeholder="/favicon.ico"
+              className="rounded-lg"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Path to your favicon (site icon) - appears in browser tab
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
               Default Avatar URL
             </label>
             <Input
