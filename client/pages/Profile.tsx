@@ -395,7 +395,7 @@ const Profile = (): JSX.Element => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                {viewingOwnProfile
+                {isViewingOwnProfile
                   ? "My listings"
                   : `${profileFirstName}'s listings`}
               </h2>
