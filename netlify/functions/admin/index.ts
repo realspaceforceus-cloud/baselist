@@ -88,7 +88,7 @@ export const handler: Handler = async (event) => {
     // GET /api/admin/users (with pagination and search)
     if (method === "GET" && path === "/users") {
       // For now, allow all authenticated users to see users list (they should be admin anyway)
-      if (!auth?.userId) {
+      if (!userId) {
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
