@@ -969,16 +969,30 @@ const Landing = (): JSX.Element => {
                 >
                   Confirm Password
                 </label>
-                <Input
-                  id="signup-password-confirm"
-                  type="password"
-                  value={passwordConfirm}
-                  onChange={(event) => setPasswordConfirm(event.target.value)}
-                  placeholder="Confirm your password"
-                  className="h-11 rounded-full"
-                  required
-                  disabled={isSubmitting}
-                />
+                <div className="relative">
+                  <Input
+                    id="signup-password-confirm"
+                    type={showPasswordConfirm ? "text" : "password"}
+                    value={passwordConfirm}
+                    onChange={(event) => setPasswordConfirm(event.target.value)}
+                    placeholder="Confirm your password"
+                    className="h-11 rounded-full pr-10"
+                    required
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                    title={showPasswordConfirm ? "Hide password" : "Show password"}
+                  >
+                    {showPasswordConfirm ? (
+                      <EyeOff className="h-4 w-4" aria-hidden />
+                    ) : (
+                      <Eye className="h-4 w-4" aria-hidden />
+                    )}
+                  </button>
+                </div>
                 {passwordConfirm ? (
                   passwordsMatch ? (
                     <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
