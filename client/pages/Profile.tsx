@@ -42,15 +42,15 @@ const Profile = (): JSX.Element => {
 
   // Clear fetched user when navigating to own profile
   useEffect(() => {
-    if (!memberId || memberId === currentUser.id) {
+    if (!memberId || (currentUser && memberId === currentUser.id)) {
       setFetchedUser(null);
       setIsLoadingUser(false);
     }
-  }, [memberId, currentUser.id]);
+  }, [memberId, currentUser?.id]);
 
   // Fetch user from API if not in local context
   useEffect(() => {
-    if (!memberId || memberId === currentUser.id) {
+    if (!memberId || (currentUser && memberId === currentUser.id)) {
       return;
     }
 
