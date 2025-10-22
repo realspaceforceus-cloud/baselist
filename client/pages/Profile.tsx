@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RatingBadge } from "@/components/shared/RatingBadge";
 import { useBaseList } from "@/context/BaseListContext";
-import { getUserListings } from "@/lib/listingsApi";
+import { useUserListings } from "@/hooks/useListings";
 import { cn } from "@/lib/utils";
 import type { TransactionHistoryEntry, UserProfile, Listing } from "@/types";
 
