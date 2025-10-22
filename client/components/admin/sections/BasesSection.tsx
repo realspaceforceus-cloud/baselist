@@ -163,6 +163,8 @@ export const BasesSection = () => {
           users: base.usersCount || 0,
           activeListings: base.listingsCount || 0,
           pendingReports: base.reportsCount || 0,
+          latitude: base.latitude,
+          longitude: base.longitude,
         }),
       );
       setBases(baseRows);
