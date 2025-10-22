@@ -40,7 +40,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/dashboard
     if (method === "GET" && path === "/dashboard") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -96,7 +96,7 @@ export const handler: Handler = async (event) => {
         };
       }
       // TODO: re-enable isAdmin check once we verify it's working
-      // if (!(await isAdmin(auth.userId))) {
+      // if (!(await isAdmin(userId))) {
       //   return { statusCode: 403, body: JSON.stringify({ error: "Forbidden" }) };
       // }
 
@@ -180,7 +180,7 @@ export const handler: Handler = async (event) => {
 
     // PATCH /api/admin/users/:id
     if (method === "PATCH" && path.startsWith("/users/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -264,7 +264,7 @@ export const handler: Handler = async (event) => {
           [
             `note-${Date.now()}`,
             userId,
-            auth.userId,
+            userId,
             "strike",
             strikeType,
             strikeDescription,
@@ -301,7 +301,7 @@ export const handler: Handler = async (event) => {
       path.startsWith("/users/") &&
       path.includes("/detail")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -452,7 +452,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/metrics
     if (method === "GET" && path === "/metrics") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -490,7 +490,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/audit
     if (method === "GET" && path === "/audit") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -566,7 +566,7 @@ export const handler: Handler = async (event) => {
       path.startsWith("/listings/") &&
       path.includes("/detail")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -651,7 +651,7 @@ export const handler: Handler = async (event) => {
 
     // PATCH /api/admin/listings/:id
     if (method === "PATCH" && path.startsWith("/listings/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1043,7 +1043,7 @@ export const handler: Handler = async (event) => {
 
     // DELETE /api/admin/bases/:id (soft delete)
     if (method === "DELETE" && path.startsWith("/bases/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1097,7 +1097,7 @@ export const handler: Handler = async (event) => {
       path.includes("/bases/") &&
       path.includes("/restore")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1147,7 +1147,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/deleted-bases (show deleted bases)
     if (method === "GET" && path === "/deleted-bases") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1195,7 +1195,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/invitation-codes
     if (method === "GET" && path === "/invitation-codes") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1238,7 +1238,7 @@ export const handler: Handler = async (event) => {
 
     // POST /api/admin/invitation-codes
     if (method === "POST" && path === "/invitation-codes") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1268,7 +1268,7 @@ export const handler: Handler = async (event) => {
             [
               `code-${Date.now()}`,
               code,
-              auth.userId,
+              userId,
               baseId,
               maxUses || null,
               expiresAt || null,
@@ -1311,7 +1311,7 @@ export const handler: Handler = async (event) => {
 
     // PATCH /api/admin/invitation-codes/:id
     if (method === "PATCH" && path.startsWith("/invitation-codes/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1380,7 +1380,7 @@ export const handler: Handler = async (event) => {
       path.includes("/invitation-codes/") &&
       path.includes("/users")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1435,7 +1435,7 @@ export const handler: Handler = async (event) => {
       path.startsWith("/invitation-codes/") &&
       !path.includes("/users")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1467,7 +1467,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/account-notes/:userId
     if (method === "GET" && path.startsWith("/account-notes/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1491,7 +1491,7 @@ export const handler: Handler = async (event) => {
 
     // POST /api/admin/account-notes/:userId
     if (method === "POST" && path.startsWith("/account-notes/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1520,7 +1520,7 @@ export const handler: Handler = async (event) => {
         [
           `note-${Date.now()}`,
           userId,
-          auth.userId,
+          userId,
           noteType,
           strikeReason || null,
           description,
@@ -1537,7 +1537,7 @@ export const handler: Handler = async (event) => {
 
     // DELETE /api/admin/users/:userId/strikes/:strikeId
     if (method === "DELETE" && path.includes("/strikes/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1559,7 +1559,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/failed-logins
     if (method === "GET" && path === "/failed-logins") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1595,7 +1595,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/ip-blacklist
     if (method === "GET" && path === "/ip-blacklist") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1627,7 +1627,7 @@ export const handler: Handler = async (event) => {
 
     // POST /api/admin/ip-blacklist
     if (method === "POST" && path === "/ip-blacklist") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1652,7 +1652,7 @@ export const handler: Handler = async (event) => {
           `blacklist-${Date.now()}`,
           ipAddress,
           reason,
-          auth.userId,
+          userId,
           notes || null,
         ],
       );
@@ -1666,7 +1666,7 @@ export const handler: Handler = async (event) => {
 
     // DELETE /api/admin/ip-blacklist/:id
     if (method === "DELETE" && path.startsWith("/ip-blacklist/")) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1687,7 +1687,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/threads
     if (method === "GET" && path === "/threads") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1708,7 +1708,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/threads/flagged
     if (method === "GET" && path === "/threads/flagged") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -1976,7 +1976,7 @@ export const handler: Handler = async (event) => {
       path.startsWith("/users/") &&
       path.includes("/profile")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2047,7 +2047,7 @@ export const handler: Handler = async (event) => {
       path.startsWith("/users/") &&
       path.includes("/password-reset")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2110,7 +2110,7 @@ export const handler: Handler = async (event) => {
       path.startsWith("/users/") &&
       path.includes("/moderator-bases")
     ) {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2147,7 +2147,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/system-health
     if (method === "GET" && path === "/analytics/system-health") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2248,7 +2248,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/live-users
     if (method === "GET" && path === "/analytics/live-users") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2292,7 +2292,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/bases-by-users?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/analytics/bases-by-users") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2355,7 +2355,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/bases-by-listings?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/analytics/bases-by-listings") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2418,7 +2418,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/bases-by-signups?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/analytics/bases-by-signups") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2481,7 +2481,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/moderation
     if (method === "GET" && path === "/analytics/moderation") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2545,7 +2545,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/revenue?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/analytics/revenue") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2612,7 +2612,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/peak-activity
     if (method === "GET" && path === "/analytics/peak-activity") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -2673,7 +2673,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/retention
     if (method === "GET" && path === "/analytics/retention") {
-      if (!(await isAdmin(auth.userId))) {
+      if (!(await isAdmin(userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
