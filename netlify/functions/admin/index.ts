@@ -665,10 +665,26 @@ export const handler: Handler = async (event) => {
         };
       }
 
+      // Transform snake_case to camelCase
+      const transformedReport = {
+        id: result.rows[0].id,
+        type: result.rows[0].report_type || result.rows[0].type,
+        status: result.rows[0].status,
+        description: result.rows[0].description,
+        reportedBy: result.rows[0].reported_by,
+        targetType: result.rows[0].target_type,
+        targetId: result.rows[0].target_id,
+        baseId: result.rows[0].base_id,
+        createdAt: result.rows[0].created_at,
+        updatedAt: result.rows[0].updated_at,
+        resolvedAt: result.rows[0].resolved_at,
+        resolverId: result.rows[0].resolver_id,
+      };
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ report: result.rows[0] }),
+        body: JSON.stringify({ report: transformedReport }),
       };
     }
 
@@ -678,10 +694,24 @@ export const handler: Handler = async (event) => {
         `SELECT * FROM verifications ORDER BY submitted_at DESC`,
       );
 
+      // Transform snake_case to camelCase
+      const transformedVerifications = result.rows.map((v: any) => ({
+        id: v.id,
+        userId: v.user_id,
+        method: v.method,
+        status: v.status,
+        documentUrl: v.document_url,
+        submittedAt: v.submitted_at,
+        updatedAt: v.updated_at,
+        expiresAt: v.expires_at,
+        adjudicatedAt: v.adjudicated_at,
+        adjudicatedBy: v.adjudicated_by,
+      }));
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ verifications: result.rows }),
+        body: JSON.stringify({ verifications: transformedVerifications }),
       };
     }
 
