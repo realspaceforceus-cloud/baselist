@@ -241,6 +241,30 @@ export const handler: Handler = async (event) => {
       );
 
       const threadData = threadResult.rows[0];
+
+      // Fetch listing info if listing_id exists
+      let listing = null;
+      if (threadData.listing_id) {
+        const listingResult = await client.query(
+          "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+          [threadData.listing_id],
+        );
+        listing = listingResult.rows[0];
+      }
+
+      // Fetch partner info (the other participant)
+      const partnerId = threadData.participants.find(
+        (p: string) => p !== authorId,
+      );
+      let partner = null;
+      if (partnerId) {
+        const partnerResult = await client.query(
+          "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+          [partnerId],
+        );
+        partner = partnerResult.rows[0];
+      }
+
       const transformedThread = {
         id: threadData.id,
         listingId: threadData.listing_id,
@@ -251,6 +275,18 @@ export const handler: Handler = async (event) => {
         transaction: threadData.transaction,
         createdAt: threadData.created_at,
         updatedAt: threadData.updated_at,
+        listing,
+        partner,
+        messages: [
+          {
+            id: messageResult.rows[0].id,
+            threadId: messageResult.rows[0].thread_id,
+            authorId: messageResult.rows[0].author_id,
+            body: messageResult.rows[0].body,
+            sentAt: messageResult.rows[0].sent_at,
+            type: messageResult.rows[0].type || "text",
+          },
+        ],
       };
 
       return {
