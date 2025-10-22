@@ -1094,12 +1094,8 @@ const Messages = (): JSX.Element => {
                       variant="outline"
                       size="sm"
                       className="rounded-full px-4 text-xs font-semibold"
-                      onClick={handleQuickOffer}
-                      disabled={
-                        !activeSummary?.listing ||
-                        activeSummary.listing.isFree ||
-                        !activeSummary.listing.price
-                      }
+                      onClick={handleOpenOfferDialog}
+                      disabled={!activeSummary?.listing}
                     >
                       {activeSummary?.listing &&
                       !activeSummary.listing.isFree &&
