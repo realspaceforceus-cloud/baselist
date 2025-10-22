@@ -437,9 +437,22 @@ export const handler: Handler = async (event) => {
         [threadId, listingId, participants, "active", "[]", "[]"],
       );
 
+      const threadData = result.rows[0];
+      const transformedThread = {
+        id: threadData.id,
+        listingId: threadData.listing_id,
+        participants: threadData.participants,
+        status: threadData.status,
+        archivedBy: threadData.archived_by,
+        deletedBy: threadData.deleted_by,
+        transaction: threadData.transaction,
+        createdAt: threadData.created_at,
+        updatedAt: threadData.updated_at,
+      };
+
       return {
         statusCode: 201,
-        body: JSON.stringify(result.rows[0]),
+        body: JSON.stringify(transformedThread),
       };
     } catch (err) {
       const errorMsg =
