@@ -502,6 +502,132 @@ export const handler: Handler = async (event) => {
     }
   }
 
+  // POST /api/messages/threads/:threadId/offer - make an offer
+  if (method === "POST" && path.includes("/threads/") && path.endsWith("/offer")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/offer")[0];
+      const { amount, madeBy } = JSON.parse(event.body || "{}");
+      const userId = await getUserIdFromAuth(event);
+
+      if (!userId || !threadId || amount === undefined) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
+      }
+
+      if (userId !== madeBy) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Cannot make offer on behalf of another user" }),
+        };
+      }
+
+      // Verify thread exists and user is a participant
+      const threadResult = await client.query(
+        "SELECT participants, transaction FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const thread = threadResult.rows[0];
+      if (!thread.participants.includes(userId)) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Not a participant in this thread" }),
+        };
+      }
+
+      // Update transaction with new offer
+      const transaction = thread.transaction || {};
+      const now = new Date().toISOString();
+
+      // If there's an existing offer, move it to counterOffer
+      if (transaction.offer?.status === "pending") {
+        transaction.counterOffer = { ...transaction.offer };
+      }
+
+      transaction.offer = {
+        amount: Number(amount),
+        madeBy: userId,
+        madeAt: now,
+        status: "pending",
+      };
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, updated_at = NOW() WHERE id = $2",
+        [JSON.stringify(transaction), threadId],
+      );
+
+      // Fetch updated thread with all data
+      const updatedThreadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      const threadData = updatedThreadResult.rows[0];
+      const listingResult = threadData.listing_id
+        ? await client.query(
+            "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+            [threadData.listing_id],
+          )
+        : { rows: [null] };
+
+      const listing = listingResult.rows[0];
+      const partnerId = threadData.participants.find((p: string) => p !== userId);
+      const partnerResult = partnerId
+        ? await client.query(
+            "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+            [partnerId],
+          )
+        : { rows: [null] };
+
+      const partner = partnerResult.rows[0];
+
+      return {
+        statusCode: 201,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          thread: {
+            id: threadData.id,
+            listingId: threadData.listing_id,
+            participants: threadData.participants,
+            status: threadData.status,
+            archivedBy: threadData.archived_by,
+            deletedBy: threadData.deleted_by,
+            transaction: transaction,
+            createdAt: threadData.created_at,
+            updatedAt: threadData.updated_at,
+            listing,
+            partner,
+            messages: [],
+          },
+        }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   // POST /api/messages/threads/:threadId/dispute - raise a dispute
   if (method === "POST" && path.includes("/threads/") && path.endsWith("/dispute")) {
     const client = await pool.connect();
