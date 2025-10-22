@@ -862,10 +862,41 @@ export const handler: Handler = async (event) => {
 
       transaction.offer.status = "retracted";
 
+      const threadDetailResult = await client.query(
+        "SELECT participants FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      const threadDetail = threadDetailResult.rows[0];
+      const recipientId = threadDetail?.participants?.find(
+        (p: string) => p !== userId,
+      );
+
       await client.query(
         "UPDATE message_threads SET transaction = $1, updated_at = NOW() WHERE id = $2",
         [JSON.stringify(transaction), threadId],
       );
+
+      // Notify the offer recipient that offer was retracted
+      try {
+        if (recipientId) {
+          await createNotification({
+            userId: recipientId,
+            type: "offer_retracted",
+            title: "Offer Retracted",
+            description: `An offer has been retracted. You can make a counter offer if interested.`,
+            actorId: userId,
+            targetId: threadId,
+            targetType: "thread",
+            data: {
+              amount: transaction.offer?.amount,
+              threadId,
+            },
+          });
+        }
+      } catch (notifErr) {
+        console.error("Failed to create notification:", notifErr);
+      }
 
       return {
         statusCode: 200,
