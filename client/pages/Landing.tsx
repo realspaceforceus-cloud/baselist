@@ -814,8 +814,8 @@ const Landing = (): JSX.Element => {
                 </button>
               </div>
 
-              {/* Email or Code Input */}
-              {useInvitationCode ? (
+              {/* Invitation Code Input (when using join code) */}
+              {useInvitationCode && (
                 <div className="space-y-2">
                   <label
                     htmlFor="signup-code"
@@ -839,50 +839,63 @@ const Landing = (): JSX.Element => {
                     Your invitation code grants you access to join.
                   </p>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  <label
-                    htmlFor="signup-email"
-                    className="text-sm font-semibold text-foreground"
-                  >
-                    Email
-                  </label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    value={accountForm.email}
-                    onChange={(event) =>
-                      setAccountForm((prev) => ({
-                        ...prev,
-                        email: event.target.value,
-                      }))
-                    }
-                    placeholder="Enter your .mil or DoW email"
-                    className="h-11 rounded-full"
-                    required
-                    disabled={isSubmitting}
-                  />
-                  {accountForm.email ? (
-                    emailPositive ? (
+              )}
+
+              {/* Email Input (always shown) */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="signup-email"
+                  className="text-sm font-semibold text-foreground"
+                >
+                  Email
+                </label>
+                <Input
+                  id="signup-email"
+                  type="email"
+                  value={accountForm.email}
+                  onChange={(event) =>
+                    setAccountForm((prev) => ({
+                      ...prev,
+                      email: event.target.value,
+                    }))
+                  }
+                  placeholder={useInvitationCode ? "Enter any email address" : "Enter your .mil or DoW email"}
+                  className="h-11 rounded-full"
+                  required
+                  disabled={isSubmitting}
+                />
+                {accountForm.email ? (
+                  useInvitationCode ? (
+                    emailFormatValid ? (
                       <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
                         <CheckCircle2 className="h-4 w-4" aria-hidden />
-                        DoW email detected.
+                        Email is valid.
                       </p>
                     ) : (
                       <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
                         <AlertCircle className="h-4 w-4" aria-hidden />
-                        {!emailFormatValid
-                          ? "Enter a valid email address."
-                          : "Use an approved DoW email (.mil or .defense.gov)."}
+                        Enter a valid email address.
                       </p>
                     )
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      Use your DoW email (.mil or .defense.gov).
+                  ) : emailPositive ? (
+                    <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                      <CheckCircle2 className="h-4 w-4" aria-hidden />
+                      DoW email detected.
                     </p>
-                  )}
-                </div>
-              )}
+                  ) : (
+                    <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                      <AlertCircle className="h-4 w-4" aria-hidden />
+                      {!emailFormatValid
+                        ? "Enter a valid email address."
+                        : "Use an approved DoW email (.mil or .defense.gov)."}
+                    </p>
+                  )
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {useInvitationCode ? "Any email address works with your invitation code." : "Use your DoW email (.mil or .defense.gov)."}
+                  </p>
+                )}
+              </div>
 
               <div className="space-y-2">
                 <label
