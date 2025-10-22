@@ -2,18 +2,7 @@ import { Handler } from "@netlify/functions";
 import { pool } from "../db";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
-
-function verifyAdminAuth(event: any): { userId: string } | null {
-  const cookies = event.headers.cookie || "";
-  const userIdMatch = cookies.match(/userId=([^;]+)/);
-  const userId = userIdMatch ? userIdMatch[1] : null;
-
-  if (!userId) {
-    return null;
-  }
-
-  return { userId };
-}
+import { getUserIdFromAuth } from "../auth";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
@@ -29,8 +18,8 @@ export const handler: Handler = async (event) => {
   }
   path = path || "/";
 
-  const auth = verifyAdminAuth(event);
-  if (!auth) {
+  const userId = await getUserIdFromAuth(event);
+  if (!userId) {
     return {
       statusCode: 401,
       headers: { "Content-Type": "application/json" },
