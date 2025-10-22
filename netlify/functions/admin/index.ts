@@ -814,7 +814,10 @@ export const handler: Handler = async (event) => {
             } catch (e) {
               console.error("Failed to fetch listing:", e);
             }
-          } else if (report.target_type === "user" || report.target_type === "thread") {
+          } else if (
+            report.target_type === "user" ||
+            report.target_type === "thread"
+          ) {
             try {
               const userResult = await client.query(
                 "SELECT username FROM users WHERE id = $1",

@@ -436,9 +436,7 @@ const Messages = (): JSX.Element => {
 
       // Update local messageThreads state with the new thread
       setMessageThreads((prev) => {
-        const existingIndex = prev.findIndex(
-          (t) => t.id === updatedThread.id,
-        );
+        const existingIndex = prev.findIndex((t) => t.id === updatedThread.id);
         if (existingIndex !== -1) {
           // Update existing thread - move to top
           const remaining = prev.filter((_, i) => i !== existingIndex);

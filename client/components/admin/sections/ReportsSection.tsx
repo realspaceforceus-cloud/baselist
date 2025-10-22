@@ -226,7 +226,10 @@ export const ReportsSection = () => {
                               username: report.targetUsername || "Unknown",
                               avatarUrl: "",
                             },
-                            targetType: report.targetType as "listing" | "user" | "thread",
+                            targetType: report.targetType as
+                              | "listing"
+                              | "user"
+                              | "thread",
                             targetId: report.targetId,
                             targetLabel: report.targetLabel,
                             createdAt: report.createdAt,
