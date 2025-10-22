@@ -269,7 +269,10 @@ export const handler: Handler = async (event) => {
               })),
             };
           } catch (e) {
-            console.error(`Failed to fetch messages for thread ${thread.id}:`, e);
+            console.error(
+              `Failed to fetch messages for thread ${thread.id}:`,
+              e,
+            );
             return {
               ...thread,
               messages: [],

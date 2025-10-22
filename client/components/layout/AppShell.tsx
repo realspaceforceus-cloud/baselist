@@ -43,7 +43,9 @@ export const AppShell = (): JSX.Element => {
   // Update favicon based on settings
   useEffect(() => {
     if (settings.favicon_url) {
-      const faviconLink = document.getElementById("favicon-link") as HTMLLinkElement;
+      const faviconLink = document.getElementById(
+        "favicon-link",
+      ) as HTMLLinkElement;
       if (faviconLink) {
         faviconLink.href = settings.favicon_url;
       }

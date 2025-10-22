@@ -212,7 +212,9 @@ export const BasesSection = () => {
     }
 
     if (!formData.latitude || !formData.longitude) {
-      toast.error("Latitude and longitude are required for accurate distance calculations");
+      toast.error(
+        "Latitude and longitude are required for accurate distance calculations",
+      );
       return;
     }
 
@@ -362,7 +364,36 @@ export const BasesSection = () => {
                   />
                   <datalist id="states">
                     {Object.keys(REGION_TIMEZONE_MAP)
-                      .filter((region) => !["Germany", "United Kingdom", "Italy", "Spain", "France", "Japan", "South Korea", "Qatar", "United Arab Emirates", "Turkey", "Saudi Arabia", "Kuwait", "Bahrain", "Oman", "Jordan", "Iraq", "Afghanistan", "India", "Philippines", "Thailand", "Singapore", "Australia", "Guam", "Puerto Rico", "Diego Garcia"].includes(region))
+                      .filter(
+                        (region) =>
+                          ![
+                            "Germany",
+                            "United Kingdom",
+                            "Italy",
+                            "Spain",
+                            "France",
+                            "Japan",
+                            "South Korea",
+                            "Qatar",
+                            "United Arab Emirates",
+                            "Turkey",
+                            "Saudi Arabia",
+                            "Kuwait",
+                            "Bahrain",
+                            "Oman",
+                            "Jordan",
+                            "Iraq",
+                            "Afghanistan",
+                            "India",
+                            "Philippines",
+                            "Thailand",
+                            "Singapore",
+                            "Australia",
+                            "Guam",
+                            "Puerto Rico",
+                            "Diego Garcia",
+                          ].includes(region),
+                      )
                       .map((state) => (
                         <option key={state} value={state} />
                       ))}
@@ -404,7 +435,9 @@ export const BasesSection = () => {
                     }
                     placeholder="e.g., 36.3495"
                   />
-                  <span className="text-xs text-muted-foreground">-90 to 90</span>
+                  <span className="text-xs text-muted-foreground">
+                    -90 to 90
+                  </span>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="longitude">Longitude</Label>
@@ -418,7 +451,9 @@ export const BasesSection = () => {
                     }
                     placeholder="e.g., -97.8822"
                   />
-                  <span className="text-xs text-muted-foreground">-180 to 180</span>
+                  <span className="text-xs text-muted-foreground">
+                    -180 to 180
+                  </span>
                 </div>
               </div>
             </div>
