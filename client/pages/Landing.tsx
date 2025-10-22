@@ -155,6 +155,9 @@ const Landing = (): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showExpansionForm, setShowExpansionForm] = useState(false);
   const [expansionEmail, setExpansionEmail] = useState("");
+  const [closestBasesSignup, setClosestBasesSignup] = useState<
+    BaseWithDistance[]
+  >([]);
 
   const handleStartJoin = () => {
     setJoinStage("account");
