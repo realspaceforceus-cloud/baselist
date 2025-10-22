@@ -378,7 +378,7 @@ const Messages = (): JSX.Element => {
 
     const currentId = activeSummary.thread.id;
     if (lastThreadIdRef.current !== currentId) {
-      if (activeSummary.thread.messages.length === 0) {
+      if ((activeSummary.thread.messages ?? []).length === 0) {
         setComposerMessage(activeDefaultComposerMessage);
       } else {
         setComposerMessage("");
