@@ -81,43 +81,69 @@ export const RolesSection = (): JSX.Element => {
     loadData();
   }, []);
 
-  const handleEditRole = (user: RoleUser) => {
+  const handleEditRole = async (user: RoleUser) => {
     setEditingUserId(user.id);
     setEditingRole(user.role);
-    setEditingBaseId(user.baseId || "");
+
+    if (user.role === "moderator") {
+      try {
+        const baseIds = await adminApi.getModeratorBases(user.id);
+        setEditingBaseIds(baseIds);
+      } catch (error) {
+        console.error("Failed to load moderator bases:", error);
+        setEditingBaseIds([]);
+      }
+    } else {
+      setEditingBaseIds([]);
+    }
   };
 
   const handleSaveRole = async () => {
     if (!editingUserId) return;
 
-    if (!editingBaseId) {
-      toast.error("Base assignment is required");
+    // Admins don't need base assignment (they have access to all)
+    // Moderators must have at least one base
+    if (editingRole === "moderator" && editingBaseIds.length === 0) {
+      toast.error("Moderators must have at least one base assigned");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await adminApi.updateUser(editingUserId, {
+      const updatePayload: any = {
         role: editingRole as any,
-        baseId: editingBaseId,
-      });
+      };
+
+      if (editingRole === "moderator") {
+        updatePayload.baseIds = editingBaseIds;
+      }
+
+      await adminApi.updateUser(editingUserId, updatePayload);
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
           u.id === editingUserId
-            ? { ...u, role: editingRole as any, baseId: editingBaseId }
+            ? { ...u, role: editingRole as any }
             : u,
         ),
       );
-      toast.success("Role and base updated");
+      toast.success("Role and base assignments updated");
       setEditingUserId(null);
       setEditingRole("");
-      setEditingBaseId("");
+      setEditingBaseIds([]);
     } catch (error) {
       console.error("Failed to update role:", error);
       toast.error("Failed to update role");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const toggleBaseSelection = (baseId: string) => {
+    setEditingBaseIds((prev) =>
+      prev.includes(baseId)
+        ? prev.filter((id) => id !== baseId)
+        : [...prev, baseId],
+    );
   };
 
   const roleUserCount = users.length;
