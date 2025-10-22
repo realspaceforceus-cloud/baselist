@@ -535,8 +535,12 @@ const Messages = (): JSX.Element => {
     toast.success("Conversation dismissed");
   };
 
-  const handleFilterSelect = (nextFilter: ThreadFilter) => {
+  const handleStatusFilterSelect = (nextFilter: ThreadFilter) => {
     setThreadFilter(nextFilter);
+  };
+
+  const handleTypeFilterSelect = (nextFilter: ThreadTypeFilter) => {
+    setTypeFilter(nextFilter);
   };
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
