@@ -2,7 +2,11 @@ import { Check, ChevronDown, MapPin, Navigation } from "lucide-react";
 import { useCallback, useState, useEffect } from "react";
 
 import { useBaseList } from "@/context/BaseListContext";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
   getUserLocation,
@@ -25,10 +29,7 @@ export const BaseSelector = (): JSX.Element => {
       setUserLocation(location);
 
       if (location) {
-        const closest = getClosestBases(
-          location,
-          bases as BaseWithDistance[],
-        );
+        const closest = getClosestBases(location, bases as BaseWithDistance[]);
         setClosestBases(closest);
       }
     };

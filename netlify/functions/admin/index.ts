@@ -2129,7 +2129,9 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const userId = path.replace("/users/", "").replace("/moderator-bases", "");
+      const userId = path
+        .replace("/users/", "")
+        .replace("/moderator-bases", "");
 
       try {
         const result = await client.query(
@@ -2140,7 +2142,9 @@ export const handler: Handler = async (event) => {
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ baseIds: result.rows.map((r: any) => r.baseId) }),
+          body: JSON.stringify({
+            baseIds: result.rows.map((r: any) => r.baseId),
+          }),
         };
       } catch (error) {
         console.error("Failed to fetch moderator bases:", error);

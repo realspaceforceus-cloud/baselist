@@ -172,7 +172,9 @@ export default function AdminListingDetail() {
   const handleRemoveImage = (indexToRemove: number) => {
     setEditData({
       ...editData,
-      imageUrls: editData.imageUrls.filter((_, index) => index !== indexToRemove),
+      imageUrls: editData.imageUrls.filter(
+        (_, index) => index !== indexToRemove,
+      ),
     });
   };
 
@@ -393,31 +395,37 @@ export default function AdminListingDetail() {
           {(isEditing ? editData.imageUrls : listing.imageUrls)?.length > 0 && (
             <div className="space-y-2">
               <Label className="text-xs font-semibold text-muted-foreground uppercase">
-                Images ({isEditing ? editData.imageUrls.length : listing.imageUrls?.length})
+                Images (
+                {isEditing
+                  ? editData.imageUrls.length
+                  : listing.imageUrls?.length}
+                )
               </Label>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                {(isEditing ? editData.imageUrls : listing.imageUrls).map((url, index) => (
-                  <div
-                    key={index}
-                    className="relative aspect-square rounded-lg overflow-hidden border border-border"
-                  >
-                    <img
-                      src={url}
-                      alt={`Listing image ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    {isEditing && (
-                      <button
-                        onClick={() => handleRemoveImage(index)}
-                        disabled={isSaving}
-                        className="absolute top-1 right-1 bg-destructive hover:bg-destructive/90 text-white rounded-full p-1 transition-colors"
-                        title="Remove image"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
+                {(isEditing ? editData.imageUrls : listing.imageUrls).map(
+                  (url, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden border border-border"
+                    >
+                      <img
+                        src={url}
+                        alt={`Listing image ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {isEditing && (
+                        <button
+                          onClick={() => handleRemoveImage(index)}
+                          disabled={isSaving}
+                          className="absolute top-1 right-1 bg-destructive hover:bg-destructive/90 text-white rounded-full p-1 transition-colors"
+                          title="Remove image"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           )}

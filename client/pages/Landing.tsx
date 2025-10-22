@@ -179,7 +179,10 @@ const Landing = (): JSX.Element => {
       const initLocation = async () => {
         const location = await getUserLocation();
         if (location) {
-          const closest = getClosestBases(location, bases as BaseWithDistance[]);
+          const closest = getClosestBases(
+            location,
+            bases as BaseWithDistance[],
+          );
           setClosestBasesSignup(closest);
         }
       };
