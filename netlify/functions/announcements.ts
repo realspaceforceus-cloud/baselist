@@ -199,7 +199,7 @@ export const handler: Handler = async (event) => {
 
     // PATCH /api/announcements/:id (update)
     if (method === "PATCH" && path.startsWith("/") && path !== "/") {
-      if (!auth) {
+      if (!userId) {
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
