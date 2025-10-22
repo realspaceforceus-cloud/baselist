@@ -328,6 +328,23 @@ const ListingDetail = (): JSX.Element => {
     addSuffix: true,
   });
 
+  const sellerLastActive = useMemo(
+    () =>
+      seller?.lastActiveAt
+        ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
+          ? "Active today ✅"
+          : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
+              addSuffix: true,
+            })} 🕓`
+        : undefined,
+    [seller?.lastActiveAt],
+  );
+
+  const sellerYear = useMemo(
+    () => (seller?.memberSince ? new Date(seller.memberSince).getFullYear() : null),
+    [seller?.memberSince],
+  );
+
   return (
     <section className="space-y-6">
       <Button
@@ -347,13 +364,91 @@ const ListingDetail = (): JSX.Element => {
         <aside className="space-y-4">
           <article className="rounded-3xl border border-border bg-card p-6 shadow-card">
             <div className="space-y-4">
+              {seller && (
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 flex-1">
+                    {seller.avatarUrl ? (
+                      <img
+                        src={seller.avatarUrl}
+                        alt={seller.name}
+                        className="h-12 w-12 rounded-full object-cover flex-shrink-0"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary flex-shrink-0">
+                        {seller.name?.[0]?.toUpperCase() ?? "M"}
+                      </span>
+                    )}
+                    <div className="space-y-1 flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-sm font-semibold text-foreground">
+                          {seller.name}
+                        </h3>
+                        {seller.verified && (
+                          <div className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 rounded-full px-2 py-1">
+                            <Check
+                              className="h-3 w-3 text-green-600"
+                              aria-hidden
+                              title="Verified DoW Member"
+                            />
+                            <span className="text-xs font-semibold text-green-700 dark:text-green-400">
+                              Verified
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-0.5 text-xs text-muted-foreground">
+                        {sellerYear && (
+                          <p>
+                            Member since{" "}
+                            <span className="font-medium text-foreground">
+                              {sellerYear}
+                            </span>
+                          </p>
+                        )}
+                        {seller.rating ? (
+                          <p>
+                            <span aria-hidden>⭐</span>{" "}
+                            <span className="font-medium text-foreground">
+                              {seller.rating.toFixed(1)}
+                            </span>{" "}
+                            from {seller.ratingCount}{" "}
+                            {seller.ratingCount === 1 ? "sale" : "sales"}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-muted-foreground">
+                            No ratings yet
+                          </p>
+                        )}
+                        {sellerLastActive && (
+                          <p className="text-xs text-muted-foreground">
+                            {sellerLastActive}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setReportDialogOpen(true)}
+                    className="rounded-lg p-2 hover:bg-red-50 dark:hover:bg-red-950/20 transition flex-shrink-0"
+                    aria-label="Report listing"
+                    title="Report this listing"
+                  >
+                    <Flag className="h-5 w-5 text-red-600 dark:text-red-400" aria-hidden />
+                  </button>
+                </div>
+              )}
+
+              <div className="border-t border-border" />
+
               <div>
                 <h1 className="text-2xl font-semibold text-foreground md:text-3xl">
                   {listing.title}
                 </h1>
               </div>
 
-              <div className="space-y-2 border-t border-border pt-4">
+              <div className="space-y-2">
                 <p className="text-2xl font-bold text-primary">
                   {formattedPrice}
                 </p>
@@ -373,85 +468,38 @@ const ListingDetail = (): JSX.Element => {
                 </div>
               </div>
 
-              {listing.category === "Vehicles" && (
-                <div className="space-y-2 border-t border-border pt-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Vehicle Details
-                  </p>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    {listing.vehicleYear && (
-                      <div className="rounded-lg bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground">Year</p>
-                        <p className="font-semibold text-foreground">
-                          {listing.vehicleYear}
-                        </p>
-                      </div>
-                    )}
-                    {listing.vehicleMake && (
-                      <div className="rounded-lg bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground">Make</p>
-                        <p className="font-semibold text-foreground">
-                          {listing.vehicleMake}
-                        </p>
-                      </div>
-                    )}
-                    {listing.vehicleModel && (
-                      <div className="rounded-lg bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground">Model</p>
-                        <p className="font-semibold text-foreground">
-                          {listing.vehicleModel}
-                        </p>
-                      </div>
-                    )}
-                    {listing.vehicleType && (
-                      <div className="rounded-lg bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground">Type</p>
-                        <p className="font-semibold text-foreground">
-                          {listing.vehicleType}
-                        </p>
-                      </div>
-                    )}
-                    {listing.vehicleColor && (
-                      <div className="rounded-lg bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground">Color</p>
-                        <p className="font-semibold text-foreground">
-                          {listing.vehicleColor}
-                        </p>
-                      </div>
-                    )}
-                    {listing.vehicleMiles && (
-                      <div className="rounded-lg bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground">Miles</p>
-                        <p className="font-semibold text-foreground">
-                          {Number(listing.vehicleMiles).toLocaleString()}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
               {listing.description && (
                 <div className="border-t border-border pt-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                    Description
-                  </p>
-                  <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                  <p className="text-sm leading-relaxed dark:text-white whitespace-pre-wrap">
                     {listing.description}
                   </p>
                 </div>
               )}
+
+              <div className="space-y-2 border-t border-border pt-4">
+                <Button
+                  className="w-full rounded-full"
+                  onClick={handleOpenComposer}
+                  disabled={!seller}
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden />
+                  Message seller
+                </Button>
+                <Button
+                  variant={isSaved ? "default" : "outline"}
+                  className="w-full rounded-full"
+                  onClick={handleSaveListing}
+                  disabled={isLoadingSave}
+                >
+                  <Heart
+                    className={cn("h-4 w-4", isSaved ? "fill-current" : "")}
+                    aria-hidden
+                  />
+                  {isSaved ? "Saved" : "Save listing"}
+                </Button>
+              </div>
             </div>
           </article>
-
-          <SellerInfoSidebar
-            seller={seller}
-            isSaved={isSaved}
-            onSaveListing={handleSaveListing}
-            onOpenComposer={handleOpenComposer}
-            onOpenReportDialog={() => setReportDialogOpen(true)}
-            isLoadingSave={isLoadingSave}
-          />
         </aside>
       </div>
 
