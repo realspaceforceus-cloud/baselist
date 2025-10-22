@@ -135,18 +135,31 @@ const Messages = (): JSX.Element => {
 
   const threadSummaries = useMemo<ThreadSummary[]>(() => {
     return messageThreads
-      .map((thread) => {
+      .map((thread: any) => {
         if (thread.deletedBy?.includes(user.id)) {
           return null;
         }
 
-        const listing = listings.find((item) => item.id === thread.listingId);
-        const partnerId = thread.participants.find(
-          (participant) => participant !== user.id,
+        // Use listing from thread (fetched from backend) or fallback to context
+        const listing = thread.listing || listings.find((item) => item.id === thread.listingId);
+        const partnerId = thread.participants?.find(
+          (participant: string) => participant !== user.id,
         );
-        // Seller will be fetched from backend - not using mock data
-        const seller = undefined;
-        const partnerName = partnerId ? getMemberName(partnerId) : "Member";
+        // Use partner data from backend
+        const seller = thread.partner
+          ? {
+              id: thread.partner.id,
+              name: thread.partner.username,
+              username: thread.partner.username,
+              avatarUrl: thread.partner.avatar_url || "",
+              verified: !!thread.partner.dow_verified_at,
+              memberSince: new Date().toISOString(),
+              rating: undefined,
+              ratingCount: 0,
+              completedSales: 0,
+            }
+          : undefined;
+        const partnerName = seller?.name || (partnerId ? getMemberName(partnerId) : "Member");
 
         const lastMessage =
           thread.messages[thread.messages.length - 1] ?? undefined;
