@@ -121,13 +121,13 @@ export default function Feed(): JSX.Element {
 
       {/* Feed Posts */}
       <div className="space-y-4">
-        {posts.length === 0 && !isLoading && (
+        {regularPosts.length === 0 && !isLoading && psaPosts.length === 0 && (
           <div className="rounded-lg border border-border bg-card p-8 text-center text-muted-foreground">
             <p>No posts yet. Be the first to share something!</p>
           </div>
         )}
 
-        {posts.map((post) => (
+        {regularPosts.map((post) => (
           <FeedPostItem
             key={post.id}
             post={post}
