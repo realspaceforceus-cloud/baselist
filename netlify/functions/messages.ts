@@ -288,7 +288,7 @@ export const handler: Handler = async (event) => {
         [userId, limit, offset],
       );
 
-      // Fetch messages for each thread
+      // Fetch messages, listing, and partner info for each thread
       const threads = await Promise.all(
         result.rows.map(async (thread) => {
           try {
@@ -296,8 +296,34 @@ export const handler: Handler = async (event) => {
               "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC LIMIT 100",
               [thread.id],
             );
+
+            // Fetch listing info if listing_id exists
+            let listing = null;
+            if (thread.listing_id) {
+              const listingResult = await client.query(
+                "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+                [thread.listing_id],
+              );
+              listing = listingResult.rows[0];
+            }
+
+            // Fetch partner info (the other participant)
+            const partnerId = thread.participants.find(
+              (p: string) => p !== userId,
+            );
+            let partner = null;
+            if (partnerId) {
+              const partnerResult = await client.query(
+                "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+                [partnerId],
+              );
+              partner = partnerResult.rows[0];
+            }
+
             return {
               ...thread,
+              listing,
+              partner,
               messages: messagesResult.rows.map((msg: any) => ({
                 id: msg.id,
                 threadId: msg.thread_id,
@@ -314,6 +340,8 @@ export const handler: Handler = async (event) => {
             );
             return {
               ...thread,
+              listing: null,
+              partner: null,
               messages: [],
             };
           }
