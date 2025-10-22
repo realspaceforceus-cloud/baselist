@@ -87,8 +87,25 @@ export default function Feed(): JSX.Element {
 
   const visibleAnnouncements = announcements.filter((ann) => !ann.isDismissed);
 
+  // Separate PSA posts from regular posts
+  const psaPosts = posts.filter((p) => p.type === "psa");
+  const regularPosts = posts.filter((p) => p.type !== "psa");
+
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
+    <div className="space-y-6 px-4 py-6">
+      {/* PSA Posts (if any) */}
+      {psaPosts.length > 0 && (
+        <div className="space-y-4">
+          {psaPosts.map((post) => (
+            <FeedPostItem
+              key={post.id}
+              post={post}
+              onPostDeleted={handlePostDeleted}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Announcements */}
       {visibleAnnouncements.length > 0 && (
         <FeedAnnouncements
@@ -98,7 +115,9 @@ export default function Feed(): JSX.Element {
       )}
 
       {/* Composer */}
-      <FeedComposer onPostCreated={handlePostCreated} baseName={baseName} />
+      <div className="mx-auto max-w-2xl w-full">
+        <FeedComposer onPostCreated={handlePostCreated} baseName={baseName} />
+      </div>
 
       {/* Feed Posts */}
       <div className="space-y-4">
