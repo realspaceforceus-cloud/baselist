@@ -75,7 +75,8 @@ export default function AdminListingDetail() {
         updatedAt: result.listing.updatedAt || result.listing.updated_at,
         isFree: result.listing.isFree || result.listing.is_free || false,
         sellerId: result.listing.sellerId || result.listing.seller_id,
-        sellerUsername: result.listing.sellerUsername || result.listing.seller_username,
+        sellerUsername:
+          result.listing.sellerUsername || result.listing.seller_username,
         baseId: result.listing.baseId || result.listing.base_id,
         baseName: result.listing.baseName || result.listing.base_name,
         imageUrls: result.listing.imageUrls || result.listing.image_urls,
@@ -131,7 +132,8 @@ export default function AdminListingDetail() {
         updatedAt: result.listing.updatedAt || result.listing.updated_at,
         isFree: result.listing.isFree || result.listing.is_free || false,
         sellerId: result.listing.sellerId || result.listing.seller_id,
-        sellerUsername: result.listing.sellerUsername || result.listing.seller_username,
+        sellerUsername:
+          result.listing.sellerUsername || result.listing.seller_username,
         baseId: result.listing.baseId || result.listing.base_id,
         baseName: result.listing.baseName || result.listing.base_name,
         imageUrls: result.listing.imageUrls || result.listing.image_urls,
