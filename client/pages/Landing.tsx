@@ -212,21 +212,48 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    if (!emailFormatValid) {
-      setAccountError("Enter a valid email address.");
-      return;
-    }
+    if (useInvitationCode) {
+      if (!invitationCode.trim()) {
+        setAccountError("Please enter your invitation code.");
+        return;
+      }
 
-    if (!emailDow) {
-      setAccountError(
-        "Use an approved DoW email (.mil or .defense.gov) to continue.",
-      );
-      return;
-    }
+      if (!emailFormatValid) {
+        setAccountError("Enter a valid email address.");
+        return;
+      }
 
-    if (!passwordStrong) {
-      setAccountError("Password must be at least 12 characters long.");
-      return;
+      if (!passwordStrong) {
+        setAccountError("Password must be at least 12 characters long.");
+        return;
+      }
+
+      if (!passwordsMatch) {
+        setAccountError("Passwords do not match.");
+        return;
+      }
+    } else {
+      if (!emailFormatValid) {
+        setAccountError("Enter a valid email address.");
+        return;
+      }
+
+      if (!emailDow) {
+        setAccountError(
+          "Use an approved DoW email (.mil or .defense.gov) to continue.",
+        );
+        return;
+      }
+
+      if (!passwordStrong) {
+        setAccountError("Password must be at least 12 characters long.");
+        return;
+      }
+
+      if (!passwordsMatch) {
+        setAccountError("Passwords do not match.");
+        return;
+      }
     }
 
     if (!accountForm.agreeRules) {
