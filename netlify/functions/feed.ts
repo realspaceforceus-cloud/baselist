@@ -433,10 +433,21 @@ export const handler: Handler = async (event) => {
             "SELECT role FROM users WHERE id = $1",
             [userId],
           );
-          if (
-            !userResult.rows.length ||
-            !["admin", "moderator"].includes(userResult.rows[0].role)
-          ) {
+
+          if (!userResult.rows.length) {
+            client.release();
+            return {
+              statusCode: 403,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                error: "User not found",
+              }),
+            };
+          }
+
+          const role = userResult.rows[0].role;
+
+          if (!["admin", "moderator"].includes(role)) {
             client.release();
             return {
               statusCode: 403,
@@ -446,6 +457,26 @@ export const handler: Handler = async (event) => {
               }),
             };
           }
+
+          // For moderators, verify they are assigned to this base
+          if (role === "moderator") {
+            const assignmentResult = await client.query(
+              "SELECT id FROM moderator_bases WHERE moderator_id = $1 AND base_id = $2",
+              [userId, baseId],
+            );
+
+            if (assignmentResult.rows.length === 0) {
+              client.release();
+              return {
+                statusCode: 403,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  error: "You are not assigned to this base",
+                }),
+              };
+            }
+          }
+          // Admins can post in any base (no additional check needed)
         }
 
         const result = await client.query(
