@@ -44,16 +44,14 @@ export const handler: Handler = async (event) => {
     try {
       const { listingId, recipientId, body } = JSON.parse(event.body || "{}");
 
-      // Get userId from cookies
-      const cookies = event.headers.cookie || "";
-      const userIdMatch = cookies.match(/userId=([^;]+)/);
-      const authorId = userIdMatch ? userIdMatch[1] : null;
+      // Get userId from auth
+      const authorId = await getUserIdFromAuth(event);
 
       if (!authorId || !listingId || !recipientId || !body) {
         return {
-          statusCode: 400,
+          statusCode: !authorId ? 401 : 400,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Missing required fields" }),
+          body: JSON.stringify({ error: !authorId ? "Unauthorized" : "Missing required fields" }),
         };
       }
 
