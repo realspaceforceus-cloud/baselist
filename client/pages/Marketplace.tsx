@@ -237,8 +237,6 @@ export const Marketplace = (): JSX.Element => {
           </div>
         </div>
 
-        <SponsorTile placement={sponsorPlacement} />
-
         {activeFilter === "Vehicles" && (
           <VehicleFilterBar
             filters={vehicleFilters}
