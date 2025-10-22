@@ -53,9 +53,11 @@ export const handler: Handler = async (event) => {
         statusCode: 200,
         body: JSON.stringify({
           id: user.id,
+          username: user.name || "Member",
           name: user.name || "Member",
           email: user.email,
           role: user.role,
+          currentBaseId: user.baseId,
           baseId: user.baseId,
           avatarUrl: user.avatarUrl || "",
           memberSince: user.memberSince,
