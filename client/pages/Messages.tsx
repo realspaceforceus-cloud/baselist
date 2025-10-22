@@ -1314,7 +1314,7 @@ const Messages = (): JSX.Element => {
                             isOwn ? "justify-end" : "justify-start",
                           )}
                         >
-                          <div className="max-w-sm rounded-2xl border-2 border-blue-500/40 bg-blue-50 p-4 shadow-sm dark:bg-blue-950/30">
+                          <div className={cn("max-w-sm rounded-2xl border-2 p-4 shadow-sm", offerStatus === "accepted" ? "border-green-500/40 bg-green-50 dark:bg-green-950/30" : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30")}>
                             <div className="flex gap-3">
                               {itemImage && (
                                 <img
@@ -1325,9 +1325,9 @@ const Messages = (): JSX.Element => {
                               )}
                               <div className="flex-1">
                                 <p className="text-xs font-medium text-muted-foreground mb-1">
-                                  {partnerName} sent an offer
+                                  {partnerName} {offerStatus === "accepted" ? "and you accepted an offer of" : "sent an offer"}
                                 </p>
-                                <p className="text-lg font-bold text-blue-600">
+                                <p className={cn("text-lg font-bold", offerStatus === "accepted" ? "text-green-600" : "text-blue-600")}>
                                   ${offerAmount.toFixed(2)}
                                 </p>
                                 {activeSummary.listing?.title && (
@@ -1336,6 +1336,7 @@ const Messages = (): JSX.Element => {
                                   </p>
                                 )}
                                 <p className="text-[0.65rem] text-muted-foreground/70 mt-2">
+                                  {offerStatus === "accepted" && <CheckCircle2 className="h-3 w-3 inline mr-1" aria-hidden />}
                                   {timestamp}
                                 </p>
                               </div>
