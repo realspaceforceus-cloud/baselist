@@ -164,7 +164,7 @@ export const Marketplace = (): JSX.Element => {
   const resultSummary = useMemo(() => {
     const formatter = new Intl.NumberFormat("en-US");
     return formatter.format(filteredListings.length);
-  }, [filteredListings.length]);
+  }, [filteredListings]);
 
   const showVerificationBanner = isAuthenticated && !isDowVerified;
 
