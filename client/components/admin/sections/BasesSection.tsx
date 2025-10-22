@@ -189,7 +189,7 @@ export const BasesSection = () => {
       state: base.region,
       country: "",
       city: "",
-      latitude: "",
+      latitude: base.latitude ? `${base.latitude}, ${base.longitude}` : "",
       longitude: "",
     });
     setIsDialogOpen(true);
