@@ -167,6 +167,8 @@ export const handler: Handler = async (event) => {
       body: JSON.stringify({ error: errorMsg }),
     };
   } finally {
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 };
