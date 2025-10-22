@@ -227,7 +227,7 @@ const Messages = (): JSX.Element => {
         );
         const canSubmitRating = Boolean(
           transaction?.status === "completed" ||
-            transaction?.status === "pending_complete",
+            transaction?.status === "pending_confirmation",
         );
 
         const isMarketplace = !!listing;
