@@ -87,7 +87,7 @@ export function FeedCommentItem({
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <Link
-              to={`/profile/${comment.userId}`}
+              to={`/profile/${comment.author?.username || comment.userId}`}
               className="font-semibold text-xs hover:text-primary transition"
             >
               {comment.author?.name}
