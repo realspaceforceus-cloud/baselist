@@ -88,8 +88,8 @@ export default function Feed(): JSX.Element {
   const visibleAnnouncements = announcements.filter((ann) => !ann.isDismissed);
 
   // Separate PSA posts from regular posts
-  const psaPosts = posts.filter((p) => p.type === "psa");
-  const regularPosts = posts.filter((p) => p.type !== "psa");
+  const psaPosts = posts.filter((p) => p.postType === "psa");
+  const regularPosts = posts.filter((p) => p.postType !== "psa");
 
   return (
     <div className="space-y-6 px-4 py-6">
