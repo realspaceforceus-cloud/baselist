@@ -1,12 +1,11 @@
-import { ArrowLeft, MessageCircle, ShieldCheck } from "lucide-react";
+import { ArrowLeft, MessageCircle, ShieldCheck, Flag, Check, Heart } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { differenceInHours, formatDistanceToNow } from "date-fns";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/listings/ImageGallery";
-import { SellerInfoSidebar } from "@/components/listings/SellerInfoSidebar";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useBaseList } from "@/context/BaseListContext";
 import { extractIdFromSlug, generateSlug } from "@/lib/slugUtils";
+import { cn } from "@/lib/utils";
 import type { UserProfile } from "@/types";
 
 const ListingDetail = (): JSX.Element => {
