@@ -306,6 +306,102 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // GET /api/admin/users/:id/detail
+    if (
+      method === "GET" &&
+      path.startsWith("/users/") &&
+      path.includes("/detail")
+    ) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/users/", "").replace("/detail", "");
+
+      try {
+        // Fetch user data
+        const userResult = await client.query(
+          `SELECT u.*, b.name as base_name FROM users u
+           LEFT JOIN bases b ON u.base_id = b.id
+           WHERE u.id = $1`,
+          [userId],
+        );
+
+        if (userResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "User not found" }),
+          };
+        }
+
+        const user = userResult.rows[0];
+
+        // Fetch successful login attempts
+        const successLoginsResult = await client.query(
+          `SELECT id, ip_address as "ipAddress", user_agent as "userAgent", logged_in_at as "loggedInAt"
+           FROM successful_login_attempts
+           WHERE user_id = $1
+           ORDER BY logged_in_at DESC
+           LIMIT 50`,
+          [userId],
+        );
+
+        // Fetch failed login attempts
+        const failedLoginsResult = await client.query(
+          `SELECT id, ip_address as "ipAddress", user_agent as "userAgent", attempted_at as "attemptedAt", reason
+           FROM failed_login_attempts
+           WHERE user_id = $1
+           ORDER BY attempted_at DESC
+           LIMIT 50`,
+          [userId],
+        );
+
+        // Get unique IPs from both successful and failed attempts
+        const uniqueIpsResult = await client.query(
+          `SELECT DISTINCT ip_address FROM successful_login_attempts WHERE user_id = $1
+           UNION
+           SELECT DISTINCT ip_address FROM failed_login_attempts WHERE user_id = $1`,
+          [userId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user: {
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              role: user.role,
+              status: user.status,
+              baseId: user.base_id,
+              baseName: user.base_name,
+              avatarUrl: user.avatar_url,
+              dowVerifiedAt: user.dow_verified_at,
+              lastActiveAt: user.last_active_at,
+              createdAt: user.created_at,
+              successfulLogins: successLoginsResult.rows,
+              failedLogins: failedLoginsResult.rows,
+              uniqueIps: uniqueIpsResult.rows.map((row: any) => row.ip_address),
+              strikes: [],
+            },
+          }),
+        };
+      } catch (error) {
+        console.error("Failed to fetch user detail:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch user detail" }),
+        };
+      }
+    }
+
     // GET /api/admin/metrics
     if (method === "GET" && path === "/metrics") {
       if (!(await isAdmin(auth.userId))) {
