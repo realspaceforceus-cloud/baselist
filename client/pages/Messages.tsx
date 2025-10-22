@@ -1369,27 +1369,41 @@ const Messages = (): JSX.Element => {
                   }
 
                   const isOwn = message.authorId === user.id;
+                  const authorUsername = isOwn ? user.username : activeSummary.partner?.username;
+                  const authorAvatar = isOwn ? user.avatarUrl : activeSummary.partner?.avatarUrl;
 
                   return (
                     <div
                       key={message.id}
                       className={cn(
-                        "flex",
-                        isOwn ? "justify-end" : "justify-start",
+                        "flex gap-2",
+                        isOwn ? "flex-row-reverse" : "flex-row",
                       )}
                     >
-                      <div
-                        className={cn(
-                          "max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm",
-                          isOwn
-                            ? "bg-foreground/10 text-foreground"
-                            : "bg-muted text-foreground",
-                        )}
-                      >
-                        <p>{message.body}</p>
-                        <span className="mt-2 block text-[0.65rem] text-muted-foreground/80">
-                          {timestamp}
-                        </span>
+                      {authorAvatar && (
+                        <img
+                          src={authorAvatar}
+                          alt={authorUsername}
+                          className="h-8 w-8 rounded-full object-cover flex-shrink-0 mt-0.5"
+                        />
+                      )}
+                      <div className="flex flex-col">
+                        <p className="text-[0.65rem] font-semibold text-muted-foreground mb-1">
+                          {authorUsername}
+                        </p>
+                        <div
+                          className={cn(
+                            "max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm",
+                            isOwn
+                              ? "bg-foreground/10 text-foreground"
+                              : "bg-muted text-foreground",
+                          )}
+                        >
+                          <p>{message.body}</p>
+                          <span className="mt-2 block text-[0.65rem] text-muted-foreground/80">
+                            {timestamp}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );
