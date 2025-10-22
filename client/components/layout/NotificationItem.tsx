@@ -194,7 +194,13 @@ export const NotificationItem = ({
         className={cn(
           "p-4 hover:bg-muted/30 transition cursor-pointer active:bg-muted/40",
         )}
-        onClick={handleClick}
+        onClick={() => {
+          handleClick();
+          // Also call the onClick callback to close popover
+          if (onClick) {
+            onClick();
+          }
+        }}
         role="button"
         tabIndex={0}
       >
