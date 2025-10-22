@@ -1960,6 +1960,43 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // GET /api/admin/users/:id/moderator-bases
+    if (
+      method === "GET" &&
+      path.startsWith("/users/") &&
+      path.includes("/moderator-bases")
+    ) {
+      if (!(await isAdmin(auth.userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const userId = path.replace("/users/", "").replace("/moderator-bases", "");
+
+      try {
+        const result = await client.query(
+          `SELECT base_id as "baseId" FROM moderator_bases WHERE moderator_id = $1 ORDER BY assigned_at`,
+          [userId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ baseIds: result.rows.map((r: any) => r.baseId) }),
+        };
+      } catch (error) {
+        console.error("Failed to fetch moderator bases:", error);
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch moderator bases" }),
+        };
+      }
+    }
+
     // GET /api/admin/analytics/system-health
     if (method === "GET" && path === "/analytics/system-health") {
       if (!(await isAdmin(auth.userId))) {
