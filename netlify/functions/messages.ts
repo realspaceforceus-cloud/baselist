@@ -249,11 +249,40 @@ export const handler: Handler = async (event) => {
         [userId, limit, offset],
       );
 
+      // Fetch messages for each thread
+      const threads = await Promise.all(
+        result.rows.map(async (thread) => {
+          try {
+            const messagesResult = await client.query(
+              "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC LIMIT 100",
+              [thread.id],
+            );
+            return {
+              ...thread,
+              messages: messagesResult.rows.map((msg: any) => ({
+                id: msg.id,
+                threadId: msg.thread_id,
+                authorId: msg.author_id,
+                body: msg.body,
+                sentAt: msg.sent_at,
+                type: msg.type || "text",
+              })),
+            };
+          } catch (e) {
+            console.error(`Failed to fetch messages for thread ${thread.id}:`, e);
+            return {
+              ...thread,
+              messages: [],
+            };
+          }
+        }),
+      );
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          threads: result.rows,
+          threads,
           total,
           limit,
           offset,
