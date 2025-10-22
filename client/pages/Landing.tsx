@@ -5,6 +5,7 @@ import {
   Copy,
   MapPin,
   MessageCircle,
+  Navigation,
   ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
