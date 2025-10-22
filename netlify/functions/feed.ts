@@ -231,7 +231,7 @@ export const handler: Handler = async (event) => {
         if (userIds.length > 0) {
           const placeholders = userIds.map((_, i) => `$${i + 1}`).join(",");
           const usersResult = await client.query(
-            `SELECT id, username, name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
+            `SELECT id, username, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
             userIds,
           );
 
@@ -245,7 +245,7 @@ export const handler: Handler = async (event) => {
             usersMap.set(user.id, {
               id: user.id,
               username: user.username,
-              name: user.name || user.username,
+              name: user.username,
               verified: !!user.verified,
               memberSince: new Date().toISOString(),
               avatarUrl: user.avatarUrl || "",
