@@ -93,35 +93,13 @@ export const Marketplace = (): JSX.Element => {
     fetchMore();
   }, [offset, currentBaseId, activeFilter, searchQuery]);
 
-  const sponsorPlacement = useMemo(
-    () =>
-      sponsorPlacements.find((placement) => placement.baseId === currentBaseId),
-    [currentBaseId, sponsorPlacements],
-  );
-
   const vehicleOptions = useMemo(() => {
     return extractVehicleOptions(listings);
   }, [listings]);
 
+  // Apply client-side vehicle filters only (category & search already filtered by API)
   const filteredListings = useMemo(() => {
-    const normalizedSearch = searchQuery.trim().toLowerCase();
-
     return listings.filter((listing) => {
-      if (listing.baseId !== currentBaseId) {
-        return false;
-      }
-
-      if (activeFilter !== "All") {
-        if (activeFilter === "Free") {
-          const isFreeMatch = listing.isFree || listing.category === "Free";
-          if (!isFreeMatch) {
-            return false;
-          }
-        } else if (listing.category !== activeFilter) {
-          return false;
-        }
-      }
-
       if (activeFilter === "Vehicles" && listing.category === "Vehicles") {
         if (
           vehicleFilters.year &&
@@ -161,24 +139,9 @@ export const Marketplace = (): JSX.Element => {
           }
         }
       }
-
-      if (!normalizedSearch) {
-        return true;
-      }
-
-      const haystack = [listing.title, listing.description, listing.category]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return haystack.includes(normalizedSearch);
+      return true;
     });
-  }, [activeFilter, currentBaseId, listings, searchQuery, vehicleFilters]);
-
-  const visibleListings = useMemo(
-    () => filteredListings.slice(0, visibleCount),
-    [filteredListings, visibleCount],
-  );
+  }, [listings, activeFilter, vehicleFilters]);
 
   useEffect(() => {
     const node = sentinelRef.current;
