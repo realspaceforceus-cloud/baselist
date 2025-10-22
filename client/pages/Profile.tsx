@@ -45,13 +45,6 @@ const Profile = (): JSX.Element => {
       return;
     }
 
-    // Check if user is in local context first
-    const localUser = getMemberProfile(memberId);
-    if (localUser) {
-      setFetchedUser(null);
-      return;
-    }
-
     // Fetch from API
     const fetchUser = async () => {
       setIsLoadingUser(true);
@@ -71,7 +64,7 @@ const Profile = (): JSX.Element => {
     };
 
     fetchUser();
-  }, [memberId, currentUser.id, getMemberProfile]);
+  }, [memberId, currentUser.id]);
 
   // Show a message if guest tries to view their own profile without memberId
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
