@@ -32,14 +32,10 @@ export const handler: Handler = async (event) => {
     }
     path = path || "/";
 
-    // Get userId from cookies
-    const cookies = event.headers.cookie || "";
-    const userIdMatch = cookies.match(/userId=([^;]+)/);
-    const userId = userIdMatch ? userIdMatch[1] : null;
-
     // Special case: /count endpoint - SAFE, always returns 200 with count
     // This endpoint never 500s, even if DB is down
     if (method === "GET" && path === "/count") {
+      const userId = await getUserIdFromAuth(event);
       if (!userId) {
         return json({ unreadCount: 0 });
       }
