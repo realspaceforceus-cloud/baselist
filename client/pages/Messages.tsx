@@ -45,7 +45,7 @@ import { useBaseList } from "@/context/BaseListContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
-import { messagesApi } from "@/lib/messagesApi";
+import { getThreads } from "@/lib/messagesApi";
 import type { Listing, Message, MessageThread, UserProfile } from "@/types";
 
 const ratingOptions = [1, 2, 3, 4, 5];
