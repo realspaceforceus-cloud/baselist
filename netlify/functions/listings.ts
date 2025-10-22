@@ -2,6 +2,7 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
 import { createNotification } from "./notification-helpers";
+import { recordMetric } from "./lib/metrics";
 
 // Transform database row to Listing type
 const transformListing = (row: any) => ({
