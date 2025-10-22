@@ -124,8 +124,13 @@ export const ReportsSection = () => {
                   <td className="px-4 py-3 font-medium capitalize">
                     {report.type}
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {report.reporter}
+                  <td className="px-4 py-3 text-xs">
+                    <Link
+                      to={`/profile/${report.reporter}`}
+                      className="text-primary hover:underline"
+                    >
+                      {report.reporter}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 text-xs">
                     <span className="inline-flex rounded bg-muted px-2 py-1">
@@ -144,15 +149,23 @@ export const ReportsSection = () => {
                         size="sm"
                         variant="ghost"
                         className="h-8 w-8 p-0 rounded-lg text-green-600"
+                        onClick={() => {
+                          setSelectedReport({
+                            id: report.id,
+                            type: report.type,
+                            description: "",
+                            reportedBy: { id: "", username: report.reporter, avatarUrl: "" },
+                            target: { id: report.targetId, username: "", avatarUrl: "" },
+                            targetType: report.targetType,
+                            targetId: report.targetId,
+                            targetLabel: report.targetLabel,
+                            createdAt: report.time,
+                          });
+                          setShowDetailModal(true);
+                        }}
+                        title="Resolve report"
                       >
                         <CheckCircle2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0 rounded-lg text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </td>
