@@ -142,6 +142,8 @@ const Landing = (): JSX.Element => {
   const [invitationCode, setInvitationCode] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [isValidatingCode, setIsValidatingCode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   // Now validation logic that uses state
   const usernameValid =
