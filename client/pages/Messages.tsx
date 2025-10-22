@@ -1329,28 +1329,28 @@ const Messages = (): JSX.Element => {
                                 </p>
                               </div>
                             </div>
-                            {(canAccept || canDecline || canRetract) && (
+                            {offerStatus === "pending" && (
                               <div className="flex gap-2 mt-3 pt-3 border-t border-blue-200 dark:border-blue-900">
-                                {canAccept && (
-                                  <Button
-                                    size="sm"
-                                    onClick={handleAcceptOffer}
-                                    className="flex-1 text-xs h-8"
-                                  >
-                                    Accept
-                                  </Button>
+                                {!isOwn && (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      onClick={handleAcceptOffer}
+                                      className="flex-1 text-xs h-8"
+                                    >
+                                      Accept
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={handleDeclineOffer}
+                                      className="flex-1 text-xs h-8"
+                                    >
+                                      Decline
+                                    </Button>
+                                  </>
                                 )}
-                                {canDecline && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={handleDeclineOffer}
-                                    className="flex-1 text-xs h-8"
-                                  >
-                                    Decline
-                                  </Button>
-                                )}
-                                {canRetract && (
+                                {isOwn && (
                                   <Button
                                     size="sm"
                                     variant="ghost"
