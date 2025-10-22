@@ -1062,10 +1062,62 @@ export const handler: Handler = async (event) => {
         console.error("Failed to create notification:", notifErr);
       }
 
+      // Fetch updated thread with all data
+      const updatedThreadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      const threadData = updatedThreadResult.rows[0];
+      const listingResult = threadData.listing_id
+        ? await client.query(
+            "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+            [threadData.listing_id],
+          )
+        : { rows: [null] };
+
+      const listing = listingResult.rows[0];
+      const partnerResult = recipientId
+        ? await client.query(
+            "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+            [recipientId],
+          )
+        : { rows: [null] };
+
+      const partner = partnerResult.rows[0];
+
+      // Fetch all messages in the thread
+      const messagesResult = await client.query(
+        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+        [threadId],
+      );
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transaction }),
+        body: JSON.stringify({
+          thread: {
+            id: threadData.id,
+            listingId: threadData.listing_id,
+            participants: threadData.participants,
+            status: threadData.status,
+            archivedBy: threadData.archived_by,
+            deletedBy: threadData.deleted_by,
+            transaction: transaction,
+            createdAt: threadData.created_at,
+            updatedAt: threadData.updated_at,
+            listing,
+            partner,
+            messages: messagesResult.rows.map((msg: any) => ({
+              id: msg.id,
+              threadId: msg.thread_id,
+              authorId: msg.author_id,
+              body: msg.body,
+              sentAt: msg.sent_at,
+              type: msg.type || "text",
+            })),
+          },
+        }),
       };
     } catch (err) {
       const errorMsg =
