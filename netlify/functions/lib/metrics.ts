@@ -123,8 +123,7 @@ export function withMetrics(
         method,
         statusCode: 500,
         responseTimeMs,
-        errorMessage:
-          error instanceof Error ? error.message : "Unknown error",
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
       }).catch((error) => {
         console.debug("Metric recording failed:", error);
       });

@@ -366,7 +366,8 @@ export const handler: Handler = async (event) => {
         };
       } catch (e) {
         console.error("[FEED] GET /posts - Error:", e);
-        const errorMsg = e instanceof Error ? e.message : "Internal server error";
+        const errorMsg =
+          e instanceof Error ? e.message : "Internal server error";
 
         recordMetric(pool, {
           endpoint: "/feed/posts",
@@ -584,7 +585,8 @@ export const handler: Handler = async (event) => {
         };
       } catch (e) {
         console.error("[FEED] POST /posts - Error:", e);
-        const errorMsg = e instanceof Error ? e.message : "Internal server error";
+        const errorMsg =
+          e instanceof Error ? e.message : "Internal server error";
 
         recordMetric(pool, {
           endpoint: "/feed/posts",

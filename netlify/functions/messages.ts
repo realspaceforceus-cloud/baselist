@@ -51,7 +51,9 @@ export const handler: Handler = async (event) => {
         return {
           statusCode: !authorId ? 401 : 400,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: !authorId ? "Unauthorized" : "Missing required fields" }),
+          body: JSON.stringify({
+            error: !authorId ? "Unauthorized" : "Missing required fields",
+          }),
         };
       }
 
