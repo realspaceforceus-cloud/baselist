@@ -298,11 +298,22 @@ const Messages = (): JSX.Element => {
         return false;
       }
 
-      const matchesFilter =
+      // Filter by status
+      const matchesStatusFilter =
         threadFilter === "all" || summary.userStatus === threadFilter;
-      if (!matchesFilter) {
+      if (!matchesStatusFilter) {
         return false;
       }
+
+      // Filter by type (marketplace vs DM)
+      const matchesTypeFilter =
+        typeFilter === "all-types" ||
+        (typeFilter === "marketplace" && summary.isMarketplace) ||
+        (typeFilter === "dm" && !summary.isMarketplace);
+      if (!matchesTypeFilter) {
+        return false;
+      }
+
       if (!query) {
         return true;
       }
@@ -311,7 +322,7 @@ const Messages = (): JSX.Element => {
       const partnerText = summary.partnerName.toLowerCase();
       return listingText.includes(query) || partnerText.includes(query);
     });
-  }, [searchTerm, threadFilter, threadSummaries, dismissedThreadIds]);
+  }, [searchTerm, threadFilter, typeFilter, threadSummaries, dismissedThreadIds]);
 
   const activeSummary = useMemo(
     () =>
