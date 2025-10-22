@@ -1,11 +1,10 @@
 import { Eye, MapPin, BadgeCheck } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { generateSlug } from "@/lib/slugUtils";
-import type { Listing, Seller } from "@/types";
+import type { ListingWithSeller } from "@/lib/listingsApi";
 
 interface MarketplaceSidebarProps {
-  listings: Listing[];
-  sellers: Record<string, Seller>;
+  listings: ListingWithSeller[];
 }
 
 const formatPrice = (price: number, isFree: boolean): string => {
@@ -22,14 +21,13 @@ const formatPrice = (price: number, isFree: boolean): string => {
 
 export function MarketplaceSidebar({
   listings,
-  sellers,
 }: MarketplaceSidebarProps): JSX.Element {
   const navigate = useNavigate();
 
   return (
     <div className="space-y-3">
       {listings.map((listing) => {
-        const seller = sellers[listing.sellerId];
+        const seller = listing.seller;
         const slug = generateSlug(listing.title, listing.id);
         const firstImage = listing.imageUrls[0];
 
