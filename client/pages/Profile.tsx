@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   BadgeCheck,
   ClipboardList,
+  MessageCircle,
   ShieldCheck,
   ShoppingBag,
   Star as StarIcon,
   Stars,
   Tag,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
