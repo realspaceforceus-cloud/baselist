@@ -516,7 +516,7 @@ const Profile = (): JSX.Element => {
         </Tabs>
       </section>
 
-      {viewingOwnProfile ? (
+      {isViewingOwnProfile ? (
         <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
           <div className="flex items-center justify-between gap-3">
             <div>
