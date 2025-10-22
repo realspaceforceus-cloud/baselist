@@ -220,6 +220,8 @@ const Messages = (): JSX.Element => {
             transaction?.status === "pending_complete",
         );
 
+        const isMarketplace = !!listing;
+
         return {
           thread,
           listing,
@@ -238,6 +240,7 @@ const Messages = (): JSX.Element => {
           userMarkedComplete,
           ratingSubmitted,
           canSubmitRating,
+          isMarketplace,
         };
       })
       .filter((summary): summary is ThreadSummary => summary !== null);
