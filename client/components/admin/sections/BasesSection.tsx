@@ -345,34 +345,81 @@ export const BasesSection = () => {
                       abbreviation: e.target.value,
                     })
                   }
-                  placeholder="e.g., AFB"
+                  placeholder="e.g., VANCE-AFB"
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="region">Region</Label>
-                <Input
-                  id="region"
-                  value={formData.region}
-                  onChange={(e) => handleRegionChange(e.target.value)}
-                  placeholder="e.g., Oklahoma or Germany"
-                  list="regions"
-                />
-                <datalist id="regions">
-                  {Object.keys(REGION_TIMEZONE_MAP).map((region) => (
-                    <option key={region} value={region} />
-                  ))}
-                </datalist>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    value={formData.state}
+                    onChange={(e) =>
+                      setFormData({ ...formData, state: e.target.value })
+                    }
+                    placeholder="e.g., Oklahoma"
+                    list="states"
+                  />
+                  <datalist id="states">
+                    {Object.keys(REGION_TIMEZONE_MAP)
+                      .filter((region) => !["Germany", "United Kingdom", "Italy", "Spain", "France", "Japan", "South Korea", "Qatar", "United Arab Emirates", "Turkey", "Saudi Arabia", "Kuwait", "Bahrain", "Oman", "Jordan", "Iraq", "Afghanistan", "India", "Philippines", "Thailand", "Singapore", "Australia", "Guam", "Puerto Rico", "Diego Garcia"].includes(region))
+                      .map((state) => (
+                        <option key={state} value={state} />
+                      ))}
+                  </datalist>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Input
+                    id="country"
+                    value={formData.country}
+                    onChange={(e) =>
+                      setFormData({ ...formData, country: e.target.value })
+                    }
+                    placeholder="e.g., Germany"
+                  />
+                </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="timezone">Timezone</Label>
+                <Label htmlFor="city">City</Label>
                 <Input
-                  id="timezone"
-                  value={formData.timezone}
+                  id="city"
+                  value={formData.city}
                   onChange={(e) =>
-                    setFormData({ ...formData, timezone: e.target.value })
+                    setFormData({ ...formData, city: e.target.value })
                   }
-                  placeholder="e.g., America/Chicago (auto-filled from region)"
+                  placeholder="e.g., Enid"
                 />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="latitude">Latitude</Label>
+                  <Input
+                    id="latitude"
+                    type="number"
+                    step="0.000001"
+                    value={formData.latitude}
+                    onChange={(e) =>
+                      setFormData({ ...formData, latitude: e.target.value })
+                    }
+                    placeholder="e.g., 36.3495"
+                  />
+                  <span className="text-xs text-muted-foreground">-90 to 90</span>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="longitude">Longitude</Label>
+                  <Input
+                    id="longitude"
+                    type="number"
+                    step="0.000001"
+                    value={formData.longitude}
+                    onChange={(e) =>
+                      setFormData({ ...formData, longitude: e.target.value })
+                    }
+                    placeholder="e.g., -97.8822"
+                  />
+                  <span className="text-xs text-muted-foreground">-180 to 180</span>
+                </div>
               </div>
             </div>
             <div className="flex justify-end gap-2">
