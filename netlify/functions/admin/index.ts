@@ -417,6 +417,11 @@ export const handler: Handler = async (event) => {
           console.error("Failed to fetch ratings:", error);
         }
 
+        // Calculate sold count
+        const soldCount = listingRows.filter(
+          (l: any) => l.status === "sold",
+        ).length;
+
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
@@ -439,6 +444,10 @@ export const handler: Handler = async (event) => {
               strikes: strikeRows,
               listings: listingRows,
               ratings: ratingRows,
+              soldCount,
+              listingCount: listingRows.length,
+              ratingCount: ratingRows.length,
+              strikeCount: strikeRows.length,
             },
           }),
         };
