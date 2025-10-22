@@ -469,15 +469,33 @@ const Messages = (): JSX.Element => {
     }
 
     try {
-      // TODO: Call API endpoint to save offer
-      // For now, just add to composer as message
+      const response = await fetch(
+        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/offer`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount, madeBy: user.id }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit offer");
+      }
+
+      const data = await response.json();
+
+      // Update thread in local state
+      setMessageThreads((prev) =>
+        prev.map((t) => (t.id === activeSummary.thread.id ? data.thread : t)),
+      );
+
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
       }).format(amount);
 
-      setComposerMessage(`Offer ${formatted}`);
       setShowOfferDialog(false);
       setOfferAmount("");
       toast.success(`Offer of ${formatted} sent`);
