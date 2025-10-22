@@ -789,24 +789,67 @@ export const handler: Handler = async (event) => {
     // GET /api/admin/reports
     if (method === "GET" && path === "/reports") {
       const result = await client.query(
-        `SELECT * FROM reports ORDER BY created_at DESC`,
+        `SELECT r.*, u.username as reporter_username, u.avatar_url as reporter_avatar
+         FROM reports r
+         LEFT JOIN users u ON r.reported_by = u.id
+         ORDER BY r.created_at DESC`,
       );
 
-      // Transform snake_case to camelCase
-      const transformedReports = result.rows.map((report: any) => ({
-        id: report.id,
-        type: report.report_type || report.type,
-        status: report.status,
-        description: report.description,
-        reportedBy: report.reported_by,
-        targetType: report.target_type,
-        targetId: report.target_id,
-        baseId: report.base_id,
-        createdAt: report.created_at,
-        updatedAt: report.updated_at,
-        resolvedAt: report.resolved_at,
-        resolverId: report.resolver_id,
-      }));
+      // Transform snake_case to camelCase and fetch target info
+      const transformedReports = await Promise.all(
+        result.rows.map(async (report: any) => {
+          let targetLabel = "Unknown";
+          let targetUsername = "Unknown";
+
+          // Fetch target label based on target_type
+          if (report.target_type === "listing") {
+            try {
+              const listingResult = await client.query(
+                "SELECT title FROM listings WHERE id = $1",
+                [report.target_id],
+              );
+              if (listingResult.rows.length > 0) {
+                targetLabel = listingResult.rows[0].title;
+              }
+            } catch (e) {
+              console.error("Failed to fetch listing:", e);
+            }
+          } else if (report.target_type === "user" || report.target_type === "thread") {
+            try {
+              const userResult = await client.query(
+                "SELECT username FROM users WHERE id = $1",
+                [report.target_id],
+              );
+              if (userResult.rows.length > 0) {
+                targetLabel = userResult.rows[0].username;
+                targetUsername = userResult.rows[0].username;
+              }
+            } catch (e) {
+              console.error("Failed to fetch user:", e);
+            }
+          }
+
+          return {
+            id: report.id,
+            type: report.report_type || report.type,
+            status: report.status,
+            notes: report.notes || "",
+            description: report.notes || "",
+            reportedBy: report.reporter_username || "Unknown",
+            reporterId: report.reported_by,
+            reporterAvatar: report.reporter_avatar,
+            targetType: report.target_type,
+            targetId: report.target_id,
+            targetLabel,
+            targetUsername,
+            baseId: report.base_id,
+            createdAt: report.created_at,
+            updatedAt: report.updated_at,
+            resolvedAt: report.resolved_at,
+            resolverId: report.resolver_id,
+          };
+        }),
+      );
 
       return {
         statusCode: 200,
