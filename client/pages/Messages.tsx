@@ -447,27 +447,46 @@ const Messages = (): JSX.Element => {
     }
   };
 
-  const handleQuickOffer = () => {
-    if (
-      !activeSummary?.listing ||
-      activeSummary.listing.isFree ||
-      !activeSummary.listing.price
-    ) {
+  const handleOpenOfferDialog = () => {
+    if (!activeSummary?.listing) {
       return;
     }
 
     const price = Number(activeSummary.listing.price);
-    if (isNaN(price)) {
+    setOfferAmount(isNaN(price) ? "" : String(price));
+    setShowOfferDialog(true);
+  };
+
+  const handleSubmitOffer = async () => {
+    if (!activeSummary || !offerAmount) {
       return;
     }
 
-    const formatted = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: price % 1 === 0 ? 0 : 2,
-    }).format(price);
+    const amount = Number(offerAmount);
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Please enter a valid offer amount");
+      return;
+    }
 
-    setComposerMessage(`Offer ${formatted}`);
+    try {
+      // TODO: Call API endpoint to save offer
+      // For now, just add to composer as message
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
+      }).format(amount);
+
+      setComposerMessage(`Offer ${formatted}`);
+      setShowOfferDialog(false);
+      setOfferAmount("");
+      toast.success(`Offer of ${formatted} sent`);
+    } catch (error) {
+      toast.error("Failed to send offer", {
+        description:
+          error instanceof Error ? error.message : "Try again later",
+      });
+    }
   };
 
   const handleMarkComplete = () => {
