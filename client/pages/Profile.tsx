@@ -387,7 +387,7 @@ const Profile = (): JSX.Element => {
             <p className="text-sm text-muted-foreground">
               Current base:{" "}
               <span className="font-semibold text-foreground">
-                {profileBase.name}
+                {profileBase?.name ?? "—"}
               </span>
             </p>
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
