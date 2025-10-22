@@ -93,7 +93,7 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -143,7 +143,7 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -178,7 +178,7 @@ export const handler: Handler = async (event) => {
             backgroundColor || "#dbeafe",
             textColor || "#1e40af",
             isVisible !== false,
-            auth.userId,
+            userId,
           ],
         );
 
@@ -207,7 +207,7 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -307,7 +307,7 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -355,7 +355,7 @@ export const handler: Handler = async (event) => {
           `INSERT INTO dismissed_announcements (id, user_id, announcement_id)
            VALUES ($1, $2, $3)
            ON CONFLICT (user_id, announcement_id) DO NOTHING`,
-          [randomUUID(), auth.userId, announcementId],
+          [randomUUID(), userId, announcementId],
         );
 
         return {
