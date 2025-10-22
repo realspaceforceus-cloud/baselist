@@ -171,7 +171,14 @@ export const handler: Handler = async (event) => {
         await client.query(
           `INSERT INTO message_threads (id, listing_id, participants, status, archived_by, deleted_by, created_at, updated_at)
            VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`,
-          [threadId, listingId || null, [authorId, recipientId], "active", [], []],
+          [
+            threadId,
+            listingId || null,
+            [authorId, recipientId],
+            "active",
+            [],
+            [],
+          ],
         );
       }
 

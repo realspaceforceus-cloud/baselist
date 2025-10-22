@@ -115,7 +115,9 @@ const Messages = (): JSX.Element => {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [disputeReason, setDisputeReason] = useState<string>("");
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
-  const [dismissedThreadIds, setDismissedThreadIds] = useState<Set<string>>(new Set());
+  const [dismissedThreadIds, setDismissedThreadIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   // Fetch threads from API on mount
   useEffect(() => {
@@ -142,7 +144,9 @@ const Messages = (): JSX.Element => {
         }
 
         // Use listing from thread (fetched from backend) or fallback to context
-        const listing = thread.listing || listings.find((item) => item.id === thread.listingId);
+        const listing =
+          thread.listing ||
+          listings.find((item) => item.id === thread.listingId);
         const partnerId = thread.participants?.find(
           (participant: string) => participant !== user.id,
         );
@@ -160,7 +164,8 @@ const Messages = (): JSX.Element => {
               completedSales: 0,
             }
           : undefined;
-        const partnerName = seller?.name || (partnerId ? getMemberName(partnerId) : "Member");
+        const partnerName =
+          seller?.name || (partnerId ? getMemberName(partnerId) : "Member");
 
         const lastMessage =
           thread.messages[thread.messages.length - 1] ?? undefined;
@@ -709,7 +714,8 @@ const Messages = (): JSX.Element => {
                   </Link>
                 </Button>
               ) : null}
-              {!activeSummary.listing || activeSummary.listing.status === "sold" ? (
+              {!activeSummary.listing ||
+              activeSummary.listing.status === "sold" ? (
                 <Button
                   type="button"
                   variant="outline"
@@ -777,7 +783,9 @@ const Messages = (): JSX.Element => {
           ) : !activeSummary.listing ? (
             <div className="border-b border-red-200 bg-red-50 px-6 py-3 text-xs text-red-700">
               <div className="flex items-center justify-between gap-3">
-                <span className="font-semibold">This listing has been removed.</span>
+                <span className="font-semibold">
+                  This listing has been removed.
+                </span>
                 <Button
                   type="button"
                   variant="ghost"
