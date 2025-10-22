@@ -61,6 +61,9 @@ export const handler: Handler = async (event) => {
       }
     }
 
+    // Get userId for all other endpoints
+    const userId = await getUserIdFromAuth(event);
+
     // All other endpoints require auth
     if (!userId) {
       return json({ error: "Unauthorized" }, 401);
