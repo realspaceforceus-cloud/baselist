@@ -3,10 +3,12 @@ import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { Heart, Share2 } from "lucide-react";
 
 import { RatingBadge } from "@/components/shared/RatingBadge";
 import { generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
+import { shareContent, generateListingShareUrl } from "@/lib/shareUtils";
 import type { Listing, Seller } from "@/types";
 
 interface ListingCardProps {
