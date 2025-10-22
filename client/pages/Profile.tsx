@@ -101,6 +101,11 @@ const Profile = (): JSX.Element => {
     return getMemberProfile(memberId) ?? fetchedUser ?? null;
   }, [currentUser, getMemberProfile, memberId, fetchedUser]);
 
+  // Fetch user's listings using React Query hook
+  const { data: listingsResponse, isLoading: isLoadingListings } = useUserListings(
+    profileUser?.id || null,
+  );
+
   const viewingOwnProfile = !memberId || memberId === currentUser.id;
 
   // Show error if profile not found (e.g., guest trying to view another member)
