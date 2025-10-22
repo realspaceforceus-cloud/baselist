@@ -123,7 +123,21 @@ export default function AdminListingDetail() {
       };
 
       const result = await adminApi.updateListing(listingId, updates);
-      setListing(result.listing);
+
+      // Transform snake_case from database to camelCase
+      const transformedListing = {
+        ...result.listing,
+        createdAt: result.listing.createdAt || result.listing.created_at,
+        updatedAt: result.listing.updatedAt || result.listing.updated_at,
+        isFree: result.listing.isFree || result.listing.is_free || false,
+        sellerId: result.listing.sellerId || result.listing.seller_id,
+        sellerUsername: result.listing.sellerUsername || result.listing.seller_username,
+        baseId: result.listing.baseId || result.listing.base_id,
+        baseName: result.listing.baseName || result.listing.base_name,
+        imageUrls: result.listing.imageUrls || result.listing.image_urls,
+      };
+
+      setListing(transformedListing);
       setIsEditing(false);
       toast.success("Listing updated successfully");
     } catch (error) {
