@@ -821,21 +821,92 @@ export const handler: Handler = async (event) => {
       path.includes("/reports/") &&
       path.includes("/resolve")
     ) {
-      const reportId = path.replace("/reports/", "").replace("/resolve", "");
-      const { status, notes } = JSON.parse(event.body || "{}");
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
 
-      const result = await client.query(
-        `UPDATE reports SET status = $1, updated_at = NOW(), resolved_at = NOW() 
-         WHERE id = $2 RETURNING *`,
-        [status, reportId],
+      if (!(await isAdmin(client, userId))) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Forbidden" }),
+        };
+      }
+
+      const reportId = path.replace("/reports/", "").replace("/resolve", "");
+      const { status, action, message } = JSON.parse(event.body || "{}");
+
+      // Get report details first
+      const reportResult = await client.query(
+        `SELECT * FROM reports WHERE id = $1`,
+        [reportId],
       );
 
-      if (result.rows.length === 0) {
+      if (reportResult.rows.length === 0) {
         return {
           statusCode: 404,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ error: "Report not found" }),
         };
+      }
+
+      const report = reportResult.rows[0];
+
+      // Update report status
+      const result = await client.query(
+        `UPDATE reports SET status = $1, updated_at = NOW(), resolved_at = NOW(), resolver_id = $2
+         WHERE id = $3 RETURNING *`,
+        [status || "resolved", userId, reportId],
+      );
+
+      // Create notifications for reporter and target
+      try {
+        const { createNotification } = await import("./create-notification");
+
+        // Notify reporter
+        if (report.reported_by) {
+          await createNotification({
+            userId: report.reported_by,
+            type: "report_resolved",
+            title: "Your Report Was Reviewed",
+            description: `Your report about this ${report.target_type} has been reviewed and action has been taken.`,
+            actorId: userId,
+            targetId: reportId,
+            targetType: "report",
+            data: {
+              reportId,
+              action,
+              message,
+            },
+          });
+        }
+
+        // Notify reported user (only if action taken against them)
+        if (
+          report.target_type === "user" &&
+          action !== "false_report"
+        ) {
+          await createNotification({
+            userId: report.target_id,
+            type: "content_action_taken",
+            title: "Content Action Taken",
+            description: message || "Action has been taken on your account due to a report.",
+            actorId: userId,
+            targetId: report.target_id,
+            targetType: "user",
+            data: {
+              reportId,
+              action,
+              message,
+            },
+          });
+        }
+      } catch (notifErr) {
+        console.error("Failed to create notifications:", notifErr);
       }
 
       // Transform snake_case to camelCase
