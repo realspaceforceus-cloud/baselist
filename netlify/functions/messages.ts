@@ -106,12 +106,15 @@ export const handler: Handler = async (event) => {
         [threadId],
       );
 
-      // Get listing title for notification
-      const listingResult = await client.query(
-        "SELECT title FROM listings WHERE id = $1",
-        [listingId],
-      );
-      const listingTitle = listingResult.rows[0]?.title || "an item";
+      // Get listing title for notification (if listing exists)
+      let listingTitle = "an item";
+      if (listingId) {
+        const listingResult = await client.query(
+          "SELECT title FROM listings WHERE id = $1",
+          [listingId],
+        );
+        listingTitle = listingResult.rows[0]?.title || "an item";
+      }
 
       // Get sender name for notification
       const senderResult = await client.query(
