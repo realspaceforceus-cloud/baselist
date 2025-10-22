@@ -515,10 +515,23 @@ export const handler: Handler = async (event) => {
       const userId = await getUserIdFromAuth(event);
 
       if (!userId || !threadId || amount === undefined) {
+        console.error("Offer validation failed:", {
+          userId: !!userId,
+          threadId: !!threadId,
+          amount: amount !== undefined,
+          amountValue: amount,
+        });
         return {
           statusCode: 400,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Missing required fields" }),
+          body: JSON.stringify({
+            error: "Missing required fields",
+            details: {
+              missingUserId: !userId,
+              missingThreadId: !threadId,
+              missingAmount: amount === undefined,
+            },
+          }),
         };
       }
 
