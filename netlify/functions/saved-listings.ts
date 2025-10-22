@@ -21,9 +21,9 @@ export const handler: Handler = async (event) => {
     };
   }
 
-  const client = await pool.connect();
-
+  let client;
   try {
+    client = await pool.connect();
     // GET /api/saved-listings - get user's saved listings
     if (method === "GET" && path === "") {
       const result = await client.query(
