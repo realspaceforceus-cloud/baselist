@@ -3,6 +3,8 @@ import {
   AlertCircle,
   CheckCircle2,
   Copy,
+  Eye,
+  EyeOff,
   MapPin,
   MessageCircle,
   Navigation,
