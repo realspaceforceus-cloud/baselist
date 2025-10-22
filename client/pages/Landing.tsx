@@ -793,48 +793,94 @@ const Landing = (): JSX.Element => {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <label
-                  htmlFor="signup-email"
-                  className="text-sm font-semibold text-foreground"
+              {/* Join Code Toggle */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseInvitationCode(!useInvitationCode);
+                    setInvitationCode("");
+                    setAccountForm((prev) => ({ ...prev, email: "" }));
+                  }}
+                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition ${
+                    useInvitationCode
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground hover:bg-muted/80"
+                  }`}
                 >
-                  Email
-                </label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  value={accountForm.email}
-                  onChange={(event) =>
-                    setAccountForm((prev) => ({
-                      ...prev,
-                      email: event.target.value,
-                    }))
-                  }
-                  placeholder="Enter your .mil or DoW email"
-                  className="h-11 rounded-full"
-                  required
-                  disabled={isSubmitting}
-                />
-                {accountForm.email ? (
-                  emailPositive ? (
-                    <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                      <CheckCircle2 className="h-4 w-4" aria-hidden />
-                      DoW email detected.
-                    </p>
-                  ) : (
-                    <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
-                      <AlertCircle className="h-4 w-4" aria-hidden />
-                      {!emailFormatValid
-                        ? "Enter a valid email address."
-                        : "Use an approved DoW email (.mil or .defense.gov)."}
-                    </p>
-                  )
-                ) : (
-                  <p className="text-xs text-muted-foreground">
-                    Use your DoW email (.mil or .defense.gov).
-                  </p>
-                )}
+                  I have a join code
+                </button>
               </div>
+
+              {/* Email or Code Input */}
+              {useInvitationCode ? (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="signup-code"
+                    className="text-sm font-semibold text-foreground"
+                  >
+                    Invitation Code
+                  </label>
+                  <Input
+                    id="signup-code"
+                    type="text"
+                    value={invitationCode}
+                    onChange={(event) =>
+                      setInvitationCode(event.target.value.toUpperCase())
+                    }
+                    placeholder="Enter your invitation code"
+                    className="h-11 rounded-full font-mono tracking-widest"
+                    required
+                    disabled={isSubmitting || isValidatingCode}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Your invitation code grants you access to join.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="signup-email"
+                    className="text-sm font-semibold text-foreground"
+                  >
+                    Email
+                  </label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    value={accountForm.email}
+                    onChange={(event) =>
+                      setAccountForm((prev) => ({
+                        ...prev,
+                        email: event.target.value,
+                      }))
+                    }
+                    placeholder="Enter your .mil or DoW email"
+                    className="h-11 rounded-full"
+                    required
+                    disabled={isSubmitting}
+                  />
+                  {accountForm.email ? (
+                    emailPositive ? (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                        <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        DoW email detected.
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                        <AlertCircle className="h-4 w-4" aria-hidden />
+                        {!emailFormatValid
+                          ? "Enter a valid email address."
+                          : "Use an approved DoW email (.mil or .defense.gov)."}
+                      </p>
+                    )
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Use your DoW email (.mil or .defense.gov).
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-2">
                 <label
