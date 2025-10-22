@@ -400,7 +400,7 @@ const ListingDetail = (): JSX.Element => {
                 <div className="flex items-start justify-between gap-4">
                   <button
                     type="button"
-                    onClick={() => navigate(`/profile/${seller.id}`)}
+                    onClick={() => navigate(`/profile/${seller.username || seller.id}`)}
                     className="flex items-start gap-3 flex-1 hover:opacity-80 transition text-left"
                   >
                     {seller.avatarUrl ? (
