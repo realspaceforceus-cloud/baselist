@@ -30,11 +30,11 @@ import type { UserProfile } from "@/types";
 
 const ListingDetail = (): JSX.Element => {
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
   const { listingSlug } = useParams<{ listingSlug: string }>();
   const {
     listings,
     bases,
-    sendMessageToSeller,
     setSearchQuery,
     setCurrentBaseId,
   } = useBaseList();
