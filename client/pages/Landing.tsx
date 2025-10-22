@@ -124,6 +124,24 @@ const Landing = (): JSX.Element => {
   const normalizedEmail = accountForm.email.trim().toLowerCase();
   const trimmedPassword = accountForm.password.trim();
 
+  // All useState hooks must come first (React rule)
+  const [selectedBaseId, setSelectedBaseId] = useState<string>(
+    bases[0]?.id ?? "",
+  );
+  const [userCoords, setUserCoords] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<
+    "idle" | "requesting" | "granted" | "denied" | "unavailable"
+  >("idle");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [useInvitationCode, setUseInvitationCode] = useState(false);
+  const [invitationCode, setInvitationCode] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
+
+  // Now validation logic that uses state
   const usernameValid =
     trimmedUsername.length > 0 && USERNAME_PATTERN.test(trimmedUsername);
   const usernamePositive = usernameValid;
@@ -148,22 +166,6 @@ const Landing = (): JSX.Element => {
       passwordStrong &&
       passwordsMatch &&
       accountForm.agreeRules;
-
-  const [selectedBaseId, setSelectedBaseId] = useState<string>(
-    bases[0]?.id ?? "",
-  );
-  const [userCoords, setUserCoords] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
-  const [locationStatus, setLocationStatus] = useState<
-    "idle" | "requesting" | "granted" | "denied" | "unavailable"
-  >("idle");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [useInvitationCode, setUseInvitationCode] = useState(false);
-  const [invitationCode, setInvitationCode] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [showExpansionForm, setShowExpansionForm] = useState(false);
   const [expansionEmail, setExpansionEmail] = useState("");
   const [closestBasesSignup, setClosestBasesSignup] = useState<
