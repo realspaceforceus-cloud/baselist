@@ -135,12 +135,19 @@ const Landing = (): JSX.Element => {
 
   const passwordStrong = trimmedPassword.length >= PASSWORD_MIN_LENGTH;
   const passwordPositive = trimmedPassword.length > 0 && passwordStrong;
+  const passwordsMatch = trimmedPassword === passwordConfirm.trim();
 
-  const canSubmitAccount =
-    usernamePositive &&
-    emailPositive &&
-    passwordStrong &&
-    accountForm.agreeRules;
+  const canSubmitAccount = useInvitationCode
+    ? usernamePositive &&
+      invitationCode.trim().length > 0 &&
+      passwordStrong &&
+      passwordsMatch &&
+      accountForm.agreeRules
+    : usernamePositive &&
+      emailPositive &&
+      passwordStrong &&
+      passwordsMatch &&
+      accountForm.agreeRules;
 
   const [selectedBaseId, setSelectedBaseId] = useState<string>(
     bases[0]?.id ?? "",
