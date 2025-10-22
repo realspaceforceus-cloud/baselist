@@ -328,7 +328,15 @@ export const handler: Handler = async (event) => {
             }
 
             return {
-              ...thread,
+              id: thread.id,
+              listingId: thread.listing_id,
+              participants: thread.participants,
+              status: thread.status,
+              archivedBy: thread.archived_by,
+              deletedBy: thread.deleted_by,
+              transaction: thread.transaction,
+              createdAt: thread.created_at,
+              updatedAt: thread.updated_at,
               listing,
               partner,
               messages: messagesResult.rows.map((msg: any) => ({
