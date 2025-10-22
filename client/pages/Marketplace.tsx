@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-
 import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
 import { VehicleFilterBar } from "@/components/listings/VehicleFilterBar";
