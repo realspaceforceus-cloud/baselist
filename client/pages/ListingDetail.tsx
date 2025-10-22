@@ -353,24 +353,6 @@ const ListingDetail = (): JSX.Element => {
     addSuffix: true,
   });
 
-  const sellerLastActive = useMemo(
-    () =>
-      seller?.lastActiveAt
-        ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
-          ? "Active today ✅"
-          : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
-              addSuffix: true,
-            })} 🕓`
-        : undefined,
-    [seller],
-  );
-
-  const sellerYear = useMemo(
-    () =>
-      seller?.memberSince ? new Date(seller.memberSince).getFullYear() : null,
-    [seller],
-  );
-
   return (
     <section className="space-y-6">
       <Button
