@@ -94,6 +94,7 @@ export default function AdminListingDetail() {
         isFree: transformedListing.isFree || false,
         category: transformedListing.category || "",
         baseId: transformedListing.baseId || "",
+        imageUrls: transformedListing.imageUrls || [],
         promoted: transformedListing.promoted || false,
       });
     } catch (error) {
