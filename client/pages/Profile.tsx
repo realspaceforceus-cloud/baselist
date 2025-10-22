@@ -77,7 +77,13 @@ const Profile = (): JSX.Element => {
     }
     // Try local context first, then fetched user
     return getMemberProfile(memberId) ?? fetchedUser ?? null;
-  }, [currentUser, getMemberProfile, memberId, fetchedUser, isViewingOwnProfile]);
+  }, [
+    currentUser,
+    getMemberProfile,
+    memberId,
+    fetchedUser,
+    isViewingOwnProfile,
+  ]);
 
   // Fetch user's listings using React Query hook
   const { data: listingsResponse, isLoading: isLoadingListings } =
@@ -91,7 +97,13 @@ const Profile = (): JSX.Element => {
     return (
       bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase
     );
-  }, [bases, currentBase, profileUser?.currentBaseId, isViewingOwnProfile, profileUser]);
+  }, [
+    bases,
+    currentBase,
+    profileUser?.currentBaseId,
+    isViewingOwnProfile,
+    profileUser,
+  ]);
 
   // Show error if profile not found (check after all hooks)
   if (profileUser === null) {

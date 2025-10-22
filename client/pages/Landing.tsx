@@ -742,7 +742,8 @@ const Landing = (): JSX.Element => {
                   : "Complete"}
             </p>
             <h2 className="text-2xl font-semibold text-foreground">
-              {joinStage === "account" && `Create your ${settings.website_name || "trustyPCS"} account`}
+              {joinStage === "account" &&
+                `Create your ${settings.website_name || "trustyPCS"} account`}
               {joinStage === "verify" && "Verify your .mil email"}
               {joinStage === "success" && "You're all set!"}
             </h2>
@@ -984,7 +985,9 @@ const Landing = (): JSX.Element => {
                     type="button"
                     onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                    title={showPasswordConfirm ? "Hide password" : "Show password"}
+                    title={
+                      showPasswordConfirm ? "Hide password" : "Show password"
+                    }
                   >
                     {showPasswordConfirm ? (
                       <EyeOff className="h-4 w-4" aria-hidden />
@@ -1271,8 +1274,8 @@ const Landing = (): JSX.Element => {
                   Account verified!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  You're all set. Start browsing, posting, and messaging on
-                  {" "}{settings.website_name || "trustyPCS"}.
+                  You're all set. Start browsing, posting, and messaging on{" "}
+                  {settings.website_name || "trustyPCS"}.
                 </p>
               </div>
 
