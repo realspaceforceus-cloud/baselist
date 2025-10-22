@@ -242,7 +242,7 @@ const ListingDetail = (): JSX.Element => {
 
       setComposerOpen(false);
       setMessageBody("");
-      navigate(`/messages/${data.threadId}`);
+      navigate(`/messages/${data.thread?.id}`);
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message");
