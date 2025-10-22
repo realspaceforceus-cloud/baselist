@@ -320,7 +320,7 @@ export function FeedPostItem({
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3 flex-1">
           <Link
-            to={`/profile/${post.userId}`}
+            to={`/profile/${post.author?.username || post.userId}`}
             className="flex-shrink-0 rounded-full hover:opacity-80 transition"
           >
             <img
@@ -335,7 +335,7 @@ export function FeedPostItem({
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <Link
-                to={`/profile/${post.userId}`}
+                to={`/profile/${post.author?.username || post.userId}`}
                 className="font-semibold text-sm hover:text-primary transition"
               >
                 {post.author?.name}
