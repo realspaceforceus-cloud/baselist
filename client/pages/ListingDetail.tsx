@@ -112,30 +112,16 @@ const ListingDetail = (): JSX.Element => {
     fetchSeller();
   }, [listing?.sellerId]);
 
-  // Validate listing freshness (check if status is still active)
+  // Validate listing freshness after it's loaded
   useEffect(() => {
-    if (!listing?.id) {
+    if (!queryListing || queryListing.status === "active") {
       return;
     }
 
-    const validateListing = async () => {
-      try {
-        const freshListing = await getListing(listing.id);
-        // If listing is no longer active, show a message
-        if (freshListing.status !== "active") {
-          toast.error(
-            `This listing is no longer available. Status: ${freshListing.status}`,
-          );
-        }
-      } catch (error) {
-        console.error("Failed to validate listing freshness:", error);
-      }
-    };
-
-    // Validate after a short delay to avoid hammering the API
-    const timer = setTimeout(validateListing, 500);
-    return () => clearTimeout(timer);
-  }, [listing?.id]);
+    toast.error(
+      `This listing is no longer available. Status: ${queryListing.status}`,
+    );
+  }, [queryListing?.status]);
 
   // Check if listing is saved
   useEffect(() => {
