@@ -7,11 +7,15 @@ export const handler: Handler = async (event) => {
   const path = event.path.replace("/.netlify/functions/users", "");
   const userId = event.headers.authorization?.replace("Bearer ", "");
 
-  // GET /api/users/:id
+  // GET /api/users/:id (supports both ID and username)
   if (method === "GET" && path.startsWith("/")) {
     const client = await pool.connect();
     try {
-      const id = path.slice(1);
+      const param = path.slice(1);
+
+      // Check if param looks like a UUID (contains dashes) or is a username
+      const isUuid = param.includes("-") && param.split("-").length === 5;
+
       const result = await client.query(
         `SELECT
           u.id,
@@ -33,8 +37,8 @@ export const handler: Handler = async (event) => {
            INNER JOIN transactions t ON r.transaction_id = t.id
            WHERE t.seller_id = u.id AND r.user_id != u.id) as "ratingCount",
           (SELECT COUNT(*) FROM transactions WHERE seller_id = u.id AND status = 'completed') as "completedSales"
-        FROM users u WHERE u.id = $1`,
-        [id],
+        FROM users u WHERE ${isUuid ? "u.id = $1" : "LOWER(u.username) = LOWER($1)"}`,
+        [param],
       );
 
       if (result.rows.length === 0) {
