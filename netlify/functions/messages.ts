@@ -767,6 +767,28 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(transaction), threadId],
       );
 
+      // Notify the offer maker that offer was declined
+      try {
+        const offerMakerId = transaction.offer?.madeBy;
+        if (offerMakerId && offerMakerId !== userId) {
+          await createNotification({
+            userId: offerMakerId,
+            type: "offer_declined",
+            title: "Offer Declined",
+            description: `Your offer has been declined. Feel free to make another offer.`,
+            actorId: userId,
+            targetId: threadId,
+            targetType: "thread",
+            data: {
+              amount: transaction.offer?.amount,
+              threadId,
+            },
+          });
+        }
+      } catch (notifErr) {
+        console.error("Failed to create notification:", notifErr);
+      }
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
