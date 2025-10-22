@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { useState, useMemo, useEffect } from "react";
 import { CheckCircle2, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
