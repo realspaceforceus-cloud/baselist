@@ -122,6 +122,7 @@ export default function AdminListingDetail() {
         isFree: editData.isFree,
         category: editData.category,
         baseId: editData.baseId,
+        imageUrls: editData.imageUrls,
         promoted: editData.promoted,
       };
 
