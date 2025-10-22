@@ -27,9 +27,11 @@ export function MarketplaceSidebar({
   return (
     <div className="space-y-3">
       {listings.map((listing) => {
+        if (!listing || !listing.id) return null;
+
         const seller = listing.seller;
         const slug = generateSlug(listing.title, listing.id);
-        const firstImage = listing.imageUrls[0];
+        const firstImage = listing.imageUrls?.[0];
 
         const handleViewClick = (e: React.MouseEvent) => {
           e.preventDefault();
