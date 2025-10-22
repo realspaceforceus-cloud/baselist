@@ -282,6 +282,11 @@ const ListingDetail = (): JSX.Element => {
   }, [listing, isSaved]);
 
   const handleReportListing = useCallback(async () => {
+    if (!listing) {
+      toast.error("Listing not found");
+      return;
+    }
+
     if (!reportReason.trim()) {
       toast.error("Please provide a reason for the report");
       return;
@@ -312,7 +317,7 @@ const ListingDetail = (): JSX.Element => {
     } catch (error) {
       toast.error("Unable to submit report");
     }
-  }, [listing.id, reportReason]);
+  }, [listing, reportReason]);
 
   if (isLoading) {
     return (
