@@ -143,34 +143,23 @@ export const Marketplace = (): JSX.Element => {
     });
   }, [listings, activeFilter, vehicleFilters]);
 
+  // Handle infinite scroll pagination
   useEffect(() => {
     const node = sentinelRef.current;
-
-    if (!node) {
-      return;
-    }
-
-    if (visibleListings.length >= filteredListings.length) {
-      return;
-    }
+    if (!node || !hasMore || isLoading) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          setVisibleCount((previous) =>
-            Math.min(previous + 10, filteredListings.length),
-          );
+          setOffset((prev) => prev + 20);
         }
       },
       { rootMargin: "200px" },
     );
 
     observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [filteredListings.length, visibleListings.length]);
+    return () => observer.disconnect();
+  }, [hasMore, isLoading]);
 
   const resultSummary = useMemo(() => {
     const formatter = new Intl.NumberFormat("en-US");
