@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit2 } from "lucide-react";
+import { Edit2, X, Check } from "lucide-react";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,7 +40,7 @@ export const RolesSection = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<string>("");
-  const [editingBaseId, setEditingBaseId] = useState<string>("");
+  const [editingBaseIds, setEditingBaseIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
