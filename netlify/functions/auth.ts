@@ -569,10 +569,8 @@ const handleMe = async (event: any) => {
   const client = await pool.connect();
 
   try {
-    // Extract userId from cookies
-    const cookies = event.headers.cookie || "";
-    const userIdMatch = cookies.match(/userId=([^;]+)/);
-    const userId = userIdMatch ? userIdMatch[1] : null;
+    // Get userId from auth (extracts from secure cookies)
+    const userId = getUserIdFromAuth(event);
 
     if (!userId) {
       return {
