@@ -435,39 +435,20 @@ export const BasesSection = () => {
                   placeholder="e.g., Enid"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="latitude">Latitude</Label>
-                  <Input
-                    id="latitude"
-                    type="number"
-                    step="0.000001"
-                    value={formData.latitude}
-                    onChange={(e) =>
-                      setFormData({ ...formData, latitude: e.target.value })
-                    }
-                    placeholder="e.g., 36.3495"
-                  />
-                  <span className="text-xs text-muted-foreground">
-                    -90 to 90
-                  </span>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="longitude">Longitude</Label>
-                  <Input
-                    id="longitude"
-                    type="number"
-                    step="0.000001"
-                    value={formData.longitude}
-                    onChange={(e) =>
-                      setFormData({ ...formData, longitude: e.target.value })
-                    }
-                    placeholder="e.g., -97.8822"
-                  />
-                  <span className="text-xs text-muted-foreground">
-                    -180 to 180
-                  </span>
-                </div>
+              <div className="grid gap-2">
+                <Label htmlFor="coordinates">Latitude & Longitude</Label>
+                <Input
+                  id="coordinates"
+                  type="text"
+                  value={formData.latitude}
+                  onChange={(e) =>
+                    setFormData({ ...formData, latitude: e.target.value })
+                  }
+                  placeholder="Paste as: 36.3495, -97.8822"
+                />
+                <span className="text-xs text-muted-foreground">
+                  Paste coordinates as comma-separated: latitude, longitude (e.g., 36.3495, -97.8822)
+                </span>
               </div>
             </div>
             <div className="flex justify-end gap-2">
