@@ -68,41 +68,32 @@ const Profile = (): JSX.Element => {
     fetchUser();
   }, [memberId, currentUser.id]);
 
-  // Show a message if guest tries to view their own profile without memberId
+  // Determine viewing own profile (must come before other hooks)
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
-  if (!isAuthenticated && isViewingOwnProfile) {
-    return (
-      <section className="space-y-6">
-        <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-card">
-          <h1 className="text-3xl font-semibold text-foreground mb-3">
-            View Your Profile
-          </h1>
-          <p className="text-muted-foreground mb-6">
-            Sign in to view your profile and complete your member journey.
-          </p>
-          <Link to="/" className="text-primary hover:underline font-semibold">
-            Sign in to continue
-          </Link>
-        </div>
-      </section>
-    );
-  }
 
   const profileUser = useMemo(() => {
-    if (!memberId || memberId === currentUser.id) {
+    if (isViewingOwnProfile) {
       return currentUser;
     }
     // Try local context first, then fetched user
     return getMemberProfile(memberId) ?? fetchedUser ?? null;
-  }, [currentUser, getMemberProfile, memberId, fetchedUser]);
+  }, [currentUser, getMemberProfile, memberId, fetchedUser, isViewingOwnProfile]);
 
   // Fetch user's listings using React Query hook
   const { data: listingsResponse, isLoading: isLoadingListings } =
     useUserListings(profileUser?.id || null);
 
-  const viewingOwnProfile = !memberId || memberId === currentUser.id;
+  const profileBase = useMemo(() => {
+    if (isViewingOwnProfile) {
+      return currentBase;
+    }
+    if (!profileUser) return currentBase;
+    return (
+      bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase
+    );
+  }, [bases, currentBase, profileUser?.currentBaseId, isViewingOwnProfile, profileUser]);
 
-  // Show error if profile not found (e.g., guest trying to view another member)
+  // Show error if profile not found (check after all hooks)
   if (profileUser === null) {
     return (
       <section className="space-y-6">
@@ -122,14 +113,24 @@ const Profile = (): JSX.Element => {
     );
   }
 
-  const profileBase = useMemo(() => {
-    if (viewingOwnProfile) {
-      return currentBase;
-    }
+  // Show a message if guest tries to view their own profile without memberId
+  if (!isAuthenticated && isViewingOwnProfile) {
     return (
-      bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase
+      <section className="space-y-6">
+        <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-card">
+          <h1 className="text-3xl font-semibold text-foreground mb-3">
+            View Your Profile
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Sign in to view your profile and complete your member journey.
+          </p>
+          <Link to="/" className="text-primary hover:underline font-semibold">
+            Sign in to continue
+          </Link>
+        </div>
+      </section>
     );
-  }, [bases, currentBase, profileUser.currentBaseId, viewingOwnProfile]);
+  }
 
   const profileFirstName = useMemo(() => {
     return profileUser.name.includes(" ")
