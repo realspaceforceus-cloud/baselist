@@ -369,6 +369,54 @@ export const handler: Handler = async (event) => {
           [userId],
         );
 
+        // Fetch account notes/strikes
+        let strikeRows: any[] = [];
+        try {
+          const strikeResult = await client.query(
+            `SELECT id, note_type as "type", strike_reason as "strikeType", description, severity, created_at as "createdAt"
+             FROM account_notes
+             WHERE user_id = $1
+             ORDER BY created_at DESC`,
+            [userId],
+          );
+          strikeRows = strikeResult.rows;
+        } catch (error) {
+          console.error("Failed to fetch strikes:", error);
+          // Continue even if strikes table doesn't exist
+        }
+
+        // Fetch user's listings
+        let listingRows: any[] = [];
+        try {
+          const listingResult = await client.query(
+            `SELECT id, title, price, status, created_at as "createdAt"
+             FROM listings
+             WHERE seller_id = $1
+             ORDER BY created_at DESC
+             LIMIT 50`,
+            [userId],
+          );
+          listingRows = listingResult.rows;
+        } catch (error) {
+          console.error("Failed to fetch listings:", error);
+        }
+
+        // Fetch user's ratings
+        let ratingRows: any[] = [];
+        try {
+          const ratingResult = await client.query(
+            `SELECT id, score, comment, is_from_seller as "isFromSeller", created_at as "createdAt"
+             FROM ratings
+             WHERE rated_user_id = $1
+             ORDER BY created_at DESC
+             LIMIT 50`,
+            [userId],
+          );
+          ratingRows = ratingResult.rows;
+        } catch (error) {
+          console.error("Failed to fetch ratings:", error);
+        }
+
         return {
           statusCode: 200,
           headers: { "Content-Type": "application/json" },
@@ -388,7 +436,9 @@ export const handler: Handler = async (event) => {
               successfulLogins: successLoginsResult.rows,
               failedLogins: failedLoginsResult.rows,
               uniqueIps: uniqueIpsResult.rows.map((row: any) => row.ip_address),
-              strikes: [],
+              strikes: strikeRows,
+              listings: listingRows,
+              ratings: ratingRows,
             },
           }),
         };
