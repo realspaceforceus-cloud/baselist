@@ -298,34 +298,46 @@ const Landing = (): JSX.Element => {
       setPendingUsername(trimmedUsername);
       setPendingBaseId(selectedBaseId);
 
-      // Then request a verification code for inbound verification
-      const verifyResponse = await fetch(
-        "/.netlify/functions/verify-status/request",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: normalizedEmail,
-          }),
-        },
-      );
+      // If using invitation code, automatically verify and proceed
+      if (useInvitationCode) {
+        toast.success("Account created and verified!", {
+          description: "Welcome! You can now log in.",
+        });
+        // Auto-proceed to login after 2 seconds
+        setTimeout(() => {
+          setJoinStage("hidden");
+          openSignIn();
+        }, 2000);
+      } else {
+        // For military email, request verification code
+        const verifyResponse = await fetch(
+          "/.netlify/functions/verify-status/request",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: normalizedEmail,
+            }),
+          },
+        );
 
-      if (!verifyResponse.ok) {
-        const data = await verifyResponse.json();
-        setAccountError(data.error || "Failed to generate verification code");
-        setIsSubmitting(false);
-        return;
+        if (!verifyResponse.ok) {
+          const data = await verifyResponse.json();
+          setAccountError(data.error || "Failed to generate verification code");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const verifyData = await verifyResponse.json();
+        setGeneratedCode(verifyData.code);
+        setTimeRemaining(1800); // 30 minutes
+        setIsVerificationPending(false);
+        setJoinStage("verify");
+
+        toast.success("Account created", {
+          description: "Follow the email instructions to verify your account.",
+        });
       }
-
-      const verifyData = await verifyResponse.json();
-      setGeneratedCode(verifyData.code);
-      setTimeRemaining(1800); // 30 minutes
-      setIsVerificationPending(false);
-      setJoinStage("verify");
-
-      toast.success("Account created", {
-        description: "Follow the email instructions to verify your account.",
-      });
     } catch (error) {
       setAccountError(
         error instanceof Error ? error.message : "Failed to create account",
