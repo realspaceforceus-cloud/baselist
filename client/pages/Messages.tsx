@@ -276,6 +276,11 @@ const Messages = (): JSX.Element => {
     const query = searchTerm.trim().toLowerCase();
 
     return threadSummaries.filter((summary) => {
+      // Filter out dismissed threads
+      if (dismissedThreadIds.has(summary.thread.id)) {
+        return false;
+      }
+
       const matchesFilter =
         threadFilter === "all" || summary.userStatus === threadFilter;
       if (!matchesFilter) {
@@ -289,7 +294,7 @@ const Messages = (): JSX.Element => {
       const partnerText = summary.partnerName.toLowerCase();
       return listingText.includes(query) || partnerText.includes(query);
     });
-  }, [searchTerm, threadFilter, threadSummaries]);
+  }, [searchTerm, threadFilter, threadSummaries, dismissedThreadIds]);
 
   const activeSummary = useMemo(
     () =>
