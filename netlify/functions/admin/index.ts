@@ -619,10 +619,26 @@ export const handler: Handler = async (event) => {
         `SELECT * FROM reports ORDER BY created_at DESC`,
       );
 
+      // Transform snake_case to camelCase
+      const transformedReports = result.rows.map((report: any) => ({
+        id: report.id,
+        type: report.report_type || report.type,
+        status: report.status,
+        description: report.description,
+        reportedBy: report.reported_by,
+        targetType: report.target_type,
+        targetId: report.target_id,
+        baseId: report.base_id,
+        createdAt: report.created_at,
+        updatedAt: report.updated_at,
+        resolvedAt: report.resolved_at,
+        resolverId: report.resolver_id,
+      }));
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reports: result.rows }),
+        body: JSON.stringify({ reports: transformedReports }),
       };
     }
 
