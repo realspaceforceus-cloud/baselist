@@ -13,8 +13,8 @@ CREATE INDEX idx_moderator_bases_base_id ON moderator_bases(base_id);
 
 -- Migrate existing moderator baseIds from users table to moderator_bases
 INSERT INTO moderator_bases (id, moderator_id, base_id, assigned_at)
-SELECT 
-  (SELECT uuid_generate_v4())::TEXT,
+SELECT
+  md5(random()::text || clock_timestamp()::text)::TEXT,
   id,
   base_id,
   created_at
