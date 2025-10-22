@@ -26,6 +26,7 @@ interface RoleUser {
   email: string;
   role: "admin" | "moderator" | "member";
   baseId: string;
+  baseIds?: string[];
   createdAt: string;
 }
 
