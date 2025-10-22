@@ -63,7 +63,27 @@ export const RolesSection = (): JSX.Element => {
             baseId: u.baseId,
             createdAt: u.createdAt,
           }));
-        setUsers(roleUsers);
+
+        // Load moderator bases for display
+        const usersWithBases = await Promise.all(
+          roleUsers.map(async (user) => {
+            if (user.role === "moderator") {
+              try {
+                const baseIds = await adminApi.getModeratorBases(user.id);
+                return { ...user, baseIds };
+              } catch (error) {
+                console.error(
+                  `Failed to load bases for moderator ${user.id}:`,
+                  error,
+                );
+                return user;
+              }
+            }
+            return user;
+          }),
+        );
+
+        setUsers(usersWithBases);
 
         const baseOptions = (basesResult?.bases || []).map((b: any) => ({
           id: b.id,
