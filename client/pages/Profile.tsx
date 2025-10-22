@@ -85,9 +85,9 @@ const Profile = (): JSX.Element => {
     isViewingOwnProfile,
   ]);
 
-  // Fetch user's listings using React Query hook
+  // Fetch user's listings using React Query hook (only fetch when we have a valid user)
   const { data: listingsResponse, isLoading: isLoadingListings } =
-    useUserListings(profileUser?.id || null);
+    useUserListings(profileUser?.id ? profileUser.id : null);
 
   const profileBase = useMemo(() => {
     if (isViewingOwnProfile) {
