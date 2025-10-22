@@ -227,26 +227,51 @@ export const RolesSection = (): JSX.Element => {
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
                     {editingUserId === user.id ? (
-                      <Select
-                        value={editingBaseId}
-                        onValueChange={setEditingBaseId}
-                      >
-                        <SelectTrigger className="w-40 rounded-xl">
-                          <SelectValue placeholder="Select base" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {bases.map((base) => (
-                            <SelectItem key={base.id} value={base.id}>
-                              {base.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <>
+                        {editingRole === "admin" ? (
+                          <span className="text-xs font-medium text-success">
+                            All Bases
+                          </span>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="text-xs text-muted-foreground mb-2">
+                              Select bases for this moderator:
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {bases.map((base) => (
+                                <button
+                                  key={base.id}
+                                  onClick={() => toggleBaseSelection(base.id)}
+                                  disabled={isSubmitting}
+                                  className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
+                                    editingBaseIds.includes(base.id)
+                                      ? "bg-primary text-primary-foreground"
+                                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                                  }`}
+                                >
+                                  {editingBaseIds.includes(base.id) && (
+                                    <Check className="h-3 w-3 inline mr-1" />
+                                  )}
+                                  {base.name}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <>
-                        {bases.find((b) => b.id === user.baseId)?.name ||
-                          user.baseId ||
-                          "—"}
+                        {user.role === "admin" ? (
+                          <span className="text-xs font-medium text-success">
+                            All Bases
+                          </span>
+                        ) : (
+                          <>
+                            {bases.find((b) => b.id === user.baseId)?.name ||
+                              user.baseId ||
+                              "—"}
+                          </>
+                        )}
                       </>
                     )}
                   </td>
