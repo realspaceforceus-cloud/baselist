@@ -182,33 +182,6 @@ const Profile = (): JSX.Element => {
     );
   }
 
-  const profileFirstName = useMemo(() => {
-    return profileUser.name.includes(" ")
-      ? profileUser.name.split(" ")[0]
-      : profileUser.name;
-  }, [profileUser.name]);
-
-  const profileMemberSinceYear = useMemo(
-    () => new Date(profileUser.memberSince).getFullYear(),
-    [profileUser.memberSince],
-  );
-
-  // Use API-fetched listings or filter from context if viewing own profile
-  const myListings = useMemo(() => {
-    if (!profileUser?.id) return [];
-    if (isViewingOwnProfile) {
-      return listings.filter((listing) => listing.sellerId === profileUser.id);
-    }
-    return listingsResponse?.listings || [];
-  }, [listingsResponse, listings, profileUser?.id, isViewingOwnProfile]);
-
-  const activeListings = myListings.filter(
-    (listing) => listing.status === "active",
-  );
-  const soldListings = myListings.filter(
-    (listing) => listing.status === "sold",
-  );
-
   const purchases = transactions.filter(
     (entry) => entry.buyerId === profileUser.id,
   );
