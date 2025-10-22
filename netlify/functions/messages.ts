@@ -624,6 +624,12 @@ export const handler: Handler = async (event) => {
 
       const partner = partnerResult.rows[0];
 
+      // Fetch all messages in the thread
+      const messagesResult = await client.query(
+        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+        [threadId],
+      );
+
       return {
         statusCode: 201,
         headers: { "Content-Type": "application/json" },
@@ -640,7 +646,14 @@ export const handler: Handler = async (event) => {
             updatedAt: threadData.updated_at,
             listing,
             partner,
-            messages: [],
+            messages: messagesResult.rows.map((msg: any) => ({
+              id: msg.id,
+              threadId: msg.thread_id,
+              authorId: msg.author_id,
+              body: msg.body,
+              sentAt: msg.sent_at,
+              type: msg.type || "text",
+            })),
           },
         }),
       };
