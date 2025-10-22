@@ -286,14 +286,14 @@ export const handler: Handler = async (event) => {
             .map((_, i) => `$${i + 1}`)
             .join(",");
           const commentersResult = await client.query(
-            `SELECT id, username as name, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
+            `SELECT id, username, avatar_url as "avatarUrl", dow_verified_at as "verified" FROM users WHERE id IN (${placeholders})`,
             commenterIds,
           );
 
           commentersResult.rows.forEach((user) => {
             commenterMap.set(user.id, {
               id: user.id,
-              name: user.name,
+              name: user.username,
               verified: !!user.verified,
               memberSince: new Date().toISOString(),
               avatarUrl: user.avatarUrl || "",
