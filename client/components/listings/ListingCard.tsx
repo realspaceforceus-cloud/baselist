@@ -225,6 +225,16 @@ export const ListingCard = ({
           aria-hidden
         />
       </button>
+
+      <button
+        type="button"
+        onClick={handleShare}
+        className="absolute right-16 top-4 rounded-full bg-white/90 dark:bg-black/50 p-2 transition hover:scale-110 active:scale-95"
+        title="Share listing"
+        aria-label="Share listing"
+      >
+        <Share2 className="h-5 w-5 text-muted-foreground hover:text-foreground transition" />
+      </button>
     </div>
   );
 };
