@@ -3,7 +3,10 @@ import { CheckCircle2, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { Button } from "@/components/ui/button";
-import { ReportDetailModal, ReportDetail } from "@/components/admin/ReportDetailModal";
+import {
+  ReportDetailModal,
+  ReportDetail,
+} from "@/components/admin/ReportDetailModal";
 import { toast } from "sonner";
 
 export interface AdminReportRecord {
@@ -21,7 +24,9 @@ export const ReportsSection = () => {
   const [reports, setReports] = useState<AdminReportRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>("All");
-  const [selectedReport, setSelectedReport] = useState<ReportDetail | null>(null);
+  const [selectedReport, setSelectedReport] = useState<ReportDetail | null>(
+    null,
+  );
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
@@ -196,8 +201,16 @@ export const ReportsSection = () => {
                             id: report.id,
                             type: report.type,
                             description: "",
-                            reportedBy: { id: "", username: report.reporter, avatarUrl: "" },
-                            target: { id: report.targetId, username: "", avatarUrl: "" },
+                            reportedBy: {
+                              id: "",
+                              username: report.reporter,
+                              avatarUrl: "",
+                            },
+                            target: {
+                              id: report.targetId,
+                              username: "",
+                              avatarUrl: "",
+                            },
                             targetType: report.targetType,
                             targetId: report.targetId,
                             targetLabel: report.targetLabel,

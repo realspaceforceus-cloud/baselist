@@ -886,15 +886,14 @@ export const handler: Handler = async (event) => {
         }
 
         // Notify reported user (only if action taken against them)
-        if (
-          report.target_type === "user" &&
-          action !== "false_report"
-        ) {
+        if (report.target_type === "user" && action !== "false_report") {
           await createNotification({
             userId: report.target_id,
             type: "content_action_taken",
             title: "Content Action Taken",
-            description: message || "Action has been taken on your account due to a report.",
+            description:
+              message ||
+              "Action has been taken on your account due to a report.",
             actorId: userId,
             targetId: report.target_id,
             targetType: "user",

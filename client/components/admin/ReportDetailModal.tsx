@@ -122,8 +122,7 @@ export const ReportDetailModal = ({
       onClose();
     } catch (error) {
       toast.error("Failed to resolve report", {
-        description:
-          error instanceof Error ? error.message : "Try again later",
+        description: error instanceof Error ? error.message : "Try again later",
       });
     } finally {
       setIsSubmitting(false);
@@ -135,10 +134,7 @@ export const ReportDetailModal = ({
       <AlertDialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between">
           <AlertDialogTitle>Review Report</AlertDialogTitle>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1 hover:bg-muted"
-          >
+          <button onClick={onClose} className="rounded-lg p-1 hover:bg-muted">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -150,11 +146,15 @@ export const ReportDetailModal = ({
             <div className="rounded-lg bg-muted p-4 space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Type:</span>
-                <span className="text-sm font-medium capitalize">{report.type}</span>
+                <span className="text-sm font-medium capitalize">
+                  {report.type}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Reported:</span>
-                <span className="text-sm">{new Date(report.createdAt).toLocaleDateString()}</span>
+                <span className="text-sm">
+                  {new Date(report.createdAt).toLocaleDateString()}
+                </span>
               </div>
               {report.description && (
                 <div className="pt-2 border-t border-border">
@@ -210,12 +210,15 @@ export const ReportDetailModal = ({
           {/* View Content Link */}
           {report.contentUrl && (
             <div className="space-y-3">
-              <h3 className="font-semibold text-foreground">Reported Content</h3>
+              <h3 className="font-semibold text-foreground">
+                Reported Content
+              </h3>
               <Link
                 to={report.contentUrl}
                 className="inline-block px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-sm font-medium"
               >
-                View {report.targetType === "thread" ? "Message" : report.targetType}
+                View{" "}
+                {report.targetType === "thread" ? "Message" : report.targetType}
               </Link>
             </div>
           )}
@@ -258,7 +261,10 @@ export const ReportDetailModal = ({
                   Message to both parties:
                 </p>
                 <p className="text-sm">
-                  {RESOLUTION_ACTIONS.find((a) => a.id === selectedAction)?.message}
+                  {
+                    RESOLUTION_ACTIONS.find((a) => a.id === selectedAction)
+                      ?.message
+                  }
                 </p>
               </div>
             )}
@@ -268,10 +274,7 @@ export const ReportDetailModal = ({
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-4">
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Button
-            onClick={handleResolve}
-            disabled={isSubmitting}
-          >
+          <Button onClick={handleResolve} disabled={isSubmitting}>
             {isSubmitting ? "Resolving..." : "Resolve Report"}
           </Button>
         </div>
