@@ -459,6 +459,12 @@ const Messages = (): JSX.Element => {
 
   const handleSubmitOffer = async () => {
     if (!activeSummary || !offerAmount) {
+      toast.error("Please enter an offer amount");
+      return;
+    }
+
+    if (!user || !user.id) {
+      toast.error("You must be logged in to make an offer");
       return;
     }
 
@@ -480,7 +486,10 @@ const Messages = (): JSX.Element => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit offer");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `Server error: ${response.status}`,
+        );
       }
 
       const data = await response.json();
