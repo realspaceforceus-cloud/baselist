@@ -37,8 +37,6 @@ const Profile = (): JSX.Element => {
   const { memberId } = useParams<{ memberId?: string }>();
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
-  const [userListings, setUserListings] = useState<Listing[]>([]);
-  const [isLoadingListings, setIsLoadingListings] = useState(false);
 
   // Fetch user from API if not in local context
   useEffect(() => {
@@ -78,28 +76,10 @@ const Profile = (): JSX.Element => {
     fetchUser();
   }, [memberId, currentUser.id, getMemberProfile]);
 
-  // Fetch user's listings from API
-  useEffect(() => {
-    if (!profileUser?.id) {
-      setUserListings([]);
-      return;
-    }
-
-    const fetchUserListings = async () => {
-      setIsLoadingListings(true);
-      try {
-        const response = await getUserListings(profileUser.id);
-        setUserListings(response.listings);
-      } catch (error) {
-        console.error("Failed to fetch user listings:", error);
-        setUserListings([]);
-      } finally {
-        setIsLoadingListings(false);
-      }
-    };
-
-    fetchUserListings();
-  }, [profileUser?.id]);
+  // Fetch user's listings using React Query hook
+  const { data: listingsResponse, isLoading: isLoadingListings } = useUserListings(
+    profileUser?.id || null,
+  );
 
   // Show a message if guest tries to view their own profile without memberId
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
