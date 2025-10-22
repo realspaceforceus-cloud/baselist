@@ -96,9 +96,26 @@ export function FeedCommentItem({
               <BadgeCheck className="h-3 w-3 text-blue-500" />
             )}
           </div>
-          <p className="text-muted-foreground whitespace-pre-wrap">
-            {comment.content}
-          </p>
+          <div className="text-muted-foreground whitespace-pre-wrap">
+            {(() => {
+              const parts = comment.content.split(/(@\w+)/g);
+              return parts.map((part, idx) => {
+                if (part.startsWith("@")) {
+                  const username = part.slice(1);
+                  return (
+                    <Link
+                      key={idx}
+                      to={`/profile/${username}`}
+                      className="font-bold text-white hover:underline"
+                    >
+                      {part}
+                    </Link>
+                  );
+                }
+                return <span key={idx}>{part}</span>;
+              });
+            })()}
+          </div>
           <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
             <button
               onClick={handleLike}
