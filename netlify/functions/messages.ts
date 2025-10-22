@@ -3,6 +3,7 @@ import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
 import { createNotification, getActorName } from "./notification-helpers";
+import { getUserIdFromAuth } from "./auth";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
