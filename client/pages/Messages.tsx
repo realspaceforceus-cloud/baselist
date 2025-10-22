@@ -1058,46 +1058,50 @@ const Messages = (): JSX.Element => {
                 className="h-12 rounded-full border-border bg-background/80 text-sm"
               />
               <div className="flex flex-wrap gap-2 md:justify-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full px-4 text-xs font-semibold"
-                  onClick={handleQuickOffer}
-                  disabled={
-                    !activeSummary?.listing || activeSummary.listing.isFree
-                  }
-                >
-                  {activeSummary?.listing && !activeSummary.listing.isFree
-                    ? `Offer ${new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                        maximumFractionDigits:
-                          activeSummary.listing.price % 1 === 0 ? 0 : 2,
-                      }).format(activeSummary.listing.price)}`
-                    : "Quick offer"}
-                </Button>
-                {canMarkComplete ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full px-4 text-xs font-semibold"
-                    onClick={handleMarkComplete}
-                  >
-                    Mark complete
-                  </Button>
-                ) : null}
-                {!awaitingUserConfirmation && !isDisputed ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full px-4 text-xs font-semibold text-destructive hover:bg-destructive/10"
-                    onClick={() => setShowDisputeDialog(true)}
-                  >
-                    Dispute
-                  </Button>
+                {activeSummary.isMarketplace ? (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full px-4 text-xs font-semibold"
+                      onClick={handleQuickOffer}
+                      disabled={
+                        !activeSummary?.listing || activeSummary.listing.isFree
+                      }
+                    >
+                      {activeSummary?.listing && !activeSummary.listing.isFree
+                        ? `Offer ${new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                            maximumFractionDigits:
+                              activeSummary.listing.price % 1 === 0 ? 0 : 2,
+                          }).format(activeSummary.listing.price)}`
+                        : "Quick offer"}
+                    </Button>
+                    {canMarkComplete ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full px-4 text-xs font-semibold"
+                        onClick={handleMarkComplete}
+                      >
+                        Mark complete
+                      </Button>
+                    ) : null}
+                    {!awaitingUserConfirmation && !isDisputed ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full px-4 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                        onClick={() => setShowDisputeDialog(true)}
+                      >
+                        Dispute
+                      </Button>
+                    ) : null}
+                  </>
                 ) : null}
                 <Button
                   type="submit"
