@@ -112,6 +112,18 @@ export interface ThreadTransaction {
     reason?: string;
     raisedAt: string;
   };
+  offer?: {
+    amount: number;
+    madeBy: string;
+    madeAt: string;
+    status: "pending" | "accepted" | "declined" | "retracted";
+  };
+  counterOffer?: {
+    amount: number;
+    madeBy: string;
+    madeAt: string;
+    status: "pending" | "accepted" | "declined" | "retracted";
+  };
 }
 
 export interface MessageThread {
