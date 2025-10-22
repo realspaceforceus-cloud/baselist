@@ -102,9 +102,8 @@ const Profile = (): JSX.Element => {
   }, [currentUser, getMemberProfile, memberId, fetchedUser]);
 
   // Fetch user's listings using React Query hook
-  const { data: listingsResponse, isLoading: isLoadingListings } = useUserListings(
-    profileUser?.id || null,
-  );
+  const { data: listingsResponse, isLoading: isLoadingListings } =
+    useUserListings(profileUser?.id || null);
 
   const viewingOwnProfile = !memberId || memberId === currentUser.id;
 
