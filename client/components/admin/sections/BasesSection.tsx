@@ -205,26 +205,37 @@ export const BasesSection = () => {
     setIsDialogOpen(true);
   };
 
-  const handleRegionChange = (region: string) => {
-    setFormData({
-      ...formData,
-      region,
-      // Auto-default timezone based on region if it's new
-      timezone: !editingBase ? getTimezoneForRegion(region) : formData.timezone,
-    });
-  };
-
   const handleSaveBase = async () => {
-    if (!formData.name || !formData.abbreviation || !formData.region) {
-      toast.error("Name, abbreviation, and region are required");
+    if (!formData.name || !formData.abbreviation) {
+      toast.error("Name and abbreviation are required");
       return;
     }
 
-    // Auto-set timezone if empty
-    let timezone = formData.timezone;
-    if (!timezone) {
-      timezone = getTimezoneForRegion(formData.region);
+    if (!formData.latitude || !formData.longitude) {
+      toast.error("Latitude and longitude are required for accurate distance calculations");
+      return;
     }
+
+    const latitude = parseFloat(formData.latitude);
+    const longitude = parseFloat(formData.longitude);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      toast.error("Latitude and longitude must be valid numbers");
+      return;
+    }
+
+    if (latitude < -90 || latitude > 90) {
+      toast.error("Latitude must be between -90 and 90");
+      return;
+    }
+
+    if (longitude < -180 || longitude > 180) {
+      toast.error("Longitude must be between -180 and 180");
+      return;
+    }
+
+    // Use state if present, otherwise use country
+    const region = formData.state || formData.country || "Unknown";
 
     setIsSubmitting(true);
     try {
@@ -234,8 +245,9 @@ export const BasesSection = () => {
         await adminApi.updateBase(editingBase.id, {
           name: formData.name,
           abbreviation: formData.abbreviation,
-          region: formData.region,
-          timezone,
+          region,
+          latitude,
+          longitude,
         });
         toast.success("Base updated successfully");
       } else {
@@ -244,10 +256,10 @@ export const BasesSection = () => {
           id: baseId,
           name: formData.name,
           abbreviation: formData.abbreviation,
-          region: formData.region,
-          timezone,
-          latitude: 0,
-          longitude: 0,
+          region,
+          timezone: "UTC",
+          latitude,
+          longitude,
         });
         toast.success("Base created successfully");
         // Refresh bases in the global context so new base appears in selector
