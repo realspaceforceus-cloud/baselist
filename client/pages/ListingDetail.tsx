@@ -232,7 +232,9 @@ const ListingDetail = (): JSX.Element => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        const errorData = await response.json();
+        console.error("Message API error:", errorData);
+        throw new Error(errorData.error || "Failed to send message");
       }
 
       const data = await response.json();
@@ -244,8 +246,9 @@ const ListingDetail = (): JSX.Element => {
       setMessageBody("");
       navigate(`/messages/${data.thread?.id}`);
     } catch (error) {
-      console.error("Error sending message:", error);
-      toast.error("Failed to send message");
+      const message = error instanceof Error ? error.message : "Failed to send message";
+      console.error("Error sending message:", message);
+      toast.error(message);
     }
   }, [listing, messageBody, navigate, seller?.name, currentUser]);
 
