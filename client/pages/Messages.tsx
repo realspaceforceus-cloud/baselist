@@ -645,6 +645,12 @@ const Messages = (): JSX.Element => {
                     alt={activeSummary.listing.title}
                     className="h-full w-full object-cover"
                   />
+                ) : activeSummary.seller?.avatarUrl ? (
+                  <img
+                    src={activeSummary.seller.avatarUrl}
+                    alt={activeSummary.partnerName}
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <MessageSquare
                     className="h-full w-full p-2 text-muted-foreground"
@@ -654,7 +660,7 @@ const Messages = (): JSX.Element => {
               </div>
               <div className="space-y-1">
                 <h2 className="text-base font-semibold text-foreground">
-                  {activeSummary.listing?.title ?? "Listing removed"}
+                  {activeSummary.listing?.title ?? "Direct message"}
                 </h2>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   {activeSummary.partnerId ? (
@@ -688,20 +694,33 @@ const Messages = (): JSX.Element => {
                 </div>
               </div>
             </div>
-            {activeSummary.listing ? (
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="rounded-full px-3 py-1 text-xs"
-              >
-                <Link
-                  to={`/listing/${generateSlug(activeSummary.listing.title, activeSummary.listing.id)}`}
+            <div className="flex items-center gap-2">
+              {activeSummary.listing ? (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full px-3 py-1 text-xs"
                 >
-                  View item
-                </Link>
-              </Button>
-            ) : null}
+                  <Link
+                    to={`/listing/${generateSlug(activeSummary.listing.title, activeSummary.listing.id)}`}
+                  >
+                    View item
+                  </Link>
+                </Button>
+              ) : null}
+              {!activeSummary.listing || activeSummary.listing.status === "sold" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full px-3 py-1 text-xs"
+                  onClick={handleDismissListing}
+                >
+                  Dismiss
+                </Button>
+              ) : null}
+            </div>
           </div>
 
           {activeTransaction ? (
