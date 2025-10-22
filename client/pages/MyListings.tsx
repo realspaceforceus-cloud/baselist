@@ -94,19 +94,15 @@ export const MyListings = (): JSX.Element => {
     });
   };
 
-  const handleDeleteListing = async (listingId: string) => {
-    try {
-      await deleteListing(listingId);
-      setMyListings((prev) => prev.filter((l) => l.id !== listingId));
-      setDeleteConfirm(null);
-      toast.success("Listing deleted successfully");
-    } catch (error) {
-      console.error("Delete listing error:", error);
-      const errorMsg =
-        error instanceof Error ? error.message : "Unable to delete listing";
-      toast.error(errorMsg);
-      setDeleteConfirm(null);
-    }
+  const handleDeleteListing = (listingId: string) => {
+    deleteListingMutation.mutate(listingId, {
+      onSuccess: () => {
+        setDeleteConfirm(null);
+      },
+      onError: () => {
+        setDeleteConfirm(null);
+      },
+    });
   };
 
   const getListingStatus = (listing: ListingWithOffers) => {
