@@ -925,6 +925,42 @@ const Landing = (): JSX.Element => {
 
               <div className="space-y-2">
                 <label
+                  htmlFor="signup-password-confirm"
+                  className="text-sm font-semibold text-foreground"
+                >
+                  Confirm Password
+                </label>
+                <Input
+                  id="signup-password-confirm"
+                  type="password"
+                  value={passwordConfirm}
+                  onChange={(event) => setPasswordConfirm(event.target.value)}
+                  placeholder="Confirm your password"
+                  className="h-11 rounded-full"
+                  required
+                  disabled={isSubmitting}
+                />
+                {passwordConfirm ? (
+                  passwordsMatch ? (
+                    <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                      <CheckCircle2 className="h-4 w-4" aria-hidden />
+                      Passwords match.
+                    </p>
+                  ) : (
+                    <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                      <AlertCircle className="h-4 w-4" aria-hidden />
+                      Passwords do not match.
+                    </p>
+                  )
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Re-enter your password to confirm.
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label
                   htmlFor="signup-base"
                   className="text-sm font-semibold text-foreground"
                 >
