@@ -481,12 +481,12 @@ const Messages = (): JSX.Element => {
     }
   };
 
-  const handleRaiseDispute = () => {
+  const handleRaiseDispute = async () => {
     if (!activeSummary) {
       return;
     }
     try {
-      raiseDispute(activeSummary.thread.id, user.id, disputeReason);
+      await raiseDispute(activeSummary.thread.id, user.id, disputeReason);
       setShowDisputeDialog(false);
       setDisputeReason("");
     } catch (error) {
