@@ -218,7 +218,7 @@ const Messages = (): JSX.Element => {
             transaction.markedCompleteBy !== user.id,
         );
         const userMarkedComplete = Boolean(
-          transaction?.status === "pending_complete" &&
+          transaction?.status === "pending_confirmation" &&
             transaction.markedCompleteBy === user.id,
         );
         const ratingSubmitted = Boolean(
