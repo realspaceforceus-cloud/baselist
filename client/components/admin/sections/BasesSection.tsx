@@ -181,9 +181,12 @@ export const BasesSection = () => {
     setEditingBase(base);
     setFormData({
       name: base.name,
-      abbreviation: base.id, // Show the abbreviation from base ID
-      region: base.region,
-      timezone: "", // Will need to fetch actual timezone from API
+      abbreviation: base.id,
+      state: base.region,
+      country: "",
+      city: "",
+      latitude: "",
+      longitude: "",
     });
     setIsDialogOpen(true);
   };
@@ -193,8 +196,11 @@ export const BasesSection = () => {
     setFormData({
       name: "",
       abbreviation: "",
-      region: "",
-      timezone: "",
+      state: "",
+      country: "",
+      city: "",
+      latitude: "",
+      longitude: "",
     });
     setIsDialogOpen(true);
   };
