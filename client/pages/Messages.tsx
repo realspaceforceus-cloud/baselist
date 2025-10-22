@@ -369,7 +369,7 @@ const Messages = (): JSX.Element => {
     activeSummary &&
       (!activeTransaction ||
         (activeTransaction.status !== "completed" &&
-          activeTransaction.status !== "pending_complete")) &&
+          activeTransaction.status !== "pending_confirmation")) &&
       !userMarkedComplete,
   );
   const isDisputed = activeTransaction?.status === "disputed";
