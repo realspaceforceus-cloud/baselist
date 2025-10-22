@@ -1,12 +1,39 @@
-import { Check, ChevronDown, MapPin } from "lucide-react";
-import { useCallback } from "react";
+import { Check, ChevronDown, MapPin, Navigation } from "lucide-react";
+import { useCallback, useState, useEffect } from "react";
 
 import { useBaseList } from "@/context/BaseListContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import {
+  getUserLocation,
+  getClosestBases,
+  type BaseWithDistance,
+} from "@/lib/geoUtils";
 
 export const BaseSelector = (): JSX.Element => {
   const { bases, currentBase, setCurrentBaseId } = useBaseList();
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [closestBases, setClosestBases] = useState<BaseWithDistance[]>([]);
+
+  // Get user location on mount
+  useEffect(() => {
+    const initLocation = async () => {
+      const location = await getUserLocation();
+      setUserLocation(location);
+
+      if (location) {
+        const closest = getClosestBases(
+          location,
+          bases as BaseWithDistance[],
+        );
+        setClosestBases(closest);
+      }
+    };
+    initLocation();
+  }, [bases]);
 
   const handleSelect = useCallback(
     (baseId: string) => {
