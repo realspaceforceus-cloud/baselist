@@ -322,7 +322,13 @@ const Messages = (): JSX.Element => {
       const partnerText = summary.partnerName.toLowerCase();
       return listingText.includes(query) || partnerText.includes(query);
     });
-  }, [searchTerm, threadFilter, typeFilter, threadSummaries, dismissedThreadIds]);
+  }, [
+    searchTerm,
+    threadFilter,
+    typeFilter,
+    threadSummaries,
+    dismissedThreadIds,
+  ]);
 
   const activeSummary = useMemo(
     () =>
@@ -432,7 +438,11 @@ const Messages = (): JSX.Element => {
   };
 
   const handleQuickOffer = () => {
-    if (!activeSummary?.listing || activeSummary.listing.isFree || !activeSummary.listing.price) {
+    if (
+      !activeSummary?.listing ||
+      activeSummary.listing.isFree ||
+      !activeSummary.listing.price
+    ) {
       return;
     }
 

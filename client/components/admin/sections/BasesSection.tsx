@@ -447,7 +447,8 @@ export const BasesSection = () => {
                   placeholder="Paste as: 36.3495, -97.8822"
                 />
                 <span className="text-xs text-muted-foreground">
-                  Paste coordinates as comma-separated: latitude, longitude (e.g., 36.3495, -97.8822)
+                  Paste coordinates as comma-separated: latitude, longitude
+                  (e.g., 36.3495, -97.8822)
                 </span>
               </div>
             </div>
