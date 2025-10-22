@@ -121,7 +121,7 @@ const Messages = (): JSX.Element => {
     const fetchThreads = async () => {
       try {
         setIsLoadingThreads(true);
-        const response = await messagesApi.getThreads(50, 0);
+        const response = await getThreads(50, 0);
         setMessageThreads(response.threads || []);
       } catch (error) {
         console.error("Failed to fetch message threads:", error);
