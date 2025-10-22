@@ -514,6 +514,120 @@ const Messages = (): JSX.Element => {
     markTransactionComplete(activeSummary.thread.id, user.id);
   };
 
+  const handleAcceptOffer = async () => {
+    if (!activeSummary) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/accept-offer`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to accept offer");
+      }
+
+      const data = await response.json();
+      setMessageThreads((prev) =>
+        prev.map((t) => ({
+          ...t,
+          ...(t.id === activeSummary.thread.id && {
+            transaction: data.transaction,
+          }),
+        })),
+      );
+
+      toast.success("Offer accepted");
+    } catch (error) {
+      toast.error("Failed to accept offer", {
+        description:
+          error instanceof Error ? error.message : "Try again later",
+      });
+    }
+  };
+
+  const handleDeclineOffer = async () => {
+    if (!activeSummary) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/decline-offer`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to decline offer");
+      }
+
+      const data = await response.json();
+      setMessageThreads((prev) =>
+        prev.map((t) => ({
+          ...t,
+          ...(t.id === activeSummary.thread.id && {
+            transaction: data.transaction,
+          }),
+        })),
+      );
+
+      toast.success("Offer declined");
+    } catch (error) {
+      toast.error("Failed to decline offer", {
+        description:
+          error instanceof Error ? error.message : "Try again later",
+      });
+    }
+  };
+
+  const handleRetractOffer = async () => {
+    if (!activeSummary) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/offer`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to retract offer");
+      }
+
+      const data = await response.json();
+      setMessageThreads((prev) =>
+        prev.map((t) => ({
+          ...t,
+          ...(t.id === activeSummary.thread.id && {
+            transaction: data.transaction,
+          }),
+        })),
+      );
+
+      toast.success("Offer retracted");
+    } catch (error) {
+      toast.error("Failed to retract offer", {
+        description:
+          error instanceof Error ? error.message : "Try again later",
+      });
+    }
+  };
+
   const handleConfirmCompletion = () => {
     if (!activeSummary) {
       return;
