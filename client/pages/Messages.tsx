@@ -418,7 +418,7 @@ const Messages = (): JSX.Element => {
 
   const handleComposerSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!activeSummary || !activeSummary.partnerId) {
+    if (!activeSummary || !activeSummary.partnerId || !user) {
       return;
     }
 
@@ -427,18 +427,63 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    try {
-      const updatedThread = await sendMessageToSeller(
-        activeSummary.thread.listingId,
-        activeSummary.partnerId,
-        trimmed,
-      );
+    // Generate clientId for optimistic reconciliation
+    const clientId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      // Update local messageThreads state with the new thread
+    // Optimistically add message to UI
+    const optimisticMessage: Message = {
+      id: clientId,
+      threadId: activeSummary.thread.id,
+      authorId: user.id,
+      body: trimmed,
+      sentAt: new Date().toISOString(),
+      type: "text",
+    };
+
+    // Add optimistic message to thread
+    setMessageThreads((prev) =>
+      prev.map((t) =>
+        t.id === activeSummary.thread.id
+          ? {
+              ...t,
+              messages: [...t.messages, optimisticMessage],
+              updatedAt: new Date().toISOString(),
+            }
+          : t,
+      ),
+    );
+
+    setComposerMessage("");
+
+    try {
+      // POST with clientId
+      const response = await fetch("/.netlify/functions/messages", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listingId: activeSummary.thread.listingId,
+          recipientId: activeSummary.partnerId,
+          body: trimmed,
+          clientId,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error || "Failed to send message");
+      }
+
+      const result = await response.json();
+      const updatedThread = result.thread as MessageThread;
+
+      // Reconcile optimistic message with real one
       setMessageThreads((prev) => {
-        const existingIndex = prev.findIndex((t) => t.id === updatedThread.id);
+        const existingIndex = prev.findIndex(
+          (t) => t.id === updatedThread.id,
+        );
         if (existingIndex !== -1) {
-          // Update existing thread - move to top
+          // Update existing thread - use all messages from server
           const remaining = prev.filter((_, i) => i !== existingIndex);
           return [updatedThread, ...remaining];
         }
@@ -446,10 +491,22 @@ const Messages = (): JSX.Element => {
         return [updatedThread, ...prev];
       });
 
-      setComposerMessage("");
       markThreadAsRead(updatedThread.id);
       navigate(`/messages/${updatedThread.id}`, { replace: true });
+      toast.success("Message sent");
     } catch (error) {
+      // Remove optimistic message on error
+      setMessageThreads((prev) =>
+        prev.map((t) =>
+          t.id === activeSummary.thread.id
+            ? {
+                ...t,
+                messages: t.messages.filter((m) => m.id !== clientId),
+              }
+            : t,
+        ),
+      );
+
       toast.error("Unable to send message", {
         description:
           error instanceof Error
