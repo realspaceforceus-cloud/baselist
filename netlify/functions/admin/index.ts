@@ -1411,7 +1411,7 @@ export const handler: Handler = async (event) => {
            LEFT JOIN successful_login_attempts sl ON u.id = sl.user_id AND sl.logged_in_at = (
              SELECT MAX(logged_in_at) FROM successful_login_attempts WHERE user_id = u.id
            )
-           WHERE u.invitation_code_id = $1
+           WHERE u.join_code_id = $1
            ORDER BY u.created_at DESC`,
           [codeId],
         );
