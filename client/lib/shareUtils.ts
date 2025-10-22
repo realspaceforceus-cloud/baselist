@@ -64,6 +64,9 @@ export function generatePostShareUrl(postId: string): string {
 /**
  * Generate a shareable URL for a listing
  */
-export function generateListingShareUrl(listingId: string, slug: string): string {
+export function generateListingShareUrl(
+  listingId: string,
+  slug: string,
+): string {
   return `${getAppBaseUrl()}/listing/${slug}-${listingId}`;
 }
