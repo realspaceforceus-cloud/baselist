@@ -1434,10 +1434,21 @@ export const handler: Handler = async (event) => {
         "SELECT * FROM ip_blacklist WHERE active = true ORDER BY added_at DESC",
       );
 
+      // Transform snake_case to camelCase
+      const transformedBlacklist = result.rows.map((row: any) => ({
+        id: row.id,
+        ipAddress: row.ip_address,
+        reason: row.reason,
+        addedBy: row.added_by,
+        addedAt: row.added_at,
+        notes: row.notes,
+        active: row.active,
+      }));
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ blacklist: result.rows }),
+        body: JSON.stringify({ blacklist: transformedBlacklist }),
       };
     }
 
