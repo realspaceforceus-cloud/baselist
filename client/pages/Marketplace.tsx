@@ -246,12 +246,8 @@ export const Marketplace = (): JSX.Element => {
         )}
       </div>
 
-      {visibleListings.length > 0 ? (
-        <SellerCacheRenderer listings={visibleListings}>
-          {(sellers) => (
-            <MarketplaceSidebar listings={visibleListings} sellers={sellers} />
-          )}
-        </SellerCacheRenderer>
+      {filteredListings.length > 0 ? (
+        <MarketplaceSidebar listings={filteredListings} />
       ) : (
         <EmptyState />
       )}
