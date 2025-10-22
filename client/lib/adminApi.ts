@@ -94,6 +94,12 @@ export const adminApi = {
     );
     return user;
   },
+  async getModeratorBases(userId: string): Promise<string[]> {
+    const { baseIds } = await apiRequest<{ baseIds: string[] }>(
+      `${ADMIN_BASE}/users/${userId}/moderator-bases`,
+    );
+    return baseIds;
+  },
   async getInvitationCodes(baseId?: string): Promise<any[]> {
     const params = baseId ? `?baseId=${baseId}` : "";
     const { codes } = await apiRequest<{ codes: any[] }>(
