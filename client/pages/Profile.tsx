@@ -40,10 +40,17 @@ const Profile = (): JSX.Element => {
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
-  // Fetch user from API if not in local context
+  // Clear fetched user when navigating to own profile
   useEffect(() => {
     if (!memberId || memberId === currentUser.id) {
       setFetchedUser(null);
+      setIsLoadingUser(false);
+    }
+  }, [memberId, currentUser.id]);
+
+  // Fetch user from API if not in local context
+  useEffect(() => {
+    if (!memberId || memberId === currentUser.id) {
       return;
     }
 
@@ -60,6 +67,7 @@ const Profile = (): JSX.Element => {
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
+        setFetchedUser(null);
       } finally {
         setIsLoadingUser(false);
       }
