@@ -628,8 +628,10 @@ export const Header = (): JSX.Element => {
                         notifications.map((n) => ({ ...n, read: true })),
                       );
                       setUnreadNotificationCount(0);
+                      toast.success("All notifications marked as read");
                     } catch (error) {
                       console.error("Error marking all as read:", error);
+                      toast.error("Failed to mark notifications as read");
                     }
                   }}
                 >
