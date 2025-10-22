@@ -265,6 +265,12 @@ export const handler: Handler = async (event) => {
         partner = partnerResult.rows[0];
       }
 
+      // Fetch ALL messages in the thread (not just the new one)
+      const allMessagesResult = await client.query(
+        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+        [threadId],
+      );
+
       const transformedThread = {
         id: threadData.id,
         listingId: threadData.listing_id,
@@ -277,16 +283,15 @@ export const handler: Handler = async (event) => {
         updatedAt: threadData.updated_at,
         listing,
         partner,
-        messages: [
-          {
-            id: messageResult.rows[0].id,
-            threadId: messageResult.rows[0].thread_id,
-            authorId: messageResult.rows[0].author_id,
-            body: messageResult.rows[0].body,
-            sentAt: messageResult.rows[0].sent_at,
-            type: messageResult.rows[0].type || "text",
-          },
-        ],
+        messages: allMessagesResult.rows.map((msg: any) => ({
+          id: msg.id,
+          threadId: msg.thread_id,
+          authorId: msg.author_id,
+          body: msg.body,
+          sentAt: msg.sent_at,
+          type: msg.type || "text",
+          clientId: undefined, // Will be set by client on optimistic sends
+        })),
       };
 
       return {
@@ -295,6 +300,7 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({
           message: {
             id: messageResult.rows[0].id,
+            clientId,
             threadId: messageResult.rows[0].thread_id,
             authorId: messageResult.rows[0].author_id,
             body: messageResult.rows[0].body,
