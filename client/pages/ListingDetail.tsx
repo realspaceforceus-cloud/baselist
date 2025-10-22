@@ -32,12 +32,7 @@ const ListingDetail = (): JSX.Element => {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
   const { listingSlug } = useParams<{ listingSlug: string }>();
-  const {
-    listings,
-    bases,
-    setSearchQuery,
-    setCurrentBaseId,
-  } = useBaseList();
+  const { listings, bases, setSearchQuery, setCurrentBaseId } = useBaseList();
 
   const [seller, setSeller] = useState<UserProfile | null>(null);
   const [fetchedListing, setFetchedListing] = useState<any | null>(null);
