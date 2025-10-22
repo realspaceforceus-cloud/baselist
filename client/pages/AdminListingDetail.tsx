@@ -67,18 +67,32 @@ export default function AdminListingDetail() {
     setIsLoading(true);
     try {
       const result = await adminApi.getListingDetail(listingId);
-      setListing(result.listing);
+
+      // Transform snake_case from database to camelCase
+      const transformedListing = {
+        ...result.listing,
+        createdAt: result.listing.createdAt || result.listing.created_at,
+        updatedAt: result.listing.updatedAt || result.listing.updated_at,
+        isFree: result.listing.isFree || result.listing.is_free || false,
+        sellerId: result.listing.sellerId || result.listing.seller_id,
+        sellerUsername: result.listing.sellerUsername || result.listing.seller_username,
+        baseId: result.listing.baseId || result.listing.base_id,
+        baseName: result.listing.baseName || result.listing.base_name,
+        imageUrls: result.listing.imageUrls || result.listing.image_urls,
+      };
+
+      setListing(transformedListing);
       setReports(result.reports || []);
       setMessageThreadCount(result.messageThreadCount || 0);
 
       setEditData({
-        title: result.listing.title || "",
-        description: result.listing.description || "",
-        price: result.listing.price?.toString() || "",
-        isFree: result.listing.isFree || false,
-        category: result.listing.category || "",
-        baseId: result.listing.baseId || "",
-        promoted: result.listing.promoted || false,
+        title: transformedListing.title || "",
+        description: transformedListing.description || "",
+        price: transformedListing.price?.toString() || "",
+        isFree: transformedListing.isFree || false,
+        category: transformedListing.category || "",
+        baseId: transformedListing.baseId || "",
+        promoted: transformedListing.promoted || false,
       });
     } catch (error) {
       console.error("Failed to load listing:", error);
