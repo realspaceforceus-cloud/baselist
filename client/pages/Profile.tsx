@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import {
   BadgeCheck,
   ClipboardList,
@@ -15,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RatingBadge } from "@/components/shared/RatingBadge";
 import { useBaseList } from "@/context/BaseListContext";
 import { cn } from "@/lib/utils";
-import type { TransactionHistoryEntry } from "@/types";
+import type { TransactionHistoryEntry, UserProfile } from "@/types";
 
 const Profile = (): JSX.Element => {
   const {
