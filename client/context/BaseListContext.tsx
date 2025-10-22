@@ -1971,7 +1971,7 @@ export const BaseListProvider = ({
       const lastReadAt = thread.lastReadAt?.[user.id];
       return (
         count +
-        thread.messages.reduce((threadCount, message) => {
+        (thread.messages ?? []).reduce((threadCount, message) => {
           if (message.authorId === user.id) {
             return threadCount;
           }
