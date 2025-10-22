@@ -1294,57 +1294,78 @@ const Messages = (): JSX.Element => {
                     const canAccept = !isOwn && offerStatus === "pending";
                     const canDecline = !isOwn && offerStatus === "pending";
                     const canRetract = isOwn && offerStatus === "pending";
+                    const partnerName = isOwn ? "You" : activeSummary.partnerName;
+                    const itemImage = activeSummary.listing?.imageUrls?.[0];
 
                     return (
-                      <div key={message.id} className="flex flex-col gap-2">
+                      <div key={message.id} className="flex flex-col gap-3">
                         <div
                           className={cn(
                             "flex",
                             isOwn ? "justify-end" : "justify-start",
                           )}
                         >
-                          <div className="max-w-[80%] rounded-2xl bg-blue-500/20 px-4 py-3 text-sm border border-blue-500/30">
-                            <p className="font-semibold text-blue-600">
-                              Offer: ${offerAmount.toFixed(2)}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {timestamp}
-                            </p>
+                          <div className="max-w-sm rounded-2xl border-2 border-blue-500/40 bg-blue-50 p-4 shadow-sm dark:bg-blue-950/30">
+                            <div className="flex gap-3">
+                              {itemImage && (
+                                <img
+                                  src={itemImage}
+                                  alt={activeSummary.listing?.title}
+                                  className="h-16 w-16 rounded object-cover flex-shrink-0"
+                                />
+                              )}
+                              <div className="flex-1">
+                                <p className="text-xs font-medium text-muted-foreground mb-1">
+                                  {partnerName} sent an offer
+                                </p>
+                                <p className="text-lg font-bold text-blue-600">
+                                  ${offerAmount.toFixed(2)}
+                                </p>
+                                {activeSummary.listing?.title && (
+                                  <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                                    {activeSummary.listing.title}
+                                  </p>
+                                )}
+                                <p className="text-[0.65rem] text-muted-foreground/70 mt-2">
+                                  {timestamp}
+                                </p>
+                              </div>
+                            </div>
+                            {(canAccept || canDecline || canRetract) && (
+                              <div className="flex gap-2 mt-3 pt-3 border-t border-blue-200 dark:border-blue-900">
+                                {canAccept && (
+                                  <Button
+                                    size="sm"
+                                    onClick={handleAcceptOffer}
+                                    className="flex-1 text-xs h-8"
+                                  >
+                                    Accept
+                                  </Button>
+                                )}
+                                {canDecline && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={handleDeclineOffer}
+                                    className="flex-1 text-xs h-8"
+                                  >
+                                    Decline
+                                  </Button>
+                                )}
+                                {canRetract && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={handleRetractOffer}
+                                    className="flex-1 text-xs h-8"
+                                  >
+                                    Retract
+                                  </Button>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        {activeSummary.isMarketplace && (
-                          <div className="flex gap-2 justify-center">
-                            {canAccept && (
-                              <Button
-                                size="sm"
-                                onClick={handleAcceptOffer}
-                                className="text-xs"
-                              >
-                                Accept
-                              </Button>
-                            )}
-                            {canDecline && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={handleDeclineOffer}
-                                className="text-xs"
-                              >
-                                Decline
-                              </Button>
-                            )}
-                            {canRetract && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={handleRetractOffer}
-                                className="text-xs"
-                              >
-                                Retract
-                              </Button>
-                            )}
-                          </div>
-                        )}
                       </div>
                     );
                   }
