@@ -742,7 +742,7 @@ const Landing = (): JSX.Element => {
                   : "Complete"}
             </p>
             <h2 className="text-2xl font-semibold text-foreground">
-              {joinStage === "account" && "Create your BaseList account"}
+              {joinStage === "account" && `Create your ${settings.website_name || "trustyPCS"} account`}
               {joinStage === "verify" && "Verify your .mil email"}
               {joinStage === "success" && "You're all set!"}
             </h2>
