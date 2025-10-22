@@ -143,7 +143,11 @@ export const RolesSection = (): JSX.Element => {
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
           u.id === editingUserId
-            ? { ...u, role: editingRole as any }
+            ? {
+                ...u,
+                role: editingRole as any,
+                ...(editingRole === "moderator" && { baseIds: editingBaseIds }),
+              }
             : u,
         ),
       );
