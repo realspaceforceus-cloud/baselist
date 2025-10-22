@@ -22,6 +22,8 @@ export const ReportsSection = () => {
   const [reports, setReports] = useState<AdminReportRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>("All");
+  const [selectedReport, setSelectedReport] = useState<ReportDetail | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     const loadReports = async () => {
