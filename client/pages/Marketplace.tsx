@@ -1,16 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useCallback } from "react";
 
 import { EmptyState } from "@/components/listings/EmptyState";
 import { FilterBar } from "@/components/listings/FilterBar";
 import { VehicleFilterBar } from "@/components/listings/VehicleFilterBar";
 import { MarketplaceSidebar } from "@/components/marketplace/MarketplaceSidebar";
-import { SponsorTile } from "@/components/listings/SponsorTile";
 import { Button } from "@/components/ui/button";
 import { useBaseList } from "@/context/BaseListContext";
+import { useListings } from "@/hooks/useListings";
 import { extractVehicleOptions } from "@/lib/vehicleUtils";
-import { getListings } from "@/lib/listingsApi";
 import { LISTING_CATEGORIES } from "@/data/mock";
-import type { Listing, ListingFilter, ListingWithSeller } from "@/types";
+import type { ListingFilter } from "@/types";
 
 interface VehicleFilters {
   year?: string;
