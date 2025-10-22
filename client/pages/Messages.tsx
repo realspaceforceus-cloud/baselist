@@ -212,6 +212,9 @@ const Messages = (): JSX.Element => {
             : "active";
 
         const transaction = thread.transaction;
+        if (transaction?.offer?.status === "accepted") {
+          console.log("[threadSummaries] Found accepted offer in thread:", thread.id, "transaction:", transaction);
+        }
         const awaitingUserConfirmation = Boolean(
           transaction?.status === "pending_confirmation" &&
             transaction.markedCompleteBy &&
@@ -597,8 +600,12 @@ const Messages = (): JSX.Element => {
 
   const handleAcceptOffer = async () => {
     if (!activeSummary) {
+      console.log("[handleAcceptOffer] No activeSummary");
       return;
     }
+
+    console.log("[handleAcceptOffer] Starting with threadId:", activeSummary.thread.id);
+    console.log("[handleAcceptOffer] Current transaction:", activeSummary.transaction);
 
     try {
       const response = await fetch(
@@ -615,6 +622,8 @@ const Messages = (): JSX.Element => {
       }
 
       const data = await response.json();
+      console.log("[handleAcceptOffer] Response data:", data);
+      console.log("[handleAcceptOffer] Updated transaction:", data.thread?.transaction);
 
       // Update thread with full response including all messages
       setMessageThreads((prev) => {
@@ -623,6 +632,8 @@ const Messages = (): JSX.Element => {
         );
         if (existingIndex !== -1) {
           const remaining = prev.filter((_, i) => i !== existingIndex);
+          console.log("[handleAcceptOffer] Updating thread at index:", existingIndex);
+          console.log("[handleAcceptOffer] New thread data:", data.thread);
           return [data.thread, ...remaining];
         }
         return prev;
@@ -630,6 +641,7 @@ const Messages = (): JSX.Element => {
 
       toast.success("Offer accepted");
     } catch (error) {
+      console.error("[handleAcceptOffer] Error:", error);
       toast.error("Failed to accept offer", {
         description: error instanceof Error ? error.message : "Try again later",
       });
