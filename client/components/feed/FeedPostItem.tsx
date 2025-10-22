@@ -319,14 +319,19 @@ export function FeedPostItem({
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3 flex-1">
-          <img
-            src={
-              post.author?.avatarUrl ||
-              "https://api.dicebear.com/7.x/initials/svg?seed=user"
-            }
-            alt={post.author?.name}
-            className="h-10 w-10 rounded-full object-cover"
-          />
+          <Link
+            to={`/profile/${post.userId}`}
+            className="flex-shrink-0 rounded-full hover:opacity-80 transition"
+          >
+            <img
+              src={
+                post.author?.avatarUrl ||
+                "https://api.dicebear.com/7.x/initials/svg?seed=user"
+              }
+              alt={post.author?.name}
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          </Link>
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <Link
