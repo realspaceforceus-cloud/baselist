@@ -674,6 +674,13 @@ const Messages = (): JSX.Element => {
   };
 
   const handleArchiveAction = (summary: ThreadSummary) => {
+    const hasPendingOffer = summary.thread.transaction?.offer?.status === "pending";
+    if (hasPendingOffer) {
+      toast.error("Cannot archive thread", {
+        description: "Cannot archive thread with active offer. Decline the offer first.",
+      });
+      return;
+    }
     if (summary.isArchived) {
       unarchiveThread(summary.thread.id);
       return;
@@ -682,6 +689,13 @@ const Messages = (): JSX.Element => {
   };
 
   const handleDeleteAction = (summary: ThreadSummary) => {
+    const hasPendingOffer = summary.thread.transaction?.offer?.status === "pending";
+    if (hasPendingOffer) {
+      toast.error("Cannot delete thread", {
+        description: "Cannot delete thread with active offer. Decline the offer first.",
+      });
+      return;
+    }
     deleteThread(summary.thread.id);
   };
 
