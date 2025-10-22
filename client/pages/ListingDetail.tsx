@@ -208,9 +208,14 @@ const ListingDetail = (): JSX.Element => {
     setComposerOpen(true);
   }, [defaultMessage]);
 
-  const handleSendMessage = useCallback(() => {
+  const handleSendMessage = useCallback(async () => {
     if (!listing) {
       toast.error("Listing not found");
+      return;
+    }
+
+    if (!currentUser) {
+      toast.error("Please sign in to message");
       return;
     }
 
@@ -219,16 +224,35 @@ const ListingDetail = (): JSX.Element => {
       return;
     }
 
-    const thread = sendMessageToSeller(listing.id, listing.sellerId, trimmed);
+    try {
+      const response = await fetch("/.netlify/functions/messages", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listingId: listing.id,
+          recipientId: listing.sellerId,
+          body: trimmed,
+        }),
+      });
 
-    toast.success("Message sent", {
-      description: `Chatting with ${seller?.name ?? "the seller"} is ready to go.`,
-    });
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
 
-    setComposerOpen(false);
-    setMessageBody("");
-    navigate(`/messages/${thread.id}`);
-  }, [listing, messageBody, navigate, sendMessageToSeller, seller?.name]);
+      const data = await response.json();
+      toast.success("Message sent", {
+        description: `Chatting with ${seller?.name ?? "the seller"} is ready to go.`,
+      });
+
+      setComposerOpen(false);
+      setMessageBody("");
+      navigate(`/messages/${data.threadId}`);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
+    }
+  }, [listing, messageBody, navigate, seller?.name, currentUser]);
 
   const handleViewSellerListings = useCallback(() => {
     if (!seller || !listing) {
