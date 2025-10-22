@@ -1,18 +1,7 @@
 import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
-
-function verifyAuth(event: any): { userId: string } | null {
-  const cookies = event.headers.cookie || "";
-  const userIdMatch = cookies.match(/userId=([^;]+)/);
-  const userId = userIdMatch ? userIdMatch[1] : null;
-
-  if (!userId) {
-    return null;
-  }
-
-  return { userId };
-}
+import { getUserIdFromAuth } from "./auth";
 
 async function isAdmin(client: any, userId: string): Promise<boolean> {
   const result = await client.query("SELECT role FROM users WHERE id = $1", [
