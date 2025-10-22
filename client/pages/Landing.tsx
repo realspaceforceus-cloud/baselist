@@ -153,6 +153,10 @@ const Landing = (): JSX.Element => {
     "idle" | "requesting" | "granted" | "denied" | "unavailable"
   >("idle");
   const [searchTerm, setSearchTerm] = useState("");
+  const [useInvitationCode, setUseInvitationCode] = useState(false);
+  const [invitationCode, setInvitationCode] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [showExpansionForm, setShowExpansionForm] = useState(false);
   const [expansionEmail, setExpansionEmail] = useState("");
   const [closestBasesSignup, setClosestBasesSignup] = useState<
