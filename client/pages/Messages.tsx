@@ -1290,7 +1290,9 @@ const Messages = (): JSX.Element => {
                     const canAccept = !isOwn && offerStatus === "pending";
                     const canDecline = !isOwn && offerStatus === "pending";
                     const canRetract = isOwn && offerStatus === "pending";
-                    const partnerName = isOwn ? "You" : activeSummary.partnerName;
+                    const partnerName = isOwn
+                      ? "You"
+                      : activeSummary.partnerName;
                     const itemImage = activeSummary.listing?.imageUrls?.[0];
 
                     return (
