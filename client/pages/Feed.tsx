@@ -100,7 +100,7 @@ export default function Feed(): JSX.Element {
             <FeedPostItem
               key={post.id}
               post={post}
-              onPostDeleted={handlePostDeleted}
+              onPostDeleted={() => handlePostDeleted(post.id)}
             />
           ))}
         </div>
