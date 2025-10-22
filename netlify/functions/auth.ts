@@ -141,8 +141,8 @@ const handleSignup = async (event: any) => {
     const client = await pool.connect();
     try {
       const codeResult = await client.query(
-        `SELECT id, email FROM invitation_codes
-         WHERE code = $1 AND used_at IS NULL AND expires_at > NOW()`,
+        `SELECT id, base_id, max_uses, uses_count FROM invitation_codes
+         WHERE code = $1 AND active = TRUE AND (expires_at IS NULL OR expires_at > NOW())`,
         [trimmedCode],
       );
 
@@ -155,8 +155,18 @@ const handleSignup = async (event: any) => {
         };
       }
 
+      const codeRow = codeResult.rows[0];
+      // Check if code has reached max uses
+      if (codeRow.max_uses && codeRow.uses_count >= codeRow.max_uses) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            error: "This invitation code has reached its usage limit",
+          }),
+        };
+      }
+
       hasValidCode = true;
-      codeUsedByUser = codeResult.rows[0].email || null;
     } catch (error) {
       console.error("Code validation error:", error);
       return {
