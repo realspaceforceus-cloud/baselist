@@ -56,15 +56,24 @@ const ListingDetail = (): JSX.Element => {
     return listingSlug;
   }, [listingSlug]);
 
+  // Fetch listing using React Query hook
+  const { data: queryListing, isLoading: isLoadingQuery } = useListing(actualListingId);
+
   const listing = useMemo(() => {
     if (!actualListingId) return null;
+    // Prefer context listings if available, otherwise use API data
     return (
       listings.find(
         (item) =>
           item.id === actualListingId || item.id.includes(actualListingId),
-      ) || fetchedListing
+      ) || queryListing || fetchedListing
     );
-  }, [listings, actualListingId, fetchedListing]);
+  }, [listings, actualListingId, queryListing, fetchedListing]);
+
+  // Update loading state based on query
+  useEffect(() => {
+    setIsLoading(isLoadingQuery);
+  }, [isLoadingQuery]);
 
   // Redirect to slug URL if listing is found
   useEffect(() => {
@@ -75,45 +84,6 @@ const ListingDetail = (): JSX.Element => {
       }
     }
   }, [listing, listingSlug, navigate]);
-
-  // Fetch listing from backend if not in local context
-  useEffect(() => {
-    if (!actualListingId) {
-      setIsLoading(false);
-      return;
-    }
-
-    if (
-      listings.find(
-        (item) =>
-          item.id === actualListingId || item.id.includes(actualListingId),
-      )
-    ) {
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchListing = async () => {
-      try {
-        const response = await fetch(
-          `/.netlify/functions/listings/${actualListingId}`,
-          {
-            credentials: "include",
-          },
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setFetchedListing(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch listing:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchListing();
-  }, [actualListingId, listings]);
 
   // Fetch seller info from backend
   useEffect(() => {
