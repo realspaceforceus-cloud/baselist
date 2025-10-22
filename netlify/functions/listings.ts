@@ -291,6 +291,14 @@ export const handler: Handler = async (event) => {
       } = JSON.parse(event.body || "{}");
 
       if (!title || !category || !baseId || !sellerId) {
+        recordMetric(pool, {
+          endpoint: "/listings",
+          method: "POST",
+          statusCode: 400,
+          responseTimeMs: Date.now() - startTime,
+          errorMessage: "Missing required fields",
+        }).catch(() => {});
+
         return {
           statusCode: 400,
           headers: { "Content-Type": "application/json" },
@@ -323,6 +331,13 @@ export const handler: Handler = async (event) => {
           vehicleMiles || null,
         ],
       );
+
+      recordMetric(pool, {
+        endpoint: "/listings",
+        method: "POST",
+        statusCode: 201,
+        responseTimeMs: Date.now() - startTime,
+      }).catch(() => {});
 
       return {
         statusCode: 201,
