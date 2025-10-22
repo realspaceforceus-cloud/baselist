@@ -629,6 +629,12 @@ const Messages = (): JSX.Element => {
                         alt={summary.listing.title}
                         className="h-full w-full object-cover"
                       />
+                    ) : summary.seller?.avatarUrl ? (
+                      <img
+                        src={summary.seller.avatarUrl}
+                        alt={summary.partnerName}
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <MessageSquare
                         className="h-full w-full p-1.5 text-muted-foreground"
@@ -651,7 +657,7 @@ const Messages = (): JSX.Element => {
                           : "font-medium text-foreground",
                       )}
                     >
-                      {summary.listing?.title ?? "Listing removed"}
+                      {summary.listing?.title ?? summary.partnerName}
                     </p>
                     <p className="line-clamp-1 text-xs text-muted-foreground">
                       {summary.lastMessage?.body ?? "No messages yet"}
