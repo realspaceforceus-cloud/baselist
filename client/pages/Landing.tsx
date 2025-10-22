@@ -914,21 +914,35 @@ const Landing = (): JSX.Element => {
                 >
                   Password
                 </label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  value={accountForm.password}
-                  onChange={(event) =>
-                    setAccountForm((prev) => ({
-                      ...prev,
-                      password: event.target.value,
-                    }))
-                  }
-                  placeholder="Create a password"
-                  className="h-11 rounded-full"
-                  required
-                  disabled={isSubmitting}
-                />
+                <div className="relative">
+                  <Input
+                    id="signup-password"
+                    type={showPassword ? "text" : "password"}
+                    value={accountForm.password}
+                    onChange={(event) =>
+                      setAccountForm((prev) => ({
+                        ...prev,
+                        password: event.target.value,
+                      }))
+                    }
+                    placeholder="Create a password"
+                    className="h-11 rounded-full pr-10"
+                    required
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" aria-hidden />
+                    ) : (
+                      <Eye className="h-4 w-4" aria-hidden />
+                    )}
+                  </button>
+                </div>
                 {accountForm.password ? (
                   passwordPositive ? (
                     <p className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
