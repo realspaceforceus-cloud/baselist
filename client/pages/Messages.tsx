@@ -1099,7 +1099,11 @@ const Messages = (): JSX.Element => {
                   ? `This transaction has been marked complete by ${getMemberName(
                       activeTransaction.initiatedBy,
                     )}. Confirm to lock it in.`
-                  : "Listing marked sold and history updated."}
+                  : activeTransaction.offer
+                    ? activeTransaction.offer.madeBy === user.id
+                      ? "Offer sent. Waiting for seller's response."
+                      : `${activeSummary.partnerName} has sent an offer of $${activeTransaction.offer.amount}. You can accept, decline, or send a counter offer.`
+                    : "Transaction details available."}
               </p>
             </div>
           ) : !activeSummary.listing ? (
