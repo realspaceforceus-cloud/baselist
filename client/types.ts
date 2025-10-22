@@ -21,6 +21,7 @@ export interface Base {
 export interface Seller {
   id: string;
   name: string;
+  username?: string;
   verified: boolean;
   memberSince: string;
   avatarUrl: string;
@@ -33,6 +34,7 @@ export interface Seller {
 export type VerificationStatus = "Verified" | "Pending verification";
 
 export interface UserProfile extends Seller {
+  username: string;
   currentBaseId: string;
   verificationStatus: VerificationStatus;
   role: "member" | "moderator" | "admin";
