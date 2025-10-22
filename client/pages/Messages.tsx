@@ -407,8 +407,13 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    if (messagesEndRef.current && conversationRef.current) {
-      conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
+    // Scroll to bottom using the ref with smooth behavior
+    if (messagesEndRef.current) {
+      // Use a small timeout to ensure DOM has been painted
+      const timer = setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [activeThreadId, activeMessageCount]);
 
