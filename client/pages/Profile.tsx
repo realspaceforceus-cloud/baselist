@@ -423,7 +423,7 @@ const Profile = (): JSX.Element => {
               </dd>
             </div>
           </dl>
-          {viewingOwnProfile && (
+          {isViewingOwnProfile && (
             <Button
               asChild
               variant="outline"
