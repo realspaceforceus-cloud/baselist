@@ -339,7 +339,7 @@ export const handler: Handler = async (event) => {
 
     // POST /api/announcements/:id/dismiss
     if (method === "POST" && path.includes("/") && path.endsWith("/dismiss")) {
-      if (!auth) {
+      if (!userId) {
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
