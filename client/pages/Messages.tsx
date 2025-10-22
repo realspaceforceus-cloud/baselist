@@ -551,13 +551,13 @@ const Messages = (): JSX.Element => {
     <aside className="space-y-4">
       <div className="rounded-3xl border border-border bg-card p-4 shadow-soft">
         <div className="flex flex-wrap gap-2">
-          {filterOptions.map((option) => {
+          {statusFilterOptions.map((option) => {
             const isActive = option.value === threadFilter;
             return (
               <button
                 key={option.value}
                 type="button"
-                onClick={() => handleFilterSelect(option.value)}
+                onClick={() => handleStatusFilterSelect(option.value)}
                 className={cn(
                   "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   isActive
@@ -569,6 +569,26 @@ const Messages = (): JSX.Element => {
                 <span className="text-[0.65rem] uppercase tracking-wide">
                   {threadCounts[option.value] ?? 0}
                 </span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex flex-wrap gap-2 border-t border-border/40 pt-3">
+          {typeFilterOptions.map((option) => {
+            const isActive = option.value === typeFilter;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleTypeFilterSelect(option.value)}
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  isActive
+                    ? "bg-primary text-background shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80",
+                )}
+              >
+                {option.label}
               </button>
             );
           })}
