@@ -54,6 +54,7 @@ export default function AdminListingDetail() {
     isFree: false,
     category: "",
     baseId: "",
+    imageUrls: [] as string[],
     promoted: false,
   });
 
