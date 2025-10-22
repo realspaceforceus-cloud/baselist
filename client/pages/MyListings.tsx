@@ -34,63 +34,50 @@ interface ListingWithOffers extends Listing {
   pendingOfferId?: string;
 }
 
+interface ListingWithOffers extends Listing {
+  offers: MessageThread[];
+  pendingOfferId?: string;
+}
+
 export const MyListings = (): JSX.Element => {
   const { user } = useAuth();
-  const { messageThreads, removeListing, initiateTransaction } = useBaseList();
+  const { messageThreads, initiateTransaction } = useBaseList();
 
-  const [myListings, setMyListings] = useState<ListingWithOffers[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [expandedListingId, setExpandedListingId] = useState<string | null>(
-    null,
-  );
+  const [expandedListingId, setExpandedListingId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [acceptOfferDialog, setAcceptOfferDialog] = useState<{
     listingId: string;
     threadId: string;
   } | null>(null);
 
-  // Fetch user's listings from API
-  useEffect(() => {
-    if (!user?.userId) return;
+  // Fetch user's listings using React Query hook
+  const { data: listingsResponse, isLoading } = useUserListings(user?.userId || null);
 
-    const fetchMyListings = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getUserListings(user.userId);
-        const listingsWithOffers: ListingWithOffers[] = response.listings.map(
-          (listing) => {
-            const offers = messageThreads.filter(
-              (thread) =>
-                thread.listingId === listing.id &&
-                thread.participants.includes(user.userId),
-            );
+  // Transform listings to include offers
+  const myListings: ListingWithOffers[] = (listingsResponse?.listings || []).map(
+    (listing) => {
+      const offers = messageThreads.filter(
+        (thread) =>
+          thread.listingId === listing.id &&
+          thread.participants.includes(user?.userId || ""),
+      );
 
-            const pendingThread = offers.find(
-              (thread) =>
-                thread.transaction?.status === "pending_complete" ||
-                thread.transaction?.status === "pending_confirmation" ||
-                thread.status === "completed",
-            );
+      const pendingThread = offers.find(
+        (thread) =>
+          thread.transaction?.status === "pending_complete" ||
+          thread.transaction?.status === "pending_confirmation" ||
+          thread.status === "completed",
+      );
 
-            return {
-              ...listing,
-              offers,
-              pendingOfferId: pendingThread?.id,
-            };
-          },
-        );
-        setMyListings(listingsWithOffers);
-      } catch (error) {
-        console.error("Failed to fetch listings:", error);
-        toast.error("Failed to load listings");
-        setMyListings([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      return {
+        ...listing,
+        offers,
+        pendingOfferId: pendingThread?.id,
+      };
+    },
+  );
 
-    fetchMyListings();
-  }, [user?.userId, messageThreads]);
+  const deleteListingMutation = useDeleteListing();
 
   const handleAcceptOffer = (listingId: string, threadId: string) => {
     try {
