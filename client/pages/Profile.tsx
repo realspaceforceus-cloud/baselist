@@ -100,8 +100,9 @@ const Profile = (): JSX.Element => {
     if (!memberId || memberId === currentUser.id) {
       return currentUser;
     }
-    return getMemberProfile(memberId) ?? null;
-  }, [currentUser, getMemberProfile, memberId]);
+    // Try local context first, then fetched user
+    return getMemberProfile(memberId) ?? fetchedUser ?? null;
+  }, [currentUser, getMemberProfile, memberId, fetchedUser]);
 
   const viewingOwnProfile = !memberId || memberId === currentUser.id;
 
