@@ -26,6 +26,11 @@ import {
   isDowEmail,
   useBaseList,
 } from "@/context/BaseListContext";
+import {
+  getUserLocation,
+  getClosestBases,
+  type BaseWithDistance,
+} from "@/lib/geoUtils";
 
 const ICON_STEPS = [
   {
