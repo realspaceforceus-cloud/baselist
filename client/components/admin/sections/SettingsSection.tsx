@@ -21,6 +21,7 @@ export const SettingsSection = (): JSX.Element => {
     website_description:
       settings.website_description || "Buy, sell, and connect—DoD verified.",
     website_logo_url: settings.website_logo_url || "/logo.png",
+    default_avatar_url: settings.default_avatar_url || "",
     support_email: settings.support_email || "support@yourdomain.com",
     admin_email: settings.admin_email || "admin@yourdomain.com",
     mailing_address:
