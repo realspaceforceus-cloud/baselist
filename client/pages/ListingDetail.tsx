@@ -168,6 +168,24 @@ const ListingDetail = (): JSX.Element => {
     checkIfSaved();
   }, [listing?.id]);
 
+  const sellerLastActive = useMemo(
+    () =>
+      seller?.lastActiveAt
+        ? differenceInHours(new Date(), new Date(seller.lastActiveAt)) <= 24
+          ? "Active today ✅"
+          : `Active ${formatDistanceToNow(new Date(seller.lastActiveAt), {
+              addSuffix: true,
+            })} 🕓`
+        : undefined,
+    [seller],
+  );
+
+  const sellerYear = useMemo(
+    () =>
+      seller?.memberSince ? new Date(seller.memberSince).getFullYear() : null,
+    [seller],
+  );
+
   const listingBase = useMemo(
     () => bases.find((base) => base.id === listing?.baseId),
     [bases, listing?.baseId],
