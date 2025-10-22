@@ -146,11 +146,11 @@ const Profile = (): JSX.Element => {
   // Use API-fetched listings or filter from context if viewing own profile
   const myListings = useMemo(() => {
     if (!profileUser?.id) return [];
-    if (viewingOwnProfile) {
+    if (isViewingOwnProfile) {
       return listings.filter((listing) => listing.sellerId === profileUser.id);
     }
     return listingsResponse?.listings || [];
-  }, [listingsResponse, listings, profileUser?.id, viewingOwnProfile]);
+  }, [listingsResponse, listings, profileUser?.id, isViewingOwnProfile]);
 
   const activeListings = myListings.filter(
     (listing) => listing.status === "active",
