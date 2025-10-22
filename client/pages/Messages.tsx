@@ -354,6 +354,9 @@ const Messages = (): JSX.Element => {
   const awaitingUserConfirmation =
     activeSummary?.awaitingUserConfirmation ?? false;
   const userMarkedComplete = activeSummary?.userMarkedComplete ?? false;
+  const partnerNeedsConfirmation =
+    activeTransaction?.status === "pending_confirmation" &&
+    activeTransaction?.markedCompleteBy === user.id;
   const canSubmitRating = activeSummary?.canSubmitRating ?? false;
   const userRatingValue = activeTransaction?.ratingByUser?.[user.id];
   const completedAtLabel = activeTransaction?.completedAt
