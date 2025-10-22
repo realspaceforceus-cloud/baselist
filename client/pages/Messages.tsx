@@ -50,14 +50,21 @@ import type { Listing, Message, MessageThread, UserProfile } from "@/types";
 
 const ratingOptions = [1, 2, 3, 4, 5];
 
-const filterOptions = [
+const statusFilterOptions = [
   { value: "all", label: "All" },
   { value: "active", label: "Active" },
   { value: "completed", label: "Completed" },
   { value: "archived", label: "Archived" },
 ] as const;
 
-type ThreadFilter = (typeof filterOptions)[number]["value"];
+const typeFilterOptions = [
+  { value: "all-types", label: "All Messages" },
+  { value: "marketplace", label: "Marketplace" },
+  { value: "dm", label: "Direct Messages" },
+] as const;
+
+type ThreadFilter = (typeof statusFilterOptions)[number]["value"];
+type ThreadTypeFilter = (typeof typeFilterOptions)[number]["value"];
 type ThreadSummaryStatus = "active" | "completed" | "archived";
 
 interface ThreadSummary {
@@ -78,6 +85,7 @@ interface ThreadSummary {
   userMarkedComplete: boolean;
   ratingSubmitted: boolean;
   canSubmitRating: boolean;
+  isMarketplace: boolean;
 }
 
 const Messages = (): JSX.Element => {
