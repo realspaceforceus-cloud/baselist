@@ -17,11 +17,13 @@ import { cn } from "@/lib/utils";
 interface NotificationItemProps {
   notification: Notification;
   onDismiss: (notificationId: string) => void;
+  onClick?: () => void;
 }
 
 export const NotificationItem = ({
   notification,
   onDismiss,
+  onClick,
 }: NotificationItemProps): JSX.Element => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
