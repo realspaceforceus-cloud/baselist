@@ -223,9 +223,7 @@ const ListingDetail = (): JSX.Element => {
       }
 
       const data = await response.json();
-      toast.success("Message sent", {
-        description: `Chatting with ${seller?.name ?? "the seller"} is ready to go.`,
-      });
+      toast.success("Message sent!");
 
       setComposerOpen(false);
       setMessageBody("");
