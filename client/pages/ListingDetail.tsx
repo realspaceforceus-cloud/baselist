@@ -344,13 +344,13 @@ const ListingDetail = (): JSX.Element => {
               addSuffix: true,
             })} 🕓`
         : undefined,
-    [seller?.lastActiveAt],
+    [seller],
   );
 
   const sellerYear = useMemo(
     () =>
       seller?.memberSince ? new Date(seller.memberSince).getFullYear() : null,
-    [seller?.memberSince],
+    [seller],
   );
 
   return (
