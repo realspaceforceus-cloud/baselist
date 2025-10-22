@@ -49,7 +49,7 @@ export const handler: Handler = async (event) => {
           query += ` AND id NOT IN (
             SELECT announcement_id FROM dismissed_announcements WHERE user_id = $1
           )`;
-          params.push(auth.userId);
+          params.push(userId);
         }
 
         query += ` ORDER BY created_at DESC LIMIT 1`;
