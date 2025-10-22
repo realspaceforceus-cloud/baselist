@@ -47,7 +47,7 @@ export const handler: Handler = async (event) => {
       // Get userId from auth
       const authorId = await getUserIdFromAuth(event);
 
-      if (!authorId || !listingId || !recipientId || !body) {
+      if (!authorId || !recipientId || !body) {
         return {
           statusCode: !authorId ? 401 : 400,
           headers: { "Content-Type": "application/json" },
@@ -55,13 +55,24 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      // Check if thread already exists
-      const threadCheckResult = await client.query(
-        `SELECT id FROM message_threads
-         WHERE listing_id = $1 AND $2 = ANY(participants) AND $3 = ANY(participants)
-         LIMIT 1`,
-        [listingId, authorId, recipientId],
-      );
+      // Check if thread already exists (listingId is optional for direct messages)
+      let threadCheckResult;
+      if (listingId) {
+        threadCheckResult = await client.query(
+          `SELECT id FROM message_threads
+           WHERE listing_id = $1 AND $2 = ANY(participants) AND $3 = ANY(participants)
+           LIMIT 1`,
+          [listingId, authorId, recipientId],
+        );
+      } else {
+        // Direct message - find thread without specific listing
+        threadCheckResult = await client.query(
+          `SELECT id FROM message_threads
+           WHERE listing_id IS NULL AND $1 = ANY(participants) AND $2 = ANY(participants)
+           LIMIT 1`,
+          [authorId, recipientId],
+        );
+      }
 
       let threadId: string;
 
