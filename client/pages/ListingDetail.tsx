@@ -398,7 +398,11 @@ const ListingDetail = (): JSX.Element => {
             <div className="space-y-4">
               {seller && (
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3 flex-1">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/profile/${seller.id}`)}
+                    className="flex items-start gap-3 flex-1 hover:opacity-80 transition text-left"
+                  >
                     {seller.avatarUrl ? (
                       <img
                         src={seller.avatarUrl}
@@ -413,7 +417,7 @@ const ListingDetail = (): JSX.Element => {
                     )}
                     <div className="space-y-1 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-sm font-semibold text-foreground">
+                        <h3 className="text-sm font-semibold text-foreground hover:text-primary">
                           {seller.name}
                         </h3>
                         {seller.verified && (
@@ -459,7 +463,7 @@ const ListingDetail = (): JSX.Element => {
                         )}
                       </div>
                     </div>
-                  </div>
+                  </button>
                   <button
                     type="button"
                     onClick={() => setReportDialogOpen(true)}
