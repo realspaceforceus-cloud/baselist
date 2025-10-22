@@ -29,6 +29,7 @@ const transformListing = (row: any) => ({
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/listings", "");
+  const startTime = Date.now();
 
   // GET /api/listings?baseId=&category=&search=&limit=&offset=
   if (method === "GET" && path === "") {
