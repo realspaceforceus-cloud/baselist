@@ -22,17 +22,6 @@ interface VehicleFilters {
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
 
-interface VehicleFilters {
-  year?: string;
-  make?: string;
-  model?: string;
-  type?: string;
-  color?: string;
-  maxMiles?: string;
-}
-
-const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
-
 export const Marketplace = (): JSX.Element => {
   const {
     currentBaseId,
