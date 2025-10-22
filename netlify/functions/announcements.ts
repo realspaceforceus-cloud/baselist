@@ -135,7 +135,7 @@ export const handler: Handler = async (event) => {
 
     // POST /api/announcements (create)
     if (method === "POST" && path === "/") {
-      if (!auth) {
+      if (!userId) {
         return {
           statusCode: 401,
           headers: { "Content-Type": "application/json" },
