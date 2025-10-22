@@ -240,12 +240,32 @@ export const handler: Handler = async (event) => {
         [threadId],
       );
 
+      const threadData = threadResult.rows[0];
+      const transformedThread = {
+        id: threadData.id,
+        listingId: threadData.listing_id,
+        participants: threadData.participants,
+        status: threadData.status,
+        archivedBy: threadData.archived_by,
+        deletedBy: threadData.deleted_by,
+        transaction: threadData.transaction,
+        createdAt: threadData.created_at,
+        updatedAt: threadData.updated_at,
+      };
+
       return {
         statusCode: 201,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: messageResult.rows[0],
-          thread: threadResult.rows[0],
+          message: {
+            id: messageResult.rows[0].id,
+            threadId: messageResult.rows[0].thread_id,
+            authorId: messageResult.rows[0].author_id,
+            body: messageResult.rows[0].body,
+            sentAt: messageResult.rows[0].sent_at,
+            type: messageResult.rows[0].type || "text",
+          },
+          thread: transformedThread,
         }),
       };
     } catch (err) {
