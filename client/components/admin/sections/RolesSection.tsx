@@ -286,6 +286,28 @@ export const RolesSection = (): JSX.Element => {
                           <span className="text-xs font-medium text-success">
                             All Bases
                           </span>
+                        ) : user.role === "moderator" ? (
+                          <div className="flex flex-wrap gap-1">
+                            {user.baseIds && user.baseIds.length > 0 ? (
+                              user.baseIds.map((baseId) => {
+                                const baseName = bases.find(
+                                  (b) => b.id === baseId,
+                                )?.name;
+                                return (
+                                  <span
+                                    key={baseId}
+                                    className="inline-flex rounded-lg bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"
+                                  >
+                                    {baseName || baseId}
+                                  </span>
+                                );
+                              })
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                —
+                              </span>
+                            )}
+                          </div>
                         ) : (
                           <>
                             {bases.find((b) => b.id === user.baseId)?.name ||
