@@ -399,78 +399,9 @@ export const BaseListProvider = ({
     fetchBases();
   }, [fetchBases]);
 
-  // Fetch listings from the database
-  useEffect(() => {
-    const fetchListings = async () => {
-      try {
-        const response = await fetch("/.netlify/functions/listings", {
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          console.error(`Failed to fetch listings: HTTP ${response.status}`);
-          setListings([]);
-          return;
-        }
-
-        const listingsData = await response.json();
-        if (Array.isArray(listingsData)) {
-          setListings(
-            listingsData.sort(
-              (a, b) =>
-                new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
-            ),
-          );
-        } else {
-          console.error("Listings response is not an array:", listingsData);
-          setListings([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch listings from database:", error);
-        setListings([]);
-      }
-    };
-    fetchListings();
-  }, []);
-
-  // Fetch message threads from the database
-  useEffect(() => {
-    const fetchMessageThreads = async () => {
-      if (!authUser?.userId) {
-        setMessageThreads([]);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `/.netlify/functions/messages/threads/${authUser.userId}`,
-          {
-            credentials: "include",
-          },
-        );
-
-        if (!response.ok) {
-          console.error(
-            `Failed to fetch message threads: HTTP ${response.status}`,
-          );
-          setMessageThreads([]);
-          return;
-        }
-
-        const threadsData = await response.json();
-        if (Array.isArray(threadsData)) {
-          setMessageThreads(threadsData);
-        } else {
-          setMessageThreads([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch message threads from database:", error);
-        setMessageThreads([]);
-      }
-    };
-
-    fetchMessageThreads();
-  }, [authUser?.userId]);
+  // NOTE: Listings and messageThreads are no longer fetched globally from context
+  // Pages should fetch these directly using listingsApi and messagesApi for better performance and freshness
+  // This allows lazy-loading and pagination at the page level instead of loading everything at app startup
 
   useEffect(() => {
     if (currentAccount) {
