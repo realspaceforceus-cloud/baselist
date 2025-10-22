@@ -21,7 +21,7 @@ export const handler: Handler = async (event) => {
   }
   path = path || "/";
 
-  const auth = verifyAuth(event);
+  const userId = await getUserIdFromAuth(event);
   const client = await pool.connect();
 
   try {
@@ -45,7 +45,7 @@ export const handler: Handler = async (event) => {
         const params: any[] = [];
 
         // If user is authenticated, exclude announcements they've dismissed
-        if (auth) {
+        if (userId) {
           query += ` AND id NOT IN (
             SELECT announcement_id FROM dismissed_announcements WHERE user_id = $1
           )`;
