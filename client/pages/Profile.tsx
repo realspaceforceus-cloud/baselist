@@ -95,7 +95,7 @@ const Profile = (): JSX.Element => {
 
   // Fetch user's listings using React Query hook (only fetch when we have a valid user)
   const { data: listingsResponse, isLoading: isLoadingListings } =
-    useUserListings(profileUser?.id ? profileUser.id : null);
+    useUserListings(profileUser?.id || null);
 
   const profileBase = useMemo(() => {
     if (isViewingOwnProfile) {
@@ -112,6 +112,36 @@ const Profile = (): JSX.Element => {
     isViewingOwnProfile,
     profileUser,
   ]);
+
+  // Define all hooks BEFORE any early returns (required by React rules of hooks)
+  const profileFirstName = useMemo(() => {
+    if (!profileUser) return "";
+    return profileUser.name.includes(" ")
+      ? profileUser.name.split(" ")[0]
+      : profileUser.name;
+  }, [profileUser?.name]);
+
+  const profileMemberSinceYear = useMemo(() => {
+    if (!profileUser?.memberSince) return new Date().getFullYear();
+    return new Date(profileUser.memberSince).getFullYear();
+  }, [profileUser?.memberSince]);
+
+  // Use API-fetched listings or filter from context if viewing own profile
+  const myListings = useMemo(() => {
+    if (!profileUser?.id) return [];
+    if (isViewingOwnProfile) {
+      return listings.filter((listing) => listing.sellerId === profileUser.id);
+    }
+    return listingsResponse?.listings || [];
+  }, [listingsResponse, listings, profileUser?.id, isViewingOwnProfile]);
+
+  const activeListings = useMemo(() => {
+    return myListings.filter((listing) => listing.status === "active");
+  }, [myListings]);
+
+  const soldListings = useMemo(() => {
+    return myListings.filter((listing) => listing.status === "sold");
+  }, [myListings]);
 
   // Show error if profile not found (check after all hooks)
   if (profileUser === null) {
