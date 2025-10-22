@@ -628,6 +628,208 @@ export const handler: Handler = async (event) => {
     }
   }
 
+  // POST /api/messages/threads/:threadId/accept-offer - accept an offer
+  if (method === "POST" && path.includes("/threads/") && path.endsWith("/accept-offer")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/accept-offer")[0];
+      const userId = await getUserIdFromAuth(event);
+
+      if (!userId || !threadId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
+      }
+
+      const threadResult = await client.query(
+        "SELECT transaction FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const transaction = threadResult.rows[0].transaction || {};
+      if (!transaction.offer) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "No pending offer" }),
+        };
+      }
+
+      transaction.offer.status = "accepted";
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, updated_at = NOW() WHERE id = $2",
+        [JSON.stringify(transaction), threadId],
+      );
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transaction }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
+  // POST /api/messages/threads/:threadId/decline-offer - decline an offer
+  if (method === "POST" && path.includes("/threads/") && path.endsWith("/decline-offer")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/decline-offer")[0];
+      const userId = await getUserIdFromAuth(event);
+
+      if (!userId || !threadId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
+      }
+
+      const threadResult = await client.query(
+        "SELECT transaction FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const transaction = threadResult.rows[0].transaction || {};
+      if (!transaction.offer) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "No pending offer" }),
+        };
+      }
+
+      transaction.offer.status = "declined";
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, updated_at = NOW() WHERE id = $2",
+        [JSON.stringify(transaction), threadId],
+      );
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transaction }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
+  // DELETE /api/messages/threads/:threadId/offer - retract an offer
+  if (method === "DELETE" && path.includes("/threads/") && path.endsWith("/offer")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/offer")[0];
+      const userId = await getUserIdFromAuth(event);
+
+      if (!userId || !threadId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
+      }
+
+      const threadResult = await client.query(
+        "SELECT transaction FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const transaction = threadResult.rows[0].transaction || {};
+      if (!transaction.offer) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "No pending offer" }),
+        };
+      }
+
+      if (transaction.offer.madeBy !== userId) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Can only retract your own offer" }),
+        };
+      }
+
+      if (transaction.offer.status !== "pending") {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Can only retract pending offers" }),
+        };
+      }
+
+      transaction.offer.status = "retracted";
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, updated_at = NOW() WHERE id = $2",
+        [JSON.stringify(transaction), threadId],
+      );
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transaction }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   // POST /api/messages/threads/:threadId/dispute - raise a dispute
   if (method === "POST" && path.includes("/threads/") && path.endsWith("/dispute")) {
     const client = await pool.connect();
