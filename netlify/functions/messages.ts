@@ -502,6 +502,80 @@ export const handler: Handler = async (event) => {
     }
   }
 
+  // POST /api/messages/threads/:threadId/dispute - raise a dispute
+  if (method === "POST" && path.includes("/threads/") && path.endsWith("/dispute")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/dispute")[0];
+      const { reason, baseId } = JSON.parse(event.body || "{}");
+      const userId = await getUserIdFromAuth(event);
+
+      if (!userId || !threadId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
+      }
+
+      // Verify thread exists and user is a participant
+      const threadResult = await client.query(
+        "SELECT participants FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const thread = threadResult.rows[0];
+      if (!thread.participants.includes(userId)) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Not a participant in this thread" }),
+        };
+      }
+
+      // Create a report for the dispute
+      const reportId = randomUUID();
+      await client.query(
+        `INSERT INTO reports (id, type, reporter_id, target_type, target_id, base_id, notes, status, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())`,
+        [
+          reportId,
+          "dispute",
+          userId,
+          "thread",
+          threadId,
+          baseId || "default",
+          reason || "User initiated dispute",
+          "open",
+        ],
+      );
+
+      return {
+        statusCode: 201,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportId }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   return {
     statusCode: 404,
     body: JSON.stringify({ error: "Not found" }),
