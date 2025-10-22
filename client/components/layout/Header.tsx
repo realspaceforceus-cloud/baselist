@@ -501,7 +501,14 @@ export const Header = (): JSX.Element => {
           className="flex h-full w-full max-w-sm flex-col gap-6 bg-background p-6"
         >
           <SheetHeader className="items-start text-left">
-            <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/profile");
+              }}
+              className="flex w-full items-center gap-3 rounded-lg transition hover:bg-muted/30 -m-2 p-2"
+            >
               <Avatar className="h-12 w-12">
                 {user.avatarUrl ? (
                   <AvatarImage
@@ -514,7 +521,7 @@ export const Header = (): JSX.Element => {
                   </AvatarFallback>
                 )}
               </Avatar>
-              <div>
+              <div className="text-left">
                 <SheetTitle className="text-xl font-semibold text-foreground">
                   {user.name}
                 </SheetTitle>
@@ -529,7 +536,7 @@ export const Header = (): JSX.Element => {
                   {verificationLabel}
                 </SheetDescription>
               </div>
-            </div>
+            </button>
           </SheetHeader>
           <div className="space-y-4 overflow-y-auto">
             {currentBase && (
