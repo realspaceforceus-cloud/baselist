@@ -189,9 +189,17 @@ const Messages = (): JSX.Element => {
             new Date(lastReadTimestamp).getTime() <
               new Date(lastMessage.sentAt).getTime()
           : false;
-        const defaultComposerMessage = seller
-          ? `Hi ${seller.name.split(" ")[0]}, is this still available?`
-          : "Hi, is this still available?";
+        const isSeller = listing ? user.id === listing.sellerId : false;
+        const hasMessages = (thread.messages ?? []).length > 0;
+        const defaultComposerMessage = !listing
+          ? "Hi there!"
+          : isSeller
+            ? hasMessages
+              ? ""
+              : "What would you like to know about this?"
+            : hasMessages
+              ? ""
+              : `Hi, is ${listing.title} still available?`;
 
         const isArchived = thread.archivedBy?.includes(user.id) ?? false;
         const isCompleted = thread.status === "completed";
