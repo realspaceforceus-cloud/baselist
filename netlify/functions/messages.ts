@@ -167,26 +167,54 @@ export const handler: Handler = async (event) => {
     }
   }
 
-  // GET /api/messages/threads/:userId - get user's message threads
-  if (method === "GET" && path.includes("/threads/")) {
+  // GET /api/messages/threads - get user's message threads
+  if (method === "GET" && path === "") {
     const client = await pool.connect();
     try {
-      const userId = path.split("/threads/")[1];
+      const userId = await getUserIdFromAuth(event);
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
 
-      const result = await client.query(
-        "SELECT * FROM message_threads WHERE $1 = ANY(participants) ORDER BY updated_at DESC",
+      // Parse pagination params
+      const url = new URL(event.rawUrl || `http://localhost${event.path}`);
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
+      const offset = parseInt(url.searchParams.get("offset") || "0");
+
+      // Get total count
+      const countResult = await client.query(
+        "SELECT COUNT(*) as count FROM message_threads WHERE $1 = ANY(participants)",
         [userId],
+      );
+      const total = parseInt(countResult.rows[0]?.count || "0");
+
+      // Get threads with pagination
+      const result = await client.query(
+        "SELECT * FROM message_threads WHERE $1 = ANY(participants) ORDER BY updated_at DESC LIMIT $2 OFFSET $3",
+        [userId, limit, offset],
       );
 
       return {
         statusCode: 200,
-        body: JSON.stringify(result.rows),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          threads: result.rows,
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total,
+        }),
       };
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : "Internal server error";
       return {
         statusCode: 400,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ error: errorMsg }),
       };
     } finally {
