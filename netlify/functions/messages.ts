@@ -622,14 +622,14 @@ export const handler: Handler = async (event) => {
           (p: string) => p !== userId,
         );
         if (partnerId) {
-          const amount = Number(amount);
+          const offerAmount = Number(amount);
           const formatted = new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
-            maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
-          }).format(amount);
+            maximumFractionDigits: offerAmount % 1 === 0 ? 0 : 2,
+          }).format(offerAmount);
 
-          await createNotification(client, {
+          await createNotification({
             userId: partnerId,
             type: "offer_received",
             title: "New Offer Received",
@@ -638,7 +638,7 @@ export const handler: Handler = async (event) => {
             targetId: threadId,
             targetType: "thread",
             data: {
-              amount,
+              amount: offerAmount,
               listingTitle: listing?.title,
               bidderName: partner?.username,
               threadId,
