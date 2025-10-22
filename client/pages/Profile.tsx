@@ -77,15 +77,16 @@ const Profile = (): JSX.Element => {
   }, [memberId, currentUser?.id]);
 
   // Determine viewing own profile (must come before other hooks)
-  const isViewingOwnProfile = !memberId || memberId === currentUser.id;
+  // Safe boolean: don't read currentUser.id unless it exists
+  const isViewingOwnProfile = !memberId || (currentUser?.id === memberId);
 
   const profileUser = useMemo(() => {
     if (isViewingOwnProfile) {
-      return currentUser;
+      return currentUser ?? null;
     }
     // Use fetched user when viewing another profile
     return fetchedUser ?? null;
-  }, [currentUser, memberId, fetchedUser, isViewingOwnProfile]);
+  }, [isViewingOwnProfile, currentUser, fetchedUser]);
 
   // Fetch user's listings using React Query hook (only fetch when we have a valid user)
   const { data: listingsResponse, isLoading: isLoadingListings } =
@@ -93,18 +94,17 @@ const Profile = (): JSX.Element => {
 
   const profileBase = useMemo(() => {
     if (isViewingOwnProfile) {
-      return currentBase;
+      return currentBase ?? null;
     }
-    if (!profileUser) return currentBase;
+    if (!profileUser) return currentBase ?? null;
     return (
-      bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase
+      bases.find((base) => base.id === profileUser.currentBaseId) ?? currentBase ?? null
     );
   }, [
     bases,
     currentBase,
-    profileUser?.currentBaseId,
-    isViewingOwnProfile,
     profileUser,
+    isViewingOwnProfile,
   ]);
 
   // Define all hooks BEFORE any early returns (required by React rules of hooks)
