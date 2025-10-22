@@ -215,21 +215,21 @@ export const ReportsSection = () => {
                           setSelectedReport({
                             id: report.id,
                             type: report.type,
-                            description: "",
+                            description: report.notes,
                             reportedBy: {
-                              id: "",
+                              id: report.reporterId,
                               username: report.reporter,
-                              avatarUrl: "",
+                              avatarUrl: report.reporterAvatar,
                             },
                             target: {
                               id: report.targetId,
-                              username: "",
+                              username: report.targetUsername || "Unknown",
                               avatarUrl: "",
                             },
-                            targetType: report.targetType,
+                            targetType: report.targetType as "listing" | "user" | "thread",
                             targetId: report.targetId,
                             targetLabel: report.targetLabel,
-                            createdAt: report.time,
+                            createdAt: report.createdAt,
                           });
                           setShowDetailModal(true);
                         }}
