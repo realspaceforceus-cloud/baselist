@@ -9,9 +9,8 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,9 +22,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useBaseList } from "@/context/BaseListContext";
 import { useAuth } from "@/context/AuthContext";
-import { getUserListings, deleteListing } from "@/lib/listingsApi";
+import { useUserListings, useDeleteListing } from "@/hooks/useListings";
+import { useBaseList } from "@/context/BaseListContext";
 import { generateSlug } from "@/lib/slugUtils";
 import { cn } from "@/lib/utils";
 import type { Listing, MessageThread } from "@/types";
