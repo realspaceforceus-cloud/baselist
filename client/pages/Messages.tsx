@@ -119,6 +119,7 @@ const Messages = (): JSX.Element => {
   const [isLoadingThreads, setIsLoadingThreads] = useState(true);
   const [composerMessage, setComposerMessage] = useState<string>("");
   const [threadFilter, setThreadFilter] = useState<ThreadFilter>("active");
+  const [typeFilter, setTypeFilter] = useState<ThreadTypeFilter>("all-types");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [disputeReason, setDisputeReason] = useState<string>("");
