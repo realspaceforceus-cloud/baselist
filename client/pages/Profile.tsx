@@ -35,6 +35,46 @@ const Profile = (): JSX.Element => {
   } = useBaseList();
 
   const { memberId } = useParams<{ memberId?: string }>();
+  const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(false);
+
+  // Fetch user from API if not in local context
+  useEffect(() => {
+    if (!memberId || memberId === currentUser.id) {
+      setFetchedUser(null);
+      return;
+    }
+
+    // Check if user is in local context first
+    const localUser = getMemberProfile(memberId);
+    if (localUser) {
+      setFetchedUser(null);
+      return;
+    }
+
+    // Fetch from API
+    const fetchUser = async () => {
+      setIsLoadingUser(true);
+      try {
+        const response = await fetch(
+          `/.netlify/functions/users/${memberId}`,
+          {
+            credentials: "include",
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setFetchedUser(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    fetchUser();
+  }, [memberId, currentUser.id, getMemberProfile]);
 
   // Show a message if guest tries to view their own profile without memberId
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
