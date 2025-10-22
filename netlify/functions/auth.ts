@@ -230,10 +230,14 @@ const handleSignup = async (event: any) => {
     const userId = randomUUID();
     const passwordHash = await bcrypt.hash(trimmedPassword, 10);
     const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(trimmedUsername)}&backgroundType=gradientLinear&fontWeight=700`;
+    const now = new Date();
+
+    // If using invitation code, automatically verify the user
+    const dowVerifiedAt = hasValidCode ? now : null;
 
     await client.query(
-      `INSERT INTO users (id, username, email, password_hash, role, status, base_id, avatar_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO users (id, username, email, password_hash, role, status, base_id, avatar_url, dow_verified_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         userId,
         trimmedUsername,
@@ -243,12 +247,21 @@ const handleSignup = async (event: any) => {
         "active",
         baseId,
         avatarUrl,
+        dowVerifiedAt,
       ],
     );
 
-    // Don't generate or send verification code here
-    // Users verify by sending an email to verify@yourdomain.com with their code in the subject
-    // See inbound-email.ts for the inbound verification handler
+    // If invitation code was used, mark it as used
+    if (hasValidCode && trimmedCode) {
+      await client.query(
+        "UPDATE invitation_codes SET used_at = $1, used_by = $2 WHERE code = $3",
+        [now, userId, trimmedCode],
+      );
+    }
+
+    const message = hasValidCode
+      ? "Account created and verified! You can now log in."
+      : "Account created. Send an email to verify@yourdomain.com with your verification code in the subject to complete signup.";
 
     return {
       statusCode: 201,
@@ -257,8 +270,8 @@ const handleSignup = async (event: any) => {
         username: trimmedUsername,
         email: trimmedEmail,
         baseId,
-        message:
-          "Account created. Send an email to verify@yourdomain.com with your verification code in the subject to complete signup.",
+        verified: hasValidCode,
+        message,
       }),
     };
   } catch (error) {
