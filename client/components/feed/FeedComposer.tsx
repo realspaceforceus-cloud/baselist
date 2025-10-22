@@ -3,6 +3,7 @@ import { Image, BarChart3, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { feedApi } from "@/lib/feedApi";
+import { adminApi } from "@/lib/adminApi";
 import { useBaseList } from "@/context/BaseListContext";
 import { useAuth } from "@/context/AuthContext";
 import { uploadImageToCloudinary } from "@/lib/cloudinaryClient";
@@ -31,7 +32,39 @@ export function FeedComposer({
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
-  const isAdmin = user?.role === "admin" || user?.role === "moderator";
+  const [canPostPSA, setCanPostPSA] = useState(false);
+
+  // Check if user can post PSA (admin or moderator assigned to this base)
+  useEffect(() => {
+    const checkPSAPermission = async () => {
+      if (!user || !currentBaseId) {
+        setCanPostPSA(false);
+        return;
+      }
+
+      // Admins can always post PSAs
+      if (user.role === "admin") {
+        setCanPostPSA(true);
+        return;
+      }
+
+      // For moderators, check if assigned to current base
+      if (user.role === "moderator") {
+        try {
+          const assignedBases = await adminApi.getModeratorBases(user.id);
+          setCanPostPSA(assignedBases.includes(currentBaseId));
+        } catch (error) {
+          console.error("Failed to fetch moderator bases:", error);
+          setCanPostPSA(false);
+        }
+      } else {
+        setCanPostPSA(false);
+      }
+    };
+
+    checkPSAPermission();
+  }, [user, currentBaseId]);
+
   const isFormValid = content.trim().length > 0;
 
   const handlePhotoUpload = async (
