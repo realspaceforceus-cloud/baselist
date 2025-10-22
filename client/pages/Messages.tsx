@@ -1224,6 +1224,44 @@ const Messages = (): JSX.Element => {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Offer Dialog */}
+      <AlertDialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
+        <AlertDialogContent>
+          <AlertDialogTitle>Make an Offer</AlertDialogTitle>
+          <AlertDialogDescription className="space-y-4">
+            <p>
+              Offer an amount for {activeSummary?.listing?.title || "this item"}
+            </p>
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-foreground">
+                Offer Amount
+              </span>
+              <Input
+                type="number"
+                value={offerAmount}
+                onChange={(e) => setOfferAmount(e.target.value)}
+                placeholder="Enter amount in USD"
+                className="rounded-lg"
+                step="0.01"
+                min="0"
+              />
+            </label>
+            {activeSummary?.listing?.price && (
+              <p className="text-xs text-muted-foreground">
+                Asking price: $
+                {Number(activeSummary.listing.price).toFixed(2)}
+              </p>
+            )}
+          </AlertDialogDescription>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSubmitOffer}>
+              Send Offer
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };
