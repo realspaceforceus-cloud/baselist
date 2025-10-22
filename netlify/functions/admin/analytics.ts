@@ -34,7 +34,7 @@ export const handler: Handler = async (event) => {
   try {
     // GET /api/admin/analytics/system-health
     if (method === "GET" && path === "/system-health") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/live-users
     if (method === "GET" && path === "/live-users") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -127,7 +127,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/bases-by-users?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/bases-by-users") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -173,7 +173,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/bases-by-listings?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/bases-by-listings") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -219,7 +219,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/bases-by-signups?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/bases-by-signups") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -265,7 +265,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/moderation
     if (method === "GET" && path === "/moderation") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -300,7 +300,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/revenue?period=24h|7d|30d|90d|all
     if (method === "GET" && path === "/revenue") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -342,7 +342,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/peak-activity
     if (method === "GET" && path === "/peak-activity") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
@@ -380,7 +380,7 @@ export const handler: Handler = async (event) => {
 
     // GET /api/admin/analytics/retention
     if (method === "GET" && path === "/retention") {
-      if (!(await isAdmin(client, auth.userId))) {
+      if (!(await isAdmin(client, userId))) {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
