@@ -37,6 +37,8 @@ const Profile = (): JSX.Element => {
   const { memberId } = useParams<{ memberId?: string }>();
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const [userListings, setUserListings] = useState<Listing[]>([]);
+  const [isLoadingListings, setIsLoadingListings] = useState(false);
 
   // Fetch user from API if not in local context
   useEffect(() => {
