@@ -22,6 +22,17 @@ interface VehicleFilters {
 
 const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
 
+interface VehicleFilters {
+  year?: string;
+  make?: string;
+  model?: string;
+  type?: string;
+  color?: string;
+  maxMiles?: string;
+}
+
+const filters: ListingFilter[] = ["All", ...LISTING_CATEGORIES];
+
 export const Marketplace = (): JSX.Element => {
   const {
     currentBaseId,
@@ -30,67 +41,25 @@ export const Marketplace = (): JSX.Element => {
     isAuthenticated,
     isDowVerified,
     beginVerification,
-    sponsorPlacements,
   } = useBaseList();
-  const [listings, setListings] = useState<ListingWithSeller[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<ListingFilter>("All");
-  const [vehicleFilters, setVehicleFilters] = useState<VehicleFilters>({});
+
+  const [offset, setOffset] = React.useState(0);
+  const [activeFilter, setActiveFilter] = React.useState<ListingFilter>("All");
+  const [vehicleFilters, setVehicleFilters] = React.useState<VehicleFilters>({});
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // Fetch listings when filters change
-  useEffect(() => {
-    const fetchListingsData = async () => {
-      setIsLoading(true);
-      try {
-        const category = activeFilter !== "All" ? activeFilter : undefined;
-        const response = await getListings({
-          baseId: currentBaseId || undefined,
-          category,
-          search: searchQuery || undefined,
-          limit: 20,
-          offset: 0,
-        });
-        setListings(response.listings);
-        setHasMore(response.hasMore);
-        setOffset(0);
-      } catch (error) {
-        console.error("Failed to fetch listings:", error);
-        setListings([]);
-        setHasMore(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Fetch listings using React Query hook
+  const category = activeFilter !== "All" ? activeFilter : undefined;
+  const { data: listingsResponse, isLoading } = useListings({
+    baseId: currentBaseId || undefined,
+    category,
+    search: searchQuery || undefined,
+    limit: 20,
+    offset,
+  });
 
-    fetchListingsData();
-  }, [currentBaseId, activeFilter, searchQuery]);
-
-  // Load more when offset changes
-  useEffect(() => {
-    if (offset === 0) return;
-
-    const fetchMore = async () => {
-      try {
-        const category = activeFilter !== "All" ? activeFilter : undefined;
-        const response = await getListings({
-          baseId: currentBaseId || undefined,
-          category,
-          search: searchQuery || undefined,
-          limit: 20,
-          offset,
-        });
-        setListings((prev) => [...prev, ...response.listings]);
-        setHasMore(response.hasMore);
-      } catch (error) {
-        console.error("Failed to fetch more listings:", error);
-      }
-    };
-
-    fetchMore();
-  }, [offset, currentBaseId, activeFilter, searchQuery]);
+  const listings = useMemo(() => listingsResponse?.listings || [], [listingsResponse]);
+  const hasMore = useMemo(() => listingsResponse?.hasMore || false, [listingsResponse]);
 
   const vehicleOptions = useMemo(() => {
     return extractVehicleOptions(listings);
