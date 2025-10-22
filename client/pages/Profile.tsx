@@ -74,7 +74,7 @@ const Profile = (): JSX.Element => {
     };
 
     fetchUser();
-  }, [memberId, currentUser.id]);
+  }, [memberId, currentUser?.id]);
 
   // Determine viewing own profile (must come before other hooks)
   const isViewingOwnProfile = !memberId || memberId === currentUser.id;
