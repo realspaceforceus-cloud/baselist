@@ -364,6 +364,23 @@ export const SettingsSection = (): JSX.Element => {
               Path to your website logo image
             </p>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              Default Avatar URL
+            </label>
+            <Input
+              type="text"
+              name="default_avatar_url"
+              value={formData.default_avatar_url}
+              onChange={handleChange}
+              placeholder="https://example.com/default-avatar.png"
+              className="rounded-lg"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Default avatar image for new users who haven't uploaded one yet
+            </p>
+          </div>
         </div>
       </Card>
 
