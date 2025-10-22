@@ -46,10 +46,15 @@ export const ReportsSection = () => {
             id: report.id,
             type: report.type || "Unknown",
             reporter: report.reportedBy || "Unknown",
+            reporterId: report.reporterId || "",
+            reporterAvatar: report.reporterAvatar,
+            notes: report.notes || "",
             targetType: report.targetType || "listing",
             targetId: report.targetId || "",
             targetLabel: report.targetLabel || "Unknown",
+            targetUsername: report.targetUsername,
             base: report.baseId || "Unknown",
+            createdAt: report.createdAt || "",
             time: report.createdAt
               ? new Intl.DateTimeFormat("en-US", {
                   month: "short",
