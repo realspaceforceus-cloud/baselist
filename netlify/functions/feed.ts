@@ -554,11 +554,31 @@ export const handler: Handler = async (event) => {
           console.error("[FEED] Error processing post mentions:", err);
         }
 
+        recordMetric(pool, {
+          endpoint: "/feed/posts",
+          method: "POST",
+          statusCode: 201,
+          responseTimeMs: Date.now() - startTime,
+        }).catch(() => {});
+
         return {
           statusCode: 201,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(transformFeedPost(result.rows[0])),
         };
+      } catch (e) {
+        console.error("[FEED] POST /posts - Error:", e);
+        const errorMsg = e instanceof Error ? e.message : "Internal server error";
+
+        recordMetric(pool, {
+          endpoint: "/feed/posts",
+          method: "POST",
+          statusCode: 500,
+          responseTimeMs: Date.now() - startTime,
+          errorMessage: errorMsg,
+        }).catch(() => {});
+
+        throw e;
       } finally {
         client.release();
       }
