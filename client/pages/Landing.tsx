@@ -277,9 +277,10 @@ const Landing = (): JSX.Element => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: trimmedUsername,
-          email: normalizedEmail,
+          email: useInvitationCode ? normalizedEmail : normalizedEmail,
           password: trimmedPassword,
           baseId: selectedBaseId,
+          invitationCode: useInvitationCode ? invitationCode.trim() : undefined,
         }),
       });
 
