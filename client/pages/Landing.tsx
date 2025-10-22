@@ -859,7 +859,11 @@ const Landing = (): JSX.Element => {
                       email: event.target.value,
                     }))
                   }
-                  placeholder={useInvitationCode ? "Enter any email address" : "Enter your .mil or DoW email"}
+                  placeholder={
+                    useInvitationCode
+                      ? "Enter any email address"
+                      : "Enter your .mil or DoW email"
+                  }
                   className="h-11 rounded-full"
                   required
                   disabled={isSubmitting}
@@ -892,7 +896,9 @@ const Landing = (): JSX.Element => {
                   )
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    {useInvitationCode ? "Any email address works with your invitation code." : "Use your DoW email (.mil or .defense.gov)."}
+                    {useInvitationCode
+                      ? "Any email address works with your invitation code."
+                      : "Use your DoW email (.mil or .defense.gov)."}
                   </p>
                 )}
               </div>
