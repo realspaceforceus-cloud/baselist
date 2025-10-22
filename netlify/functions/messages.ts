@@ -503,7 +503,11 @@ export const handler: Handler = async (event) => {
   }
 
   // POST /api/messages/threads/:threadId/offer - make an offer
-  if (method === "POST" && path.includes("/threads/") && path.endsWith("/offer")) {
+  if (
+    method === "POST" &&
+    path.includes("/threads/") &&
+    path.endsWith("/offer")
+  ) {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/offer")[0];
@@ -522,7 +526,9 @@ export const handler: Handler = async (event) => {
         return {
           statusCode: 403,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Cannot make offer on behalf of another user" }),
+          body: JSON.stringify({
+            error: "Cannot make offer on behalf of another user",
+          }),
         };
       }
 
@@ -585,7 +591,9 @@ export const handler: Handler = async (event) => {
         : { rows: [null] };
 
       const listing = listingResult.rows[0];
-      const partnerId = threadData.participants.find((p: string) => p !== userId);
+      const partnerId = threadData.participants.find(
+        (p: string) => p !== userId,
+      );
       const partnerResult = partnerId
         ? await client.query(
             "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
@@ -662,7 +670,11 @@ export const handler: Handler = async (event) => {
   }
 
   // POST /api/messages/threads/:threadId/accept-offer - accept an offer
-  if (method === "POST" && path.includes("/threads/") && path.endsWith("/accept-offer")) {
+  if (
+    method === "POST" &&
+    path.includes("/threads/") &&
+    path.endsWith("/accept-offer")
+  ) {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/accept-offer")[0];
@@ -724,7 +736,11 @@ export const handler: Handler = async (event) => {
   }
 
   // POST /api/messages/threads/:threadId/decline-offer - decline an offer
-  if (method === "POST" && path.includes("/threads/") && path.endsWith("/decline-offer")) {
+  if (
+    method === "POST" &&
+    path.includes("/threads/") &&
+    path.endsWith("/decline-offer")
+  ) {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/decline-offer")[0];
@@ -808,7 +824,11 @@ export const handler: Handler = async (event) => {
   }
 
   // DELETE /api/messages/threads/:threadId/offer - retract an offer
-  if (method === "DELETE" && path.includes("/threads/") && path.endsWith("/offer")) {
+  if (
+    method === "DELETE" &&
+    path.includes("/threads/") &&
+    path.endsWith("/offer")
+  ) {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/offer")[0];
@@ -917,7 +937,11 @@ export const handler: Handler = async (event) => {
   }
 
   // POST /api/messages/threads/:threadId/dispute - raise a dispute
-  if (method === "POST" && path.includes("/threads/") && path.endsWith("/dispute")) {
+  if (
+    method === "POST" &&
+    path.includes("/threads/") &&
+    path.endsWith("/dispute")
+  ) {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/dispute")[0];

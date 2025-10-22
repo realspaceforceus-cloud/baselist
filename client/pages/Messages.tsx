@@ -501,8 +501,7 @@ const Messages = (): JSX.Element => {
       toast.success(`Offer of ${formatted} sent`);
     } catch (error) {
       toast.error("Failed to send offer", {
-        description:
-          error instanceof Error ? error.message : "Try again later",
+        description: error instanceof Error ? error.message : "Try again later",
       });
     }
   };
@@ -546,8 +545,7 @@ const Messages = (): JSX.Element => {
       toast.success("Offer accepted");
     } catch (error) {
       toast.error("Failed to accept offer", {
-        description:
-          error instanceof Error ? error.message : "Try again later",
+        description: error instanceof Error ? error.message : "Try again later",
       });
     }
   };
@@ -584,8 +582,7 @@ const Messages = (): JSX.Element => {
       toast.success("Offer declined");
     } catch (error) {
       toast.error("Failed to decline offer", {
-        description:
-          error instanceof Error ? error.message : "Try again later",
+        description: error instanceof Error ? error.message : "Try again later",
       });
     }
   };
@@ -622,8 +619,7 @@ const Messages = (): JSX.Element => {
       toast.success("Offer retracted");
     } catch (error) {
       toast.error("Failed to retract offer", {
-        description:
-          error instanceof Error ? error.message : "Try again later",
+        description: error instanceof Error ? error.message : "Try again later",
       });
     }
   };
@@ -674,10 +670,12 @@ const Messages = (): JSX.Element => {
   };
 
   const handleArchiveAction = (summary: ThreadSummary) => {
-    const hasPendingOffer = summary.thread.transaction?.offer?.status === "pending";
+    const hasPendingOffer =
+      summary.thread.transaction?.offer?.status === "pending";
     if (hasPendingOffer) {
       toast.error("Cannot archive thread", {
-        description: "Cannot archive thread with active offer. Decline the offer first.",
+        description:
+          "Cannot archive thread with active offer. Decline the offer first.",
       });
       return;
     }
@@ -689,10 +687,12 @@ const Messages = (): JSX.Element => {
   };
 
   const handleDeleteAction = (summary: ThreadSummary) => {
-    const hasPendingOffer = summary.thread.transaction?.offer?.status === "pending";
+    const hasPendingOffer =
+      summary.thread.transaction?.offer?.status === "pending";
     if (hasPendingOffer) {
       toast.error("Cannot delete thread", {
-        description: "Cannot delete thread with active offer. Decline the offer first.",
+        description:
+          "Cannot delete thread with active offer. Decline the offer first.",
       });
       return;
     }
@@ -1193,14 +1193,21 @@ const Messages = (): JSX.Element => {
                   if (message.type === "offer") {
                     const isOwn = message.authorId === user.id;
                     const offerAmount = Number(message.body) || 0;
-                    const offerStatus = activeSummary?.thread?.transaction?.offer?.status || "pending";
+                    const offerStatus =
+                      activeSummary?.thread?.transaction?.offer?.status ||
+                      "pending";
                     const canAccept = !isOwn && offerStatus === "pending";
                     const canDecline = !isOwn && offerStatus === "pending";
                     const canRetract = isOwn && offerStatus === "pending";
 
                     return (
                       <div key={message.id} className="flex flex-col gap-2">
-                        <div className={cn("flex", isOwn ? "justify-end" : "justify-start")}>
+                        <div
+                          className={cn(
+                            "flex",
+                            isOwn ? "justify-end" : "justify-start",
+                          )}
+                        >
                           <div className="max-w-[80%] rounded-2xl bg-blue-500/20 px-4 py-3 text-sm border border-blue-500/30">
                             <p className="font-semibold text-blue-600">
                               Offer: ${offerAmount.toFixed(2)}
@@ -1304,9 +1311,7 @@ const Messages = (): JSX.Element => {
                       !activeSummary.listing.isFree &&
                       activeSummary.listing.price
                         ? (() => {
-                            const price = Number(
-                              activeSummary.listing.price,
-                            );
+                            const price = Number(activeSummary.listing.price);
                             return isNaN(price)
                               ? "Quick offer"
                               : `Offer ${new Intl.NumberFormat("en-US", {
@@ -1452,8 +1457,7 @@ const Messages = (): JSX.Element => {
             </label>
             {activeSummary?.listing?.price && (
               <p className="text-xs text-muted-foreground">
-                Asking price: $
-                {Number(activeSummary.listing.price).toFixed(2)}
+                Asking price: ${Number(activeSummary.listing.price).toFixed(2)}
               </p>
             )}
           </AlertDialogDescription>
