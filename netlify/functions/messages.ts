@@ -1368,18 +1368,19 @@ export const handler: Handler = async (event) => {
       }
 
       const now = new Date().toISOString();
-      const aMarkedAt = tx.aMarkedAt || (isA ? now : undefined);
-      const bMarkedAt = tx.bMarkedAt || (isB ? now : undefined);
+      // Set timestamp for the current user marking complete
+      const aMarkedAt = isA ? now : tx.aMarkedAt;
+      const bMarkedAt = isB ? now : tx.bMarkedAt;
 
       let newState = "open";
       if (aMarkedAt && bMarkedAt) {
         // Both have marked → transaction completed
         newState = "completed";
-      } else if (isA) {
-        // User A marking → pending_a
+      } else if (aMarkedAt) {
+        // Only A marked → pending_a
         newState = "pending_a";
-      } else if (isB) {
-        // User B marking → pending_b
+      } else if (bMarkedAt) {
+        // Only B marked → pending_b
         newState = "pending_b";
       }
 
