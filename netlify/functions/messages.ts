@@ -1337,10 +1337,13 @@ export const handler: Handler = async (event) => {
 
       let newState = "open";
       if (aMarkedAt && bMarkedAt) {
+        // Both have marked → transaction completed
         newState = "completed";
-      } else if (isA && aMarkedAt) {
+      } else if (isA) {
+        // User A marking → pending_a
         newState = "pending_a";
-      } else if (isB && bMarkedAt) {
+      } else if (isB) {
+        // User B marking → pending_b
         newState = "pending_b";
       }
 
