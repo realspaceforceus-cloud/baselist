@@ -169,7 +169,7 @@ export const CompletionCard = ({
 
   const handleRatingSubmit = async () => {
     if (rating === 0) {
-      toast.error("Please select a rating.");
+      showError("Please select a rating.");
       return;
     }
 
@@ -195,10 +195,10 @@ export const CompletionCard = ({
       }
 
       setRatingSubmitted(true);
-      toast.success("Thank you for your feedback!");
+      showSuccess("Thank you for your feedback!");
     } catch (error) {
       console.error("Error submitting rating:", error);
-      toast.error("Failed to submit rating. Please try again.");
+      showError("Failed to submit rating. Please try again.");
     } finally {
       setIsLoading(false);
     }
