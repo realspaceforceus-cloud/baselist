@@ -598,13 +598,6 @@ const Messages = (): JSX.Element => {
     }
   };
 
-  const handleMarkComplete = () => {
-    if (!activeSummary) {
-      return;
-    }
-    markTransactionComplete(activeSummary.thread.id, user.id);
-  };
-
   const handleAcceptOffer = async () => {
     if (!activeSummary) {
       console.log("[handleAcceptOffer] No activeSummary");
