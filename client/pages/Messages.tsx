@@ -592,19 +592,10 @@ const Messages = (): JSX.Element => {
   };
 
   const handleAcceptOffer = async () => {
-    if (!activeSummary) {
-      console.log("[handleAcceptOffer] No activeSummary");
+    if (!activeSummary || !user?.id) {
+      console.log("[handleAcceptOffer] No activeSummary or user");
       return;
     }
-
-    console.log(
-      "[handleAcceptOffer] Starting with threadId:",
-      activeSummary.thread.id,
-    );
-    console.log(
-      "[handleAcceptOffer] Current transaction:",
-      activeSummary.transaction,
-    );
 
     try {
       const response = await fetch(
@@ -613,38 +604,43 @@ const Messages = (): JSX.Element => {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
         },
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to accept offer");
+      // Parse response safely - handle errors gracefully
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("[handleAcceptOffer] Failed to parse response:", parseError);
       }
 
-      const data = await response.json();
-      console.log("[handleAcceptOffer] Response data:", data);
-      console.log(
-        "[handleAcceptOffer] Updated transaction:",
-        data.thread?.transaction,
-      );
-
-      // Update thread with full response including all messages
-      setMessageThreads((prev) => {
-        const existingIndex = prev.findIndex(
-          (t) => t.id === activeSummary.thread.id,
-        );
-        if (existingIndex !== -1) {
-          const remaining = prev.filter((_, i) => i !== existingIndex);
-          console.log(
-            "[handleAcceptOffer] Updating thread at index:",
-            existingIndex,
+      // Accept idempotent responses: update UI if server sent thread data, even on non-200
+      if (data?.thread) {
+        setMessageThreads((prev) => {
+          const existingIndex = prev.findIndex(
+            (t) => t.id === activeSummary.thread.id,
           );
-          console.log("[handleAcceptOffer] New thread data:", data.thread);
-          return [data.thread, ...remaining];
-        }
-        return prev;
-      });
+          if (existingIndex !== -1) {
+            const remaining = prev.filter((_, i) => i !== existingIndex);
+            return [data.thread, ...remaining];
+          }
+          return prev;
+        });
 
-      toast.success("Offer accepted");
+        // Show appropriate message based on response status
+        if (response.ok) {
+          toast.success("Offer accepted");
+        } else {
+          // 409 or other status that still updated
+          toast.info("Offer update processed");
+        }
+      } else if (!response.ok) {
+        // No thread data and error status
+        const errorMsg = data?.error || "Failed to accept offer";
+        throw new Error(errorMsg);
+      }
     } catch (error) {
       console.error("[handleAcceptOffer] Error:", error);
       toast.error("Failed to accept offer", {
