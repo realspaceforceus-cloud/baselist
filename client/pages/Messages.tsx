@@ -644,7 +644,10 @@ const Messages = (): JSX.Element => {
           setMessageThreads(refreshed.threads);
         }
       } catch (refreshError) {
-        console.error("[handleAcceptOffer] Failed to refresh threads:", refreshError);
+        console.error(
+          "[handleAcceptOffer] Failed to refresh threads:",
+          refreshError,
+        );
       }
 
       // Surface the *real* reason from server
@@ -683,7 +686,10 @@ const Messages = (): JSX.Element => {
           setMessageThreads(refreshed.threads);
         }
       } catch (refreshError) {
-        console.error("[handleDeclineOffer] Failed to refresh threads:", refreshError);
+        console.error(
+          "[handleDeclineOffer] Failed to refresh threads:",
+          refreshError,
+        );
       }
 
       const msg = data?.error || data?.message || text || `HTTP ${status}`;
@@ -721,7 +727,10 @@ const Messages = (): JSX.Element => {
           setMessageThreads(refreshed.threads);
         }
       } catch (refreshError) {
-        console.error("[handleRetractOffer] Failed to refresh threads:", refreshError);
+        console.error(
+          "[handleRetractOffer] Failed to refresh threads:",
+          refreshError,
+        );
       }
 
       const msg = data?.error || data?.message || text || `HTTP ${status}`;
