@@ -137,7 +137,7 @@ export const MyListings = (): JSX.Element => {
         </p>
       </div>
 
-      {listings.length === 0 ? (
+      {myListings.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-nav-border bg-background/70 p-10 text-center">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
             <MessageSquare className="h-6 w-6" aria-hidden />
