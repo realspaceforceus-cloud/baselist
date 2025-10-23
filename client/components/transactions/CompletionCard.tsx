@@ -162,10 +162,15 @@ export const CompletionCard = ({
       console.log("[Rating] Server response status:", response.status);
 
       const ratingData = await response.json();
+      console.log("[Rating] Response body:", ratingData);
 
       if (!response.ok) {
         const errorMessage =
-          ratingData?.error || ratingData?.details || "Failed to submit rating";
+          ratingData?.details ||
+          ratingData?.originalMessage ||
+          ratingData?.error ||
+          "Failed to submit rating";
+        console.log("[Rating] Using error message:", errorMessage);
         throw new Error(errorMessage);
       }
 
