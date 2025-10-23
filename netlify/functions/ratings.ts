@@ -183,17 +183,30 @@ export const handler: Handler = async (event, context) => {
       );
       console.log("[RATINGS] ✓ Transaction updated");
 
-      // 6. Auto-archive thread after rating is submitted
-      console.log("[RATINGS] Auto-archiving thread...");
-      const archivedBy = threadCheck.rows[0].archived_by || [];
-      if (!archivedBy.includes(userId)) {
-        archivedBy.push(userId);
+      // 6. Check if both users have now rated - only then auto-archive
+      const bothRated = updatedTransaction.ratingByUser &&
+                       Object.keys(updatedTransaction.ratingByUser).length >= 2;
+
+      if (bothRated) {
+        console.log("[RATINGS] Both users have rated - auto-archiving thread...");
+        const archivedBy = threadCheck.rows[0].archived_by || [];
+
+        // Auto-archive for both users if not already archived
+        const participants = threadCheck.rows[0].participants || [];
+        for (const participant of participants) {
+          if (!archivedBy.includes(participant)) {
+            archivedBy.push(participant);
+          }
+        }
+
+        await client.query(
+          `UPDATE message_threads SET archived_by = $1, updated_at = NOW() WHERE id = $2`,
+          [archivedBy, actualThreadId],
+        );
+        console.log("[RATINGS] ✓ Thread auto-archived (both users rated)");
+      } else {
+        console.log("[RATINGS] Only one user rated so far - thread not archived yet");
       }
-      await client.query(
-        `UPDATE message_threads SET archived_by = $1, updated_at = NOW() WHERE id = $2`,
-        [archivedBy, actualThreadId],
-      );
-      console.log("[RATINGS] ✓ Thread archived");
 
       // 7. Fetch and return the complete updated thread
       console.log("[RATINGS] Fetching complete updated thread...");
