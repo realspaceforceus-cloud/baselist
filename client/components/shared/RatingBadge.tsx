@@ -78,30 +78,30 @@ export const RatingBadge = ({
   }, [initialAverage, initialCount, summary.overallAverage, summary.overallCount]);
 
   const sellerView = useMemo(() => {
-    if (summary.sellerCount > 0 && summary.sellerAverage !== null) {
+    if (summary?.sellerCount > 0 && summary?.sellerAverage !== null) {
       return {
         average: summary.sellerAverage,
         count: summary.sellerCount,
       };
     }
-    if (summary.overallCount === 0 && effectiveOverall.average !== null) {
+    if ((summary?.overallCount ?? 0) === 0 && effectiveOverall.average !== null) {
       return {
         average: effectiveOverall.average,
         count: effectiveOverall.count,
       };
     }
     return { average: null, count: 0 };
-  }, [effectiveOverall, summary.sellerAverage, summary.sellerCount, summary.overallCount]);
+  }, [effectiveOverall, summary?.sellerAverage, summary?.sellerCount, summary?.overallCount]);
 
   const buyerView = useMemo(() => {
-    if (summary.buyerCount > 0 && summary.buyerAverage !== null) {
+    if (summary?.buyerCount > 0 && summary?.buyerAverage !== null) {
       return {
         average: summary.buyerAverage,
         count: summary.buyerCount,
       };
     }
     return { average: null, count: 0 };
-  }, [summary.buyerAverage, summary.buyerCount]);
+  }, [summary?.buyerAverage, summary?.buyerCount]);
 
   const hasRatings = effectiveOverall.average !== null && effectiveOverall.count > 0;
 
