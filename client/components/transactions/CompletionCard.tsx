@@ -26,6 +26,19 @@ export const CompletionCard = ({
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
+  const markListingAsSold = async (listingId: string) => {
+    try {
+      await fetch(`/.netlify/functions/listings/${listingId}/mark-sold`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Error marking listing as sold:", error);
+      // Don't fail transaction completion if this fails
+    }
+  };
+
   const tx = thread.transaction;
   if (!tx) return null;
 
