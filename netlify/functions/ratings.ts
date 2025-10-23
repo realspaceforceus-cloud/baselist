@@ -171,18 +171,33 @@ const handler: Handler = async (event) => {
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
     const errorStack = error instanceof Error ? error.stack : "";
-    console.error("[ratings] Catch block error:", {
+    const errorType = error instanceof Error ? error.constructor.name : "Unknown";
+
+    console.error("[ratings] ❌ CRITICAL ERROR:", {
       errorMsg,
+      errorType,
       errorStack,
-      error,
+      fullError: JSON.stringify(error, null, 2),
     });
+
+    // Provide detailed error information to help debug
+    let detailedMessage = errorMsg;
+    if (errorMsg.includes("relation") || errorMsg.includes("column")) {
+      detailedMessage = `Database schema issue: ${errorMsg} (migration may not be applied)`;
+    } else if (errorMsg.includes("UNIQUE") || errorMsg.includes("constraint")) {
+      detailedMessage = `Database constraint error: ${errorMsg}`;
+    } else if (errorMsg.includes("no rows")) {
+      detailedMessage = `User not found: ${errorMsg}`;
+    }
+
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         error: "Rating submission failed",
-        details: errorMsg,
-        type: error instanceof Error ? error.constructor.name : "Unknown",
+        details: detailedMessage,
+        type: errorType,
+        originalMessage: errorMsg,
       }),
     };
   }
