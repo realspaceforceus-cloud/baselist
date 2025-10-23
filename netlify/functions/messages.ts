@@ -1038,6 +1038,27 @@ export const handler: Handler = async (event) => {
 
       transaction.offer.status = "retracted";
 
+      // Find the offer message and update its status
+      const offerMessageResult = await client.query(
+        `SELECT id, body FROM messages WHERE thread_id = $1 AND type = 'offer'
+         ORDER BY sent_at DESC LIMIT 1`,
+        [threadId],
+      );
+
+      if (offerMessageResult.rows.length > 0) {
+        const offerMessage = offerMessageResult.rows[0];
+        try {
+          const offerData = JSON.parse(offerMessage.body);
+          offerData.status = "retracted";
+          await client.query(
+            `UPDATE messages SET body = $1 WHERE id = $2`,
+            [JSON.stringify(offerData), offerMessage.id],
+          );
+        } catch (parseErr) {
+          console.error("Failed to parse offer message body:", parseErr);
+        }
+      }
+
       const threadDetailResult = await client.query(
         "SELECT participants FROM message_threads WHERE id = $1",
         [threadId],
