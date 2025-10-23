@@ -1515,7 +1515,8 @@ const Messages = (): JSX.Element => {
                   );
                 })}
 
-                {activeSummary.thread.transaction?.offer?.status === "accepted" && (
+                {activeSummary.thread.transaction?.offer?.status ===
+                  "accepted" && (
                   <div className="my-3">
                     <CompletionCard
                       thread={activeSummary.thread}

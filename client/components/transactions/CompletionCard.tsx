@@ -165,7 +165,9 @@ export const CompletionCard = ({
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          targetUserId: thread.participants?.find((p: string) => p !== currentUserId),
+          targetUserId: thread.participants?.find(
+            (p: string) => p !== currentUserId,
+          ),
           rating,
           review: ratingText,
           transactionId: thread.id,
