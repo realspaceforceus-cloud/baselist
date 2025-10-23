@@ -1,22 +1,30 @@
 import { useState } from "react";
-import { Check, AlertCircle } from "lucide-react";
+import { Check, AlertCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import type { MessageThread, ThreadTransaction } from "@/types";
 
 interface CompletionCardProps {
   thread: MessageThread;
   currentUserId: string;
   onUpdated: (tx: ThreadTransaction) => void;
+  partnerName?: string;
 }
 
 export const CompletionCard = ({
   thread,
   currentUserId,
   onUpdated,
+  partnerName = "User",
 }: CompletionCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [ratingText, setRatingText] = useState("");
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   const tx = thread.transaction;
   if (!tx) return null;
