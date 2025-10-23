@@ -22,7 +22,7 @@ export const handler: Handler = async (event) => {
   }
   path = path || "/";
 
-  const userId = await getUserIdFromAuth(event);
+  const userId = getUserIdFromAuth(event);
   const client = await pool.connect();
 
   try {

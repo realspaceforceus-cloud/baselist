@@ -35,7 +35,7 @@ export const handler: Handler = async (event) => {
     // Special case: /count endpoint - SAFE, always returns 200 with count
     // This endpoint never 500s, even if DB is down
     if (method === "GET" && path === "/count") {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return json({ unreadCount: 0 });
       }
