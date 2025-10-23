@@ -1394,12 +1394,21 @@ const Messages = (): JSX.Element => {
                               )}
                               <div className="flex-1">
                                 <p className="text-xs font-medium text-muted-foreground mb-1">
-                                  {partnerName}{" "}
                                   {messageOfferStatus === "accepted"
-                                    ? "and you accepted an offer of"
-                                    : messageOfferStatus === "retracted"
-                                      ? "sent an offer of (retracted)"
-                                      : "sent an offer"}
+                                    ? isOwn
+                                      ? `${activeSummary.partnerName} accepted your offer!`
+                                      : `You accepted ${activeSummary.partnerName}'s offer!`
+                                    : messageOfferStatus === "declined"
+                                      ? isOwn
+                                        ? `${activeSummary.partnerName} declined your offer`
+                                        : "You declined this offer"
+                                      : messageOfferStatus === "retracted"
+                                        ? isOwn
+                                          ? "You retracted this offer"
+                                          : `${activeSummary.partnerName} retracted their offer`
+                                        : isOwn
+                                          ? `You made an offer`
+                                          : `${activeSummary.partnerName} made an offer`}
                                 </p>
                                 <p
                                   className={cn(
