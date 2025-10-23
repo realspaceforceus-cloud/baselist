@@ -381,54 +381,66 @@ const Profile = (): JSX.Element => {
   const defaultTransactionTab = purchases.length > 0 ? "purchases" : "sales";
 
   return (
-    <section className="space-y-6">
-      <header className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between md:gap-8">
-        <div className="flex items-center gap-4">
-          {profileUser?.avatarUrl ? (
-            <img
-              src={profileUser.avatarUrl}
-              alt={profileUser.name}
-              className="h-14 w-14 rounded-3xl object-cover border border-border"
-            />
-          ) : (
-            <span className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary">
-              <BadgeCheck className="h-7 w-7" aria-hidden />
-            </span>
-          )}
-          <div className="space-y-1">
-            <h1 className="text-3xl font-semibold text-foreground">
-              {profileUser.name}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {profileUser.verificationStatus} • Member since{" "}
-              {profileMemberSinceYear}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Current base:{" "}
-              <span className="font-semibold text-foreground">
-                {profileBase?.name ?? "—"}
-              </span>
-            </p>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <RatingBadge
-                userId={profileUser.id}
-                size="md"
-                initialAverage={
-                  profileRatingSummary.overallCount > 0
-                    ? profileRatingSummary.overallAverage
-                    : profileRatingFallbackAverage
-                }
-                initialCount={
-                  profileRatingSummary.overallCount > 0
-                    ? profileRatingSummary.overallCount
-                    : profileRatingFallbackCount
-                }
-                label={`${profileUser.name} rating`}
-              />
-              <span>
-                {totalTransactions} transaction
-                {totalTransactions === 1 ? "" : "s"}
-              </span>
+    <section className="space-y-8">
+      {/* Modern Profile Header */}
+      <header className="overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-primary/5 via-background to-background shadow-lg">
+        <div className="px-6 py-8 md:px-8 md:py-10">
+          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-5">
+              {profileUser?.avatarUrl ? (
+                <img
+                  src={profileUser.avatarUrl}
+                  alt={profileUser.name}
+                  className="h-20 w-20 rounded-2xl object-cover border-2 border-primary/20 shadow-md"
+                />
+              ) : (
+                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-md">
+                  <BadgeCheck className="h-10 w-10" aria-hidden />
+                </span>
+              )}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-4xl font-bold text-foreground">
+                    {profileUser.name}
+                  </h1>
+                  {profileUser.verificationStatus === "verified" && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-950 px-2 py-0.5 text-xs font-semibold text-green-700 dark:text-green-300">
+                      <BadgeCheck className="h-3 w-3" aria-hidden />
+                      Verified
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                  <span>Member since {profileMemberSinceYear}</span>
+                  <span className="text-border">•</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+                    {profileBase?.name ?? "Base not set"}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex w-full flex-col gap-3 md:w-auto md:text-right">
+              <div className="flex items-center gap-2">
+                <RatingBadge
+                  userId={profileUser.id}
+                  size="lg"
+                  initialAverage={
+                    profileRatingSummary.overallCount > 0
+                      ? profileRatingSummary.overallAverage
+                      : profileRatingFallbackAverage
+                  }
+                  initialCount={
+                    profileRatingSummary.overallCount > 0
+                      ? profileRatingSummary.overallCount
+                      : profileRatingFallbackCount
+                  }
+                  label={`${profileUser.name} rating`}
+                />
+              </div>
+              <p className="text-sm font-medium text-foreground">
+                {totalTransactions} transaction{totalTransactions === 1 ? "" : "s"}
+              </p>
             </div>
           </div>
         </div>
