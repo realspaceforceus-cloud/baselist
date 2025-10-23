@@ -656,55 +656,76 @@ const Profile = (): JSX.Element => {
       )}
 
       {isViewingOwnProfile ? (
-        <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
-          <div className="flex items-center justify-between gap-3">
+        <section className="rounded-2xl border border-border/50 bg-gradient-to-br from-background to-muted/20 shadow-sm overflow-hidden">
+          <div className="border-b border-border/30 bg-gradient-to-r from-amber-50/50 to-transparent dark:from-amber-950/20 dark:to-transparent px-6 md:px-8 py-6">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">
+              <h2 className="text-lg font-bold text-foreground">
                 Account notices
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Audit trail of reports and strikes on your account.
+              <p className="text-sm text-muted-foreground mt-1">
+                Audit trail of reports and strikes on your account
               </p>
             </div>
           </div>
-          <div className="mt-4 space-y-3">
+          <div className="p-6 md:p-8">
             {userNotices.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-nav-border bg-background/80 px-4 py-3 text-sm text-muted-foreground">
-                No notices yet—you're in good standing.
+              <div className="rounded-xl border-2 border-dashed border-green-200/50 dark:border-green-900/30 bg-green-50/50 dark:bg-green-950/20 px-4 py-6 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400">
+                    <BadgeCheck className="h-4 w-4" aria-hidden />
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                  You're in good standing
+                </p>
+                <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-1">
+                  No notices to display
+                </p>
               </div>
             ) : (
-              userNotices.map((notice) => (
-                <article
-                  key={notice.id}
-                  className="rounded-2xl border border-border bg-background/80 px-4 py-3 shadow-soft"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[0.65rem] uppercase tracking-wide ${noticeSeverityClass[notice.severity] ?? "text-muted-foreground"}`}
-                      >
-                        {notice.category}
+              <div className="space-y-3">
+                {userNotices.map((notice) => (
+                  <article
+                    key={notice.id}
+                    className={`rounded-lg border transition-all p-4 ${
+                      !notice.read
+                        ? "border-yellow-200 bg-yellow-50 dark:border-yellow-900/50 dark:bg-yellow-950/30"
+                        : "border-border/50 bg-muted/30"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[0.7rem] font-bold uppercase tracking-wider ${
+                            noticeSeverityClass[notice.severity] ??
+                            "bg-muted/60 text-muted-foreground"
+                          }`}
+                        >
+                          {notice.category}
+                        </span>
+                        <span className="text-sm font-semibold text-foreground">
+                          {notice.title}
+                        </span>
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {formatNoticeDate(notice.createdAt)}
                       </span>
-                      <span>{notice.title}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      {formatNoticeDate(notice.createdAt)}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {notice.message}
-                  </p>
-                  {!notice.read ? (
-                    <button
-                      type="button"
-                      className="mt-2 text-xs font-semibold text-primary hover:underline"
-                      onClick={() => markNoticeRead(notice.id)}
-                    >
-                      Mark as read
-                    </button>
-                  ) : null}
-                </article>
-              ))
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {notice.message}
+                    </p>
+                    {!notice.read && (
+                      <button
+                        type="button"
+                        className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                        onClick={() => markNoticeRead(notice.id)}
+                      >
+                        Mark as read →
+                      </button>
+                    )}
+                  </article>
+                ))}
+              </div>
             )}
           </div>
         </section>
