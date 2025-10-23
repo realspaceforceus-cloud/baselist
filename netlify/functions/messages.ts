@@ -1417,7 +1417,7 @@ export const handler: Handler = async (event) => {
         action: "mark_complete",
       });
 
-      if (newState === "completed") {
+      if (newStatus === "completed") {
         timeline.push({
           at: now,
           actorId: userId,
@@ -1437,10 +1437,18 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
       );
 
+      // Return the full updated thread so UI can update completely
+      const updatedThreadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+      const updatedThread = updatedThreadResult.rows[0];
+      updatedThread.transaction = updatedTx;
+
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transaction: updatedTx }),
+        body: JSON.stringify({ thread: updatedThread }),
       };
     } catch (err) {
       const errorMsg =
