@@ -915,42 +915,34 @@ export const handler: Handler = async (event) => {
         [threadId],
       );
 
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          thread: {
-            id: threadData.id,
-            listingId: threadData.listing_id,
-            participants: threadData.participants,
-            status: threadData.status,
-            archivedBy: threadData.archived_by,
-            deletedBy: threadData.deleted_by,
-            transaction: transaction,
-            timeline: threadData.timeline,
-            createdAt: threadData.created_at,
-            updatedAt: threadData.updated_at,
-            listing,
-            partner,
-            messages: messagesResult.rows.map((msg: any) => ({
-              id: msg.id,
-              threadId: msg.thread_id,
-              authorId: msg.author_id,
-              body: msg.body,
-              sentAt: msg.sent_at,
-              type: msg.type || "text",
-            })),
-          },
-        }),
-      };
-    } catch (err) {
+      return ok({
+        thread: {
+          id: threadData.id,
+          listingId: threadData.listing_id,
+          participants: threadData.participants,
+          status: threadData.status,
+          archivedBy: threadData.archived_by,
+          deletedBy: threadData.deleted_by,
+          transaction: transaction,
+          timeline: threadData.timeline,
+          createdAt: threadData.created_at,
+          updatedAt: threadData.updated_at,
+          listing,
+          partner,
+          messages: messagesResult.rows.map((msg: any) => ({
+            id: msg.id,
+            threadId: msg.thread_id,
+            authorId: msg.author_id,
+            body: msg.body,
+            sentAt: msg.sent_at,
+            type: msg.type || "text",
+          })),
+        },
+      });
+    } catch (error) {
       const errorMsg =
-        err instanceof Error ? err.message : "Internal server error";
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: errorMsg }),
-      };
+        error instanceof Error ? error.message : "Internal server error";
+      return err(500, errorMsg);
     } finally {
       client.release();
     }
