@@ -152,6 +152,8 @@ const Messages = (): JSX.Element => {
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [showOfferDialog, setShowOfferDialog] = useState(false);
   const [offerAmount, setOfferAmount] = useState<string>("");
+  const [showSupportDialog, setShowSupportDialog] = useState(false);
+  const [supportMessage, setSupportMessage] = useState<string>("");
   const [dismissedThreadIds, setDismissedThreadIds] = useState<Set<string>>(
     new Set(),
   );
