@@ -375,13 +375,6 @@ const Messages = (): JSX.Element => {
         day: "numeric",
       }).format(new Date(activeTransaction.completedAt))
     : null;
-  const canMarkComplete = Boolean(
-    activeSummary &&
-      (!activeTransaction ||
-        (activeTransaction.status !== "completed" &&
-          activeTransaction.status !== "pending_confirmation")) &&
-      !userMarkedComplete,
-  );
   const isDisputed = activeTransaction?.status === "disputed";
 
   useEffect(() => {
