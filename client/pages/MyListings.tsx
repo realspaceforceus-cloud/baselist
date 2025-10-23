@@ -150,7 +150,34 @@ export const MyListings = (): JSX.Element => {
           </Button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <Button
+              variant={filterStatus === "all" ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => setFilterStatus("all")}
+            >
+              All ({listings.length})
+            </Button>
+            <Button
+              variant={filterStatus === "active" ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => setFilterStatus("active")}
+            >
+              Active ({listings.filter((l) => l.status !== "sold").length})
+            </Button>
+            <Button
+              variant={filterStatus === "sold" ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => setFilterStatus("sold")}
+            >
+              Sold ({listings.filter((l) => l.status === "sold").length})
+            </Button>
+          </div>
+
           {filteredListings.map((listing) => {
             const isExpanded = expandedListingId === listing.id;
             const status = getListingStatus(listing);
