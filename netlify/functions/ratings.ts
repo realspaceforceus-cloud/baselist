@@ -164,9 +164,9 @@ export const handler: Handler = async (event, context) => {
       const ratingRecordId = randomUUID();
       console.log("[RATINGS] Inserting rating record...");
       await client.query(
-        `INSERT INTO ratings (id, thread_id, user_id, score, comment, created_at)
-         VALUES ($1, $2, $3, $4, $5, NOW())`,
-        [ratingRecordId, actualThreadId, userId, rating, review || null],
+        `INSERT INTO ratings (id, thread_id, user_id, target_user_id, score, comment, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+        [ratingRecordId, actualThreadId, userId, targetUserId, rating, review || null],
       );
       console.log("[RATINGS] ✓ Rating record inserted");
 
