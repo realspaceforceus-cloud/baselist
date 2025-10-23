@@ -1371,7 +1371,10 @@ export const handler: Handler = async (event) => {
       const reqBody = parseBody(event);
       const userId = reqBody.actorId || reqBody.userId || authUserId;
 
+      console.log("[mark-complete] Starting:", { threadId, authUserId, reqBody, userId });
+
       if (!userId) {
+        console.log("[mark-complete] FAILED: No userId");
         return err(401, "UNAUTHORIZED");
       }
 
@@ -1381,10 +1384,12 @@ export const handler: Handler = async (event) => {
       );
 
       if (threadResult.rows.length === 0) {
+        console.log("[mark-complete] FAILED: Thread not found", { threadId });
         return err(404, "THREAD_NOT_FOUND");
       }
 
       const thread = threadResult.rows[0];
+      console.log("[mark-complete] Thread found:", { threadId, participants: thread.participants, transaction: thread.transaction });
 
       // Parse transaction and participants from JSON if needed
       let tx =
@@ -1402,18 +1407,24 @@ export const handler: Handler = async (event) => {
           ? JSON.parse(thread.participants)
           : thread.participants;
 
+      console.log("[mark-complete] Parsed:", { tx, participants, participantsType: typeof thread.participants });
+
       if (
         !participants ||
         !Array.isArray(participants) ||
         participants.length < 2
       ) {
+        console.log("[mark-complete] FAILED: Invalid participants", { participants, isArray: Array.isArray(participants), length: participants?.length });
         return err(400, "INVALID_PARTICIPANTS");
       }
 
       const isA = userId === participants[0];
       const isB = userId === participants[1];
 
+      console.log("[mark-complete] Actor check:", { userId, participant0: participants[0], participant1: participants[1], isA, isB });
+
       if (!isA && !isB) {
+        console.log("[mark-complete] FAILED: User not in participants");
         return err(403, "ACTOR_NOT_IN_THREAD");
       }
 
@@ -1422,14 +1433,19 @@ export const handler: Handler = async (event) => {
       // Use the old UI contract: pending_confirmation + markedCompleteBy
       let newStatus = tx.status || "open";
 
+      console.log("[mark-complete] Transaction state:", { currentStatus: tx.status, markedCompleteBy: tx.markedCompleteBy, userId });
+
       if (!tx.markedCompleteBy) {
         // First mark: move to pending_confirmation
         newStatus = "pending_confirmation";
+        console.log("[mark-complete] First mark - moving to pending_confirmation");
       } else if (tx.markedCompleteBy !== userId) {
         // Second mark by the other party: complete transaction
         newStatus = "completed";
+        console.log("[mark-complete] Second mark by other party - completing transaction");
       } else {
         // Same user trying to mark twice
+        console.log("[mark-complete] Same user trying to mark twice - returning 409");
         return {
           statusCode: 409,
           headers: { "Content-Type": "application/json" },
