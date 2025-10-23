@@ -956,7 +956,20 @@ const Messages = (): JSX.Element => {
                       {summary.listing?.title ?? summary.partnerName}
                     </p>
                     <p className="line-clamp-1 text-xs text-muted-foreground">
-                      {summary.lastMessage?.body ?? "No messages yet"}
+                      {summary.lastMessage
+                        ? summary.lastMessage.type === "offer"
+                          ? (() => {
+                              try {
+                                const offerData = JSON.parse(
+                                  summary.lastMessage.body
+                                );
+                                return `Offer: $${offerData.amount.toFixed(2)}`;
+                              } catch {
+                                return `Offer: $${Number(summary.lastMessage.body).toFixed(2)}`;
+                              }
+                            })()
+                          : summary.lastMessage.body
+                        : "No messages yet"}
                     </p>
                     <p className="text-[0.65rem] text-muted-foreground/60">
                       {summary.lastUpdated}
