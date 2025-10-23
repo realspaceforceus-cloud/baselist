@@ -1444,6 +1444,8 @@ export const handler: Handler = async (event) => {
       const now = new Date().toISOString();
       const updatedTx = {
         ...tx,
+        aUserId: tx.aUserId || thread.participants[0],
+        bUserId: tx.bUserId || thread.participants[1],
         state: "completed",
         aMarkedAt: tx.aMarkedAt || now,
         bMarkedAt: tx.bMarkedAt || now,
