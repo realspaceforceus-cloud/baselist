@@ -16,6 +16,17 @@ async function jsonFetch(input: RequestInfo | URL, init?: RequestInit) {
   } catch {
     // non-JSON error body
   }
+
+  // Debug logging to see why requests fail
+  if (!res.ok) {
+    console.debug("[jsonFetch] Error response:", {
+      url: input,
+      status: res.status,
+      data,
+      text: text.substring(0, 500),
+    });
+  }
+
   return { ok: res.ok, status: res.status, data, text };
 }
 
