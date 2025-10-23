@@ -196,7 +196,7 @@ export const handler: Handler = async (event, context) => {
 
       console.log("[RATINGS] ✓ Updated thread prepared");
 
-      // 7. Create notification
+      // 5. Create notification
       try {
         console.log("[RATINGS] Creating notification...");
         const userResult = await client.query(
