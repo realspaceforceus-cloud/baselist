@@ -79,51 +79,25 @@ export const CompletionCard = ({
   const handleMarkComplete = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `/.netlify/functions/messages/threads/${thread.id}/transaction/mark-complete`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: currentUserId }),
-        },
-      );
+      const mcUrl = `/.netlify/functions/messages/threads/${thread.id}/transaction/mark-complete`;
+      const { ok, status, data, text } = await jsonFetch(mcUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserId }),
+      });
 
-      // Parse response safely
-      let data: any = null;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.error(
-          "[handleMarkComplete] Failed to parse response:",
-          parseError,
-        );
-      }
-
-      // Accept idempotent responses: update UI if server sent thread data, even on non-200
       if (data?.thread) {
         onUpdated(data.thread.transaction, data.thread);
+      }
 
-        if (response.ok) {
-          showSuccess(
-            "Marked complete. Waiting for the other party to confirm.",
-          );
-        } else if (response.status === 409) {
-          showError("Waiting for the other party to confirm.");
-        } else {
-          showSuccess("Status updated");
-        }
+      if (!ok) {
+        const msg = data?.error || data?.message || text || `HTTP ${status}`;
+        showError(`Failed to mark complete — ${msg}`);
         return;
       }
 
-      // No thread data and error status
-      if (!response.ok) {
-        const errorMsg = data?.error || "Failed to mark complete";
-        throw new Error(errorMsg);
-      }
-    } catch (error) {
-      console.error("Error marking complete:", error);
-      showError("Failed to mark complete. Please try again.");
+      showSuccess("Marked complete. Waiting for the other party to confirm.");
     } finally {
       setIsLoading(false);
     }
