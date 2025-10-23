@@ -297,9 +297,7 @@ const Messages = (): JSX.Element => {
           transaction?.status === "completed" &&
             transaction.ratingByUser?.[user.id] !== undefined,
         );
-        const canSubmitRating = Boolean(
-          transaction?.status === "completed"
-        );
+        const canSubmitRating = Boolean(transaction?.status === "completed");
 
         const isMarketplace = !!listing;
 

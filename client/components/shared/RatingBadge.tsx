@@ -33,7 +33,9 @@ const renderStaticStars = (value: number) => {
           key={index}
           className={cn(
             "h-3.5 w-3.5",
-            index < rounded ? "fill-amber-400 text-amber-400" : "text-muted-foreground/50",
+            index < rounded
+              ? "fill-amber-400 text-amber-400"
+              : "text-muted-foreground/50",
           )}
         />
       ))}
@@ -75,7 +77,12 @@ export const RatingBadge = ({
       };
     }
     return { average: null, count: 0 };
-  }, [initialAverage, initialCount, summary.overallAverage, summary.overallCount]);
+  }, [
+    initialAverage,
+    initialCount,
+    summary.overallAverage,
+    summary.overallCount,
+  ]);
 
   const sellerView = useMemo(() => {
     if (summary?.sellerCount > 0 && summary?.sellerAverage !== null) {
@@ -84,14 +91,22 @@ export const RatingBadge = ({
         count: summary.sellerCount,
       };
     }
-    if ((summary?.overallCount ?? 0) === 0 && effectiveOverall.average !== null) {
+    if (
+      (summary?.overallCount ?? 0) === 0 &&
+      effectiveOverall.average !== null
+    ) {
       return {
         average: effectiveOverall.average,
         count: effectiveOverall.count,
       };
     }
     return { average: null, count: 0 };
-  }, [effectiveOverall, summary?.sellerAverage, summary?.sellerCount, summary?.overallCount]);
+  }, [
+    effectiveOverall,
+    summary?.sellerAverage,
+    summary?.sellerCount,
+    summary?.overallCount,
+  ]);
 
   const buyerView = useMemo(() => {
     if (summary?.buyerCount > 0 && summary?.buyerAverage !== null) {
@@ -103,7 +118,9 @@ export const RatingBadge = ({
     return { average: null, count: 0 };
   }, [summary?.buyerAverage, summary?.buyerCount]);
 
-  const hasRatings = (effectiveOverall?.average ?? null) !== null && (effectiveOverall?.count ?? 0) > 0;
+  const hasRatings =
+    (effectiveOverall?.average ?? null) !== null &&
+    (effectiveOverall?.count ?? 0) > 0;
 
   const triggerClasses = cn(
     "inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground transition hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
@@ -113,7 +130,8 @@ export const RatingBadge = ({
 
   if (!hasRatings) {
     return (
-      <span className={cn(triggerClasses, "cursor-default select-none bg-muted/70")}
+      <span
+        className={cn(triggerClasses, "cursor-default select-none bg-muted/70")}
         aria-label={label ? `${label}: New member` : "New member"}
       >
         <span aria-hidden>⭐</span>
@@ -147,9 +165,7 @@ export const RatingBadge = ({
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>
-            ⭐ {averageLabel}
-          </DialogTitle>
+          <DialogTitle>⭐ {averageLabel}</DialogTitle>
           <DialogDescription>{countLabel}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 text-sm text-muted-foreground">
@@ -198,7 +214,8 @@ export const RatingBadge = ({
             )}
           </section>
           <footer className="rounded-2xl bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-            Ratings are collected after each completed transaction. {getMemberName(userId)} can earn more by closing reliable deals.
+            Ratings are collected after each completed transaction.{" "}
+            {getMemberName(userId)} can earn more by closing reliable deals.
           </footer>
         </div>
       </DialogContent>
