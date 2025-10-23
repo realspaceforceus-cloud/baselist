@@ -127,20 +127,39 @@ export const CompletionCard = ({
 
     setIsLoading(true);
     try {
+      const targetUserId = thread.participants?.find(
+        (p: string) => p !== currentUserId,
+      );
+
+      console.log("[Rating] Preparing to submit:", {
+        targetUserId,
+        rating,
+        review: ratingText,
+        transactionId: thread.id,
+        currentUserId,
+        participants: thread.participants,
+      });
+
+      if (!targetUserId) {
+        throw new Error(
+          "Unable to determine recipient - invalid thread participants"
+        );
+      }
+
       const response = await fetch("/.netlify/functions/ratings", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          targetUserId: thread.participants?.find(
-            (p: string) => p !== currentUserId,
-          ),
+          targetUserId,
           rating,
           review: ratingText,
           transactionId: thread.id,
           ratingType: "transaction",
         }),
       });
+
+      console.log("[Rating] Server response status:", response.status);
 
       const ratingData = await response.json();
 
