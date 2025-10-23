@@ -142,13 +142,16 @@ const handler: Handler = async (event) => {
       }),
     };
   } catch (error) {
-    console.error("[ratings] Error:", error);
+    const errorMsg = error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : "";
+    console.error("[ratings] Catch block error:", { errorMsg, errorStack, error });
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: "Rating submission failed",
+        details: errorMsg,
+        type: error instanceof Error ? error.constructor.name : "Unknown",
       }),
     };
   }
