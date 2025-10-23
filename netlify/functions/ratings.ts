@@ -170,7 +170,8 @@ export const handler = async (event: any) => {
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
     const errorStack = error instanceof Error ? error.stack : "";
-    const errorType = error instanceof Error ? error.constructor.name : "Unknown";
+    const errorType =
+      error instanceof Error ? error.constructor.name : "Unknown";
 
     console.error("[ratings] ❌ CRITICAL ERROR:", {
       errorMsg,

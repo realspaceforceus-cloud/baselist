@@ -192,9 +192,7 @@ export const CompletionCard = ({
         "📍 To debug: Check Network tab → ratings request → Response tab",
       );
       // Show more detailed error message to user
-      showError(
-        `Rating error: ${errorMsg || "Unknown error (check console)"}`,
-      );
+      showError(`Rating error: ${errorMsg || "Unknown error (check console)"}`);
     } finally {
       setIsLoading(false);
     }
