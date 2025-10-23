@@ -19,7 +19,7 @@ async function jsonFetch(input: RequestInfo | URL, init?: RequestInit) {
 
   // Debug logging to see why requests fail
   if (!res.ok) {
-    console.debug("[jsonFetch] Error response:", {
+    console.error("[jsonFetch] Error response:", {
       url: input,
       status: res.status,
       data,
