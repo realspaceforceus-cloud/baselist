@@ -67,16 +67,15 @@ const handler: Handler = async (event) => {
           review || null,
           ratingType || "transaction",
           now,
-        ]
+        ],
       );
 
       // Get current user name for notification
       const userResult = await client.query(
         "SELECT username FROM users WHERE id = $1",
-        [userId]
+        [userId],
       );
-      const currentUserName =
-        userResult.rows[0]?.username || "A user";
+      const currentUserName = userResult.rows[0]?.username || "A user";
 
       // Create notification for rated user
       await createNotification({
