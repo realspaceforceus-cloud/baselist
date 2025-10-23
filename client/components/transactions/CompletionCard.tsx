@@ -9,7 +9,7 @@ import type { MessageThread, ThreadTransaction } from "@/types";
 interface CompletionCardProps {
   thread: MessageThread;
   currentUserId: string;
-  onUpdated: (tx: ThreadTransaction) => void;
+  onUpdated: (tx: ThreadTransaction, updatedThread?: MessageThread) => void;
   partnerName?: string;
 }
 
@@ -21,6 +21,10 @@ export const CompletionCard = ({
 }: CompletionCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [ratingText, setRatingText] = useState("");
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   // Helper functions for toast notifications
   const showSuccess = (message: string) => {
@@ -36,10 +40,6 @@ export const CompletionCard = ({
       description: message,
     });
   };
-  const [rating, setRating] = useState(0);
-  const [ratingText, setRatingText] = useState("");
-  const [ratingSubmitted, setRatingSubmitted] = useState(false);
-  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   const markListingAsSold = async (listingId: string) => {
     try {
@@ -57,19 +57,11 @@ export const CompletionCard = ({
   const tx = thread.transaction;
   if (!tx) return null;
 
-  const state = tx.state || "open";
-  const youAreA = tx.aUserId === currentUserId;
-  const youAreB = tx.bUserId === currentUserId;
-
-  const youMarked = (youAreA && !!tx.aMarkedAt) || (youAreB && !!tx.bMarkedAt);
-  const otherMarked =
-    (youAreA && !!tx.bMarkedAt) || (youAreB && !!tx.aMarkedAt);
-
-  const canMark =
-    state === "open" || state === "pending_a" || state === "pending_b";
+  // Use new contract fields
+  const status = tx.status || "open";
+  const youMarked = tx.markedCompleteBy === currentUserId;
   const waitingOnYou =
-    (state === "pending_a" && youAreB && !tx.bMarkedAt) ||
-    (state === "pending_b" && youAreA && !tx.aMarkedAt);
+    status === "pending_confirmation" && !youMarked;
 
   const handleMarkComplete = async () => {
     setIsLoading(true);
@@ -83,6 +75,17 @@ export const CompletionCard = ({
           body: JSON.stringify({ actorId: currentUserId }),
         },
       );
+
+      // Handle idempotency: 409 means already marked
+      if (response.status === 409) {
+        const errorData = await response.json().catch(() => ({}));
+        // Update UI with current state
+        if (errorData.thread) {
+          onUpdated(errorData.thread.transaction, errorData.thread);
+        }
+        showError("Waiting for the other party to confirm.");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Failed to mark complete");
@@ -198,7 +201,7 @@ export const CompletionCard = ({
       }
 
       setRatingSubmitted(true);
-      showSuccess("Thank you for your feedback!")
+      showSuccess("Thank you for your feedback!");
       // Optionally refresh thread data if endpoint returns it
       const ratingData = await response.json();
       if (ratingData.thread && onUpdated) {
@@ -213,7 +216,7 @@ export const CompletionCard = ({
   };
 
   // Transaction completed → show final badge with rating option
-  if (state === "completed") {
+  if (status === "completed") {
     return (
       <div className="space-y-3">
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-900/20">
@@ -284,7 +287,7 @@ export const CompletionCard = ({
                 disabled={isLoading || rating === 0}
                 className="w-full"
               >
-                Submit Rating
+                {isLoading ? "Submitting..." : "Submit Rating"}
               </Button>
             </div>
           </div>
@@ -302,7 +305,7 @@ export const CompletionCard = ({
   }
 
   // Transaction disputed → show dispute info
-  if (state === "disputed") {
+  if (status === "disputed") {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-900/20">
         <div className="flex items-start gap-3">
@@ -327,27 +330,27 @@ export const CompletionCard = ({
   // Open/pending states → interactive card
   return (
     <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-900/20">
-      {!youMarked && !otherMarked && (
+      {status === "open" && (
         <div className="mb-3 text-sm text-blue-700 dark:text-blue-300">
           When you've completed the exchange, click "Mark Complete" to proceed.
         </div>
       )}
 
-      {youMarked && !otherMarked && (
+      {status === "pending_confirmation" && youMarked && (
         <div className="mb-3 text-sm text-blue-700 dark:text-blue-300">
           You've marked the sale complete. Waiting for the other party to
           confirm...
         </div>
       )}
 
-      {otherMarked && !youMarked && (
+      {status === "pending_confirmation" && !youMarked && (
         <div className="mb-3 text-sm font-semibold text-blue-900 dark:text-blue-100">
           The other party marked the sale complete. Do you agree?
         </div>
       )}
 
       <div className="flex flex-wrap gap-2">
-        {canMark && !youMarked && (
+        {status === "open" && (
           <Button
             type="button"
             variant="default"
@@ -355,8 +358,14 @@ export const CompletionCard = ({
             onClick={handleMarkComplete}
             disabled={isLoading}
           >
-            Mark Complete
+            {isLoading ? "Marking..." : "Mark Complete"}
           </Button>
+        )}
+
+        {status === "pending_confirmation" && youMarked && (
+          <div className="text-sm text-blue-600 dark:text-blue-300">
+            Waiting for {partnerName}...
+          </div>
         )}
 
         {waitingOnYou && (
@@ -368,7 +377,7 @@ export const CompletionCard = ({
               onClick={handleAgree}
               disabled={isLoading}
             >
-              Agree
+              {isLoading ? "Confirming..." : "Agree"}
             </Button>
             <Button
               type="button"
@@ -377,7 +386,7 @@ export const CompletionCard = ({
               onClick={handleDisagree}
               disabled={isLoading}
             >
-              Disagree
+              {isLoading ? "Opening..." : "Disagree"}
             </Button>
           </>
         )}
