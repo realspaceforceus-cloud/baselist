@@ -497,48 +497,60 @@ const Profile = (): JSX.Element => {
         </article>
       </div>
 
-      {/* Active Listings Section */}
+      {/* Active Listings Section - Modern Grid */}
       {activeListings.length > 0 && (
-        <section className="space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <ShoppingBag className="h-5 w-5" aria-hidden />
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300">
+                <ShoppingBag className="h-5 w-5" aria-hidden />
+              </span>
+              <h2 className="text-xl font-bold text-foreground">
+                {isViewingOwnProfile
+                  ? "Items for sale"
+                  : `${profileFirstName}'s items`}
+              </h2>
+            </div>
+            <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-950 px-3 py-1 text-sm font-medium text-blue-700 dark:text-blue-300">
+              {activeListings.length}
             </span>
-            <h2 className="text-lg font-semibold text-foreground">
-              {isViewingOwnProfile
-                ? "My items for sale"
-                : `${profileFirstName}'s items for sale`}
-            </h2>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {activeListings.map((listing) => (
               <button
                 key={listing.id}
+                type="button"
                 onClick={() =>
                   navigate(`/listing/${listing.slug || listing.id}`)
                 }
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-md hover:border-primary/50"
+                className="group flex flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30"
               >
-                <div className="relative aspect-square overflow-hidden bg-muted">
+                <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-muted/50">
                   {listing.imageUrls?.[0] ? (
                     <img
                       src={listing.imageUrls[0]}
                       alt={listing.title}
-                      className="h-full w-full object-cover transition group-hover:scale-105"
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-110"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                      <ShoppingBag className="h-8 w-8 opacity-50" aria-hidden />
+                      <ShoppingBag className="h-10 w-10 opacity-40" aria-hidden />
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
                 </div>
-                <div className="flex flex-1 flex-col p-3">
-                  <h3 className="line-clamp-2 text-xs font-semibold text-foreground">
+                <div className="flex flex-1 flex-col p-4">
+                  <h3 className="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                     {listing.title}
                   </h3>
-                  <p className="mt-1 text-sm font-bold text-primary">
-                    ${listing.price?.toLocaleString("en-US") ?? "0"}
-                  </p>
+                  <div className="mt-auto flex items-center justify-between pt-3 border-t border-border/30">
+                    <p className="text-lg font-bold text-primary">
+                      ${listing.price?.toLocaleString("en-US") ?? "0"}
+                    </p>
+                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary opacity-0 transition-all group-hover:opacity-100">
+                      <span className="text-xs font-bold">→</span>
+                    </span>
+                  </div>
                 </div>
               </button>
             ))}
