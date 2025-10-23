@@ -676,6 +676,16 @@ const Messages = (): JSX.Element => {
     }
 
     if (!ok) {
+      // TEMP HOTFIX: Force refresh threads to update UI immediately
+      try {
+        const refreshed = await getThreads(50, 0);
+        if (refreshed?.threads) {
+          setMessageThreads(refreshed.threads);
+        }
+      } catch (refreshError) {
+        console.error("[handleDeclineOffer] Failed to refresh threads:", refreshError);
+      }
+
       const msg = data?.error || data?.message || text || `HTTP ${status}`;
       toast.error(`Failed to decline offer — ${msg}`);
       return;
