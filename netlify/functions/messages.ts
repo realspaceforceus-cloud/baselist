@@ -1341,13 +1341,23 @@ export const handler: Handler = async (event) => {
       }
 
       const thread = threadResult.rows[0];
-      const tx = thread.transaction || {
+
+      // Parse transaction and participants from JSON if needed
+      let tx = typeof thread.transaction === "string"
+        ? JSON.parse(thread.transaction)
+        : thread.transaction;
+
+      tx = tx || {
         id: randomUUID(),
-        offer: thread.transaction?.offer,
       };
 
-      const isA = userId === thread.participants[0];
-      const isB = userId === thread.participants[1];
+      // Parse participants if it's a string
+      const participants = typeof thread.participants === "string"
+        ? JSON.parse(thread.participants)
+        : thread.participants;
+
+      const isA = userId === participants[0];
+      const isB = userId === participants[1];
 
       if (!isA && !isB) {
         return {
