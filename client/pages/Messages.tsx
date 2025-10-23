@@ -1374,9 +1374,11 @@ const Messages = (): JSX.Element => {
                           <div
                             className={cn(
                               "max-w-sm rounded-2xl border-2 p-4 shadow-sm",
-                              offerStatus === "accepted"
+                              messageOfferStatus === "accepted"
                                 ? "border-green-500/40 bg-green-50 dark:bg-green-950/30"
-                                : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30",
+                                : messageOfferStatus === "retracted"
+                                  ? "border-gray-300/40 bg-gray-50 dark:bg-gray-950/20"
+                                  : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30",
                             )}
                           >
                             <div className="flex gap-3">
@@ -1390,16 +1392,20 @@ const Messages = (): JSX.Element => {
                               <div className="flex-1">
                                 <p className="text-xs font-medium text-muted-foreground mb-1">
                                   {partnerName}{" "}
-                                  {offerStatus === "accepted"
+                                  {messageOfferStatus === "accepted"
                                     ? "and you accepted an offer of"
-                                    : "sent an offer"}
+                                    : messageOfferStatus === "retracted"
+                                      ? "sent an offer of (retracted)"
+                                      : "sent an offer"}
                                 </p>
                                 <p
                                   className={cn(
                                     "text-lg font-bold",
-                                    offerStatus === "accepted"
+                                    messageOfferStatus === "accepted"
                                       ? "text-green-600"
-                                      : "text-blue-600",
+                                      : messageOfferStatus === "retracted"
+                                        ? "text-gray-500"
+                                        : "text-blue-600",
                                   )}
                                 >
                                   ${offerAmount.toFixed(2)}
@@ -1410,8 +1416,14 @@ const Messages = (): JSX.Element => {
                                   </p>
                                 )}
                                 <p className="text-[0.65rem] text-muted-foreground/70 mt-2">
-                                  {offerStatus === "accepted" && (
+                                  {messageOfferStatus === "accepted" && (
                                     <CheckCircle2
+                                      className="h-3 w-3 inline mr-1"
+                                      aria-hidden
+                                    />
+                                  )}
+                                  {messageOfferStatus === "retracted" && (
+                                    <X
                                       className="h-3 w-3 inline mr-1"
                                       aria-hidden
                                     />
@@ -1420,7 +1432,7 @@ const Messages = (): JSX.Element => {
                                 </p>
                               </div>
                             </div>
-                            {offerStatus === "pending" && (
+                            {messageOfferStatus === "pending" && (
                               <div className="flex gap-2 mt-3 pt-3 border-t border-blue-200 dark:border-blue-900">
                                 {!isOwn && (
                                   <>
