@@ -21,6 +21,21 @@ export const CompletionCard = ({
 }: CompletionCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Helper functions for toast notifications
+  const showSuccess = (message: string) => {
+    toast({
+      title: "Success",
+      description: message,
+    });
+  };
+
+  const showError = (message: string) => {
+    toast({
+      title: "Error",
+      description: message,
+    });
+  };
   const [rating, setRating] = useState(0);
   const [ratingText, setRatingText] = useState("");
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
