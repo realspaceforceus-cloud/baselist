@@ -103,6 +103,12 @@ export const CompletionCard = ({
 
       const data = await response.json();
       onUpdated(data.transaction);
+
+      // Mark listing as sold
+      if (thread.listingId) {
+        await markListingAsSold(thread.listingId);
+      }
+
       toast.success("Transaction completed! 🎉");
     } catch (error) {
       console.error("Error agreeing to completion:", error);
