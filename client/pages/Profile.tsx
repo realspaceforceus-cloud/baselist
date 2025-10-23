@@ -439,7 +439,8 @@ const Profile = (): JSX.Element => {
                 />
               </div>
               <p className="text-sm font-medium text-foreground">
-                {totalTransactions} transaction{totalTransactions === 1 ? "" : "s"}
+                {totalTransactions} transaction
+                {totalTransactions === 1 ? "" : "s"}
               </p>
             </div>
           </div>
@@ -534,7 +535,10 @@ const Profile = (): JSX.Element => {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                      <ShoppingBag className="h-10 w-10 opacity-40" aria-hidden />
+                      <ShoppingBag
+                        className="h-10 w-10 opacity-40"
+                        aria-hidden
+                      />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
@@ -742,11 +746,15 @@ const Profile = (): JSX.Element => {
                 Moderation tools
               </h2>
               <p className="text-sm text-muted-foreground">
-                Review reports, manage verifications, and configure base settings
+                Review reports, manage verifications, and configure base
+                settings
               </p>
             </div>
           </div>
-          <Button asChild className="mt-4 rounded-lg px-6 md:mt-0 whitespace-nowrap font-medium">
+          <Button
+            asChild
+            className="mt-4 rounded-lg px-6 md:mt-0 whitespace-nowrap font-medium"
+          >
             <Link to="/moderation">Open tools</Link>
           </Button>
         </div>
