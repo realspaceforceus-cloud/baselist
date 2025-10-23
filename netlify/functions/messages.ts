@@ -1362,15 +1362,11 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/")[0];
       const authUserId = await getUserIdFromAuth(event);
-      const body = JSON.parse(event.body || "{}");
-      const userId = body.actorId || body.userId || authUserId;
+      const reqBody = parseBody(event);
+      const userId = reqBody.actorId || reqBody.userId || authUserId;
 
       if (!userId) {
-        return {
-          statusCode: 401,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Unauthorized" }),
-        };
+        return err(401, "UNAUTHORIZED");
       }
 
       const threadResult = await client.query(
@@ -1379,11 +1375,7 @@ export const handler: Handler = async (event) => {
       );
 
       if (threadResult.rows.length === 0) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Thread not found" }),
-        };
+        return err(404, "THREAD_NOT_FOUND");
       }
 
       const thread = threadResult.rows[0];
@@ -1409,22 +1401,14 @@ export const handler: Handler = async (event) => {
         !Array.isArray(participants) ||
         participants.length < 2
       ) {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Invalid thread participants" }),
-        };
+        return err(400, "INVALID_PARTICIPANTS");
       }
 
       const isA = userId === participants[0];
       const isB = userId === participants[1];
 
       if (!isA && !isB) {
-        return {
-          statusCode: 403,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Not a participant" }),
-        };
+        return err(403, "ACTOR_NOT_IN_THREAD");
       }
 
       const now = new Date().toISOString();
