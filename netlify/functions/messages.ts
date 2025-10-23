@@ -1502,14 +1502,6 @@ export const handler: Handler = async (event) => {
 
       tx = tx || { id: randomUUID() };
 
-      if (tx.state !== "pending_a" && tx.state !== "pending_b") {
-        return {
-          statusCode: 409,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "No completion pending" }),
-        };
-      }
-
       // Use the old UI contract
       if (tx.status !== "pending_confirmation") {
         return {
