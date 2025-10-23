@@ -80,20 +80,20 @@ export const handler: Handler = async (event, context) => {
     if (!targetUserId || !rating || !actualThreadId) {
       console.log("[RATINGS] ❌ Missing required fields");
       return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: "Missing required fields",
-          required: ["targetUserId", "rating", "threadId or transactionId"],
-        }),
-      };
+      statusCode: 400,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        error: "Missing required fields",
+        required: ["targetUserId", "rating", "threadId or transactionId"],
+      }),
+    };
     }
 
     if (rating < 1 || rating > 5) {
       console.log("[RATINGS] ❌ Rating out of range:", rating);
       return {
         statusCode: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: corsHeaders,
         body: JSON.stringify({ error: "Rating must be between 1 and 5" }),
       };
     }
