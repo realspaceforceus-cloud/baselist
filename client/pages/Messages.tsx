@@ -809,6 +809,51 @@ const Messages = (): JSX.Element => {
     }
   };
 
+  const handleSubmitSupportRequest = async () => {
+    if (!activeSummary || !supportMessage.trim()) {
+      return;
+    }
+    try {
+      // Create a notification to base admins about the support request
+      const response = await fetch("/.netlify/functions/create-notification", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Send to all base admins (use base_id to target)
+          userId: "support",
+          type: "support_request",
+          title: "Support Request from Archived Conversation",
+          description: `User ${user.username} requested help with archived conversation about "${activeSummary.listing?.title || "Direct message"}": ${supportMessage}`,
+          actorId: user.id,
+          targetId: activeSummary.thread.id,
+          targetType: "thread",
+          data: {
+            userId: user.id,
+            threadId: activeSummary.thread.id,
+            listingId: activeSummary.listing?.id,
+            message: supportMessage,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send support request");
+      }
+
+      toast.success("Support request sent", {
+        description: "An admin will contact you shortly.",
+      });
+      setShowSupportDialog(false);
+      setSupportMessage("");
+    } catch (error) {
+      toast.error("Unable to send support request", {
+        description:
+          error instanceof Error ? error.message : "Try again in a moment.",
+      });
+    }
+  };
+
   const handleRatingClick = (value: number) => {
     if (!activeSummary) {
       return;
