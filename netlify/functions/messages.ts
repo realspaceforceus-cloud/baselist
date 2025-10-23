@@ -1349,6 +1349,8 @@ export const handler: Handler = async (event) => {
 
       const updatedTx = {
         ...tx,
+        aUserId: tx.aUserId || thread.participants[0],
+        bUserId: tx.bUserId || thread.participants[1],
         state: newState,
         aMarkedAt: aMarkedAt || tx.aMarkedAt || null,
         bMarkedAt: bMarkedAt || tx.bMarkedAt || null,
