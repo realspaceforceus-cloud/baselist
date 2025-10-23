@@ -1772,11 +1772,7 @@ export const handler: Handler = async (event) => {
 
       // Use old UI contract - check for pending_confirmation
       if (tx.status !== "pending_confirmation") {
-        return {
-          statusCode: 409,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "No completion pending" }),
-        };
+        return err(409, "NO_COMPLETION_PENDING");
       }
 
       const now = new Date().toISOString();
