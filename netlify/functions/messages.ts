@@ -1560,7 +1560,6 @@ export const handler: Handler = async (event) => {
           archivedBy: updatedThread.archived_by,
           deletedBy: updatedThread.deleted_by,
           transaction: updatedTx,
-          timeline: timeline,
           createdAt: updatedThread.created_at,
           updatedAt: updatedThread.updated_at,
           listing,
