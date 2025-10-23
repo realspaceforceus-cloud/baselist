@@ -1229,24 +1229,6 @@ const Messages = (): JSX.Element => {
               </div>
             ) : null}
 
-            {activeSummary.thread.transaction && (
-              <div className="my-3">
-                <CompletionCard
-                  thread={activeSummary.thread}
-                  currentUserId={user.id}
-                  onUpdated={(tx) => {
-                    setMessageThreads((prev) =>
-                      prev.map((t) =>
-                        t.id === activeSummary.thread.id
-                          ? { ...t, transaction: tx }
-                          : t,
-                      ),
-                    );
-                  }}
-                />
-              </div>
-            )}
-
             {canSubmitRating && !isDisputed ? (
               userRatingValue ? (
                 <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 shadow-inner">
