@@ -1213,7 +1213,8 @@ const Messages = (): JSX.Element => {
                         : "Awaiting confirmation"}
                   </span>
                 </div>
-                {activeTransaction.status === "pending_confirmation" ? (
+                {activeTransaction.status === "pending_confirmation" &&
+                activeTransaction.offer?.status !== "accepted" ? (
                   awaitingUserConfirmation ? (
                     <Button
                       type="button"
