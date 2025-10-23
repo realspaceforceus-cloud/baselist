@@ -1300,10 +1300,10 @@ export const handler: Handler = async (event) => {
         });
 
         if (thread.listing_id) {
-          await client.query(
-            "UPDATE listings SET status = $1 WHERE id = $2",
-            ["sold", thread.listing_id],
-          );
+          await client.query("UPDATE listings SET status = $1 WHERE id = $2", [
+            "sold",
+            thread.listing_id,
+          ]);
         }
       }
 
@@ -1391,10 +1391,10 @@ export const handler: Handler = async (event) => {
       });
 
       if (thread.listing_id) {
-        await client.query(
-          "UPDATE listings SET status = $1 WHERE id = $2",
-          ["sold", thread.listing_id],
-        );
+        await client.query("UPDATE listings SET status = $1 WHERE id = $2", [
+          "sold",
+          thread.listing_id,
+        ]);
       }
 
       await client.query(

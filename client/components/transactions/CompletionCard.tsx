@@ -92,9 +92,7 @@ export const CompletionCard = ({
   };
 
   const handleDisagree = async () => {
-    const reason = prompt(
-      "Please describe the issue briefly:",
-    );
+    const reason = prompt("Please describe the issue briefly:");
     if (reason === null) return;
 
     setIsLoading(true);
@@ -118,9 +116,7 @@ export const CompletionCard = ({
 
       const data = await response.json();
       onUpdated(data.transaction);
-      toast.success(
-        "Dispute opened. An admin will review your case shortly.",
-      );
+      toast.success("Dispute opened. An admin will review your case shortly.");
     } catch (error) {
       console.error("Error opening dispute:", error);
       toast.error("Failed to open dispute. Please try again.");
@@ -164,7 +160,8 @@ export const CompletionCard = ({
               Reason: {tx.dispute?.reason || "No reason provided"}
             </p>
             <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
-              An admin will review this dispute and contact you with a resolution.
+              An admin will review this dispute and contact you with a
+              resolution.
             </p>
           </div>
         </div>
@@ -183,7 +180,8 @@ export const CompletionCard = ({
 
       {youMarked && !otherMarked && (
         <div className="mb-3 text-sm text-blue-700 dark:text-blue-300">
-          You've marked the sale complete. Waiting for the other party to confirm...
+          You've marked the sale complete. Waiting for the other party to
+          confirm...
         </div>
       )}
 

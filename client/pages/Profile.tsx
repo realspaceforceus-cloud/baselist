@@ -40,7 +40,14 @@ const Profile = (): JSX.Element => {
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
-  console.log("[Profile] Rendering with memberId:", memberId, "currentUser.id:", currentUser?.id, "fetchedUser:", fetchedUser?.id);
+  console.log(
+    "[Profile] Rendering with memberId:",
+    memberId,
+    "currentUser.id:",
+    currentUser?.id,
+    "fetchedUser:",
+    fetchedUser?.id,
+  );
 
   // Clear fetched user when navigating to own profile
   useEffect(() => {
@@ -80,12 +87,20 @@ const Profile = (): JSX.Element => {
 
   // Determine viewing own profile (must come before other hooks)
   // Safe boolean: don't read currentUser.id unless it exists
-  const isViewingOwnProfile = !memberId || (currentUser && currentUser.id === memberId);
+  const isViewingOwnProfile =
+    !memberId || (currentUser && currentUser.id === memberId);
   console.log("[Profile] isViewingOwnProfile:", isViewingOwnProfile);
 
   const profileUser = useMemo(() => {
-    const result = isViewingOwnProfile ? (currentUser ?? null) : (fetchedUser ?? null);
-    console.log("[Profile] useMemo profileUser:", result?.id, "dependencies: isViewingOwnProfile=", isViewingOwnProfile);
+    const result = isViewingOwnProfile
+      ? (currentUser ?? null)
+      : (fetchedUser ?? null);
+    console.log(
+      "[Profile] useMemo profileUser:",
+      result?.id,
+      "dependencies: isViewingOwnProfile=",
+      isViewingOwnProfile,
+    );
     return result;
   }, [isViewingOwnProfile, currentUser, fetchedUser]);
 
@@ -124,7 +139,13 @@ const Profile = (): JSX.Element => {
       return listings.filter((listing) => listing.sellerId === profileUser.id);
     }
     return listingsResponse?.listings || [];
-  }, [listingsResponse, listings, profileUser?.id, isViewingOwnProfile, profileUser]);
+  }, [
+    listingsResponse,
+    listings,
+    profileUser?.id,
+    isViewingOwnProfile,
+    profileUser,
+  ]);
 
   const activeListings = useMemo(() => {
     return myListings.filter((listing) => listing.status === "active");
@@ -185,9 +206,9 @@ const Profile = (): JSX.Element => {
   const profileRatingFallbackCount =
     profileUser.ratingCount ?? profileUser.completedSales ?? 0;
 
-  const userNotices = useMemo(
-    () => {
-      const result = isViewingOwnProfile && profileUser
+  const userNotices = useMemo(() => {
+    const result =
+      isViewingOwnProfile && profileUser
         ? notices
             .filter(
               (notice) =>
@@ -200,11 +221,9 @@ const Profile = (): JSX.Element => {
                 new Date(a.createdAt).getTime(),
             )
         : [];
-      console.log("[Profile] useMemo userNotices count:", result.length);
-      return result;
-    },
-    [notices, profileUser?.id, isViewingOwnProfile, profileUser],
-  );
+    console.log("[Profile] useMemo userNotices count:", result.length);
+    return result;
+  }, [notices, profileUser?.id, isViewingOwnProfile, profileUser]);
 
   const noticeSeverityClass: Record<string, string> = {
     info: "text-muted-foreground",

@@ -214,7 +214,12 @@ const Messages = (): JSX.Element => {
 
         const transaction = thread.transaction;
         if (transaction?.offer?.status === "accepted") {
-          console.log("[threadSummaries] Found accepted offer in thread:", thread.id, "transaction:", transaction);
+          console.log(
+            "[threadSummaries] Found accepted offer in thread:",
+            thread.id,
+            "transaction:",
+            transaction,
+          );
         }
         const awaitingUserConfirmation = Boolean(
           transaction?.status === "pending_confirmation" &&
@@ -605,8 +610,14 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    console.log("[handleAcceptOffer] Starting with threadId:", activeSummary.thread.id);
-    console.log("[handleAcceptOffer] Current transaction:", activeSummary.transaction);
+    console.log(
+      "[handleAcceptOffer] Starting with threadId:",
+      activeSummary.thread.id,
+    );
+    console.log(
+      "[handleAcceptOffer] Current transaction:",
+      activeSummary.transaction,
+    );
 
     try {
       const response = await fetch(
@@ -624,7 +635,10 @@ const Messages = (): JSX.Element => {
 
       const data = await response.json();
       console.log("[handleAcceptOffer] Response data:", data);
-      console.log("[handleAcceptOffer] Updated transaction:", data.thread?.transaction);
+      console.log(
+        "[handleAcceptOffer] Updated transaction:",
+        data.thread?.transaction,
+      );
 
       // Update thread with full response including all messages
       setMessageThreads((prev) => {
@@ -633,7 +647,10 @@ const Messages = (): JSX.Element => {
         );
         if (existingIndex !== -1) {
           const remaining = prev.filter((_, i) => i !== existingIndex);
-          console.log("[handleAcceptOffer] Updating thread at index:", existingIndex);
+          console.log(
+            "[handleAcceptOffer] Updating thread at index:",
+            existingIndex,
+          );
           console.log("[handleAcceptOffer] New thread data:", data.thread);
           return [data.thread, ...remaining];
         }
@@ -1345,7 +1362,14 @@ const Messages = (): JSX.Element => {
                             isOwn ? "justify-end" : "justify-start",
                           )}
                         >
-                          <div className={cn("max-w-sm rounded-2xl border-2 p-4 shadow-sm", offerStatus === "accepted" ? "border-green-500/40 bg-green-50 dark:bg-green-950/30" : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30")}>
+                          <div
+                            className={cn(
+                              "max-w-sm rounded-2xl border-2 p-4 shadow-sm",
+                              offerStatus === "accepted"
+                                ? "border-green-500/40 bg-green-50 dark:bg-green-950/30"
+                                : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30",
+                            )}
+                          >
                             <div className="flex gap-3">
                               {itemImage && (
                                 <img
@@ -1356,9 +1380,19 @@ const Messages = (): JSX.Element => {
                               )}
                               <div className="flex-1">
                                 <p className="text-xs font-medium text-muted-foreground mb-1">
-                                  {partnerName} {offerStatus === "accepted" ? "and you accepted an offer of" : "sent an offer"}
+                                  {partnerName}{" "}
+                                  {offerStatus === "accepted"
+                                    ? "and you accepted an offer of"
+                                    : "sent an offer"}
                                 </p>
-                                <p className={cn("text-lg font-bold", offerStatus === "accepted" ? "text-green-600" : "text-blue-600")}>
+                                <p
+                                  className={cn(
+                                    "text-lg font-bold",
+                                    offerStatus === "accepted"
+                                      ? "text-green-600"
+                                      : "text-blue-600",
+                                  )}
+                                >
                                   ${offerAmount.toFixed(2)}
                                 </p>
                                 {activeSummary.listing?.title && (
@@ -1367,7 +1401,12 @@ const Messages = (): JSX.Element => {
                                   </p>
                                 )}
                                 <p className="text-[0.65rem] text-muted-foreground/70 mt-2">
-                                  {offerStatus === "accepted" && <CheckCircle2 className="h-3 w-3 inline mr-1" aria-hidden />}
+                                  {offerStatus === "accepted" && (
+                                    <CheckCircle2
+                                      className="h-3 w-3 inline mr-1"
+                                      aria-hidden
+                                    />
+                                  )}
                                   {timestamp}
                                 </p>
                               </div>

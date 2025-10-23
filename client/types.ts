@@ -98,7 +98,13 @@ export type ThreadLifecycleStatus = "active" | "completed" | "disputed";
 
 export type TransactionStatus = "pending_complete" | "completed" | "disputed";
 
-export type TransactionState = "open" | "pending_a" | "pending_b" | "completed" | "disputed" | "void";
+export type TransactionState =
+  | "open"
+  | "pending_a"
+  | "pending_b"
+  | "completed"
+  | "disputed"
+  | "void";
 
 export interface ThreadTransaction {
   id: string;
@@ -151,7 +157,14 @@ export interface MessageThread {
   timeline?: Array<{
     at: string;
     actorId: string;
-    action: "offer_accepted" | "mark_complete" | "agree_complete" | "disagree_complete" | "dispute_opened" | "transaction_completed" | string;
+    action:
+      | "offer_accepted"
+      | "mark_complete"
+      | "agree_complete"
+      | "disagree_complete"
+      | "dispute_opened"
+      | "transaction_completed"
+      | string;
     data?: Record<string, unknown>;
   }>;
 }
