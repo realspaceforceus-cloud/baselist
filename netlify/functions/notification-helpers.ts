@@ -12,7 +12,9 @@ export interface CreateNotificationOptions {
     | "offer_received"
     | "offer_accepted"
     | "offer_declined"
+    | "offer_retracted"
     | "transaction_complete"
+    | "rating_received"
     | "post_commented"
     | "comment_liked"
     | "comment_replied"
@@ -22,7 +24,7 @@ export interface CreateNotificationOptions {
   description: string;
   actorId?: string;
   targetId?: string;
-  targetType?: "listing" | "thread" | "user" | "post";
+  targetType?: "listing" | "thread" | "user" | "post" | "transaction";
   data?: Record<string, any>;
 }
 
