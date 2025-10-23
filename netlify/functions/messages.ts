@@ -1385,15 +1385,19 @@ export const handler: Handler = async (event) => {
 
       const updatedTx = {
         ...tx,
-        aUserId: tx.aUserId || thread.participants[0],
-        bUserId: tx.bUserId || thread.participants[1],
+        aUserId: tx.aUserId || participants[0],
+        bUserId: tx.bUserId || participants[1],
         state: newState,
         aMarkedAt: aMarkedAt || tx.aMarkedAt || null,
         bMarkedAt: bMarkedAt || tx.bMarkedAt || null,
         completedAt: newState === "completed" ? now : tx.completedAt,
       };
 
-      const timeline = thread.timeline || [];
+      // Parse timeline from JSON if needed
+      let timeline = typeof thread.timeline === "string"
+        ? JSON.parse(thread.timeline)
+        : thread.timeline || [];
+
       timeline.push({
         at: now,
         actorId: userId,
