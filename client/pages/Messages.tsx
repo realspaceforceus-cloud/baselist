@@ -1514,6 +1514,25 @@ const Messages = (): JSX.Element => {
                     </div>
                   );
                 })}
+
+                {activeSummary.thread.transaction?.offer?.status === "accepted" && (
+                  <div className="my-3">
+                    <CompletionCard
+                      thread={activeSummary.thread}
+                      currentUserId={user.id}
+                      onUpdated={(tx) => {
+                        setMessageThreads((prev) =>
+                          prev.map((t) =>
+                            t.id === activeSummary.thread.id
+                              ? { ...t, transaction: tx }
+                              : t,
+                          ),
+                        );
+                      }}
+                    />
+                  </div>
+                )}
+
                 <div ref={messagesEndRef} />
               </>
             )}
