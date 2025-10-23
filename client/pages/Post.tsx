@@ -17,6 +17,7 @@ import { useBaseList } from "@/context/BaseListContext";
 import { uploadImageToCloudinary } from "@/lib/cloudinaryClient";
 import { generateSlug } from "@/lib/slugUtils";
 import { extractVehicleOptions } from "@/lib/vehicleUtils";
+import { useListing } from "@/hooks/useListings";
 import { LISTING_CATEGORIES } from "@/data/mock";
 import type { Listing, ListingCategory } from "@/types";
 
