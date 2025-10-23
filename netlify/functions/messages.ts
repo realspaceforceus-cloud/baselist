@@ -1497,25 +1497,8 @@ export const handler: Handler = async (event) => {
         completedAt: newStatus === "completed" ? now : tx.completedAt,
       };
 
-      // Parse timeline from JSON if needed
-      let timeline =
-        typeof thread.timeline === "string"
-          ? JSON.parse(thread.timeline)
-          : thread.timeline || [];
-
-      timeline.push({
-        at: now,
-        actorId: userId,
-        action: "mark_complete",
-      });
-
+      // Mark listing as sold if transaction is completed
       if (newStatus === "completed") {
-        timeline.push({
-          at: now,
-          actorId: userId,
-          action: "transaction_completed",
-        });
-
         if (thread.listing_id) {
           await client.query("UPDATE listings SET status = $1 WHERE id = $2", [
             "sold",
@@ -1530,10 +1513,10 @@ export const handler: Handler = async (event) => {
         );
       }
 
-      // Update thread with new transaction state and timeline
+      // Update thread with new transaction state
       await client.query(
-        "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
-        [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
+        "UPDATE message_threads SET transaction = $1 WHERE id = $2",
+        [JSON.stringify(updatedTx), threadId],
       );
 
       // Fetch the full updated thread with all related data
