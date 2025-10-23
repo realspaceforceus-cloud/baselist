@@ -521,7 +521,7 @@ const Profile = (): JSX.Element => {
             {activeListings.map((listing) => (
               <Link
                 key={listing.id}
-                to={`/listing/${listing.slug || listing.id}`}
+                to={`/listing/${generateSlug(listing.title, listing.id)}`}
                 className="group flex flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30"
               >
                 <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-muted/50">
