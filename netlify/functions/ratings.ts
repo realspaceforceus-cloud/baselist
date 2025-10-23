@@ -190,6 +190,16 @@ export const handler: Handler = async (event, context) => {
       );
       console.log("[RATINGS] ✓ Transaction updated");
 
+      // 5.5 If transaction is now completed (both users rated), mark listing as sold
+      if (updatedTx.status === "completed" && threadCheck.rows[0].listing_id) {
+        console.log("[RATINGS] Marking listing as sold...");
+        await client.query(
+          `UPDATE listings SET status = 'sold', updated_at = NOW() WHERE id = $1`,
+          [threadCheck.rows[0].listing_id],
+        );
+        console.log("[RATINGS] ✓ Listing marked as sold");
+      }
+
       // 6. Auto-archive thread for the current user only (not both users)
       console.log("[RATINGS] Auto-archiving thread for current user...");
       const archivedBy = threadCheck.rows[0].archived_by || [];
