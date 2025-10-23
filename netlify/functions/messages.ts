@@ -1061,7 +1061,9 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/offer")[0];
-      const userId = await getUserIdFromAuth(event);
+      const authUserId = await getUserIdFromAuth(event);
+      const body = JSON.parse(event.body || "{}");
+      const userId = body.userId || authUserId;
 
       if (!userId || !threadId) {
         return {
