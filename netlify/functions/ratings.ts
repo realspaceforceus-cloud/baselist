@@ -177,11 +177,18 @@ export const handler: Handler = async (event, context) => {
       );
       console.log("[RATINGS] ✓ Rating record inserted");
 
-      // 5. Update transaction with ratingByUser (no system message - skips type check constraint)
+      // 5. Update transaction with ratingByUser
       console.log("[RATINGS] Updating transaction...");
+
+      // Check if both users have now rated
+      const bothUsersRated =
+        ratingByUser[threadCheck.rows[0].participants[0]] !== undefined &&
+        ratingByUser[threadCheck.rows[0].participants[1]] !== undefined;
+
       const updatedTransaction = {
         ...transaction,
         ratingByUser,
+        status: bothUsersRated ? "completed" : transaction.status,
       };
 
       await client.query(
@@ -191,7 +198,7 @@ export const handler: Handler = async (event, context) => {
       console.log("[RATINGS] ✓ Transaction updated");
 
       // 5.5 If transaction is now completed (both users rated), mark listing as sold
-      if (updatedTx.status === "completed" && threadCheck.rows[0].listing_id) {
+      if (bothUsersRated && threadCheck.rows[0].listing_id) {
         console.log("[RATINGS] Marking listing as sold...");
         await client.query(
           `UPDATE listings SET status = 'sold', updated_at = NOW() WHERE id = $1`,
