@@ -19,7 +19,10 @@ const handler: Handler = async (event) => {
     console.log("[ratings] Starting rating submission...");
 
     const userId = getUserIdFromAuth(event);
-    console.log("[ratings] Auth check - userId:", userId ? "present" : "MISSING");
+    console.log(
+      "[ratings] Auth check - userId:",
+      userId ? "present" : "MISSING",
+    );
 
     if (!userId) {
       console.log("[ratings] No userId found in auth");
@@ -28,7 +31,7 @@ const handler: Handler = async (event) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error: "Unauthorized - no user session found",
-          details: "Cookie-based authentication failed"
+          details: "Cookie-based authentication failed",
         }),
       };
     }
@@ -53,7 +56,7 @@ const handler: Handler = async (event) => {
         body: JSON.stringify({
           error: "Missing required fields",
           details: `Missing: ${missingFields.join(", ")}`,
-          received: { targetUserId, rating, transactionId }
+          received: { targetUserId, rating, transactionId },
         }),
       };
     }
@@ -66,7 +69,7 @@ const handler: Handler = async (event) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error: "Rating out of range",
-          details: `Rating must be 1-5, received: ${rating}`
+          details: `Rating must be 1-5, received: ${rating}`,
         }),
       };
     }
@@ -168,7 +171,11 @@ const handler: Handler = async (event) => {
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
     const errorStack = error instanceof Error ? error.stack : "";
-    console.error("[ratings] Catch block error:", { errorMsg, errorStack, error });
+    console.error("[ratings] Catch block error:", {
+      errorMsg,
+      errorStack,
+      error,
+    });
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },

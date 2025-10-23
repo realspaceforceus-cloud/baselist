@@ -142,7 +142,7 @@ export const CompletionCard = ({
 
       if (!targetUserId) {
         throw new Error(
-          "Unable to determine recipient - invalid thread participants"
+          "Unable to determine recipient - invalid thread participants",
         );
       }
 
@@ -179,7 +179,10 @@ export const CompletionCard = ({
       const errorMsg =
         error instanceof Error ? error.message : "Failed to submit rating";
       console.error("Error submitting rating:", error);
-      console.error("Full error stack:", error instanceof Error ? error.stack : "no stack");
+      console.error(
+        "Full error stack:",
+        error instanceof Error ? error.stack : "no stack",
+      );
       // Show more detailed error message to user
       showError(
         `Rating error: ${errorMsg}${
@@ -188,7 +191,7 @@ export const CompletionCard = ({
             : errorMsg.includes("500")
               ? " (server error)"
               : ""
-        }`
+        }`,
       );
     } finally {
       setIsLoading(false);
