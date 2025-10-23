@@ -1535,7 +1535,7 @@ export const handler: Handler = async (event) => {
       const systemMessage = {
         id: systemMessageId,
         thread_id: threadId,
-        author_id: null,
+        author_id: userId,
         body:
           newStatus === "completed"
             ? "Transaction completed."
