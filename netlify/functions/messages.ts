@@ -784,6 +784,13 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(transaction), threadId],
       );
 
+      // Fetch current user name for notification
+      const currentUserResult = await client.query(
+        "SELECT username FROM users WHERE id = $1",
+        [userId],
+      );
+      const currentUserName = currentUserResult.rows[0]?.username || "User";
+
       // Create notification for offer acceptance
       const notificationData = {
         amount: transaction.offer?.amount,
