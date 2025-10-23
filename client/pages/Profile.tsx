@@ -558,22 +558,26 @@ const Profile = (): JSX.Element => {
         </section>
       )}
 
-      <div>
-        <article className="flex h-full flex-col justify-between rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Stars className="h-4 w-4 text-primary" aria-hidden />
+      {/* Highlights Section */}
+      <div className="rounded-2xl border-2 border-dashed border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-6 md:p-8">
+        <article className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Stars className="h-4 w-4" aria-hidden />
+            </span>
+            <h3 className="text-lg font-semibold text-foreground">
               {isViewingOwnProfile
-                ? "Saved items & alerts"
+                ? "Saved & alerts"
                 : `${profileFirstName}'s highlights`}
-            </div>
-            <p>
-              Saved listings, base-wide alerts, and invite controls will appear
-              here as the product expands.
-            </p>
+            </h3>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Want a new feature? Share feedback with your base moderator team.
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {isViewingOwnProfile
+              ? "Your saved listings, price alerts, and base community features will appear here as we expand the platform."
+              : `Saved items and community highlights will appear here as ${profileFirstName} builds their profile.`}
+          </p>
+          <p className="text-xs text-muted-foreground pt-2 border-t border-primary/10">
+            Have ideas? Reach out to your base moderator team with suggestions.
           </p>
         </article>
       </div>
