@@ -5,6 +5,36 @@ import { randomUUID } from "crypto";
 import { createNotification, getActorName } from "./notification-helpers";
 import { getUserIdFromAuth } from "./auth";
 
+// Robust body parsing that handles base64 encoding
+function parseBody(event: any) {
+  const raw = event.body || "";
+  const str = event.isBase64Encoded
+    ? Buffer.from(raw, "base64").toString("utf8")
+    : raw;
+  try {
+    return str ? JSON.parse(str) : {};
+  } catch {
+    return {};
+  }
+}
+
+// Standard JSON responders
+function ok(body: any) {
+  return {
+    statusCode: 200,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+}
+
+function err(status: number, error: string, details?: any) {
+  return {
+    statusCode: status,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ error, ...(details ? { details } : {}) }),
+  };
+}
+
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
   const path = event.path.replace("/.netlify/functions/messages", "");
