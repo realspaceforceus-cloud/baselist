@@ -38,14 +38,14 @@ export const handler: Handler = async (event, context) => {
       body: JSON.stringify({
         error: "Method not allowed",
         received: event.httpMethod,
-        expected: "POST"
+        expected: "POST",
       }),
     };
   }
 
   try {
     console.log("[RATINGS] ✓ POST method confirmed");
-    
+
     // Get authenticated user
     const userId = await getUserIdFromAuth(event);
     console.log("[RATINGS] User authenticated:", userId ? "✓" : "✗");
@@ -63,7 +63,14 @@ export const handler: Handler = async (event, context) => {
 
     // Parse request body
     const body = JSON.parse(event.body || "{}");
-    const { targetUserId, rating, review, transactionId, ratingType, threadId } = body;
+    const {
+      targetUserId,
+      rating,
+      review,
+      transactionId,
+      ratingType,
+      threadId,
+    } = body;
 
     console.log("[RATINGS] Parsed data:", {
       targetUserId,
@@ -80,13 +87,13 @@ export const handler: Handler = async (event, context) => {
     if (!targetUserId || !rating || !actualThreadId) {
       console.log("[RATINGS] ❌ Missing required fields");
       return {
-      statusCode: 400,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        error: "Missing required fields",
-        required: ["targetUserId", "rating", "threadId or transactionId"],
-      }),
-    };
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          error: "Missing required fields",
+          required: ["targetUserId", "rating", "threadId or transactionId"],
+        }),
+      };
     }
 
     if (rating < 1 || rating > 5) {
@@ -230,7 +237,10 @@ export const handler: Handler = async (event, context) => {
         });
         console.log("[RATINGS] ✓ Notification created");
       } catch (notifError) {
-        console.error("[RATINGS] ⚠️  Notification error (non-fatal):", notifError);
+        console.error(
+          "[RATINGS] ⚠️  Notification error (non-fatal):",
+          notifError,
+        );
       }
 
       console.log("[RATINGS] ✓ SUCCESS - Returning response");
