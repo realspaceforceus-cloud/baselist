@@ -106,25 +106,14 @@ export const CompletionCard = ({
   const handleAgree = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `/.netlify/functions/messages/threads/${thread.id}/transaction/agree`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: currentUserId }),
-        },
-      );
+      const agreeUrl = `/.netlify/functions/messages/threads/${thread.id}/transaction/agree`;
+      const { ok, status, data, text } = await jsonFetch(agreeUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserId }),
+      });
 
-      // Parse response safely
-      let data: any = null;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.error("[handleAgree] Failed to parse response:", parseError);
-      }
-
-      // Accept idempotent responses: update UI if server sent thread data
       if (data?.thread) {
         onUpdated(data.thread.transaction, data.thread);
 
@@ -132,23 +121,15 @@ export const CompletionCard = ({
         if (thread.listingId) {
           await markListingAsSold(thread.listingId);
         }
+      }
 
-        if (response.ok) {
-          showSuccess("Transaction completed! 🎉");
-        } else {
-          showSuccess("Status updated");
-        }
+      if (!ok) {
+        const msg = data?.error || data?.message || text || `HTTP ${status}`;
+        showError(`Failed to confirm — ${msg}`);
         return;
       }
 
-      // No thread data and error status
-      if (!response.ok) {
-        const errorMsg = data?.error || "Failed to confirm completion";
-        throw new Error(errorMsg);
-      }
-    } catch (error) {
-      console.error("Error agreeing to completion:", error);
-      showError("Failed to confirm. Please try again.");
+      showSuccess("Transaction completed! 🎉");
     } finally {
       setIsLoading(false);
     }
