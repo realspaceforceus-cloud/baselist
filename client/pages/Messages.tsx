@@ -1417,9 +1417,11 @@ const Messages = (): JSX.Element => {
                                     "text-lg font-bold",
                                     messageOfferStatus === "accepted"
                                       ? "text-green-600"
-                                      : messageOfferStatus === "retracted"
-                                        ? "text-gray-500"
-                                        : "text-blue-600",
+                                      : messageOfferStatus === "declined"
+                                        ? "text-red-600"
+                                        : messageOfferStatus === "retracted"
+                                          ? "text-gray-500"
+                                          : "text-blue-600",
                                   )}
                                 >
                                   ${offerAmount.toFixed(2)}
