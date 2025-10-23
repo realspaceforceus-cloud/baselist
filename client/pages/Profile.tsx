@@ -226,25 +226,6 @@ const Profile = (): JSX.Element => {
   const profileRatingFallbackCount =
     profileUser.ratingCount ?? profileUser.completedSales ?? 0;
 
-  const userNotices = useMemo(() => {
-    const result =
-      isViewingOwnProfile && profileUser
-        ? notices
-            .filter(
-              (notice) =>
-                (notice.userId === profileUser.id || notice.userId === "all") &&
-                notice.category !== "payout",
-            )
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime(),
-            )
-        : [];
-    console.log("[Profile] useMemo userNotices count:", result.length);
-    return result;
-  }, [notices, profileUser?.id, isViewingOwnProfile, profileUser]);
-
   const noticeSeverityClass: Record<string, string> = {
     info: "text-muted-foreground",
     success: "text-success",
