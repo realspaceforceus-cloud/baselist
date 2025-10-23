@@ -206,28 +206,35 @@ export const MyListings = (): JSX.Element => {
                           View
                         </Link>
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-lg h-8 text-xs"
-                        asChild
-                        disabled={listing.status === "sold"}
-                      >
-                        <Link to={`/post?edit=${listing.id}`}>
-                          <Edit3 className="h-3.5 w-3.5" />
-                          Edit
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-lg h-8 text-xs text-destructive hover:text-destructive"
-                        onClick={() => setDeleteConfirm(listing.id)}
-                        disabled={listing.status === "sold"}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Remove
-                      </Button>
+                      {listing.status !== "sold" && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-lg h-8 text-xs"
+                            asChild
+                          >
+                            <Link to={`/post?edit=${listing.id}`}>
+                              <Edit3 className="h-3.5 w-3.5" />
+                              Edit
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-lg h-8 text-xs text-destructive hover:text-destructive"
+                            onClick={() => setDeleteConfirm(listing.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Remove
+                          </Button>
+                        </>
+                      )}
+                      {listing.status === "sold" && (
+                        <div className="text-xs text-muted-foreground">
+                          <p>Sold to buyer</p>
+                        </div>
+                      )}
                       {listing.offers.length > 0 && (
                         <Button
                           variant="outline"
