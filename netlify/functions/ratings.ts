@@ -50,63 +50,53 @@ const handler: Handler = async (event) => {
     const ratingId = randomUUID();
     const now = new Date().toISOString();
 
-    // Insert rating into database
-    const { error: insertError } = await client
-      .from("ratings")
-      .insert({
-        id: ratingId,
-        transaction_id: transactionId,
-        user_id: userId,
-        target_user_id: targetUserId,
-        score: rating,
-        comment: review || null,
-        rating_type: ratingType || "transaction",
-        created_at: now,
-      });
+    let client = null;
+    try {
+      client = await pool.connect();
 
-    if (insertError) {
-      console.error("[ratings] Insert error:", insertError);
-      return {
-        statusCode: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: "Failed to save rating",
-          details: insertError.message,
-        }),
-      };
-    }
+      // Insert rating into database
+      await client.query(
+        `INSERT INTO ratings (id, transaction_id, user_id, target_user_id, score, comment, rating_type, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          ratingId,
+          transactionId,
+          userId,
+          targetUserId,
+          rating,
+          review || null,
+          ratingType || "transaction",
+          now,
+        ]
+      );
 
-    // Create notification for rated user
-    const { data: currentUser } = await client
-      .from("users")
-      .select("username")
-      .eq("id", userId)
-      .single();
+      // Get current user name for notification
+      const userResult = await client.query(
+        "SELECT username FROM users WHERE id = $1",
+        [userId]
+      );
+      const currentUserName =
+        userResult.rows[0]?.username || "A user";
 
-    const currentUserName = currentUser?.username || "A user";
-
-    const { error: notifError } = await client
-      .from("notifications")
-      .insert({
-        id: randomUUID(),
-        user_id: targetUserId,
+      // Create notification for rated user
+      await createNotification({
+        userId: targetUserId,
         type: "rating_received",
         title: "New Rating",
         description: `${currentUserName} left you a ${rating}-star rating`,
-        actor_id: userId,
-        target_id: transactionId,
-        target_type: "transaction",
+        actorId: userId,
+        targetId: transactionId,
+        targetType: "transaction",
         data: {
           rating,
           ratingType,
           reviewText: review,
         },
-        created_at: now,
       });
-
-    if (notifError) {
-      console.error("[ratings] Notification error:", notifError);
-      // Don't fail if notification fails - rating was saved
+    } finally {
+      if (client) {
+        client.release();
+      }
     }
 
     return {
