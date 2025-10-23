@@ -1824,6 +1824,37 @@ const Messages = (): JSX.Element => {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Support Dialog */}
+      <AlertDialog open={showSupportDialog} onOpenChange={setShowSupportDialog}>
+        <AlertDialogContent>
+          <AlertDialogTitle>Request Support</AlertDialogTitle>
+          <AlertDialogDescription className="space-y-4">
+            <p>
+              This conversation is archived. Please describe how we can help you with this item.
+            </p>
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-foreground">Message</span>
+              <textarea
+                value={supportMessage}
+                onChange={(e) => setSupportMessage(e.target.value)}
+                placeholder="Describe the issue or question..."
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+                rows={4}
+              />
+            </label>
+          </AlertDialogDescription>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleSubmitSupportRequest}
+              disabled={!supportMessage.trim()}
+            >
+              Send Support Request
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };
