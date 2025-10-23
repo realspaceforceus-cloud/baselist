@@ -900,6 +900,27 @@ export const handler: Handler = async (event) => {
 
       transaction.offer.status = "declined";
 
+      // Find the pending offer message and update its status to declined
+      const offerMessageResult = await client.query(
+        `SELECT id, body FROM messages WHERE thread_id = $1 AND type = 'offer'
+         ORDER BY sent_at DESC LIMIT 1`,
+        [threadId],
+      );
+
+      if (offerMessageResult.rows.length > 0) {
+        const offerMessage = offerMessageResult.rows[0];
+        try {
+          const offerData = JSON.parse(offerMessage.body);
+          offerData.status = "declined";
+          await client.query(
+            `UPDATE messages SET body = $1 WHERE id = $2`,
+            [JSON.stringify(offerData), offerMessage.id],
+          );
+        } catch (parseErr) {
+          console.error("Failed to parse offer message body:", parseErr);
+        }
+      }
+
       await client.query(
         "UPDATE message_threads SET transaction = $1, updated_at = NOW() WHERE id = $2",
         [JSON.stringify(transaction), threadId],
