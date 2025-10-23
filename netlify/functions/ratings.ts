@@ -9,13 +9,26 @@ export const handler: Handler = async (event, context) => {
   console.log("[RATINGS] Method:", event.httpMethod);
   console.log("[RATINGS] Path:", event.path);
 
+  // Handle CORS preflight
+  if (event.httpMethod === "OPTIONS") {
+    console.log("[RATINGS] OPTIONS preflight request");
+    return {
+      statusCode: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    };
+  }
+
   // Only allow POST
   if (event.httpMethod !== "POST") {
     console.log("[RATINGS] ❌ Method not allowed:", event.httpMethod);
     return {
       statusCode: 405,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         error: "Method not allowed",
         received: event.httpMethod,
         expected: "POST"
