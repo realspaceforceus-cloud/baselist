@@ -1356,9 +1356,12 @@ const Messages = (): JSX.Element => {
                       offerAmount = Number(message.body) || 0;
                     }
 
-                    const canAccept = !isOwn && messageOfferStatus === "pending";
-                    const canDecline = !isOwn && messageOfferStatus === "pending";
-                    const canRetract = isOwn && messageOfferStatus === "pending";
+                    const canAccept =
+                      !isOwn && messageOfferStatus === "pending";
+                    const canDecline =
+                      !isOwn && messageOfferStatus === "pending";
+                    const canRetract =
+                      isOwn && messageOfferStatus === "pending";
                     const partnerName = isOwn
                       ? "You"
                       : activeSummary.partnerName;

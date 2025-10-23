@@ -168,8 +168,7 @@ const Profile = (): JSX.Element => {
       )
       .sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime(),
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     console.log("[Profile] useMemo userNotices count:", result.length);
     return result;

@@ -770,10 +770,10 @@ export const handler: Handler = async (event) => {
         try {
           const offerData = JSON.parse(offerMessage.body);
           offerData.status = "accepted";
-          await client.query(
-            `UPDATE messages SET body = $1 WHERE id = $2`,
-            [JSON.stringify(offerData), offerMessage.id],
-          );
+          await client.query(`UPDATE messages SET body = $1 WHERE id = $2`, [
+            JSON.stringify(offerData),
+            offerMessage.id,
+          ]);
         } catch (parseErr) {
           console.error("Failed to parse offer message body:", parseErr);
         }
@@ -912,10 +912,10 @@ export const handler: Handler = async (event) => {
         try {
           const offerData = JSON.parse(offerMessage.body);
           offerData.status = "declined";
-          await client.query(
-            `UPDATE messages SET body = $1 WHERE id = $2`,
-            [JSON.stringify(offerData), offerMessage.id],
-          );
+          await client.query(`UPDATE messages SET body = $1 WHERE id = $2`, [
+            JSON.stringify(offerData),
+            offerMessage.id,
+          ]);
         } catch (parseErr) {
           console.error("Failed to parse offer message body:", parseErr);
         }
@@ -1092,10 +1092,10 @@ export const handler: Handler = async (event) => {
         try {
           const offerData = JSON.parse(offerMessage.body);
           offerData.status = "retracted";
-          await client.query(
-            `UPDATE messages SET body = $1 WHERE id = $2`,
-            [JSON.stringify(offerData), offerMessage.id],
-          );
+          await client.query(`UPDATE messages SET body = $1 WHERE id = $2`, [
+            JSON.stringify(offerData),
+            offerMessage.id,
+          ]);
         } catch (parseErr) {
           console.error("Failed to parse offer message body:", parseErr);
         }
