@@ -1,4 +1,5 @@
 import { Handler } from "@netlify/functions";
+import { Handler } from "@netlify/functions";
 import { pool } from "./db";
 import { randomUUID } from "crypto";
 import { getUserIdFromAuth } from "./auth";
