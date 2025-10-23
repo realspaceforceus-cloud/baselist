@@ -80,7 +80,6 @@ export const CompletionCard = ({
     }
   };
 
-  const tx = thread.transaction;
   if (!tx) return null;
 
   // Use new contract fields
