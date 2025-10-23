@@ -1218,6 +1218,296 @@ export const handler: Handler = async (event) => {
     }
   }
 
+  // POST /api/messages/threads/:threadId/transaction/mark-complete
+  if (method === "POST" && path.includes("/transaction/mark-complete")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/")[0];
+      const userId = await getUserIdFromAuth(event);
+      const body = JSON.parse(event.body || "{}");
+
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const threadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const thread = threadResult.rows[0];
+      const tx = thread.transaction || {
+        id: randomUUID(),
+        offer: thread.transaction?.offer,
+      };
+
+      const isA = userId === thread.participants[0];
+      const isB = userId === thread.participants[1];
+
+      if (!isA && !isB) {
+        return {
+          statusCode: 403,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Not a participant" }),
+        };
+      }
+
+      const now = new Date().toISOString();
+      const aMarkedAt = tx.aMarkedAt || (isA ? now : undefined);
+      const bMarkedAt = tx.bMarkedAt || (isB ? now : undefined);
+
+      let newState = "open";
+      if (aMarkedAt && bMarkedAt) {
+        newState = "completed";
+      } else if (isA && aMarkedAt) {
+        newState = "pending_a";
+      } else if (isB && bMarkedAt) {
+        newState = "pending_b";
+      }
+
+      const updatedTx = {
+        ...tx,
+        state: newState,
+        aMarkedAt: aMarkedAt || tx.aMarkedAt || null,
+        bMarkedAt: bMarkedAt || tx.bMarkedAt || null,
+        completedAt: newState === "completed" ? now : tx.completedAt,
+      };
+
+      const timeline = thread.timeline || [];
+      timeline.push({
+        at: now,
+        actorId: userId,
+        action: "mark_complete",
+      });
+
+      if (newState === "completed") {
+        timeline.push({
+          at: now,
+          actorId: userId,
+          action: "transaction_completed",
+        });
+
+        if (thread.listing_id) {
+          await client.query(
+            "UPDATE listings SET status = $1 WHERE id = $2",
+            ["sold", thread.listing_id],
+          );
+        }
+      }
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
+        [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
+      );
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transaction: updatedTx }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
+  // POST /api/messages/threads/:threadId/transaction/agree
+  if (method === "POST" && path.includes("/transaction/agree")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/")[0];
+      const userId = await getUserIdFromAuth(event);
+
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const threadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const thread = threadResult.rows[0];
+      const tx = thread.transaction || { id: randomUUID() };
+
+      if (tx.state !== "pending_a" && tx.state !== "pending_b") {
+        return {
+          statusCode: 409,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "No completion pending" }),
+        };
+      }
+
+      const now = new Date().toISOString();
+      const updatedTx = {
+        ...tx,
+        state: "completed",
+        aMarkedAt: tx.aMarkedAt || now,
+        bMarkedAt: tx.bMarkedAt || now,
+        completedAt: now,
+      };
+
+      const timeline = thread.timeline || [];
+      timeline.push({
+        at: now,
+        actorId: userId,
+        action: "agree_complete",
+      });
+      timeline.push({
+        at: now,
+        actorId: userId,
+        action: "transaction_completed",
+      });
+
+      if (thread.listing_id) {
+        await client.query(
+          "UPDATE listings SET status = $1 WHERE id = $2",
+          ["sold", thread.listing_id],
+        );
+      }
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
+        [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
+      );
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transaction: updatedTx }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
+  // POST /api/messages/threads/:threadId/transaction/disagree
+  if (method === "POST" && path.includes("/transaction/disagree")) {
+    const client = await pool.connect();
+    try {
+      const threadId = path.split("/threads/")[1].split("/")[0];
+      const userId = await getUserIdFromAuth(event);
+      const body = JSON.parse(event.body || "{}");
+
+      if (!userId) {
+        return {
+          statusCode: 401,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const threadResult = await client.query(
+        "SELECT * FROM message_threads WHERE id = $1",
+        [threadId],
+      );
+
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const thread = threadResult.rows[0];
+      const tx = thread.transaction || { id: randomUUID() };
+
+      if (tx.state !== "pending_a" && tx.state !== "pending_b") {
+        return {
+          statusCode: 409,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "No completion pending" }),
+        };
+      }
+
+      const now = new Date().toISOString();
+      const updatedTx = {
+        ...tx,
+        state: "disputed",
+        dispute: {
+          byUserId: userId,
+          reason: body.reason || "No reason provided",
+          openedAt: now,
+          resolvedAt: null,
+        },
+      };
+
+      const timeline = thread.timeline || [];
+      timeline.push({
+        at: now,
+        actorId: userId,
+        action: "disagree_complete",
+        data: { reason: body.reason },
+      });
+      timeline.push({
+        at: now,
+        actorId: userId,
+        action: "dispute_opened",
+      });
+
+      await client.query(
+        "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
+        [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
+      );
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transaction: updatedTx }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   return {
     statusCode: 404,
     body: JSON.stringify({ error: "Not found" }),
