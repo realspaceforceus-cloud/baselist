@@ -166,6 +166,14 @@ export const CompletionCard = ({
       console.log("[Rating] Response body:", ratingData);
 
       if (!response.ok) {
+        // Handle "already rated" error specially
+        if (ratingData?.alreadyRated) {
+          console.log("[Rating] User already rated, marking as submitted");
+          setRatingSubmitted(true);
+          showSuccess("You've already rated this transaction");
+          return;
+        }
+
         const errorMessage =
           ratingData?.details ||
           ratingData?.originalMessage ||
