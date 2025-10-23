@@ -650,7 +650,7 @@ const Messages = (): JSX.Element => {
   };
 
   const handleDeclineOffer = async () => {
-    if (!activeSummary) {
+    if (!activeSummary || !user?.id) {
       return;
     }
 
@@ -661,28 +661,40 @@ const Messages = (): JSX.Element => {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
         },
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to decline offer");
+      // Parse response safely
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("[handleDeclineOffer] Failed to parse response:", parseError);
       }
 
-      const data = await response.json();
+      // Accept idempotent responses: update UI if server sent thread data
+      if (data?.thread) {
+        setMessageThreads((prev) => {
+          const existingIndex = prev.findIndex(
+            (t) => t.id === activeSummary.thread.id,
+          );
+          if (existingIndex !== -1) {
+            const remaining = prev.filter((_, i) => i !== existingIndex);
+            return [data.thread, ...remaining];
+          }
+          return prev;
+        });
 
-      // Update thread with full response including all messages
-      setMessageThreads((prev) => {
-        const existingIndex = prev.findIndex(
-          (t) => t.id === activeSummary.thread.id,
-        );
-        if (existingIndex !== -1) {
-          const remaining = prev.filter((_, i) => i !== existingIndex);
-          return [data.thread, ...remaining];
+        if (response.ok) {
+          toast.success("Offer declined");
+        } else {
+          toast.info("Offer update processed");
         }
-        return prev;
-      });
-
-      toast.success("Offer declined");
+      } else if (!response.ok) {
+        const errorMsg = data?.error || "Failed to decline offer";
+        throw new Error(errorMsg);
+      }
     } catch (error) {
       toast.error("Failed to decline offer", {
         description: error instanceof Error ? error.message : "Try again later",
