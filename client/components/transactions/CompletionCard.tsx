@@ -160,7 +160,17 @@ export const CompletionCard = ({
       const errorMsg =
         error instanceof Error ? error.message : "Failed to submit rating";
       console.error("Error submitting rating:", error);
-      showError(`${errorMsg}. Please try again.`);
+      console.error("Full error stack:", error instanceof Error ? error.stack : "no stack");
+      // Show more detailed error message to user
+      showError(
+        `Rating error: ${errorMsg}${
+          errorMsg.includes("400") || errorMsg.includes("401")
+            ? " (check required fields)"
+            : errorMsg.includes("500")
+              ? " (server error)"
+              : ""
+        }`
+      );
     } finally {
       setIsLoading(false);
     }
