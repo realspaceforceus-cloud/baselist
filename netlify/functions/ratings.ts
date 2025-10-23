@@ -134,14 +134,43 @@ export const handler: Handler = async (event, context) => {
 
       console.log("[RATINGS] ✓ Thread found");
 
-      // 2. Get existing transaction from thread
+      // 2. Check if user already rated this transaction
+      console.log("[RATINGS] Checking for existing rating...");
+      const existingRating = await client.query(
+        `SELECT id FROM ratings WHERE thread_id = $1 AND user_id = $2`,
+        [actualThreadId, userId],
+      );
+
+      if (existingRating.rows.length > 0) {
+        console.log("[RATINGS] User already rated this transaction");
+        return {
+          statusCode: 400,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            error: "You have already rated this transaction",
+            alreadyRated: true
+          }),
+        };
+      }
+
+      // 3. Get existing transaction from thread
       const transaction = threadCheck.rows[0].transaction || {};
       const ratingByUser = transaction.ratingByUser || {};
       ratingByUser[userId] = rating;
 
       console.log("[RATINGS] Updated ratingByUser:", ratingByUser);
 
-      // 3. Update transaction with ratingByUser (no system message - skips type check constraint)
+      // 4. Insert rating into ratings table
+      const ratingRecordId = randomUUID();
+      console.log("[RATINGS] Inserting rating record...");
+      await client.query(
+        `INSERT INTO ratings (id, thread_id, user_id, score, comment, created_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())`,
+        [ratingRecordId, actualThreadId, userId, rating, review || null],
+      );
+      console.log("[RATINGS] ✓ Rating record inserted");
+
+      // 5. Update transaction with ratingByUser (no system message - skips type check constraint)
       console.log("[RATINGS] Updating transaction...");
       const updatedTransaction = {
         ...transaction,
