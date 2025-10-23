@@ -47,7 +47,9 @@ export const CompletionCard = ({
   const [isLoading, setIsLoading] = useState(false);
   const [rating, setRating] = useState(0);
   const [ratingText, setRatingText] = useState("");
-  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const tx = thread.transaction;
+  const userAlreadyRated = tx?.ratingByUser?.[currentUserId] != null;
+  const [ratingSubmitted, setRatingSubmitted] = useState(userAlreadyRated);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   // Helper functions for toast notifications
