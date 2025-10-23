@@ -1156,7 +1156,7 @@ const Messages = (): JSX.Element => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {activeSummary.listing ? (
+              {!activeSummary.isArchived && activeSummary.listing ? (
                 <Button
                   asChild
                   variant="outline"
@@ -1170,8 +1170,9 @@ const Messages = (): JSX.Element => {
                   </Link>
                 </Button>
               ) : null}
-              {!activeSummary.listing ||
-              activeSummary.listing.status === "sold" ? (
+              {!activeSummary.isArchived &&
+              (!activeSummary.listing ||
+                activeSummary.listing.status === "sold") ? (
                 <Button
                   type="button"
                   variant="outline"
