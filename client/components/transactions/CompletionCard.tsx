@@ -141,49 +141,28 @@ export const CompletionCard = ({
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `/.netlify/functions/messages/threads/${thread.id}/transaction/disagree`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: currentUserId,
-            reason,
-          }),
-        },
-      );
+      const disagreeUrl = `/.netlify/functions/messages/threads/${thread.id}/transaction/disagree`;
+      const { ok, status, data, text } = await jsonFetch(disagreeUrl, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUserId,
+          reason,
+        }),
+      });
 
-      // Parse response safely
-      let data: any = null;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.error("[handleDisagree] Failed to parse response:", parseError);
-      }
-
-      // Accept idempotent responses: update UI if server sent thread data
       if (data?.thread) {
         onUpdated(data.thread.transaction, data.thread);
+      }
 
-        if (response.ok) {
-          showSuccess(
-            "Dispute opened. An admin will review your case shortly.",
-          );
-        } else {
-          showSuccess("Status updated");
-        }
+      if (!ok) {
+        const msg = data?.error || data?.message || text || `HTTP ${status}`;
+        showError(`Failed to open dispute — ${msg}`);
         return;
       }
 
-      // No thread data and error status
-      if (!response.ok) {
-        const errorMsg = data?.error || "Failed to open dispute";
-        throw new Error(errorMsg);
-      }
-    } catch (error) {
-      console.error("Error opening dispute:", error);
-      showError("Failed to open dispute. Please try again.");
+      showSuccess("Dispute opened. An admin will review your case shortly.");
     } finally {
       setIsLoading(false);
     }
