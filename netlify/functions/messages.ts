@@ -1744,15 +1744,11 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/")[0];
       const authUserId = await getUserIdFromAuth(event);
-      const body = JSON.parse(event.body || "{}");
-      const userId = body.actorId || body.userId || authUserId;
+      const reqBody = parseBody(event);
+      const userId = reqBody.actorId || reqBody.userId || authUserId;
 
       if (!userId) {
-        return {
-          statusCode: 401,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Unauthorized" }),
-        };
+        return err(401, "UNAUTHORIZED");
       }
 
       const threadResult = await client.query(
@@ -1761,11 +1757,7 @@ export const handler: Handler = async (event) => {
       );
 
       if (threadResult.rows.length === 0) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Thread not found" }),
-        };
+        return err(404, "THREAD_NOT_FOUND");
       }
 
       const thread = threadResult.rows[0];
