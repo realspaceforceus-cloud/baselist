@@ -9,7 +9,7 @@ export const handler: Handler = async (event) => {
   const path = event.path.replace("/.netlify/functions/saved-listings", "");
 
   // Get userId from auth
-  const userId = await getUserIdFromAuth(event);
+  const userId = getUserIdFromAuth(event);
 
   if (!userId) {
     // Return 401 for unauthenticated requests
