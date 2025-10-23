@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { pool } from "./db";
 import { getUserIdFromAuth } from "./auth";
-import { createNotification } from "./create-notification";
+import { createNotification } from "./notification-helpers";
 
 export const handler = async (event: any) => {
   // Only allow POST
