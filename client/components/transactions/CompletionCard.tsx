@@ -118,7 +118,8 @@ export const CompletionCard = ({
       }
 
       const data = await response.json();
-      onUpdated(data.transaction);
+      // Pass both transaction and full thread for UI to update
+      onUpdated(data.transaction || data.thread?.transaction, data.thread);
 
       // Mark listing as sold
       if (thread.listingId) {
