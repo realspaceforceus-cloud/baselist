@@ -1,10 +1,24 @@
 import { useState } from "react";
+import { useState } from "react";
 import { Check, AlertCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { MessageThread, ThreadTransaction } from "@/types";
+
+// Robust fetch helper that always returns structured data
+async function jsonFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const res = await fetch(input, init);
+  const text = await res.text();
+  let data: any = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    // non-JSON error body
+  }
+  return { ok: res.ok, status: res.status, data, text };
+}
 
 interface CompletionCardProps {
   thread: MessageThread;
