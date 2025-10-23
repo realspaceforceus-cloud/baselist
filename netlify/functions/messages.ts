@@ -1503,12 +1503,8 @@ export const handler: Handler = async (event) => {
             thread.listing_id,
           ]);
         }
-
-        // Update thread-level status to keep it in sync
-        await client.query(
-          "UPDATE message_threads SET status = $1 WHERE id = $2",
-          ["completed", threadId],
-        );
+        // Note: Do NOT update message_threads.status to 'completed' - constraint only allows 'active', 'archived', 'closed'
+        // Transaction status is stored in the JSONB field instead
       }
 
       // Update thread with new transaction state
@@ -1651,26 +1647,8 @@ export const handler: Handler = async (event) => {
           thread.listing_id,
         ]);
       }
-
-      // Update thread-level status to keep it in sync
-      await client.query(
-        "UPDATE message_threads SET status = $1 WHERE id = $2",
-        ["completed", threadId],
-      );
-
-      // Add system message to chat
-      const systemMessageId = randomUUID();
-      await client.query(
-        "INSERT INTO messages (id, thread_id, author_id, body, sent_at, type) VALUES ($1, $2, $3, $4, $5, $6)",
-        [
-          systemMessageId,
-          threadId,
-          null,
-          "Transaction completed.",
-          now,
-          "system",
-        ],
-      );
+      // Note: Do NOT update message_threads.status to 'completed' - constraint only allows 'active', 'archived', 'closed'
+      // Transaction status is stored in the JSONB field instead
 
       await client.query(
         "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
