@@ -1379,9 +1379,11 @@ const Messages = (): JSX.Element => {
                               "max-w-sm rounded-2xl border-2 p-4 shadow-sm",
                               messageOfferStatus === "accepted"
                                 ? "border-green-500/40 bg-green-50 dark:bg-green-950/30"
-                                : messageOfferStatus === "retracted"
-                                  ? "border-gray-300/40 bg-gray-50 dark:bg-gray-950/20"
-                                  : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30",
+                                : messageOfferStatus === "declined"
+                                  ? "border-red-500/40 bg-red-50 dark:bg-red-950/30"
+                                  : messageOfferStatus === "retracted"
+                                    ? "border-gray-300/40 bg-gray-50 dark:bg-gray-950/20"
+                                    : "border-blue-500/40 bg-blue-50 dark:bg-blue-950/30",
                             )}
                           >
                             <div className="flex gap-3">
