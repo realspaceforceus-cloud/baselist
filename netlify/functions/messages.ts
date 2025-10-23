@@ -958,15 +958,11 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/decline-offer")[0];
       const authUserId = await getUserIdFromAuth(event);
-      const body = JSON.parse(event.body || "{}");
-      const userId = body.userId || authUserId;
+      const reqBody = parseBody(event);
+      const userId = reqBody.userId || authUserId;
 
       if (!userId || !threadId) {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Missing required fields" }),
-        };
+        return err(400, "MISSING_REQUIRED_FIELDS");
       }
 
       const threadResult = await client.query(
