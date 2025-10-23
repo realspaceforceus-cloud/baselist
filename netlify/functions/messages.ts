@@ -1530,34 +1530,7 @@ export const handler: Handler = async (event) => {
         );
       }
 
-      // Add system message to chat
-      const systemMessageId = randomUUID();
-      const systemMessage = {
-        id: systemMessageId,
-        thread_id: threadId,
-        author_id: userId,
-        body:
-          newStatus === "completed"
-            ? "Transaction completed."
-            : `${
-                participants.find((p: string) => p === userId) ? "You" : "They"
-              } marked complete.`,
-        sent_at: now,
-        type: "system",
-      };
-
-      await client.query(
-        "INSERT INTO messages (id, thread_id, author_id, body, sent_at, type) VALUES ($1, $2, $3, $4, $5, $6)",
-        [
-          systemMessageId,
-          threadId,
-          systemMessage.author_id,
-          systemMessage.body,
-          now,
-          "system",
-        ],
-      );
-
+      // Update thread with new transaction state and timeline
       await client.query(
         "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
         [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
