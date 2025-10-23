@@ -236,7 +236,7 @@ export const handler: Handler = async (event, context) => {
       console.log("[RATINGS] ✓ SUCCESS - Returning response");
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: corsHeaders,
         body: JSON.stringify({
           success: true,
           ratingId,
