@@ -780,24 +780,30 @@ export const handler: Handler = async (event) => {
       // Idempotency: already accepted
       if (transaction.offer.status === "accepted") {
         const listing = threadData.listing_id
-          ? (await client.query(
-              "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
-              [threadData.listing_id],
-            )).rows[0]
+          ? (
+              await client.query(
+                "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+                [threadData.listing_id],
+              )
+            ).rows[0]
           : null;
         const partnerId = threadData.participants.find(
           (p: string) => p !== userId,
         );
         const partner = partnerId
-          ? (await client.query(
-              "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
-              [partnerId],
-            )).rows[0]
+          ? (
+              await client.query(
+                "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+                [partnerId],
+              )
+            ).rows[0]
           : null;
-        const messages = (await client.query(
-          "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
-          [threadId],
-        )).rows.map((msg: any) => ({
+        const messages = (
+          await client.query(
+            "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+            [threadId],
+          )
+        ).rows.map((msg: any) => ({
           id: msg.id,
           threadId: msg.thread_id,
           authorId: msg.author_id,
