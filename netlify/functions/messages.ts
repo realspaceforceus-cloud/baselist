@@ -1480,18 +1480,65 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
       );
 
-      // Return the full updated thread so UI can update completely
+      // Fetch the full updated thread with all related data
       const updatedThreadResult = await client.query(
         "SELECT * FROM message_threads WHERE id = $1",
         [threadId],
       );
       const updatedThread = updatedThreadResult.rows[0];
-      updatedThread.transaction = updatedTx;
+
+      // Fetch listing if exists
+      const listingResult = updatedThread.listing_id
+        ? await client.query(
+            "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+            [updatedThread.listing_id],
+          )
+        : { rows: [null] };
+      const listing = listingResult.rows[0];
+
+      // Fetch partner data
+      const partnerId = participants.find((p: string) => p !== userId);
+      const partnerResult = partnerId
+        ? await client.query(
+            "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+            [partnerId],
+          )
+        : { rows: [null] };
+      const partner = partnerResult.rows[0];
+
+      // Fetch all messages in the thread
+      const messagesResult = await client.query(
+        "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+        [threadId],
+      );
 
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ thread: updatedThread }),
+        body: JSON.stringify({
+          thread: {
+            id: updatedThread.id,
+            listingId: updatedThread.listing_id,
+            participants: updatedThread.participants,
+            status: updatedThread.status,
+            archivedBy: updatedThread.archived_by,
+            deletedBy: updatedThread.deleted_by,
+            transaction: updatedTx,
+            timeline: timeline,
+            createdAt: updatedThread.created_at,
+            updatedAt: updatedThread.updated_at,
+            listing,
+            partner,
+            messages: messagesResult.rows.map((msg: any) => ({
+              id: msg.id,
+              threadId: msg.thread_id,
+              authorId: msg.author_id,
+              body: msg.body,
+              sentAt: msg.sent_at,
+              type: msg.type || "text",
+            })),
+          },
+        }),
       };
     } catch (err) {
       const errorMsg =
