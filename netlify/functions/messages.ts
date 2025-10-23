@@ -597,12 +597,16 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(transaction), threadId],
       );
 
-      // Create offer message
+      // Create offer message with embedded status
       const messageId = randomUUID();
+      const offerData = JSON.stringify({
+        amount: Number(amount),
+        status: "pending",
+      });
       await client.query(
         `INSERT INTO messages (id, thread_id, author_id, body, sent_at, type)
          VALUES ($1, $2, $3, $4, NOW(), $5)`,
-        [messageId, threadId, userId, String(amount), "offer"],
+        [messageId, threadId, userId, offerData, "offer"],
       );
 
       // Fetch updated thread with all data
