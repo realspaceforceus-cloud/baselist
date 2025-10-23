@@ -1268,36 +1268,7 @@ const Messages = (): JSX.Element => {
           ) : null}
 
           <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
-            {awaitingUserConfirmation ? (
-              <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800 shadow-inner">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="font-semibold">
-                    The other party marked this transaction as complete. Confirm
-                    if you received or completed the deal.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="rounded-lg text-xs font-semibold"
-                      onClick={handleConfirmCompletion}
-                    >
-                      Confirm
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
-                      onClick={() => setShowDisputeDialog(true)}
-                    >
-                      Dispute
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : userMarkedComplete ? (
+            {userMarkedComplete && !awaitingUserConfirmation ? (
               <div className="rounded-3xl border border-blue-200 bg-blue-50 p-4 text-xs text-blue-800 shadow-inner">
                 <p className="font-semibold">
                   You marked this transaction as complete. Waiting for the other
