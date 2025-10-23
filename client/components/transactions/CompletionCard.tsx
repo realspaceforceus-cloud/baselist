@@ -124,10 +124,10 @@ export const CompletionCard = ({
         await markListingAsSold(thread.listingId);
       }
 
-      toast.success("Transaction completed! 🎉");
+      showSuccess("Transaction completed! 🎉");
     } catch (error) {
       console.error("Error agreeing to completion:", error);
-      toast.error("Failed to confirm. Please try again.");
+      showError("Failed to confirm. Please try again.");
     } finally {
       setIsLoading(false);
     }
