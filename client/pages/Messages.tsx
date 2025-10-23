@@ -185,11 +185,16 @@ const Messages = (): JSX.Element => {
         // Find the current thread and check for updates
         const updatedThread = threads.find((t: any) => t.id === threadId);
         if (updatedThread) {
-          console.log("[Polling] Updated thread - messages count:", updatedThread.messages?.length, "Transaction:", updatedThread.transaction);
+          console.log(
+            "[Polling] Updated thread - messages count:",
+            updatedThread.messages?.length,
+            "Transaction:",
+            updatedThread.transaction,
+          );
           setMessageThreads((prevThreads) => {
             // Create a new array with the updated thread
             const newThreads = prevThreads.map((t) =>
-              t.id === threadId ? updatedThread : t
+              t.id === threadId ? updatedThread : t,
             );
             return newThreads;
           });
