@@ -29,11 +29,11 @@ export const handler: Handler = async (event) => {
           u.last_login_at as "lastActiveAt",
           COALESCE(
             (SELECT AVG(CAST(score AS FLOAT)) FROM ratings r
-             WHERE r.target_user_id = u.id),
+             WHERE r.target_user_id = u.id OR (r.transaction_id IN (SELECT id FROM transactions WHERE seller_id = u.id) AND r.user_id != u.id)),
             NULL
           ) as rating,
           (SELECT COUNT(*) FROM ratings r
-           WHERE r.target_user_id = u.id) as "ratingCount",
+           WHERE r.target_user_id = u.id OR (r.transaction_id IN (SELECT id FROM transactions WHERE seller_id = u.id) AND r.user_id != u.id)) as "ratingCount",
           (SELECT COUNT(*) FROM transactions WHERE seller_id = u.id AND status = 'completed') as "completedSales"
         FROM users u WHERE ${isUuid ? "u.id = $1" : "LOWER(u.username) = LOWER($1)"}`,
         [param],
