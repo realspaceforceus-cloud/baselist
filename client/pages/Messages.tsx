@@ -1692,7 +1692,9 @@ const Messages = (): JSX.Element => {
                             : "Quick offer"}
                         </Button>
                       ) : null}
-                      {!activeSummary.isArchived && !awaitingUserConfirmation && !isDisputed ? (
+                      {!activeSummary.isArchived &&
+                      !awaitingUserConfirmation &&
+                      !isDisputed ? (
                         <Button
                           type="button"
                           variant="outline"

@@ -51,7 +51,9 @@ export const MyListings = (): JSX.Element => {
     listingId: string;
     threadId: string;
   } | null>(null);
-  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "sold">("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "sold">(
+    "all",
+  );
 
   // Fetch user's listings using React Query hook
   const { data: listingsResponse, isLoading } = useUserListings(
