@@ -186,9 +186,7 @@ const Messages = (): JSX.Element => {
         const updatedThread = threads.find((t: any) => t.id === threadId);
         if (updatedThread) {
           setMessageThreads((prevThreads) =>
-            prevThreads.map((t) =>
-              t.id === threadId ? updatedThread : t
-            )
+            prevThreads.map((t) => (t.id === threadId ? updatedThread : t)),
           );
         }
       } catch (error) {
