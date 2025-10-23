@@ -606,63 +606,32 @@ const Messages = (): JSX.Element => {
 
   const handleAcceptOffer = async () => {
     if (!activeSummary || !user?.id) {
-      console.log("[handleAcceptOffer] No activeSummary or user");
       return;
     }
 
-    try {
-      const response = await fetch(
-        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/accept-offer`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id }),
-        },
+    const acceptUrl = `/.netlify/functions/messages/threads/${activeSummary.thread.id}/accept-offer`;
+    const { ok, status, data, text } = await jsonFetch(acceptUrl, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id }),
+    });
+
+    // If server included a thread even on failure, reconcile immediately.
+    if (data?.thread) {
+      setMessageThreads((prev) =>
+        prev.map((t) => (t.id === data.thread.id ? data.thread : t)),
       );
-
-      // Parse response safely - handle errors gracefully
-      let data: any = null;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.error(
-          "[handleAcceptOffer] Failed to parse response:",
-          parseError,
-        );
-      }
-
-      // Accept idempotent responses: update UI if server sent thread data, even on non-200
-      if (data?.thread) {
-        setMessageThreads((prev) => {
-          const existingIndex = prev.findIndex(
-            (t) => t.id === activeSummary.thread.id,
-          );
-          if (existingIndex !== -1) {
-            const remaining = prev.filter((_, i) => i !== existingIndex);
-            return [data.thread, ...remaining];
-          }
-          return prev;
-        });
-
-        // Show appropriate message based on response status
-        if (response.ok) {
-          toast.success("Offer accepted");
-        } else {
-          // 409 or other status that still updated
-          toast.info("Offer update processed");
-        }
-      } else if (!response.ok) {
-        // No thread data and error status
-        const errorMsg = data?.error || "Failed to accept offer";
-        throw new Error(errorMsg);
-      }
-    } catch (error) {
-      console.error("[handleAcceptOffer] Error:", error);
-      toast.error("Failed to accept offer", {
-        description: error instanceof Error ? error.message : "Try again later",
-      });
     }
+
+    if (!ok) {
+      // Surface the *real* reason from server
+      const msg = data?.error || data?.message || text || `HTTP ${status}`;
+      toast.error(`Failed to accept offer — ${msg}`);
+      return;
+    }
+
+    toast.success("Offer accepted");
   };
 
   const handleDeclineOffer = async () => {
