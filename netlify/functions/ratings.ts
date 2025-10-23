@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { pool } from "./db";
 import { getUserIdFromAuth } from "./auth";
-import { createNotification } from "./notification-helpers";
+import { createNotification } from "./create-notification";
 
 export const handler = async (event: any) => {
   // Only allow POST
@@ -15,61 +15,36 @@ export const handler = async (event: any) => {
 
   try {
     // Get authenticated user
-    console.log("[ratings] Starting rating submission...");
-
-    const userId = getUserIdFromAuth(event);
-    console.log(
-      "[ratings] Auth check - userId:",
-      userId ? "present" : "MISSING",
-    );
+    const userId = await getUserIdFromAuth(event);
 
     if (!userId) {
-      console.log("[ratings] No userId found in auth");
       return {
         statusCode: 401,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: "Unauthorized - no user session found",
-          details: "Cookie-based authentication failed",
-        }),
+        body: JSON.stringify({ error: "Unauthorized" }),
       };
     }
 
-    console.log("[ratings] Parsing request body...");
     const body = JSON.parse(event.body || "{}");
-    console.log("[ratings] Request body:", body);
-
     const { targetUserId, rating, review, transactionId, ratingType } = body;
 
     // Validation
-    const missingFields = [];
-    if (!targetUserId) missingFields.push("targetUserId");
-    if (!rating) missingFields.push("rating");
-    if (!transactionId) missingFields.push("transactionId");
-
-    if (missingFields.length > 0) {
-      console.log("[ratings] Missing fields:", missingFields);
+    if (!targetUserId || !rating || !transactionId) {
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           error: "Missing required fields",
-          details: `Missing: ${missingFields.join(", ")}`,
-          received: { targetUserId, rating, transactionId },
+          required: ["targetUserId", "rating", "transactionId"],
         }),
       };
     }
 
-    console.log("[ratings] Rating validation:", { rating, min: 1, max: 5 });
     if (rating < 1 || rating > 5) {
-      console.log("[ratings] Rating out of range:", rating);
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: "Rating out of range",
-          details: `Rating must be 1-5, received: ${rating}`,
-        }),
+        body: JSON.stringify({ error: "Rating must be between 1 and 5" }),
       };
     }
 
@@ -80,16 +55,7 @@ export const handler = async (event: any) => {
     try {
       client = await pool.connect();
 
-      // Insert rating into database
-      console.log("[ratings] Inserting rating:", {
-        ratingId,
-        transactionId,
-        userId,
-        targetUserId,
-        rating,
-      });
-
-      // Try to insert with all columns first
+      // 1. Insert rating into ratings table
       try {
         await client.query(
           `INSERT INTO ratings (id, transaction_id, user_id, target_user_id, score, comment, rating_type, created_at)
@@ -106,98 +72,141 @@ export const handler = async (event: any) => {
           ],
         );
       } catch (columnError: any) {
-        // If target_user_id or rating_type columns don't exist, try without them
-        console.log(
-          "[ratings] Column error, trying without target_user_id/rating_type:",
-          columnError.message,
-        );
+        // Fallback for missing columns
         await client.query(
           `INSERT INTO ratings (id, transaction_id, user_id, score, comment, created_at)
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [ratingId, transactionId, userId, rating, review || null, now],
         );
       }
-      console.log("[ratings] Rating inserted successfully");
 
-      // Get current user name for notification
-      const userResult = await client.query(
-        "SELECT username FROM users WHERE id = $1",
-        [userId],
+      // 2. Update the thread's transaction to record the rating
+      const threadResult = await client.query(
+        `SELECT transaction FROM message_threads WHERE id = $1`,
+        [transactionId],
       );
-      const currentUserName = userResult.rows[0]?.username || "A user";
-      console.log("[ratings] Current user name:", currentUserName);
 
-      // Try to create notification, but don't fail if it errors
+      if (threadResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Thread not found" }),
+        };
+      }
+
+      const transaction = threadResult.rows[0].transaction || {};
+      const ratingByUser = transaction.ratingByUser || {};
+      ratingByUser[userId] = rating;
+
+      // 3. Add system message with rating
+      const messageId = randomUUID();
+      await client.query(
+        `INSERT INTO messages (id, thread_id, author_id, body, sent_at, type)
+         VALUES ($1, $2, $3, $4, NOW(), $5)`,
+        [
+          messageId,
+          transactionId,
+          userId,
+          JSON.stringify({ rating, review, ratingByUser: userId }),
+          "system",
+        ],
+      );
+
+      // 4. Update transaction with ratingByUser
+      const updatedTransaction = {
+        ...transaction,
+        ratingByUser,
+      };
+
+      await client.query(
+        `UPDATE message_threads SET transaction = $1 WHERE id = $2`,
+        [JSON.stringify(updatedTransaction), transactionId],
+      );
+
+      // 5. Fetch and return the complete updated thread
+      const completeThreadResult = await client.query(
+        `SELECT id, listing_id, participants, status, transaction, archived_by, deleted_by
+         FROM message_threads WHERE id = $1`,
+        [transactionId],
+      );
+
+      const messagesResult = await client.query(
+        `SELECT id, author_id, body, sent_at, type FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC`,
+        [transactionId],
+      );
+
+      if (completeThreadResult.rows.length === 0) {
+        return {
+          statusCode: 500,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Failed to fetch updated thread" }),
+        };
+      }
+
+      const threadRow = completeThreadResult.rows[0];
+      const updatedThread = {
+        id: threadRow.id,
+        listingId: threadRow.listing_id,
+        participants: threadRow.participants,
+        status: threadRow.status,
+        transaction: threadRow.transaction,
+        archivedBy: threadRow.archived_by,
+        deletedBy: threadRow.deleted_by,
+        messages: messagesResult.rows.map((msg: any) => ({
+          id: msg.id,
+          authorId: msg.author_id,
+          body: msg.body,
+          sentAt: msg.sent_at,
+          type: msg.type,
+        })),
+      };
+
+      // 6. Create notification
       try {
-        console.log("[ratings] Creating notification for:", targetUserId);
+        const userResult = await client.query(
+          "SELECT username FROM users WHERE id = $1",
+          [userId],
+        );
+        const userName = userResult.rows[0]?.username || "A user";
+
         await createNotification({
           userId: targetUserId,
           type: "rating_received",
           title: "New Rating",
-          description: `${currentUserName} left you a ${rating}-star rating`,
+          description: `${userName} left you a ${rating}-star rating`,
           actorId: userId,
           targetId: transactionId,
-          targetType: "transaction",
-          data: {
-            rating,
-            ratingType,
-            reviewText: review,
-          },
+          targetType: "thread",
+          data: { rating, ratingType },
         });
-        console.log("[ratings] Notification created successfully");
       } catch (notifError) {
-        // Log notification error but don't fail the rating submission
-        console.error("[ratings] Notification error (non-fatal):", notifError);
+        console.error("Notification error (non-fatal):", notifError);
       }
-    } catch (dbError) {
-      console.error("[ratings] Database error:", dbError);
-      throw dbError;
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success: true,
+          ratingId,
+          thread: updatedThread,
+          message: "Rating submitted successfully",
+        }),
+      };
     } finally {
       if (client) {
         client.release();
       }
     }
-
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        success: true,
-        ratingId,
-        message: "Rating submitted successfully",
-      }),
-    };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
-    const errorStack = error instanceof Error ? error.stack : "";
-    const errorType =
-      error instanceof Error ? error.constructor.name : "Unknown";
-
-    console.error("[ratings] ❌ CRITICAL ERROR:", {
-      errorMsg,
-      errorType,
-      errorStack,
-      fullError: JSON.stringify(error, null, 2),
-    });
-
-    // Provide detailed error information to help debug
-    let detailedMessage = errorMsg;
-    if (errorMsg.includes("relation") || errorMsg.includes("column")) {
-      detailedMessage = `Database schema issue: ${errorMsg} (migration may not be applied)`;
-    } else if (errorMsg.includes("UNIQUE") || errorMsg.includes("constraint")) {
-      detailedMessage = `Database constraint error: ${errorMsg}`;
-    } else if (errorMsg.includes("no rows")) {
-      detailedMessage = `User not found: ${errorMsg}`;
-    }
 
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         error: "Rating submission failed",
-        details: detailedMessage,
-        type: errorType,
-        originalMessage: errorMsg,
+        details: errorMsg,
       }),
     };
   }
