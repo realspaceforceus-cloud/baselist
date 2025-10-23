@@ -166,7 +166,14 @@ export const handler: Handler = async (event, context) => {
       await client.query(
         `INSERT INTO ratings (id, thread_id, user_id, target_user_id, score, comment, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
-        [ratingRecordId, actualThreadId, userId, targetUserId, rating, review || null],
+        [
+          ratingRecordId,
+          actualThreadId,
+          userId,
+          targetUserId,
+          rating,
+          review || null,
+        ],
       );
       console.log("[RATINGS] ✓ Rating record inserted");
 

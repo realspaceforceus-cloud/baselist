@@ -1634,7 +1634,8 @@ const Messages = (): JSX.Element => {
             <div className="border-t border-border px-6 py-4">
               <div className="rounded-lg bg-muted/50 p-4 text-center">
                 <p className="mb-4 text-sm text-muted-foreground">
-                  This conversation has been archived. You can no longer send messages here.
+                  This conversation has been archived. You can no longer send
+                  messages here.
                 </p>
                 <Button
                   type="button"
@@ -1675,7 +1676,9 @@ const Messages = (): JSX.Element => {
                           !activeSummary.listing.isFree &&
                           activeSummary.listing.price
                             ? (() => {
-                                const price = Number(activeSummary.listing.price);
+                                const price = Number(
+                                  activeSummary.listing.price,
+                                );
                                 return isNaN(price)
                                   ? "Quick offer"
                                   : `Offer ${new Intl.NumberFormat("en-US", {
@@ -1831,10 +1834,13 @@ const Messages = (): JSX.Element => {
           <AlertDialogTitle>Request Support</AlertDialogTitle>
           <AlertDialogDescription className="space-y-4">
             <p>
-              This conversation is archived. Please describe how we can help you with this item.
+              This conversation is archived. Please describe how we can help you
+              with this item.
             </p>
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-foreground">Message</span>
+              <span className="text-sm font-medium text-foreground">
+                Message
+              </span>
               <textarea
                 value={supportMessage}
                 onChange={(e) => setSupportMessage(e.target.value)}
