@@ -142,20 +142,23 @@ export const CompletionCard = ({
         }),
       });
 
+      const ratingData = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to submit rating");
+        const errorMessage = ratingData?.error || ratingData?.details || "Failed to submit rating";
+        throw new Error(errorMessage);
       }
 
       setRatingSubmitted(true);
       showSuccess("Thank you for your feedback!");
       // Optionally refresh thread data if endpoint returns it
-      const ratingData = await response.json();
       if (ratingData.thread && onUpdated) {
         onUpdated(ratingData.thread.transaction, ratingData.thread);
       }
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Failed to submit rating";
       console.error("Error submitting rating:", error);
-      showError("Failed to submit rating. Please try again.");
+      showError(`${errorMsg}. Please try again.`);
     } finally {
       setIsLoading(false);
     }
