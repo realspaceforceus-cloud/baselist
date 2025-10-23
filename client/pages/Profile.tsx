@@ -155,6 +155,26 @@ const Profile = (): JSX.Element => {
     return myListings.filter((listing) => listing.status === "sold");
   }, [myListings]);
 
+  // Define userNotices BEFORE early returns (required by React rules of hooks)
+  const userNotices = useMemo(() => {
+    if (!profileUser || !isViewingOwnProfile) {
+      return [];
+    }
+    const result = notices
+      .filter(
+        (notice) =>
+          (notice.userId === profileUser.id || notice.userId === "all") &&
+          notice.category !== "payout",
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() -
+          new Date(a.createdAt).getTime(),
+      );
+    console.log("[Profile] useMemo userNotices count:", result.length);
+    return result;
+  }, [notices, profileUser?.id, isViewingOwnProfile, profileUser]);
+
   // Show error if profile not found (check after all hooks)
   if (profileUser === null) {
     return (
