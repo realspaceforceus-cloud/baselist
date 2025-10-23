@@ -1566,17 +1566,6 @@ const Messages = (): JSX.Element => {
                           : "Quick offer"}
                       </Button>
                     ) : null}
-                    {canMarkComplete ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full px-4 text-xs font-semibold"
-                        onClick={handleMarkComplete}
-                      >
-                        Mark complete
-                      </Button>
-                    ) : null}
                     {!awaitingUserConfirmation && !isDisputed ? (
                       <Button
                         type="button"
