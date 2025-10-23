@@ -122,7 +122,7 @@ export const MyListings = (): JSX.Element => {
     return { label: "Active", color: "text-green-600" };
   };
 
-  const filteredListings = listings.filter((listing) => {
+  const filteredListings = myListings.filter((listing) => {
     if (filterStatus === "active") return listing.status !== "sold";
     if (filterStatus === "sold") return listing.status === "sold";
     return true;
