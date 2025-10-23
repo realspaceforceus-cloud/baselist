@@ -41,6 +41,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { CompletionCard } from "@/components/transactions/CompletionCard";
 import { useBaseList } from "@/context/BaseListContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { generateSlug } from "@/lib/slugUtils";
