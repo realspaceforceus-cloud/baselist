@@ -55,6 +55,7 @@ const handler: Handler = async (event) => {
       client = await pool.connect();
 
       // Insert rating into database
+      console.log("[ratings] Inserting rating:", { ratingId, transactionId, userId, targetUserId, rating });
       await client.query(
         `INSERT INTO ratings (id, transaction_id, user_id, target_user_id, score, comment, rating_type, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -69,6 +70,7 @@ const handler: Handler = async (event) => {
           now,
         ],
       );
+      console.log("[ratings] Rating inserted successfully");
 
       // Get current user name for notification
       const userResult = await client.query(
@@ -76,8 +78,10 @@ const handler: Handler = async (event) => {
         [userId],
       );
       const currentUserName = userResult.rows[0]?.username || "A user";
+      console.log("[ratings] Current user name:", currentUserName);
 
       // Create notification for rated user
+      console.log("[ratings] Creating notification for:", targetUserId);
       await createNotification({
         userId: targetUserId,
         type: "rating_received",
@@ -92,6 +96,10 @@ const handler: Handler = async (event) => {
           reviewText: review,
         },
       });
+      console.log("[ratings] Notification created successfully");
+    } catch (dbError) {
+      console.error("[ratings] Database error:", dbError);
+      throw dbError;
     } finally {
       if (client) {
         client.release();
