@@ -1358,6 +1358,14 @@ export const handler: Handler = async (event) => {
           ? JSON.parse(thread.participants)
           : thread.participants;
 
+      if (!participants || !Array.isArray(participants) || participants.length < 2) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Invalid thread participants" }),
+        };
+      }
+
       const isA = userId === participants[0];
       const isB = userId === participants[1];
 
