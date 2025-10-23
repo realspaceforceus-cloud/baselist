@@ -755,37 +755,77 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/accept-offer")[0];
       const authUserId = await getUserIdFromAuth(event);
-      const body = JSON.parse(event.body || "{}");
-      const userId = body.userId || authUserId;
+      const reqBody = parseBody(event);
+      const userId = reqBody.userId || authUserId;
 
       if (!userId || !threadId) {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Missing required fields" }),
-        };
+        return err(400, "MISSING_REQUIRED_FIELDS");
       }
 
       const threadResult = await client.query(
-        "SELECT transaction FROM message_threads WHERE id = $1",
+        "SELECT * FROM message_threads WHERE id = $1",
         [threadId],
       );
 
       if (threadResult.rows.length === 0) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Thread not found" }),
-        };
+        return err(404, "THREAD_NOT_FOUND");
       }
 
-      const transaction = threadResult.rows[0].transaction || {};
+      const threadData = threadResult.rows[0];
+      const transaction = threadData.transaction || {};
       if (!transaction.offer) {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "No pending offer" }),
-        };
+        return err(400, "NO_PENDING_OFFER");
+      }
+
+      // Idempotency: already accepted
+      if (transaction.offer.status === "accepted") {
+        const listing = threadData.listing_id
+          ? (await client.query(
+              "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
+              [threadData.listing_id],
+            )).rows[0]
+          : null;
+        const partnerId = threadData.participants.find(
+          (p: string) => p !== userId,
+        );
+        const partner = partnerId
+          ? (await client.query(
+              "SELECT id, username, avatar_url, dow_verified_at FROM users WHERE id = $1",
+              [partnerId],
+            )).rows[0]
+          : null;
+        const messages = (await client.query(
+          "SELECT * FROM messages WHERE thread_id = $1 ORDER BY sent_at ASC",
+          [threadId],
+        )).rows.map((msg: any) => ({
+          id: msg.id,
+          threadId: msg.thread_id,
+          authorId: msg.author_id,
+          body: msg.body,
+          sentAt: msg.sent_at,
+          type: msg.type || "text",
+        }));
+        return ok({
+          thread: {
+            id: threadData.id,
+            listingId: threadData.listing_id,
+            participants: threadData.participants,
+            status: threadData.status,
+            archivedBy: threadData.archived_by,
+            deletedBy: threadData.deleted_by,
+            transaction,
+            timeline: threadData.timeline,
+            createdAt: threadData.created_at,
+            updatedAt: threadData.updated_at,
+            listing,
+            partner,
+            messages,
+          },
+        });
+      }
+
+      if (transaction.offer.status !== "pending") {
+        return err(409, "OFFER_NOT_PENDING");
       }
 
       transaction.offer.status = "accepted";
