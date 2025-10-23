@@ -510,7 +510,7 @@ const ListingDetail = (): JSX.Element => {
                 {currentUser?.userId === listing.sellerId ? (
                   <Button
                     className="w-full rounded-full"
-                    onClick={() => navigate(`/edit-listing/${listing.id}`)}
+                    onClick={() => navigate(`/post?edit=${listing.id}`)}
                   >
                     <Edit2 className="h-4 w-4" aria-hidden />
                     Edit listing
