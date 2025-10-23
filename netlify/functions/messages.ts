@@ -1120,15 +1120,11 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/offer")[0];
       const authUserId = await getUserIdFromAuth(event);
-      const body = JSON.parse(event.body || "{}");
-      const userId = body.userId || authUserId;
+      const reqBody = parseBody(event);
+      const userId = reqBody.userId || authUserId;
 
       if (!userId || !threadId) {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Missing required fields" }),
-        };
+        return err(400, "MISSING_REQUIRED_FIELDS");
       }
 
       const threadResult = await client.query(
@@ -1137,36 +1133,20 @@ export const handler: Handler = async (event) => {
       );
 
       if (threadResult.rows.length === 0) {
-        return {
-          statusCode: 404,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Thread not found" }),
-        };
+        return err(404, "THREAD_NOT_FOUND");
       }
 
       const transaction = threadResult.rows[0].transaction || {};
       if (!transaction.offer) {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "No pending offer" }),
-        };
+        return err(400, "NO_PENDING_OFFER");
       }
 
       if (transaction.offer.madeBy !== userId) {
-        return {
-          statusCode: 403,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Can only retract your own offer" }),
-        };
+        return err(403, "NOT_OFFER_MAKER");
       }
 
       if (transaction.offer.status !== "pending") {
-        return {
-          statusCode: 400,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Can only retract pending offers" }),
-        };
+        return err(400, "OFFER_NOT_PENDING");
       }
 
       transaction.offer.status = "retracted";
