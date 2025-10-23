@@ -173,6 +173,32 @@ const Messages = (): JSX.Element => {
     fetchThreads();
   }, [user?.id]);
 
+  // Poll for new messages every 5 seconds when viewing a specific thread
+  useEffect(() => {
+    if (!threadId || !user?.id) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await getThreads(50, 0);
+        const threads = response.threads || [];
+
+        // Find the current thread and check for updates
+        const updatedThread = threads.find((t: any) => t.id === threadId);
+        if (updatedThread) {
+          setMessageThreads((prevThreads) =>
+            prevThreads.map((t) =>
+              t.id === threadId ? updatedThread : t
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Failed to poll for thread updates:", error);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [threadId, user?.id]);
+
   const threadSummaries = useMemo<ThreadSummary[]>(() => {
     return messageThreads
       .map((thread: any) => {
