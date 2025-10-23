@@ -1389,8 +1389,8 @@ export const handler: Handler = async (event) => {
         aUserId: tx.aUserId || participants[0],
         bUserId: tx.bUserId || participants[1],
         state: newState,
-        aMarkedAt: aMarkedAt || tx.aMarkedAt || null,
-        bMarkedAt: bMarkedAt || tx.bMarkedAt || null,
+        aMarkedAt: aMarkedAt || null,
+        bMarkedAt: bMarkedAt || null,
         completedAt: newState === "completed" ? now : tx.completedAt,
       };
 
