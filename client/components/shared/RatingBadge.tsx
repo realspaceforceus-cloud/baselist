@@ -103,7 +103,7 @@ export const RatingBadge = ({
     return { average: null, count: 0 };
   }, [summary?.buyerAverage, summary?.buyerCount]);
 
-  const hasRatings = effectiveOverall.average !== null && effectiveOverall.count > 0;
+  const hasRatings = (effectiveOverall?.average ?? null) !== null && (effectiveOverall?.count ?? 0) > 0;
 
   const triggerClasses = cn(
     "inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground transition hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
