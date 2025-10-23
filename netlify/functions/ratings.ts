@@ -141,27 +141,7 @@ export const handler: Handler = async (event, context) => {
 
       console.log("[RATINGS] Updated ratingByUser:", ratingByUser);
 
-      // 3. Try to insert rating into ratings table
-      // Since ratings table references transactions table, we'll try to insert without that constraint
-      // Or just skip the ratings table and only update the thread's transaction
-      console.log("[RATINGS] Saving rating to thread transaction...");
-
-      // 4. Add system message with rating
-      const messageId = randomUUID();
-      await client.query(
-        `INSERT INTO messages (id, thread_id, author_id, body, sent_at, type)
-         VALUES ($1, $2, $3, $4, NOW(), $5)`,
-        [
-          messageId,
-          actualThreadId,
-          userId,
-          JSON.stringify({ rating, review, ratedUser: targetUserId }),
-          "system",
-        ],
-      );
-      console.log("[RATINGS] ✓ System message added");
-
-      // 5. Update transaction with ratingByUser
+      // 3. Update transaction with ratingByUser (no system message - skips type check constraint)
       console.log("[RATINGS] Updating transaction...");
       const updatedTransaction = {
         ...transaction,
