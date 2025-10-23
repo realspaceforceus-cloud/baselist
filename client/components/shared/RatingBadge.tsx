@@ -52,10 +52,17 @@ export const RatingBadge = ({
   const { getUserRatingSummary, getMemberName } = useBaseList();
   const [open, setOpen] = useState(false);
 
-  const summary = getUserRatingSummary(userId);
+  const summary = getUserRatingSummary(userId) || {
+    overallAverage: null,
+    overallCount: 0,
+    sellerAverage: null,
+    sellerCount: 0,
+    buyerAverage: null,
+    buyerCount: 0,
+  };
 
   const effectiveOverall = useMemo(() => {
-    if (summary.overallCount > 0 && summary.overallAverage !== null) {
+    if (summary?.overallCount > 0 && summary?.overallAverage !== null) {
       return {
         average: summary.overallAverage,
         count: summary.overallCount,
