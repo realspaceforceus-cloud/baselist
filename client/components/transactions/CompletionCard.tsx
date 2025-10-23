@@ -174,20 +174,37 @@ export const CompletionCard = ({
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            actorId: currentUserId,
+            userId: currentUserId,
             reason,
           }),
         },
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to open dispute");
+      // Parse response safely
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("[handleDisagree] Failed to parse response:", parseError);
       }
 
-      const data = await response.json();
-      // Pass both transaction and full thread for UI to update
-      onUpdated(data.transaction || data.thread?.transaction, data.thread);
-      showSuccess("Dispute opened. An admin will review your case shortly.");
+      // Accept idempotent responses: update UI if server sent thread data
+      if (data?.thread) {
+        onUpdated(data.thread.transaction, data.thread);
+
+        if (response.ok) {
+          showSuccess("Dispute opened. An admin will review your case shortly.");
+        } else {
+          showSuccess("Status updated");
+        }
+        return;
+      }
+
+      // No thread data and error status
+      if (!response.ok) {
+        const errorMsg = data?.error || "Failed to open dispute";
+        throw new Error(errorMsg);
+      }
     } catch (error) {
       console.error("Error opening dispute:", error);
       showError("Failed to open dispute. Please try again.");
