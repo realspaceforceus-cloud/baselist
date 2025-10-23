@@ -1456,30 +1456,33 @@ const Messages = (): JSX.Element => {
               <div className="flex flex-wrap gap-2 md:justify-end">
                 {activeSummary.isMarketplace ? (
                   <>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="rounded-full px-4 text-xs font-semibold"
-                      onClick={handleOpenOfferDialog}
-                      disabled={!activeSummary?.listing}
-                    >
-                      {activeSummary?.listing &&
-                      !activeSummary.listing.isFree &&
-                      activeSummary.listing.price
-                        ? (() => {
-                            const price = Number(activeSummary.listing.price);
-                            return isNaN(price)
-                              ? "Quick offer"
-                              : `Offer ${new Intl.NumberFormat("en-US", {
-                                  style: "currency",
-                                  currency: "USD",
-                                  maximumFractionDigits:
-                                    price % 1 === 0 ? 0 : 2,
-                                }).format(price)}`;
-                          })()
-                        : "Quick offer"}
-                    </Button>
+                    {activeTransaction?.offer?.status !== "pending" &&
+                    activeTransaction?.offer?.status !== "accepted" ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full px-4 text-xs font-semibold"
+                        onClick={handleOpenOfferDialog}
+                        disabled={!activeSummary?.listing}
+                      >
+                        {activeSummary?.listing &&
+                        !activeSummary.listing.isFree &&
+                        activeSummary.listing.price
+                          ? (() => {
+                              const price = Number(activeSummary.listing.price);
+                              return isNaN(price)
+                                ? "Quick offer"
+                                : `Offer ${new Intl.NumberFormat("en-US", {
+                                    style: "currency",
+                                    currency: "USD",
+                                    maximumFractionDigits:
+                                      price % 1 === 0 ? 0 : 2,
+                                  }).format(price)}`;
+                            })()
+                          : "Quick offer"}
+                      </Button>
+                    ) : null}
                     {canMarkComplete ? (
                       <Button
                         type="button"
