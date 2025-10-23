@@ -18,7 +18,7 @@ const handler: Handler = async (event) => {
     // Get authenticated user
     console.log("[ratings] Starting rating submission...");
 
-    const userId = await getUserIdFromAuth(event);
+    const userId = getUserIdFromAuth(event);
     console.log("[ratings] Auth check - userId:", userId ? "present" : "MISSING");
 
     if (!userId) {
