@@ -46,7 +46,10 @@ export const handler: Handler = async (event, context) => {
     if (!userId) {
       return {
         statusCode: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
         body: JSON.stringify({ error: "Unauthorized" }),
       };
     }
