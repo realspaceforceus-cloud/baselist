@@ -133,6 +133,41 @@ export const CompletionCard = ({
     }
   };
 
+  const handleRatingSubmit = async () => {
+    if (rating === 0) {
+      toast.error("Please select a rating.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/.netlify/functions/ratings", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetUserId: thread.participants?.find((p: string) => p !== currentUserId),
+          rating,
+          review: ratingText,
+          transactionId: thread.id,
+          ratingType: "transaction",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit rating");
+      }
+
+      setRatingSubmitted(true);
+      toast.success("Thank you for your feedback!");
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      toast.error("Failed to submit rating. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Transaction completed → show final badge
   if (state === "completed") {
     return (
