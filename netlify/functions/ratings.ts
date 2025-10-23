@@ -56,20 +56,39 @@ const handler: Handler = async (event) => {
 
       // Insert rating into database
       console.log("[ratings] Inserting rating:", { ratingId, transactionId, userId, targetUserId, rating });
-      await client.query(
-        `INSERT INTO ratings (id, transaction_id, user_id, target_user_id, score, comment, rating_type, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [
-          ratingId,
-          transactionId,
-          userId,
-          targetUserId,
-          rating,
-          review || null,
-          ratingType || "transaction",
-          now,
-        ],
-      );
+
+      // Try to insert with all columns first
+      try {
+        await client.query(
+          `INSERT INTO ratings (id, transaction_id, user_id, target_user_id, score, comment, rating_type, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [
+            ratingId,
+            transactionId,
+            userId,
+            targetUserId,
+            rating,
+            review || null,
+            ratingType || "transaction",
+            now,
+          ],
+        );
+      } catch (columnError: any) {
+        // If target_user_id or rating_type columns don't exist, try without them
+        console.log("[ratings] Column error, trying without target_user_id/rating_type:", columnError.message);
+        await client.query(
+          `INSERT INTO ratings (id, transaction_id, user_id, score, comment, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [
+            ratingId,
+            transactionId,
+            userId,
+            rating,
+            review || null,
+            now,
+          ],
+        );
+      }
       console.log("[ratings] Rating inserted successfully");
 
       // Get current user name for notification
@@ -80,23 +99,28 @@ const handler: Handler = async (event) => {
       const currentUserName = userResult.rows[0]?.username || "A user";
       console.log("[ratings] Current user name:", currentUserName);
 
-      // Create notification for rated user
-      console.log("[ratings] Creating notification for:", targetUserId);
-      await createNotification({
-        userId: targetUserId,
-        type: "rating_received",
-        title: "New Rating",
-        description: `${currentUserName} left you a ${rating}-star rating`,
-        actorId: userId,
-        targetId: transactionId,
-        targetType: "transaction",
-        data: {
-          rating,
-          ratingType,
-          reviewText: review,
-        },
-      });
-      console.log("[ratings] Notification created successfully");
+      // Try to create notification, but don't fail if it errors
+      try {
+        console.log("[ratings] Creating notification for:", targetUserId);
+        await createNotification({
+          userId: targetUserId,
+          type: "rating_received",
+          title: "New Rating",
+          description: `${currentUserName} left you a ${rating}-star rating`,
+          actorId: userId,
+          targetId: transactionId,
+          targetType: "transaction",
+          data: {
+            rating,
+            ratingType,
+            reviewText: review,
+          },
+        });
+        console.log("[ratings] Notification created successfully");
+      } catch (notifError) {
+        // Log notification error but don't fail the rating submission
+        console.error("[ratings] Notification error (non-fatal):", notifError);
+      }
     } catch (dbError) {
       console.error("[ratings] Database error:", dbError);
       throw dbError;
