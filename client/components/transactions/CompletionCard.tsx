@@ -168,23 +168,91 @@ export const CompletionCard = ({
     }
   };
 
-  // Transaction completed → show final badge
+  // Transaction completed → show final badge with rating option
   if (state === "completed") {
     return (
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-900/20">
-        <div className="flex items-start gap-3">
-          <Check className="h-5 w-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
-          <div>
-            <p className="font-semibold text-emerald-900 dark:text-emerald-200">
-              Transaction completed
-            </p>
-            <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">
-              {tx.completedAt
-                ? `Completed on ${new Date(tx.completedAt).toLocaleDateString()}`
-                : ""}
-            </p>
+      <div className="space-y-3">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-900/20">
+          <div className="flex items-start gap-3">
+            <Check className="h-5 w-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <div>
+              <p className="font-semibold text-emerald-900 dark:text-emerald-200">
+                Transaction completed
+              </p>
+              <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">
+                {tx.completedAt
+                  ? `Completed on ${new Date(tx.completedAt).toLocaleDateString()}`
+                  : ""}
+              </p>
+            </div>
           </div>
         </div>
+
+        {!ratingSubmitted && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-900/20">
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                How was your experience with {partnerName}?
+              </p>
+
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((value) => {
+                  const highlighted =
+                    hoveredRating !== null
+                      ? value <= hoveredRating
+                      : rating > 0
+                        ? value <= rating
+                        : false;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onMouseEnter={() => setHoveredRating(value)}
+                      onMouseLeave={() => setHoveredRating(null)}
+                      onClick={() => setRating(value)}
+                      className="rounded-full p-1 outline-none transition hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-300"
+                      aria-label={`Rate ${value} star${value === 1 ? "" : "s"}`}
+                    >
+                      <Star
+                        className={cn(
+                          "h-5 w-5",
+                          highlighted
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-amber-200",
+                        )}
+                        aria-hidden
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+
+              <Textarea
+                placeholder="Optional: Share your feedback about this transaction (optional)"
+                value={ratingText}
+                onChange={(e) => setRatingText(e.target.value)}
+                className="min-h-[60px] resize-none border-amber-200 text-xs"
+              />
+
+              <Button
+                type="button"
+                onClick={handleRatingSubmit}
+                disabled={isLoading || rating === 0}
+                className="w-full"
+              >
+                Submit Rating
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {ratingSubmitted && (
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-900/20">
+            <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
+              Thank you for rating {partnerName}! 🙏
+            </p>
+          </div>
+        )}
       </div>
     );
   }
