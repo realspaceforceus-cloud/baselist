@@ -863,21 +863,21 @@ export const handler: Handler = async (event) => {
       );
 
       // Fetch thread data, listing, and partner BEFORE creating notification
-      const threadResult = await client.query(
+      const updatedThreadResult = await client.query(
         "SELECT * FROM message_threads WHERE id = $1",
         [threadId],
       );
 
-      const threadData = threadResult.rows[0];
-      const listingResult = threadData.listing_id
+      const updatedThreadData = updatedThreadResult.rows[0];
+      const listingResult = updatedThreadData.listing_id
         ? await client.query(
             "SELECT id, title, status, image_urls FROM listings WHERE id = $1",
-            [threadData.listing_id],
+            [updatedThreadData.listing_id],
           )
         : { rows: [null] };
 
       const listing = listingResult.rows[0];
-      const partnerId = threadData.participants.find(
+      const partnerId = updatedThreadData.participants.find(
         (p: string) => p !== userId,
       );
       const partnerResult = partnerId
