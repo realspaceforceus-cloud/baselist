@@ -583,65 +583,75 @@ const Profile = (): JSX.Element => {
       </div>
 
       {isViewingOwnProfile && (
-        <section className="rounded-3xl border border-border bg-card p-6 shadow-card">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <ShoppingBag className="h-5 w-5" aria-hidden />
-              </span>
-              <div className="space-y-1">
-                <h2 className="text-lg font-semibold text-foreground">
-                  My transactions
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Purchases and sales history, all in one place.
-                </p>
+        <section className="rounded-2xl border border-border/50 bg-gradient-to-br from-background to-muted/20 shadow-sm overflow-hidden">
+          <div className="border-b border-border/30 bg-gradient-to-r from-emerald-50/50 to-transparent dark:from-emerald-950/20 dark:to-transparent px-6 md:px-8 py-6 md:py-8">
+            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
+                  <ShoppingBag className="h-5 w-5" aria-hidden />
+                </span>
+                <div className="space-y-1">
+                  <h2 className="text-xl font-bold text-foreground">
+                    Transaction history
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Track your purchases and sales
+                  </p>
+                </div>
               </div>
+              <RatingBadge
+                userId={profileUser.id}
+                size="md"
+                initialAverage={
+                  profileRatingSummary.overallCount > 0
+                    ? profileRatingSummary.overallAverage
+                    : profileRatingFallbackAverage
+                }
+                initialCount={
+                  profileRatingSummary.overallCount > 0
+                    ? profileRatingSummary.overallCount
+                    : profileRatingFallbackCount
+                }
+                label={`${profileUser.name} overall rating`}
+              />
             </div>
-            <RatingBadge
-              userId={profileUser.id}
-              size="sm"
-              initialAverage={
-                profileRatingSummary.overallCount > 0
-                  ? profileRatingSummary.overallAverage
-                  : profileRatingFallbackAverage
-              }
-              initialCount={
-                profileRatingSummary.overallCount > 0
-                  ? profileRatingSummary.overallCount
-                  : profileRatingFallbackCount
-              }
-              label={`${profileUser.name} overall rating`}
-            />
           </div>
-          <Tabs defaultValue={defaultTransactionTab} className="mt-4">
-            <TabsList className="grid w-full max-w-xs grid-cols-2 rounded-full bg-muted/60 p-1">
-              <TabsTrigger
-                value="purchases"
-                className="rounded-full text-xs font-semibold"
-              >
-                <span className="inline-flex items-center gap-1">
-                  <ShoppingBag className="h-3.5 w-3.5" aria-hidden />
-                  Purchases ({purchases.length})
-                </span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="sales"
-                className="rounded-full text-xs font-semibold"
-              >
-                <span className="inline-flex items-center gap-1">
-                  <Tag className="h-3.5 w-3.5" aria-hidden />
-                  Sales ({sales.length})
-                </span>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="purchases" className="mt-4 space-y-3">
-              {renderTransactionList(purchases, "buyer")}
-            </TabsContent>
-            <TabsContent value="sales" className="mt-4 space-y-3">
-              {renderTransactionList(sales, "seller")}
-            </TabsContent>
-          </Tabs>
+          <div className="p-6 md:p-8">
+            <Tabs defaultValue={defaultTransactionTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted/60 p-1 mb-6">
+                <TabsTrigger
+                  value="purchases"
+                  className="rounded-md text-sm font-semibold"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <ShoppingBag className="h-4 w-4" aria-hidden />
+                    Purchases
+                    <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
+                      {purchases.length}
+                    </span>
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sales"
+                  className="rounded-md text-sm font-semibold"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Tag className="h-4 w-4" aria-hidden />
+                    Sales
+                    <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
+                      {sales.length}
+                    </span>
+                  </span>
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="purchases" className="space-y-3 mt-0">
+                {renderTransactionList(purchases, "buyer")}
+              </TabsContent>
+              <TabsContent value="sales" className="space-y-3 mt-0">
+                {renderTransactionList(sales, "seller")}
+              </TabsContent>
+            </Tabs>
+          </div>
         </section>
       )}
 
