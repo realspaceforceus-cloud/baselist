@@ -309,22 +309,22 @@ export const CompletionCard = ({
         )}
 
         {status === "pending_confirmation" && youMarked && (
-        <div className="text-sm text-blue-600 dark:text-blue-300">
-          Waiting for {partnerName} to mark complete...
-        </div>
-      )}
+          <div className="text-sm text-blue-600 dark:text-blue-300">
+            Waiting for {partnerName} to mark complete...
+          </div>
+        )}
 
-      {waitingOnYou && (
-        <Button
-          type="button"
-          variant="default"
-          size="sm"
-          onClick={handleMarkComplete}
-          disabled={isLoading}
-        >
-          {isLoading ? "Confirming..." : "Confirm Exchange"}
-        </Button>
-      )}
+        {waitingOnYou && (
+          <Button
+            type="button"
+            variant="default"
+            size="sm"
+            onClick={handleMarkComplete}
+            disabled={isLoading}
+          >
+            {isLoading ? "Confirming..." : "Confirm Exchange"}
+          </Button>
+        )}
       </div>
     </div>
   );
