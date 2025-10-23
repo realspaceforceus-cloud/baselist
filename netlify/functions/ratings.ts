@@ -16,34 +16,58 @@ const handler: Handler = async (event) => {
 
   try {
     // Get authenticated user
+    console.log("[ratings] Starting rating submission...");
+
     const userId = await getUserIdFromAuth(event);
+    console.log("[ratings] Auth check - userId:", userId ? "present" : "MISSING");
+
     if (!userId) {
+      console.log("[ratings] No userId found in auth");
       return {
         statusCode: 401,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "Unauthorized" }),
-      };
-    }
-
-    const body = JSON.parse(event.body || "{}");
-    const { targetUserId, rating, review, transactionId, ratingType } = body;
-
-    // Validation
-    if (!targetUserId || !rating || !transactionId) {
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          error: "Missing required fields: targetUserId, rating, transactionId",
+          error: "Unauthorized - no user session found",
+          details: "Cookie-based authentication failed"
         }),
       };
     }
 
-    if (rating < 1 || rating > 5) {
+    console.log("[ratings] Parsing request body...");
+    const body = JSON.parse(event.body || "{}");
+    console.log("[ratings] Request body:", body);
+
+    const { targetUserId, rating, review, transactionId, ratingType } = body;
+
+    // Validation
+    const missingFields = [];
+    if (!targetUserId) missingFields.push("targetUserId");
+    if (!rating) missingFields.push("rating");
+    if (!transactionId) missingFields.push("transactionId");
+
+    if (missingFields.length > 0) {
+      console.log("[ratings] Missing fields:", missingFields);
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "Rating must be between 1 and 5" }),
+        body: JSON.stringify({
+          error: "Missing required fields",
+          details: `Missing: ${missingFields.join(", ")}`,
+          received: { targetUserId, rating, transactionId }
+        }),
+      };
+    }
+
+    console.log("[ratings] Rating validation:", { rating, min: 1, max: 5 });
+    if (rating < 1 || rating > 5) {
+      console.log("[ratings] Rating out of range:", rating);
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error: "Rating out of range",
+          details: `Rating must be 1-5, received: ${rating}`
+        }),
       };
     }
 
