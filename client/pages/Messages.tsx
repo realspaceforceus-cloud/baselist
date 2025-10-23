@@ -1520,6 +1520,7 @@ const Messages = (): JSX.Element => {
                     <CompletionCard
                       thread={activeSummary.thread}
                       currentUserId={user.id}
+                      partnerName={activeSummary.partnerName}
                       onUpdated={(tx) => {
                         setMessageThreads((prev) =>
                           prev.map((t) =>
