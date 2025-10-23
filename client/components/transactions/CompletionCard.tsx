@@ -159,7 +159,8 @@ export const CompletionCard = ({
       }
 
       const data = await response.json();
-      onUpdated(data.transaction);
+      // Pass both transaction and full thread for UI to update
+      onUpdated(data.transaction || data.thread?.transaction, data.thread);
       showSuccess("Dispute opened. An admin will review your case shortly.");
     } catch (error) {
       console.error("Error opening dispute:", error);
