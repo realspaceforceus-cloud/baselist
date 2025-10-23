@@ -174,6 +174,9 @@ export const CompletionCard = ({
       }
 
       if (!ok) {
+        // TEMP HOTFIX: Show current thread state even if API returned 400
+        onUpdated(thread.transaction, thread);
+
         const msg = data?.error || data?.message || text || `HTTP ${status}`;
         showError(`Failed to open dispute — ${msg}`);
         return;
