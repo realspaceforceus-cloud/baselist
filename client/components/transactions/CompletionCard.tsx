@@ -71,29 +71,37 @@ export const CompletionCard = ({
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ actorId: currentUserId }),
+          body: JSON.stringify({ userId: currentUserId }),
         },
       );
 
-      // Handle idempotency: 409 means already marked
-      if (response.status === 409) {
-        const errorData = await response.json().catch(() => ({}));
-        // Update UI with current state
-        if (errorData.thread) {
-          onUpdated(errorData.thread.transaction, errorData.thread);
+      // Parse response safely
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("[handleMarkComplete] Failed to parse response:", parseError);
+      }
+
+      // Accept idempotent responses: update UI if server sent thread data, even on non-200
+      if (data?.thread) {
+        onUpdated(data.thread.transaction, data.thread);
+
+        if (response.ok) {
+          showSuccess("Marked complete. Waiting for the other party to confirm.");
+        } else if (response.status === 409) {
+          showError("Waiting for the other party to confirm.");
+        } else {
+          showSuccess("Status updated");
         }
-        showError("Waiting for the other party to confirm.");
         return;
       }
 
+      // No thread data and error status
       if (!response.ok) {
-        throw new Error("Failed to mark complete");
+        const errorMsg = data?.error || "Failed to mark complete";
+        throw new Error(errorMsg);
       }
-
-      const data = await response.json();
-      // Pass both transaction and full thread for UI to update
-      onUpdated(data.transaction || data.thread?.transaction, data.thread);
-      showSuccess("Marked complete. Waiting for the other party to confirm.");
     } catch (error) {
       console.error("Error marking complete:", error);
       showError("Failed to mark complete. Please try again.");
