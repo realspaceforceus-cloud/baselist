@@ -1472,7 +1472,13 @@ export const handler: Handler = async (event) => {
       }
 
       const thread = threadResult.rows[0];
-      const tx = thread.transaction || { id: randomUUID() };
+
+      // Parse transaction from JSON if needed
+      let tx = typeof thread.transaction === "string"
+        ? JSON.parse(thread.transaction)
+        : thread.transaction;
+
+      tx = tx || { id: randomUUID() };
 
       if (tx.state !== "pending_a" && tx.state !== "pending_b") {
         return {
@@ -1482,18 +1488,26 @@ export const handler: Handler = async (event) => {
         };
       }
 
+      // Parse participants if needed
+      const participants = typeof thread.participants === "string"
+        ? JSON.parse(thread.participants)
+        : thread.participants;
+
       const now = new Date().toISOString();
       const updatedTx = {
         ...tx,
-        aUserId: tx.aUserId || thread.participants[0],
-        bUserId: tx.bUserId || thread.participants[1],
+        aUserId: tx.aUserId || participants[0],
+        bUserId: tx.bUserId || participants[1],
         state: "completed",
         aMarkedAt: tx.aMarkedAt || now,
         bMarkedAt: tx.bMarkedAt || now,
         completedAt: now,
       };
 
-      const timeline = thread.timeline || [];
+      // Parse timeline from JSON if needed
+      let timeline = typeof thread.timeline === "string"
+        ? JSON.parse(thread.timeline)
+        : thread.timeline || [];
       timeline.push({
         at: now,
         actorId: userId,
