@@ -98,9 +98,16 @@ export type ThreadLifecycleStatus = "active" | "completed" | "disputed";
 
 export type TransactionStatus = "pending_complete" | "completed" | "disputed";
 
+export type TransactionState = "open" | "pending_a" | "pending_b" | "completed" | "disputed" | "void";
+
 export interface ThreadTransaction {
   id: string;
   status: TransactionStatus;
+  state?: TransactionState;
+  aUserId?: string;
+  bUserId?: string;
+  aMarkedAt?: string | null;
+  bMarkedAt?: string | null;
   markedCompleteBy?: string;
   markedCompleteAt?: string;
   confirmedBy: string[];
@@ -108,9 +115,14 @@ export interface ThreadTransaction {
   ratingByUser: Record<string, number | undefined>;
   autoCompletedAt?: string;
   dispute?: {
-    raisedBy: string;
+    raisedBy?: string;
     reason?: string;
-    raisedAt: string;
+    raisedAt?: string;
+    byUserId?: string;
+    openedAt?: string;
+    resolvedAt?: string | null;
+    resolution?: "complete" | "void";
+    resolvedBy?: string;
   };
   offer?: {
     amount: number;
@@ -136,6 +148,12 @@ export interface MessageThread {
   archivedBy?: string[];
   deletedBy?: string[];
   transaction?: ThreadTransaction;
+  timeline?: Array<{
+    at: string;
+    actorId: string;
+    action: "offer_accepted" | "mark_complete" | "agree_complete" | "disagree_complete" | "dispute_opened" | "transaction_completed" | string;
+    data?: Record<string, unknown>;
+  }>;
 }
 
 export interface TransactionHistoryEntry {
