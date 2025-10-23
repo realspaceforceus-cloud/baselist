@@ -1,10 +1,9 @@
-import { Handler } from "@netlify/functions";
 import { randomUUID } from "crypto";
 import { pool } from "./db";
 import { getUserIdFromAuth } from "./auth";
 import { createNotification } from "./notification-helpers";
 
-const handler: Handler = async (event) => {
+export const handler = async (event: any) => {
   // Only allow POST
   if (event.httpMethod !== "POST") {
     return {
