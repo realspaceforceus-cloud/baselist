@@ -784,6 +784,25 @@ export const handler: Handler = async (event) => {
         [JSON.stringify(transaction), threadId],
       );
 
+      // Create notification for offer acceptance
+      const notificationData = {
+        amount: transaction.offer?.amount,
+        listingTitle: listing?.title || "Item",
+        acceptorName: currentUserName,
+        threadId: threadId,
+      };
+
+      await createNotification({
+        userId: partnerId,
+        type: "offer_accepted",
+        title: "Offer Accepted",
+        description: `${currentUserName} accepted your offer of $${transaction.offer?.amount}`,
+        actorId: userId,
+        targetId: threadId,
+        targetType: "thread",
+        data: notificationData,
+      });
+
       // Fetch updated thread with all data
       const updatedThreadResult = await client.query(
         "SELECT * FROM message_threads WHERE id = $1",
