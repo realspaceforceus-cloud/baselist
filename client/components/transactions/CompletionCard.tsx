@@ -183,20 +183,17 @@ export const CompletionCard = ({
     } catch (error) {
       const errorMsg =
         error instanceof Error ? error.message : "Failed to submit rating";
-      console.error("Error submitting rating:", error);
+      console.error("❌ Error submitting rating:", error);
       console.error(
         "Full error stack:",
         error instanceof Error ? error.stack : "no stack",
       );
+      console.log(
+        "📍 To debug: Check Network tab → ratings request → Response tab",
+      );
       // Show more detailed error message to user
       showError(
-        `Rating error: ${errorMsg}${
-          errorMsg.includes("400") || errorMsg.includes("401")
-            ? " (check required fields)"
-            : errorMsg.includes("500")
-              ? " (server error)"
-              : ""
-        }`,
+        `Rating error: ${errorMsg || "Unknown error (check console)"}`,
       );
     } finally {
       setIsLoading(false);
