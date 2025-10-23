@@ -732,23 +732,22 @@ const Profile = (): JSX.Element => {
       ) : null}
 
       {isModerator ? (
-        <div className="rounded-3xl border border-border bg-card p-6 shadow-card md:flex md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-purple-50/50 to-background dark:from-purple-950/20 dark:to-background p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow md:flex md:items-center md:justify-between gap-6">
+          <div className="flex items-center gap-4 flex-1">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400">
               <ShieldCheck className="h-5 w-5" aria-hidden />
             </span>
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-foreground">
+              <h2 className="text-lg font-bold text-foreground">
                 Moderation tools
               </h2>
               <p className="text-sm text-muted-foreground">
-                Review reports, manage verification requests, and configure base
-                access lists.
+                Review reports, manage verifications, and configure base settings
               </p>
             </div>
           </div>
-          <Button asChild className="mt-4 rounded-full px-6 md:mt-0">
-            <Link to="/moderation">Open moderation</Link>
+          <Button asChild className="mt-4 rounded-lg px-6 md:mt-0 whitespace-nowrap font-medium">
+            <Link to="/moderation">Open tools</Link>
           </Button>
         </div>
       ) : null}
