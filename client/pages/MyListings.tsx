@@ -160,7 +160,7 @@ export const MyListings = (): JSX.Element => {
               className="rounded-full"
               onClick={() => setFilterStatus("all")}
             >
-              All ({listings.length})
+              All ({myListings.length})
             </Button>
             <Button
               variant={filterStatus === "active" ? "default" : "outline"}
@@ -168,7 +168,7 @@ export const MyListings = (): JSX.Element => {
               className="rounded-full"
               onClick={() => setFilterStatus("active")}
             >
-              Active ({listings.filter((l) => l.status !== "sold").length})
+              Active ({myListings.filter((l) => l.status !== "sold").length})
             </Button>
             <Button
               variant={filterStatus === "sold" ? "default" : "outline"}
@@ -176,7 +176,7 @@ export const MyListings = (): JSX.Element => {
               className="rounded-full"
               onClick={() => setFilterStatus("sold")}
             >
-              Sold ({listings.filter((l) => l.status === "sold").length})
+              Sold ({myListings.filter((l) => l.status === "sold").length})
             </Button>
           </div>
 
