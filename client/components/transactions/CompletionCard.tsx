@@ -89,7 +89,8 @@ export const CompletionCard = ({
       }
 
       const data = await response.json();
-      onUpdated(data.transaction);
+      // Pass both transaction and full thread for UI to update
+      onUpdated(data.transaction || data.thread?.transaction, data.thread);
       showSuccess("Marked complete. Waiting for the other party to confirm.");
     } catch (error) {
       console.error("Error marking complete:", error);
