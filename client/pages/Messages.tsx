@@ -639,55 +639,27 @@ const Messages = (): JSX.Element => {
       return;
     }
 
-    try {
-      const response = await fetch(
-        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/decline-offer`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id }),
-        },
+    const declineUrl = `/.netlify/functions/messages/threads/${activeSummary.thread.id}/decline-offer`;
+    const { ok, status, data, text } = await jsonFetch(declineUrl, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id }),
+    });
+
+    if (data?.thread) {
+      setMessageThreads((prev) =>
+        prev.map((t) => (t.id === data.thread.id ? data.thread : t)),
       );
-
-      // Parse response safely
-      let data: any = null;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        console.error(
-          "[handleDeclineOffer] Failed to parse response:",
-          parseError,
-        );
-      }
-
-      // Accept idempotent responses: update UI if server sent thread data
-      if (data?.thread) {
-        setMessageThreads((prev) => {
-          const existingIndex = prev.findIndex(
-            (t) => t.id === activeSummary.thread.id,
-          );
-          if (existingIndex !== -1) {
-            const remaining = prev.filter((_, i) => i !== existingIndex);
-            return [data.thread, ...remaining];
-          }
-          return prev;
-        });
-
-        if (response.ok) {
-          toast.success("Offer declined");
-        } else {
-          toast.info("Offer update processed");
-        }
-      } else if (!response.ok) {
-        const errorMsg = data?.error || "Failed to decline offer";
-        throw new Error(errorMsg);
-      }
-    } catch (error) {
-      toast.error("Failed to decline offer", {
-        description: error instanceof Error ? error.message : "Try again later",
-      });
     }
+
+    if (!ok) {
+      const msg = data?.error || data?.message || text || `HTTP ${status}`;
+      toast.error(`Failed to decline offer — ${msg}`);
+      return;
+    }
+
+    toast.success("Offer declined");
   };
 
   const handleRetractOffer = async () => {
