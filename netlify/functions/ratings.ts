@@ -1,12 +1,8 @@
 import { Handler } from "@netlify/functions";
 import { randomUUID } from "crypto";
-import { createClient } from "@supabase/supabase-js";
-import { getUserIdFromAuth } from "./lib/auth";
-
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const client = createClient(supabaseUrl, supabaseServiceRoleKey);
+import { pool } from "./db";
+import { getUserIdFromAuth } from "./auth";
+import { createNotification } from "./notification-helpers";
 
 const handler: Handler = async (event) => {
   // Only allow POST
