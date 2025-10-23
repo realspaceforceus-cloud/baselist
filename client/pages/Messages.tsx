@@ -52,6 +52,19 @@ import type { Listing, Message, MessageThread, UserProfile } from "@/types";
 
 const ratingOptions = [1, 2, 3, 4, 5];
 
+// Robust fetch helper that always returns structured data
+async function jsonFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const res = await fetch(input, init);
+  const text = await res.text();
+  let data: any = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    // non-JSON error body
+  }
+  return { ok: res.ok, status: res.status, data, text };
+}
+
 const statusFilterOptions = [
   { value: "all", label: "All" },
   { value: "active", label: "Active" },
