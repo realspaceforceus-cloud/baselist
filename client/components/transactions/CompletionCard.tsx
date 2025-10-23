@@ -93,7 +93,7 @@ export const CompletionCard = ({
       showSuccess("Marked complete. Waiting for the other party to confirm.");
     } catch (error) {
       console.error("Error marking complete:", error);
-      toast.error("Failed to mark complete. Please try again.");
+      showError("Failed to mark complete. Please try again.");
     } finally {
       setIsLoading(false);
     }
