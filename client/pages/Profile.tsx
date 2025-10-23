@@ -518,12 +518,9 @@ const Profile = (): JSX.Element => {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {activeListings.map((listing) => (
-              <button
+              <Link
                 key={listing.id}
-                type="button"
-                onClick={() =>
-                  navigate(`/listing/${listing.slug || listing.id}`)
-                }
+                to={`/listing/${listing.slug || listing.id}`}
                 className="group flex flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30"
               >
                 <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-muted/50">
@@ -556,7 +553,7 @@ const Profile = (): JSX.Element => {
                     </span>
                   </div>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </section>
