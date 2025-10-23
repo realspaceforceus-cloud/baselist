@@ -67,8 +67,9 @@ export function useUserListings(
     ],
     queryFn: () => getUserListings(userId!, options),
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    staleTime: 1000 * 30, // 30 seconds - reduced from 5 minutes to show updates faster
+    gcTime: 1000 * 60 * 5, // 5 minutes (formerly cacheTime)
+    refetchOnWindowFocus: true, // Refetch when user switches tabs/windows
   });
 }
 
