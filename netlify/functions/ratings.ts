@@ -148,7 +148,7 @@ export const handler: Handler = async (event, context) => {
           headers: corsHeaders,
           body: JSON.stringify({
             error: "You have already rated this transaction",
-            alreadyRated: true
+            alreadyRated: true,
           }),
         };
       }
@@ -196,7 +196,9 @@ export const handler: Handler = async (event, context) => {
         `UPDATE message_threads SET archived_by = $1, updated_at = NOW() WHERE id = $2`,
         [archivedBy, actualThreadId],
       );
-      console.log("[RATINGS] ✓ Thread archived for current user (other user can still see theirs)");
+      console.log(
+        "[RATINGS] ✓ Thread archived for current user (other user can still see theirs)",
+      );
 
       // 7. Fetch and return the complete updated thread
       console.log("[RATINGS] Fetching complete updated thread...");
