@@ -1522,11 +1522,12 @@ const Messages = (): JSX.Element => {
                       thread={activeSummary.thread}
                       currentUserId={user.id}
                       partnerName={activeSummary.partnerName}
-                      onUpdated={(tx) => {
+                      onUpdated={(tx, updatedThread) => {
                         setMessageThreads((prev) =>
                           prev.map((t) =>
                             t.id === activeSummary.thread.id
-                              ? { ...t, transaction: tx }
+                              ? // Prefer full thread update if available, otherwise just update transaction
+                                updatedThread ?? { ...t, transaction: tx }
                               : t,
                           ),
                         );
