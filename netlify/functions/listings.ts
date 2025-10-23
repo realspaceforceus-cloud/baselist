@@ -493,6 +493,53 @@ export const handler: Handler = async (event) => {
     }
   }
 
+  // PATCH /api/listings/:id/mark-sold
+  if (method === "PATCH" && path.includes("/mark-sold")) {
+    const client = await pool.connect();
+    try {
+      const id = path.split("/")[1];
+      if (!id) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Listing ID is required" }),
+        };
+      }
+
+      // Update listing status to sold
+      const result = await client.query(
+        "UPDATE listings SET status = 'sold', updated_at = NOW() WHERE id = $1 RETURNING *",
+        [id],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Listing not found" }),
+        };
+      }
+
+      const listing = transformListing(result.rows[0]);
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listing }),
+      };
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: errorMsg }),
+      };
+    } finally {
+      client.release();
+    }
+  }
+
   return {
     statusCode: 404,
     body: JSON.stringify({ error: "Not found" }),
