@@ -184,7 +184,7 @@ export const handler: Handler = async (event, context) => {
         console.log("[RATINGS] ❌ Failed to fetch updated thread");
         return {
           statusCode: 500,
-          headers: { "Content-Type": "application/json" },
+          headers: corsHeaders,
           body: JSON.stringify({ error: "Failed to fetch updated thread" }),
         };
       }
