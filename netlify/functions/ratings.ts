@@ -16,17 +16,17 @@ export const handler: Handler = async (event, context) => {
     return {
       statusCode: 405,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         error: "Method not allowed",
         received: event.httpMethod,
-        expected: "POST"
+        expected: "POST",
       }),
     };
   }
 
   try {
     console.log("[RATINGS] ✓ POST method confirmed");
-    
+
     // Get authenticated user
     console.log("[RATINGS] Extracting userId from auth...");
     const userId = await getUserIdFromAuth(event);
@@ -46,7 +46,7 @@ export const handler: Handler = async (event, context) => {
     // Parse request body
     console.log("[RATINGS] Parsing request body...");
     console.log("[RATINGS] Body content:", event.body?.substring(0, 200));
-    
+
     const body = JSON.parse(event.body || "{}");
     const { targetUserId, rating, review, transactionId, ratingType } = body;
 
@@ -110,7 +110,9 @@ export const handler: Handler = async (event, context) => {
         );
         console.log("[RATINGS] ✓ Rating inserted");
       } catch (columnError: any) {
-        console.log("[RATINGS] ⚠️  Column error, trying without target_user_id/rating_type");
+        console.log(
+          "[RATINGS] ⚠️  Column error, trying without target_user_id/rating_type",
+        );
         await client.query(
           `INSERT INTO ratings (id, transaction_id, user_id, score, comment, created_at)
            VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -235,7 +237,10 @@ export const handler: Handler = async (event, context) => {
         });
         console.log("[RATINGS] ✓ Notification created");
       } catch (notifError) {
-        console.error("[RATINGS] ⚠️  Notification error (non-fatal):", notifError);
+        console.error(
+          "[RATINGS] ⚠️  Notification error (non-fatal):",
+          notifError,
+        );
       }
 
       console.log("[RATINGS] ✓ SUCCESS - Returning response");
