@@ -1619,7 +1619,8 @@ export const handler: Handler = async (event) => {
 
       tx = tx || { id: randomUUID() };
 
-      if (tx.state !== "pending_a" && tx.state !== "pending_b") {
+      // Use old UI contract - check for pending_confirmation
+      if (tx.status !== "pending_confirmation") {
         return {
           statusCode: 409,
           headers: { "Content-Type": "application/json" },
@@ -1630,7 +1631,7 @@ export const handler: Handler = async (event) => {
       const now = new Date().toISOString();
       const updatedTx = {
         ...tx,
-        state: "disputed",
+        status: "disputed",
         dispute: {
           byUserId: userId,
           reason: body.reason || "No reason provided",
