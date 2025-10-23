@@ -636,6 +636,17 @@ const Messages = (): JSX.Element => {
     }
 
     if (!ok) {
+      // TEMP HOTFIX: Force refresh threads to update UI immediately even on 400
+      // This surfaces the real error while preventing UI limbo
+      try {
+        const refreshed = await getThreads(50, 0);
+        if (refreshed?.threads) {
+          setMessageThreads(refreshed.threads);
+        }
+      } catch (refreshError) {
+        console.error("[handleAcceptOffer] Failed to refresh threads:", refreshError);
+      }
+
       // Surface the *real* reason from server
       const msg = data?.error || data?.message || text || `HTTP ${status}`;
       toast.error(`Failed to accept offer — ${msg}`);
