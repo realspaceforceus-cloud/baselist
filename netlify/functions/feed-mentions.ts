@@ -4,7 +4,7 @@ import { getUserIdFromAuth } from "./auth";
 
 export const handler: Handler = async (event) => {
   try {
-    const userId = await getUserIdFromAuth(event);
+    const userId = getUserIdFromAuth(event);
     if (!userId) {
       return {
         statusCode: 401,

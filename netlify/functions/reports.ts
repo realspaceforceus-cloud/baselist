@@ -9,7 +9,7 @@ export const handler: Handler = async (event) => {
 
   // POST /api/reports - user submits a report
   if (method === "POST" && path === "") {
-    const userId = await getUserIdFromAuth(event);
+    const userId = getUserIdFromAuth(event);
     const client = await pool.connect();
     try {
       const { targetType, targetId, type, notes } = JSON.parse(
