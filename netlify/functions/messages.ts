@@ -1708,6 +1708,20 @@ export const handler: Handler = async (event) => {
         action: "dispute_opened",
       });
 
+      // Add system message to chat
+      const systemMessageId = randomUUID();
+      await client.query(
+        "INSERT INTO messages (id, thread_id, author_id, body, sent_at, type) VALUES ($1, $2, $3, $4, $5, $6)",
+        [
+          systemMessageId,
+          threadId,
+          null,
+          `Dispute opened: ${body.reason || "No reason provided"}`,
+          now,
+          "system",
+        ],
+      );
+
       await client.query(
         "UPDATE message_threads SET transaction = $1, timeline = $2 WHERE id = $3",
         [JSON.stringify(updatedTx), JSON.stringify(timeline), threadId],
