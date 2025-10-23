@@ -4,6 +4,13 @@ import { pool } from "./db";
 import { getUserIdFromAuth } from "./auth";
 import { createNotification } from "./notification-helpers";
 
+const corsHeaders = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
 export const handler: Handler = async (event, context) => {
   console.log("[RATINGS] ========== REQUEST START ==========");
   console.log("[RATINGS] Method:", event.httpMethod);
