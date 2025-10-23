@@ -1342,13 +1342,22 @@ const Messages = (): JSX.Element => {
 
                   if (message.type === "offer") {
                     const isOwn = message.authorId === user.id;
-                    const offerAmount = Number(message.body) || 0;
-                    const offerStatus =
-                      activeSummary?.thread?.transaction?.offer?.status ||
-                      "pending";
-                    const canAccept = !isOwn && offerStatus === "pending";
-                    const canDecline = !isOwn && offerStatus === "pending";
-                    const canRetract = isOwn && offerStatus === "pending";
+
+                    // Parse offer data from message body
+                    let offerAmount = 0;
+                    let messageOfferStatus = "pending";
+                    try {
+                      const offerData = JSON.parse(message.body);
+                      offerAmount = offerData.amount || 0;
+                      messageOfferStatus = offerData.status || "pending";
+                    } catch {
+                      // Fallback for old format (just number)
+                      offerAmount = Number(message.body) || 0;
+                    }
+
+                    const canAccept = !isOwn && messageOfferStatus === "pending";
+                    const canDecline = !isOwn && messageOfferStatus === "pending";
+                    const canRetract = isOwn && messageOfferStatus === "pending";
                     const partnerName = isOwn
                       ? "You"
                       : activeSummary.partnerName;
