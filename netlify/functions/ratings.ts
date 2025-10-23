@@ -256,7 +256,7 @@ export const handler: Handler = async (event, context) => {
 
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({
         error: "Rating submission failed",
         details: errorMsg,
