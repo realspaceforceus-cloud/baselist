@@ -117,76 +117,7 @@ export const CompletionCard = ({
     }
   };
 
-  const handleAgree = async () => {
-    setIsLoading(true);
-    try {
-      const agreeUrl = `/.netlify/functions/messages/threads/${thread.id}/transaction/agree`;
-      const { ok, status, data, text } = await jsonFetch(agreeUrl, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: currentUserId }),
-      });
-
-      if (data?.thread) {
-        onUpdated(data.thread.transaction, data.thread);
-
-        // Mark listing as sold
-        if (thread.listingId) {
-          await markListingAsSold(thread.listingId);
-        }
-      }
-
-      if (!ok) {
-        // TEMP HOTFIX: Show current thread state even if API returned 400
-        onUpdated(thread.transaction, thread);
-
-        const msg = data?.error || data?.message || text || `HTTP ${status}`;
-        showError(`Failed to confirm — ${msg}`);
-        return;
-      }
-
-      showSuccess("Transaction completed! 🎉");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDisagree = async () => {
-    const reason = prompt("Please describe the issue briefly:");
-    if (reason === null) return;
-
-    setIsLoading(true);
-    try {
-      const disagreeUrl = `/.netlify/functions/messages/threads/${thread.id}/transaction/disagree`;
-      const { ok, status, data, text } = await jsonFetch(disagreeUrl, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUserId,
-          reason,
-        }),
-      });
-
-      if (data?.thread) {
-        onUpdated(data.thread.transaction, data.thread);
-      }
-
-      if (!ok) {
-        // TEMP HOTFIX: Show current thread state even if API returned 400
-        onUpdated(thread.transaction, thread);
-
-        const msg = data?.error || data?.message || text || `HTTP ${status}`;
-        showError(`Failed to open dispute — ${msg}`);
-        return;
-      }
-
-      showSuccess("Dispute opened. An admin will review your case shortly.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Removed handleAgree and handleDisagree - auto-complete when both mark complete
 
   const handleRatingSubmit = async () => {
     if (rating === 0) {
@@ -378,33 +309,22 @@ export const CompletionCard = ({
         )}
 
         {status === "pending_confirmation" && youMarked && (
-          <div className="text-sm text-blue-600 dark:text-blue-300">
-            Waiting for {partnerName}...
-          </div>
-        )}
+        <div className="text-sm text-blue-600 dark:text-blue-300">
+          Waiting for {partnerName} to mark complete...
+        </div>
+      )}
 
-        {waitingOnYou && (
-          <>
-            <Button
-              type="button"
-              variant="default"
-              size="sm"
-              onClick={handleAgree}
-              disabled={isLoading}
-            >
-              {isLoading ? "Confirming..." : "Agree"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleDisagree}
-              disabled={isLoading}
-            >
-              {isLoading ? "Opening..." : "Disagree"}
-            </Button>
-          </>
-        )}
+      {waitingOnYou && (
+        <Button
+          type="button"
+          variant="default"
+          size="sm"
+          onClick={handleMarkComplete}
+          disabled={isLoading}
+        >
+          {isLoading ? "Confirming..." : "Confirm Exchange"}
+        </Button>
+      )}
       </div>
     </div>
   );
