@@ -478,6 +478,54 @@ const Profile = (): JSX.Element => {
             </Button>
           )}
         </article>
+      </div>
+
+      {/* Active Listings Section */}
+      {activeListings.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <ShoppingBag className="h-5 w-5" aria-hidden />
+            </span>
+            <h2 className="text-lg font-semibold text-foreground">
+              {isViewingOwnProfile ? "My items for sale" : `${profileFirstName}'s items for sale`}
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            {activeListings.map((listing) => (
+              <button
+                key={listing.id}
+                onClick={() => navigate(`/listing/${listing.slug || listing.id}`)}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-md hover:border-primary/50"
+              >
+                <div className="relative aspect-square overflow-hidden bg-muted">
+                  {listing.imageUrls?.[0] ? (
+                    <img
+                      src={listing.imageUrls[0]}
+                      alt={listing.title}
+                      className="h-full w-full object-cover transition group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                      <ShoppingBag className="h-8 w-8 opacity-50" aria-hidden />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col p-3">
+                  <h3 className="line-clamp-2 text-xs font-semibold text-foreground">
+                    {listing.title}
+                  </h3>
+                  <p className="mt-1 text-sm font-bold text-primary">
+                    ${listing.price?.toLocaleString("en-US") ?? "0"}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div>
         <article className="flex h-full flex-col justify-between rounded-3xl border border-dashed border-nav-border bg-background/70 p-6 text-sm text-muted-foreground">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
