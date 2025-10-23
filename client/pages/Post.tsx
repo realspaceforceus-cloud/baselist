@@ -67,22 +67,22 @@ const Post = (): JSX.Element => {
   // Derived state for editing mode
   const isEditing = !!editListingId;
 
+  // Fetch listing data if editing
+  const { data: listingData } = useListing(editListingId);
+
   // Load listing data if editing
   useEffect(() => {
-    if (!editListingId) return;
+    if (!listingData) return;
 
-    const listingToEdit = listings.find((l) => l.id === editListingId);
-    if (!listingToEdit) return;
-
-    setTitle(listingToEdit.title);
-    setPrice(String(listingToEdit.price));
-    setIsFree(listingToEdit.isFree);
-    setCategory(listingToEdit.category);
-    setDescription(listingToEdit.description || "");
+    setTitle(listingData.title);
+    setPrice(String(listingData.price));
+    setIsFree(listingData.isFree);
+    setCategory(listingData.category);
+    setDescription(listingData.description || "");
 
     // Load vehicle data if available
-    if (listingToEdit.category === "Vehicles") {
-      const vehicleData = extractVehicleDataFromTitle(listingToEdit.title);
+    if (listingData.category === "Vehicles") {
+      const vehicleData = extractVehicleDataFromTitle(listingData.title);
       if (vehicleData) {
         setVehicleYear(vehicleData.year);
         setVehicleMake(vehicleData.make);
@@ -94,15 +94,15 @@ const Post = (): JSX.Element => {
     }
 
     // Load existing images as previews
-    if (listingToEdit.imageUrls && listingToEdit.imageUrls.length > 0) {
-      const existingPhotos = listingToEdit.imageUrls.map((url) => ({
+    if (listingData.imageUrls && listingData.imageUrls.length > 0) {
+      const existingPhotos = listingData.imageUrls.map((url) => ({
         id: crypto.randomUUID(),
         file: new File([], url),
         preview: url,
       }));
       setPhotos(existingPhotos);
     }
-  }, [editListingId, listings]);
+  }, [listingData]);
 
   const extractVehicleDataFromTitle = (title: string) => {
     // Simple extraction: "2020 Honda Civic SUV" format
