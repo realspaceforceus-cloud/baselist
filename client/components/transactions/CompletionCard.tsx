@@ -80,7 +80,10 @@ export const CompletionCard = ({
       try {
         data = await response.json();
       } catch (parseError) {
-        console.error("[handleMarkComplete] Failed to parse response:", parseError);
+        console.error(
+          "[handleMarkComplete] Failed to parse response:",
+          parseError,
+        );
       }
 
       // Accept idempotent responses: update UI if server sent thread data, even on non-200
@@ -88,7 +91,9 @@ export const CompletionCard = ({
         onUpdated(data.thread.transaction, data.thread);
 
         if (response.ok) {
-          showSuccess("Marked complete. Waiting for the other party to confirm.");
+          showSuccess(
+            "Marked complete. Waiting for the other party to confirm.",
+          );
         } else if (response.status === 409) {
           showError("Waiting for the other party to confirm.");
         } else {
@@ -193,7 +198,9 @@ export const CompletionCard = ({
         onUpdated(data.thread.transaction, data.thread);
 
         if (response.ok) {
-          showSuccess("Dispute opened. An admin will review your case shortly.");
+          showSuccess(
+            "Dispute opened. An admin will review your case shortly.",
+          );
         } else {
           showSuccess("Status updated");
         }

@@ -613,7 +613,10 @@ const Messages = (): JSX.Element => {
       try {
         data = await response.json();
       } catch (parseError) {
-        console.error("[handleAcceptOffer] Failed to parse response:", parseError);
+        console.error(
+          "[handleAcceptOffer] Failed to parse response:",
+          parseError,
+        );
       }
 
       // Accept idempotent responses: update UI if server sent thread data, even on non-200
@@ -670,7 +673,10 @@ const Messages = (): JSX.Element => {
       try {
         data = await response.json();
       } catch (parseError) {
-        console.error("[handleDeclineOffer] Failed to parse response:", parseError);
+        console.error(
+          "[handleDeclineOffer] Failed to parse response:",
+          parseError,
+        );
       }
 
       // Accept idempotent responses: update UI if server sent thread data
@@ -723,7 +729,10 @@ const Messages = (): JSX.Element => {
       try {
         data = await response.json();
       } catch (parseError) {
-        console.error("[handleRetractOffer] Failed to parse response:", parseError);
+        console.error(
+          "[handleRetractOffer] Failed to parse response:",
+          parseError,
+        );
       }
 
       // Accept idempotent responses: update UI if server sent thread data
