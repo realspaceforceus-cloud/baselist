@@ -122,8 +122,8 @@ export const RatingBadge = ({
     );
   }
 
-  const averageLabel = effectiveOverall.average?.toFixed(1) ?? "0.0";
-  const countLabel = formatCountLabel(effectiveOverall.count);
+  const averageLabel = (effectiveOverall?.average ?? 0).toFixed(1);
+  const countLabel = formatCountLabel(effectiveOverall?.count ?? 0);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
