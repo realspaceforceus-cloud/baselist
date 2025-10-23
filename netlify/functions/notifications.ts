@@ -111,21 +111,40 @@ export const handler: Handler = async (event) => {
           [userId],
         );
 
+        // Transform snake_case to camelCase
+        const notifications = result.rows.map((row: any) => ({
+          id: row.id,
+          userId: row.user_id,
+          type: row.type,
+          title: row.title,
+          description: row.description,
+          actorId: row.actor_id,
+          targetId: row.target_id,
+          targetType: row.target_type,
+          data: row.data,
+          read: row.read,
+          dismissed: row.dismissed,
+          createdAt: row.created_at,
+          readAt: row.read_at,
+          dismissedAt: row.dismissed_at,
+        }));
+
         console.log("[NOTIFICATIONS] Result", {
-          count: result.rows.length,
+          count: notifications.length,
           unreadCount:
             countResult.rows.length > 0
               ? parseInt(countResult.rows[0].count)
               : 0,
+          sample: notifications.length > 0 ? notifications[0] : null,
         });
 
         return json({
-          notifications: result.rows,
+          notifications,
           unreadCount:
             countResult.rows.length > 0
               ? parseInt(countResult.rows[0].count)
               : 0,
-          total: result.rows.length,
+          total: notifications.length,
         });
       }
 
