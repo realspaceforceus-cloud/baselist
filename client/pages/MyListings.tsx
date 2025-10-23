@@ -151,7 +151,7 @@ export const MyListings = (): JSX.Element => {
         </div>
       ) : (
         <div className="space-y-3">
-          {myListings.map((listing) => {
+          {filteredListings.map((listing) => {
             const isExpanded = expandedListingId === listing.id;
             const status = getListingStatus(listing);
 
