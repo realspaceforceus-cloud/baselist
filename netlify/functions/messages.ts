@@ -44,7 +44,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1];
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
 
       if (!userId) {
         return {
@@ -122,7 +122,7 @@ export const handler: Handler = async (event) => {
       );
 
       // Get userId from auth
-      const authorId = await getUserIdFromAuth(event);
+      const authorId = getUserIdFromAuth(event);
 
       if (!authorId || !recipientId || !body) {
         return {
@@ -359,7 +359,7 @@ export const handler: Handler = async (event) => {
   if (method === "GET" && path === "") {
     const client = await pool.connect();
     try {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -550,7 +550,7 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/offer")[0];
       const { amount, madeBy } = JSON.parse(event.body || "{}");
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
 
       if (!userId || !threadId || amount === undefined) {
         console.error("Offer validation failed:", {
@@ -754,7 +754,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/accept-offer")[0];
-      const authUserId = await getUserIdFromAuth(event);
+      const authUserId = getUserIdFromAuth(event);
       const reqBody = parseBody(event);
       const userId = reqBody.userId || authUserId;
 
@@ -961,7 +961,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/decline-offer")[0];
-      const authUserId = await getUserIdFromAuth(event);
+      const authUserId = getUserIdFromAuth(event);
       const reqBody = parseBody(event);
       const userId = reqBody.userId || authUserId;
 
@@ -1123,7 +1123,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/offer")[0];
-      const authUserId = await getUserIdFromAuth(event);
+      const authUserId = getUserIdFromAuth(event);
       const reqBody = parseBody(event);
       const userId = reqBody.userId || authUserId;
 
@@ -1292,7 +1292,7 @@ export const handler: Handler = async (event) => {
     try {
       const threadId = path.split("/threads/")[1].split("/dispute")[0];
       const { reason, baseId } = JSON.parse(event.body || "{}");
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
 
       if (!userId || !threadId) {
         return {
@@ -1365,7 +1365,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/")[0];
-      const authUserId = await getUserIdFromAuth(event);
+      const authUserId = getUserIdFromAuth(event);
       const reqBody = parseBody(event);
       const userId = reqBody.actorId || reqBody.userId || authUserId;
 
@@ -1582,7 +1582,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/")[0];
-      const authUserId = await getUserIdFromAuth(event);
+      const authUserId = getUserIdFromAuth(event);
       const reqBody = parseBody(event);
       const userId = reqBody.actorId || reqBody.userId || authUserId;
 
@@ -1729,7 +1729,7 @@ export const handler: Handler = async (event) => {
     const client = await pool.connect();
     try {
       const threadId = path.split("/threads/")[1].split("/")[0];
-      const authUserId = await getUserIdFromAuth(event);
+      const authUserId = getUserIdFromAuth(event);
       const reqBody = parseBody(event);
       const userId = reqBody.actorId || reqBody.userId || authUserId;
 

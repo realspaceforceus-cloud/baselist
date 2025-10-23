@@ -80,7 +80,7 @@ export const handler: Handler = async (event) => {
   try {
     // POST /feed/admin/announcements (admin only)
     if (method === "POST" && path === "/admin/announcements") {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -151,7 +151,7 @@ export const handler: Handler = async (event) => {
     // GET /feed/posts?baseId=xxx&limit=20&offset=0
     if (method === "GET" && path === "/posts") {
       console.log("[FEED] GET /posts - Starting request");
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       const params = new URLSearchParams(event.rawQuery || "");
       const baseId = params.get("baseId");
       const limit = Math.min(parseInt(params.get("limit") || "20"), 100);
@@ -386,7 +386,7 @@ export const handler: Handler = async (event) => {
 
     // GET /feed/announcements?baseId=xxx
     if (method === "GET" && path === "/announcements") {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       const params = new URLSearchParams(event.rawQuery || "");
       const baseId = params.get("baseId");
 
@@ -425,7 +425,7 @@ export const handler: Handler = async (event) => {
 
     // POST /feed/posts
     if (method === "POST" && path === "/posts") {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         recordMetric(pool, {
           endpoint: "/feed/posts",
@@ -605,7 +605,7 @@ export const handler: Handler = async (event) => {
 
     // POST /feed/posts/:postId/like
     if (method === "POST" && path.match(/^\/posts\/[^/]+\/like$/)) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -652,7 +652,7 @@ export const handler: Handler = async (event) => {
 
     // POST /feed/posts/:postId/comment
     if (method === "POST" && path.match(/^\/posts\/[^/]+\/comment$/)) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -846,7 +846,7 @@ export const handler: Handler = async (event) => {
 
     // POST /feed/posts/:postId/vote
     if (method === "POST" && path.match(/^\/posts\/[^/]+\/vote$/)) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -936,7 +936,7 @@ export const handler: Handler = async (event) => {
 
     // POST /feed/announcements/:announcementId/dismiss
     if (method === "POST" && path.match(/^\/announcements\/[^/]+\/dismiss$/)) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -966,7 +966,7 @@ export const handler: Handler = async (event) => {
 
     // DELETE /feed/posts/:postId
     if (method === "DELETE" && path.match(/^\/posts\/[^/]+$/)) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -1031,7 +1031,7 @@ export const handler: Handler = async (event) => {
 
     // POST /feed/posts/:postId/report
     if (method === "POST" && path.match(/^\/posts\/[^/]+\/report$/)) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -1083,7 +1083,7 @@ export const handler: Handler = async (event) => {
       method === "DELETE" &&
       path.match(/^\/posts\/[^/]+\/comments\/[^/]+$/)
     ) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
@@ -1154,7 +1154,7 @@ export const handler: Handler = async (event) => {
       method === "POST" &&
       path.match(/^\/posts\/[^/]+\/comments\/[^/]+\/like$/)
     ) {
-      const userId = await getUserIdFromAuth(event);
+      const userId = getUserIdFromAuth(event);
       if (!userId) {
         return {
           statusCode: 401,
