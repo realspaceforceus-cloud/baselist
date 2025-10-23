@@ -120,7 +120,7 @@ export const handler: Handler = async (event, context) => {
         console.log("[RATINGS] ❌ Thread not found");
         return {
           statusCode: 404,
-          headers: { "Content-Type": "application/json" },
+          headers: corsHeaders,
           body: JSON.stringify({ error: "Thread not found" }),
         };
       }
