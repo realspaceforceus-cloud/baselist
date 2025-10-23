@@ -1510,28 +1510,19 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      // Parse participants if needed
-      const participants =
-        typeof thread.participants === "string"
-          ? JSON.parse(thread.participants)
-          : thread.participants;
-
-      if (!participants || !Array.isArray(participants) || participants.length < 2) {
+      // Use the old UI contract
+      if (tx.status !== "pending_confirmation") {
         return {
-          statusCode: 400,
+          statusCode: 409,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Invalid thread participants" }),
+          body: JSON.stringify({ error: "No completion pending" }),
         };
       }
 
       const now = new Date().toISOString();
       const updatedTx = {
         ...tx,
-        aUserId: tx.aUserId || participants[0],
-        bUserId: tx.bUserId || participants[1],
-        state: "completed",
-        aMarkedAt: tx.aMarkedAt || now,
-        bMarkedAt: tx.bMarkedAt || now,
+        status: "completed",
         completedAt: now,
       };
 
