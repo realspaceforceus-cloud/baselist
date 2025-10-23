@@ -173,7 +173,7 @@ const Messages = (): JSX.Element => {
     fetchThreads();
   }, [user?.id]);
 
-  // Poll for new messages every 5 seconds when viewing a specific thread
+  // Poll for new messages every 2 seconds when viewing a specific thread
   useEffect(() => {
     if (!threadId || !user?.id) return;
 
@@ -185,19 +185,21 @@ const Messages = (): JSX.Element => {
         // Find the current thread and check for updates
         const updatedThread = threads.find((t: any) => t.id === threadId);
         if (updatedThread) {
-          console.log("[Polling] Updated thread messages:", updatedThread.messages?.map((m: any) => ({
-            id: m.id,
-            type: m.type,
-            body: m.body,
-          })));
-          setMessageThreads((prevThreads) =>
-            prevThreads.map((t) => (t.id === threadId ? updatedThread : t)),
-          );
+          console.log("[Polling] Updated thread - messages count:", updatedThread.messages?.length, "Transaction:", updatedThread.transaction);
+          setMessageThreads((prevThreads) => {
+            // Create a new array with the updated thread
+            const newThreads = prevThreads.map((t) =>
+              t.id === threadId ? updatedThread : t
+            );
+            return newThreads;
+          });
+        } else {
+          console.log("[Polling] Thread not found in response", { threadId });
         }
       } catch (error) {
         console.error("Failed to poll for thread updates:", error);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 2000); // Poll every 2 seconds for faster updates
 
     return () => clearInterval(pollInterval);
   }, [threadId, user?.id]);
