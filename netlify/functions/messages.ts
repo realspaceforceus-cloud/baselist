@@ -1378,30 +1378,31 @@ export const handler: Handler = async (event) => {
       }
 
       const now = new Date().toISOString();
-      // Set timestamp for the current user marking complete
-      const aMarkedAt = isA ? now : tx.aMarkedAt;
-      const bMarkedAt = isB ? now : tx.bMarkedAt;
 
-      let newState = "open";
-      if (aMarkedAt && bMarkedAt) {
-        // Both have marked → transaction completed
-        newState = "completed";
-      } else if (aMarkedAt) {
-        // Only A marked → pending_a
-        newState = "pending_a";
-      } else if (bMarkedAt) {
-        // Only B marked → pending_b
-        newState = "pending_b";
+      // Use the old UI contract: pending_confirmation + markedCompleteBy
+      let newStatus = tx.status || "open";
+
+      if (!tx.markedCompleteBy) {
+        // First mark: move to pending_confirmation
+        newStatus = "pending_confirmation";
+      } else if (tx.markedCompleteBy !== userId) {
+        // Second mark by the other party: complete transaction
+        newStatus = "completed";
+      } else {
+        // Same user trying to mark twice
+        return {
+          statusCode: 409,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Already marked. Awaiting confirmation from the other party." }),
+        };
       }
 
       const updatedTx = {
         ...tx,
-        aUserId: tx.aUserId || participants[0],
-        bUserId: tx.bUserId || participants[1],
-        state: newState,
-        aMarkedAt: aMarkedAt || null,
-        bMarkedAt: bMarkedAt || null,
-        completedAt: newState === "completed" ? now : tx.completedAt,
+        status: newStatus,
+        markedCompleteBy: tx.markedCompleteBy || userId,
+        markedCompleteAt: tx.markedCompleteAt || now,
+        completedAt: newStatus === "completed" ? now : tx.completedAt,
       };
 
       // Parse timeline from JSON if needed
