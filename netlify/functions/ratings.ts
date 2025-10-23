@@ -55,7 +55,13 @@ const handler: Handler = async (event) => {
       client = await pool.connect();
 
       // Insert rating into database
-      console.log("[ratings] Inserting rating:", { ratingId, transactionId, userId, targetUserId, rating });
+      console.log("[ratings] Inserting rating:", {
+        ratingId,
+        transactionId,
+        userId,
+        targetUserId,
+        rating,
+      });
 
       // Try to insert with all columns first
       try {
@@ -75,18 +81,14 @@ const handler: Handler = async (event) => {
         );
       } catch (columnError: any) {
         // If target_user_id or rating_type columns don't exist, try without them
-        console.log("[ratings] Column error, trying without target_user_id/rating_type:", columnError.message);
+        console.log(
+          "[ratings] Column error, trying without target_user_id/rating_type:",
+          columnError.message,
+        );
         await client.query(
           `INSERT INTO ratings (id, transaction_id, user_id, score, comment, created_at)
            VALUES ($1, $2, $3, $4, $5, $6)`,
-          [
-            ratingId,
-            transactionId,
-            userId,
-            rating,
-            review || null,
-            now,
-          ],
+          [ratingId, transactionId, userId, rating, review || null, now],
         );
       }
       console.log("[ratings] Rating inserted successfully");

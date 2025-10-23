@@ -145,7 +145,8 @@ export const CompletionCard = ({
       const ratingData = await response.json();
 
       if (!response.ok) {
-        const errorMessage = ratingData?.error || ratingData?.details || "Failed to submit rating";
+        const errorMessage =
+          ratingData?.error || ratingData?.details || "Failed to submit rating";
         throw new Error(errorMessage);
       }
 
@@ -156,7 +157,8 @@ export const CompletionCard = ({
         onUpdated(ratingData.thread.transaction, ratingData.thread);
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Failed to submit rating";
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to submit rating";
       console.error("Error submitting rating:", error);
       showError(`${errorMsg}. Please try again.`);
     } finally {
