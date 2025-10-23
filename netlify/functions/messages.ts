@@ -1343,18 +1343,20 @@ export const handler: Handler = async (event) => {
       const thread = threadResult.rows[0];
 
       // Parse transaction and participants from JSON if needed
-      let tx = typeof thread.transaction === "string"
-        ? JSON.parse(thread.transaction)
-        : thread.transaction;
+      let tx =
+        typeof thread.transaction === "string"
+          ? JSON.parse(thread.transaction)
+          : thread.transaction;
 
       tx = tx || {
         id: randomUUID(),
       };
 
       // Parse participants if it's a string
-      const participants = typeof thread.participants === "string"
-        ? JSON.parse(thread.participants)
-        : thread.participants;
+      const participants =
+        typeof thread.participants === "string"
+          ? JSON.parse(thread.participants)
+          : thread.participants;
 
       const isA = userId === participants[0];
       const isB = userId === participants[1];
@@ -1395,9 +1397,10 @@ export const handler: Handler = async (event) => {
       };
 
       // Parse timeline from JSON if needed
-      let timeline = typeof thread.timeline === "string"
-        ? JSON.parse(thread.timeline)
-        : thread.timeline || [];
+      let timeline =
+        typeof thread.timeline === "string"
+          ? JSON.parse(thread.timeline)
+          : thread.timeline || [];
 
       timeline.push({
         at: now,
@@ -1474,9 +1477,10 @@ export const handler: Handler = async (event) => {
       const thread = threadResult.rows[0];
 
       // Parse transaction from JSON if needed
-      let tx = typeof thread.transaction === "string"
-        ? JSON.parse(thread.transaction)
-        : thread.transaction;
+      let tx =
+        typeof thread.transaction === "string"
+          ? JSON.parse(thread.transaction)
+          : thread.transaction;
 
       tx = tx || { id: randomUUID() };
 
@@ -1489,9 +1493,10 @@ export const handler: Handler = async (event) => {
       }
 
       // Parse participants if needed
-      const participants = typeof thread.participants === "string"
-        ? JSON.parse(thread.participants)
-        : thread.participants;
+      const participants =
+        typeof thread.participants === "string"
+          ? JSON.parse(thread.participants)
+          : thread.participants;
 
       const now = new Date().toISOString();
       const updatedTx = {
@@ -1505,9 +1510,10 @@ export const handler: Handler = async (event) => {
       };
 
       // Parse timeline from JSON if needed
-      let timeline = typeof thread.timeline === "string"
-        ? JSON.parse(thread.timeline)
-        : thread.timeline || [];
+      let timeline =
+        typeof thread.timeline === "string"
+          ? JSON.parse(thread.timeline)
+          : thread.timeline || [];
       timeline.push({
         at: now,
         actorId: userId,
@@ -1581,9 +1587,10 @@ export const handler: Handler = async (event) => {
       const thread = threadResult.rows[0];
 
       // Parse transaction from JSON if needed
-      let tx = typeof thread.transaction === "string"
-        ? JSON.parse(thread.transaction)
-        : thread.transaction;
+      let tx =
+        typeof thread.transaction === "string"
+          ? JSON.parse(thread.transaction)
+          : thread.transaction;
 
       tx = tx || { id: randomUUID() };
 
@@ -1608,9 +1615,10 @@ export const handler: Handler = async (event) => {
       };
 
       // Parse timeline from JSON if needed
-      let timeline = typeof thread.timeline === "string"
-        ? JSON.parse(thread.timeline)
-        : thread.timeline || [];
+      let timeline =
+        typeof thread.timeline === "string"
+          ? JSON.parse(thread.timeline)
+          : thread.timeline || [];
       timeline.push({
         at: now,
         actorId: userId,
