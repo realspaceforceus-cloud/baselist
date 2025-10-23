@@ -198,7 +198,12 @@ export const CompletionCard = ({
       }
 
       setRatingSubmitted(true);
-      showSuccess("Thank you for your feedback!");
+      showSuccess("Thank you for your feedback!")
+      // Optionally refresh thread data if endpoint returns it
+      const ratingData = await response.json();
+      if (ratingData.thread && onUpdated) {
+        onUpdated(ratingData.thread.transaction, ratingData.thread);
+      }
     } catch (error) {
       console.error("Error submitting rating:", error);
       showError("Failed to submit rating. Please try again.");
