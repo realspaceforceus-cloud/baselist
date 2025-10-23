@@ -183,7 +183,19 @@ export const handler: Handler = async (event, context) => {
       );
       console.log("[RATINGS] ✓ Transaction updated");
 
-      // 4. Fetch and return the complete updated thread
+      // 6. Auto-archive thread after rating is submitted
+      console.log("[RATINGS] Auto-archiving thread...");
+      const archivedBy = threadCheck.rows[0].archived_by || [];
+      if (!archivedBy.includes(userId)) {
+        archivedBy.push(userId);
+      }
+      await client.query(
+        `UPDATE message_threads SET archived_by = $1, updated_at = NOW() WHERE id = $2`,
+        [archivedBy, actualThreadId],
+      );
+      console.log("[RATINGS] ✓ Thread archived");
+
+      // 7. Fetch and return the complete updated thread
       console.log("[RATINGS] Fetching complete updated thread...");
       const completeThreadResult = await client.query(
         `SELECT id, listing_id, participants, status, transaction, archived_by, deleted_by
@@ -225,7 +237,7 @@ export const handler: Handler = async (event, context) => {
 
       console.log("[RATINGS] ✓ Updated thread prepared");
 
-      // 5. Create notification
+      // 8. Create notification
       try {
         console.log("[RATINGS] Creating notification...");
         const userResult = await client.query(
