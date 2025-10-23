@@ -154,7 +154,7 @@ export const handler: Handler = async (event, context) => {
       );
       console.log("[RATINGS] ✓ Transaction updated");
 
-      // 6. Fetch and return the complete updated thread
+      // 4. Fetch and return the complete updated thread
       console.log("[RATINGS] Fetching complete updated thread...");
       const completeThreadResult = await client.query(
         `SELECT id, listing_id, participants, status, transaction, archived_by, deleted_by
