@@ -488,14 +488,18 @@ const Profile = (): JSX.Element => {
               <ShoppingBag className="h-5 w-5" aria-hidden />
             </span>
             <h2 className="text-lg font-semibold text-foreground">
-              {isViewingOwnProfile ? "My items for sale" : `${profileFirstName}'s items for sale`}
+              {isViewingOwnProfile
+                ? "My items for sale"
+                : `${profileFirstName}'s items for sale`}
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {activeListings.map((listing) => (
               <button
                 key={listing.id}
-                onClick={() => navigate(`/listing/${listing.slug || listing.id}`)}
+                onClick={() =>
+                  navigate(`/listing/${listing.slug || listing.id}`)
+                }
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-md hover:border-primary/50"
               >
                 <div className="relative aspect-square overflow-hidden bg-muted">

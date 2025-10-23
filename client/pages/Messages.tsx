@@ -961,7 +961,7 @@ const Messages = (): JSX.Element => {
                           ? (() => {
                               try {
                                 const offerData = JSON.parse(
-                                  summary.lastMessage.body
+                                  summary.lastMessage.body,
                                 );
                                 return `Offer: $${offerData.amount.toFixed(2)}`;
                               } catch {
