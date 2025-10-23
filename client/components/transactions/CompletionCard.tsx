@@ -158,10 +158,10 @@ export const CompletionCard = ({
 
       const data = await response.json();
       onUpdated(data.transaction);
-      toast.success("Dispute opened. An admin will review your case shortly.");
+      showSuccess("Dispute opened. An admin will review your case shortly.");
     } catch (error) {
       console.error("Error opening dispute:", error);
-      toast.error("Failed to open dispute. Please try again.");
+      showError("Failed to open dispute. Please try again.");
     } finally {
       setIsLoading(false);
     }
