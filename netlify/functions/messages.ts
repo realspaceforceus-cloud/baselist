@@ -923,16 +923,16 @@ export const handler: Handler = async (event) => {
 
       return ok({
         thread: {
-          id: threadData.id,
-          listingId: threadData.listing_id,
-          participants: threadData.participants,
-          status: threadData.status,
-          archivedBy: threadData.archived_by,
-          deletedBy: threadData.deleted_by,
+          id: updatedThreadData.id,
+          listingId: updatedThreadData.listing_id,
+          participants: updatedThreadData.participants,
+          status: updatedThreadData.status,
+          archivedBy: updatedThreadData.archived_by,
+          deletedBy: updatedThreadData.deleted_by,
           transaction: transaction,
-          timeline: threadData.timeline,
-          createdAt: threadData.created_at,
-          updatedAt: threadData.updated_at,
+          timeline: updatedThreadData.timeline,
+          createdAt: updatedThreadData.created_at,
+          updatedAt: updatedThreadData.updated_at,
           listing,
           partner,
           messages: messagesResult.rows.map((msg: any) => ({
