@@ -1527,7 +1527,7 @@ const Messages = (): JSX.Element => {
                           prev.map((t) =>
                             t.id === activeSummary.thread.id
                               ? // Prefer full thread update if available, otherwise just update transaction
-                                updatedThread ?? { ...t, transaction: tx }
+                                (updatedThread ?? { ...t, transaction: tx })
                               : t,
                           ),
                         );

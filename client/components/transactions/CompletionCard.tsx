@@ -60,8 +60,7 @@ export const CompletionCard = ({
   // Use new contract fields
   const status = tx.status || "open";
   const youMarked = tx.markedCompleteBy === currentUserId;
-  const waitingOnYou =
-    status === "pending_confirmation" && !youMarked;
+  const waitingOnYou = status === "pending_confirmation" && !youMarked;
 
   const handleMarkComplete = async () => {
     setIsLoading(true);

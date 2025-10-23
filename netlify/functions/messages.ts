@@ -1359,7 +1359,11 @@ export const handler: Handler = async (event) => {
           ? JSON.parse(thread.participants)
           : thread.participants;
 
-      if (!participants || !Array.isArray(participants) || participants.length < 2) {
+      if (
+        !participants ||
+        !Array.isArray(participants) ||
+        participants.length < 2
+      ) {
         return {
           statusCode: 400,
           headers: { "Content-Type": "application/json" },
@@ -1394,7 +1398,10 @@ export const handler: Handler = async (event) => {
         return {
           statusCode: 409,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: "Already marked. Awaiting confirmation from the other party." }),
+          body: JSON.stringify({
+            error:
+              "Already marked. Awaiting confirmation from the other party.",
+          }),
         };
       }
 
@@ -1449,9 +1456,7 @@ export const handler: Handler = async (event) => {
           newStatus === "completed"
             ? "Transaction completed."
             : `${
-                participants.find((p: string) => p === userId)
-                  ? "You"
-                  : "They"
+                participants.find((p: string) => p === userId) ? "You" : "They"
               } marked complete.`,
         sent_at: now,
         type: "system",
