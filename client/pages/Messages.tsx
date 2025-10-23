@@ -1583,71 +1583,89 @@ const Messages = (): JSX.Element => {
             )}
           </div>
 
-          <form
-            onSubmit={handleComposerSubmit}
-            className="border-t border-border px-6 py-4"
-          >
-            <div className="flex flex-col gap-3 md:flex-row md:items-center">
-              <Input
-                value={composerMessage}
-                onChange={(event) => setComposerMessage(event.target.value)}
-                placeholder={activeDefaultComposerMessage}
-                className="h-12 rounded-full border-border bg-background/80 text-sm"
-              />
-              <div className="flex flex-wrap gap-2 md:justify-end">
-                {activeSummary.isMarketplace ? (
-                  <>
-                    {activeTransaction?.offer?.status !== "pending" &&
-                    activeTransaction?.offer?.status !== "accepted" ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full px-4 text-xs font-semibold"
-                        onClick={handleOpenOfferDialog}
-                        disabled={!activeSummary?.listing}
-                      >
-                        {activeSummary?.listing &&
-                        !activeSummary.listing.isFree &&
-                        activeSummary.listing.price
-                          ? (() => {
-                              const price = Number(activeSummary.listing.price);
-                              return isNaN(price)
-                                ? "Quick offer"
-                                : `Offer ${new Intl.NumberFormat("en-US", {
-                                    style: "currency",
-                                    currency: "USD",
-                                    maximumFractionDigits:
-                                      price % 1 === 0 ? 0 : 2,
-                                  }).format(price)}`;
-                            })()
-                          : "Quick offer"}
-                      </Button>
-                    ) : null}
-                    {!awaitingUserConfirmation && !isDisputed ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full px-4 text-xs font-semibold text-destructive hover:bg-destructive/10"
-                        onClick={() => setShowDisputeDialog(true)}
-                      >
-                        Dispute
-                      </Button>
-                    ) : null}
-                  </>
-                ) : null}
+          {activeSummary.isArchived ? (
+            <div className="border-t border-border px-6 py-4">
+              <div className="rounded-lg bg-muted/50 p-4 text-center">
+                <p className="mb-4 text-sm text-muted-foreground">
+                  This conversation has been archived. You can no longer send messages here.
+                </p>
                 <Button
-                  type="submit"
-                  size="sm"
+                  type="button"
+                  variant="outline"
                   className="rounded-full px-6 text-xs font-semibold"
-                  disabled={!composerMessage.trim()}
+                  onClick={() => setShowSupportDialog(true)}
                 >
-                  Send
+                  Need help with this item?
                 </Button>
               </div>
             </div>
-          </form>
+          ) : (
+            <form
+              onSubmit={handleComposerSubmit}
+              className="border-t border-border px-6 py-4"
+            >
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                <Input
+                  value={composerMessage}
+                  onChange={(event) => setComposerMessage(event.target.value)}
+                  placeholder={activeDefaultComposerMessage}
+                  className="h-12 rounded-full border-border bg-background/80 text-sm"
+                />
+                <div className="flex flex-wrap gap-2 md:justify-end">
+                  {activeSummary.isMarketplace ? (
+                    <>
+                      {activeTransaction?.offer?.status !== "pending" &&
+                      activeTransaction?.offer?.status !== "accepted" ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full px-4 text-xs font-semibold"
+                          onClick={handleOpenOfferDialog}
+                          disabled={!activeSummary?.listing}
+                        >
+                          {activeSummary?.listing &&
+                          !activeSummary.listing.isFree &&
+                          activeSummary.listing.price
+                            ? (() => {
+                                const price = Number(activeSummary.listing.price);
+                                return isNaN(price)
+                                  ? "Quick offer"
+                                  : `Offer ${new Intl.NumberFormat("en-US", {
+                                      style: "currency",
+                                      currency: "USD",
+                                      maximumFractionDigits:
+                                        price % 1 === 0 ? 0 : 2,
+                                    }).format(price)}`;
+                              })()
+                            : "Quick offer"}
+                        </Button>
+                      ) : null}
+                      {!awaitingUserConfirmation && !isDisputed ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full px-4 text-xs font-semibold text-destructive hover:bg-destructive/10"
+                          onClick={() => setShowDisputeDialog(true)}
+                        >
+                          Dispute
+                        </Button>
+                      ) : null}
+                    </>
+                  ) : null}
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="rounded-full px-6 text-xs font-semibold"
+                    disabled={!composerMessage.trim()}
+                  >
+                    Send
+                  </Button>
+                </div>
+              </div>
+            </form>
+          )}
         </>
       ) : (
         <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
