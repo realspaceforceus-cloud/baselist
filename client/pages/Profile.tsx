@@ -70,7 +70,7 @@ const Profile = (): JSX.Element => {
     const fetchUser = async () => {
       setIsLoadingUser(true);
       try {
-        const response = await fetch(`/.netlify/functions/users/${memberId}`, {
+        const response = await fetch(`/api/users/${memberId}`, {
           credentials: "include",
         });
         if (response.ok) {
@@ -86,6 +86,13 @@ const Profile = (): JSX.Element => {
     };
 
     fetchUser();
+
+    // Refetch profile data every 5 seconds when viewing own profile to catch rating updates
+    const interval = setInterval(() => {
+      fetchUser();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [memberId, currentUser?.id]);
 
   // Determine viewing own profile (must come before other hooks)
