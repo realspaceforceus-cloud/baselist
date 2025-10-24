@@ -29,17 +29,24 @@ export default function StoreManagement() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Button asChild variant="ghost" className="mb-6">
-            <Link to="/profile" className="flex items-center gap-2">
-              <ChevronLeft className="h-4 w-4" />
-              Back to Profile
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Store Management</h1>
-            <p className="text-muted-foreground mt-2">
-              Manage your store settings, customize colors, add items, and more.
-            </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold">Store Management</h1>
+              <p className="text-muted-foreground mt-2">
+                Manage your store settings, customize colors, add items, and more.
+              </p>
+            </div>
+            {(user as any)?.store_enabled && (user as any)?.store_slug && (
+              <Button asChild>
+                <Link
+                  to={`/store/${(user as any).store_slug}`}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  View Store
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
 
