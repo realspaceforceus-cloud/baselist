@@ -185,6 +185,22 @@ export const CompletionCard = ({
 
       setRatingSubmitted(true);
       showSuccess("Thank you for your feedback!");
+
+      // Refetch profile data to update rating and transaction counts
+      if (currentUserId) {
+        try {
+          const profileResponse = await fetch(`/api/users/${currentUserId}`, {
+            credentials: "include",
+          });
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            console.log("[Rating] Profile data refreshed:", profileData);
+          }
+        } catch (error) {
+          console.error("[Rating] Failed to refresh profile:", error);
+        }
+      }
+
       // Optionally refresh thread data if endpoint returns it
       if (ratingData.thread && onUpdated) {
         onUpdated(ratingData.thread.transaction, ratingData.thread);
