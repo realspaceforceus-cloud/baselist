@@ -627,6 +627,7 @@ export const StoreSettingsSection = ({
                         name: item.name,
                         description: item.description || "",
                         price: item.price.toString(),
+                        quantity: (item.quantity || 1).toString(),
                         imageUrls: item.imageUrls,
                       });
                       setShowItemForm(true);
