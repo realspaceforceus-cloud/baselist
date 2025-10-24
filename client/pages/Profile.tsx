@@ -582,7 +582,7 @@ const Profile = (): JSX.Element => {
               </div>
             </div>
             <div className="flex w-full flex-col gap-3 md:w-auto md:text-right">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-2 items-end">
                 <RatingBadge
                   userId={profileUser.id}
                   size="lg"
@@ -598,6 +598,18 @@ const Profile = (): JSX.Element => {
                   }
                   label={`${profileUser.name} rating`}
                 />
+                {(profileUser as any)?.store_enabled && (profileUser as any)?.store_slug && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="rounded-lg"
+                  >
+                    <Link to={`/store/${(profileUser as any).store_slug}`}>
+                      Visit Store
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
