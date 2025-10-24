@@ -134,29 +134,47 @@ export const StoreSettingsSection = ({
     }
 
     setIsLoading(true);
+    const operation = editingItem ? "UPDATE" : "ADD";
+    console.log(`[ITEM ${operation}] Starting...`, { name: itemForm.name, price: itemForm.price });
+
     try {
       const url = editingItem
         ? `/.netlify/functions/store/items?itemId=${editingItem.id}`
         : "/.netlify/functions/store/items";
       const method = editingItem ? "PATCH" : "POST";
 
+      const itemData = {
+        name: itemForm.name,
+        description: itemForm.description,
+        price: parseFloat(itemForm.price),
+        imageUrls: itemForm.imageUrls,
+      };
+      console.log(`[ITEM ${operation}] URL:`, url);
+      console.log(`[ITEM ${operation}] Method:`, method);
+      console.log(`[ITEM ${operation}] Data:`, itemData);
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          name: itemForm.name,
-          description: itemForm.description,
-          price: parseFloat(itemForm.price),
-          imageUrls: itemForm.imageUrls,
-        }),
+        body: JSON.stringify(itemData),
       });
 
+      console.log(`[ITEM ${operation}] Response status:`, response.status, response.statusText);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to save item");
+        let errorData;
+        try {
+          errorData = await response.json();
+          console.log(`[ITEM ${operation}] Error response:`, errorData);
+        } catch (parseError) {
+          console.log(`[ITEM ${operation}] Could not parse error response`);
+          errorData = { error: "Unknown error" };
+        }
+        throw new Error(errorData.error || errorData.details || "Failed to save item");
       }
 
+      console.log(`[ITEM ${operation}] Success! Fetching items...`);
       await fetchStoreItems();
       setItemForm({ name: "", description: "", price: "", imageUrls: [] });
       setEditingItem(null);
@@ -168,8 +186,8 @@ export const StoreSettingsSection = ({
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to save item";
+      console.error(`[ITEM ${operation}] Error:`, message, error);
       toast({ title: "Error", description: message });
-      console.error("Item save error:", error);
     } finally {
       setIsLoading(false);
     }
