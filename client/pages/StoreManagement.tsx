@@ -54,9 +54,10 @@ export default function StoreManagement() {
         {/* Store Settings Component */}
         <StoreSettingsSection
           user={user}
-          onStoreUpdated={(store: Store) => {
-            // Re-fetch user data if needed
+          onStoreUpdated={async (store: Store) => {
             console.log("Store updated:", store);
+            // Refresh user data to update store_enabled and store_slug
+            await refreshUser();
           }}
         />
       </div>
