@@ -3,6 +3,7 @@ import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { StoreSettingsSection } from "@/components/admin/sections/StoreSettingsSection";
+import CreateStore from "./CreateStore";
 import { Store } from "@/types";
 
 export default function StoreManagement() {
@@ -24,6 +25,15 @@ export default function StoreManagement() {
     );
   }
 
+  // Check if user has a store by checking if store_name exists
+  const hasStore = !!(user as any)?.store_name;
+
+  // If no store exists, show the create store form
+  if (!hasStore) {
+    return <CreateStore />;
+  }
+
+  // If store exists, show the management interface
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 py-8">
