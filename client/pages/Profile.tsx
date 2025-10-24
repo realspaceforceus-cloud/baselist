@@ -333,10 +333,24 @@ const Profile = (): JSX.Element => {
     profileUser.completedSales ?? purchases.length + sales.length ?? 0;
 
   const profileRatingSummary = getUserRatingSummary(profileUser.id);
-  const profileRatingAverage =
-    profileRatingSummary?.overallAverage ?? profileUser.rating ?? null;
-  const profileRatingCount =
-    profileRatingSummary?.overallCount ?? profileUser.ratingCount ?? 0;
+
+  // Calculate rating average and count from fetched ratings
+  const calculateRatingStats = useMemo(() => {
+    if (profileRatings.length === 0) {
+      return {
+        average: profileRatingSummary?.overallAverage ?? profileUser.rating ?? null,
+        count: profileRatingSummary?.overallCount ?? profileUser.ratingCount ?? 0,
+      };
+    }
+    const average = profileRatings.reduce((sum: number, r: any) => sum + r.score, 0) / profileRatings.length;
+    return {
+      average: average,
+      count: profileRatings.length,
+    };
+  }, [profileRatings, profileRatingSummary, profileUser.rating, profileUser.ratingCount]);
+
+  const profileRatingAverage = calculateRatingStats.average;
+  const profileRatingCount = calculateRatingStats.count;
 
   const noticeSeverityClass: Record<string, string> = {
     info: "text-muted-foreground",
