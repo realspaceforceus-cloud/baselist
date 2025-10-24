@@ -179,6 +179,21 @@ export const StoreSettingsSection = ({
     }
   };
 
+  const handleUploadLogo = async (file: File) => {
+    try {
+      const url = await uploadImageToCloudinary(file);
+      setStore((prev) => ({
+        ...prev,
+        logoUrl: url,
+      }));
+      toast({ title: "Success", description: "Logo uploaded!" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to upload logo";
+      toast({ title: "Error", description: message });
+      console.error("Logo upload error:", error);
+    }
+  };
+
   const handleUploadImage = async (file: File) => {
     try {
       const url = await uploadImageToCloudinary(file);
