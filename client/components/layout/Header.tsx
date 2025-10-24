@@ -65,7 +65,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Profile",
-    to: "/profile",
+    to: "profile", // Will be replaced with dynamic route
     icon: User,
   },
 ] as const;
