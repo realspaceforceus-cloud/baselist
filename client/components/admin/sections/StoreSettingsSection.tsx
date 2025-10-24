@@ -161,29 +161,14 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
 
   const handleUploadImage = async (file: File) => {
     try {
-      const signature = await getSignature();
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("signature", signature.signature);
-      formData.append("timestamp", signature.timestamp.toString());
-      formData.append("api_key", signature.api_key);
-      formData.append("cloud_name", signature.cloud_name);
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloud_name}/image/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Upload failed");
-
-      const data = await response.json();
+      const url = await uploadImageToCloudinary(file);
       setItemForm((prev) => ({
         ...prev,
-        imageUrls: [...prev.imageUrls, data.secure_url],
+        imageUrls: [...prev.imageUrls, url],
       }));
       toast.success("Image uploaded!");
     } catch (error) {
-      toast.error("Failed to upload image");
+      toast.error(error instanceof Error ? error.message : "Failed to upload image");
     }
   };
 
