@@ -119,7 +119,7 @@ export const handler: Handler = async (event, context) => {
       // 1. Verify thread exists
       console.log("[RATINGS] Verifying thread exists...");
       const threadCheck = await client.query(
-        `SELECT id, transaction FROM message_threads WHERE id = $1`,
+        `SELECT id, transaction, participants, listing_id, archived_by FROM message_threads WHERE id = $1`,
         [actualThreadId],
       );
 
