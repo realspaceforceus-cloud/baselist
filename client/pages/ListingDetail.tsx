@@ -97,12 +97,9 @@ const ListingDetail = (): JSX.Element => {
 
     const fetchSeller = async () => {
       try {
-        const response = await fetch(
-          `/api/users/${listing.sellerId}`,
-          {
-            credentials: "include",
-          },
-        );
+        const response = await fetch(`/api/users/${listing.sellerId}`, {
+          credentials: "include",
+        });
         if (response.ok) {
           const sellerData = await response.json();
           setSeller(sellerData);
@@ -254,13 +251,10 @@ const ListingDetail = (): JSX.Element => {
     try {
       setIsLoadingSave(true);
       const method = isSaved ? "DELETE" : "POST";
-      const response = await fetch(
-        `/api/saved-listings/${listing.id}`,
-        {
-          method,
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`/api/saved-listings/${listing.id}`, {
+        method,
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to save listing");

@@ -316,16 +316,13 @@ const Landing = (): JSX.Element => {
         }, 2000);
       } else {
         // For military email, request verification code
-        const verifyResponse = await fetch(
-          "/api/verify-status/request",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: normalizedEmail,
-            }),
-          },
-        );
+        const verifyResponse = await fetch("/api/verify-status/request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: normalizedEmail,
+          }),
+        });
 
         if (!verifyResponse.ok) {
           const data = await verifyResponse.json();

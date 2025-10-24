@@ -150,15 +150,12 @@ export const EmailTemplatesSection = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch(
-        `/api/email-templates/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "user-id": "admin",
-          },
+      const response = await fetch(`/api/email-templates/${id}`, {
+        method: "DELETE",
+        headers: {
+          "user-id": "admin",
         },
-      );
+      });
 
       if (response.ok) {
         toast.success("Template deleted successfully");

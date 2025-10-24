@@ -73,13 +73,10 @@ export const ListingCard = ({
     setIsLoadingSave(true);
     try {
       const method = isSaved ? "DELETE" : "POST";
-      const response = await fetch(
-        `/api/saved-listings/${listing.id}`,
-        {
-          method,
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`/api/saved-listings/${listing.id}`, {
+        method,
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to save listing");

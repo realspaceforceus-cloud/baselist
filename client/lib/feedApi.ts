@@ -15,10 +15,9 @@ export const feedApi = {
   },
 
   async getAnnouncements(baseId: string): Promise<FeedAnnouncement[]> {
-    const response = await fetch(
-      `/api/feed/announcements?baseId=${baseId}`,
-      { credentials: "include" },
-    );
+    const response = await fetch(`/api/feed/announcements?baseId=${baseId}`, {
+      credentials: "include",
+    });
     if (!response.ok) throw new Error("Failed to fetch announcements");
     return response.json();
   },
@@ -49,13 +48,10 @@ export const feedApi = {
   },
 
   async likePost(postId: string): Promise<void> {
-    const response = await fetch(
-      `/api/feed/posts/${postId}/like`,
-      {
-        method: "POST",
-        credentials: "include",
-      },
-    );
+    const response = await fetch(`/api/feed/posts/${postId}/like`, {
+      method: "POST",
+      credentials: "include",
+    });
     if (!response.ok) throw new Error("Failed to like post");
   },
 
@@ -64,29 +60,23 @@ export const feedApi = {
     content: string,
     parentCommentId?: string,
   ): Promise<any> {
-    const response = await fetch(
-      `/api/feed/posts/${postId}/comment`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, parentCommentId }),
-      },
-    );
+    const response = await fetch(`/api/feed/posts/${postId}/comment`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content, parentCommentId }),
+    });
     if (!response.ok) throw new Error("Failed to add comment");
     return response.json();
   },
 
   async voteOnPoll(postId: string, optionId: string): Promise<any> {
-    const response = await fetch(
-      `/api/feed/posts/${postId}/vote`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ optionId }),
-      },
-    );
+    const response = await fetch(`/api/feed/posts/${postId}/vote`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ optionId }),
+    });
     if (!response.ok) throw new Error("Failed to vote on poll");
     return response.json();
   },
@@ -110,22 +100,19 @@ export const feedApi = {
     isSticky: boolean = false,
     isDismissible: boolean = true,
   ): Promise<any> {
-    const response = await fetch(
-      "/api/feed/admin/announcements",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          baseId,
-          title,
-          content,
-          imageUrl,
-          isSticky,
-          isDismissible,
-        }),
-      },
-    );
+    const response = await fetch("/api/feed/admin/announcements", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        baseId,
+        title,
+        content,
+        imageUrl,
+        isSticky,
+        isDismissible,
+      }),
+    });
     if (!response.ok) throw new Error("Failed to create announcement");
     return response.json();
   },
@@ -139,15 +126,12 @@ export const feedApi = {
   },
 
   async reportPost(postId: string, reason: string): Promise<void> {
-    const response = await fetch(
-      `/api/feed/posts/${postId}/report`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason }),
-      },
-    );
+    const response = await fetch(`/api/feed/posts/${postId}/report`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason }),
+    });
     if (!response.ok) throw new Error("Failed to report post");
   },
 

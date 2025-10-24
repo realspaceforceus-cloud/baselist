@@ -35,10 +35,9 @@ const ListingCardWithSeller = ({
 
     const fetchSeller = async () => {
       try {
-        const response = await fetch(
-          `/api/users/${listing.sellerId}`,
-          { credentials: "include" },
-        );
+        const response = await fetch(`/api/users/${listing.sellerId}`, {
+          credentials: "include",
+        });
         if (response.ok) {
           const data = await response.json();
           setSeller(data);

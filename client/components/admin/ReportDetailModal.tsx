@@ -99,19 +99,16 @@ export const ReportDetailModal = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(
-        `/api/admin/reports/${report.id}/resolve`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            status: "resolved",
-            action: selectedAction,
-            message,
-          }),
-        },
-      );
+      const response = await fetch(`/api/admin/reports/${report.id}/resolve`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "resolved",
+          action: selectedAction,
+          message,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to resolve report");

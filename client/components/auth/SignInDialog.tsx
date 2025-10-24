@@ -73,14 +73,11 @@ export const SignInDialog = (): JSX.Element => {
     setErrorMessage(null);
 
     try {
-      const response = await fetch(
-        "/api/auth/reset-password/request",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: forgotEmail.trim() }),
-        },
-      );
+      const response = await fetch("/api/auth/reset-password/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail.trim() }),
+      });
 
       if (!response.ok) {
         const data = await response.json();

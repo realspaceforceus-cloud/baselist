@@ -44,17 +44,14 @@ const ResetPassword = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch(
-        "/api/auth/reset-password/complete",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            token,
-            newPassword,
-          }),
-        },
-      );
+      const response = await fetch("/api/auth/reset-password/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token,
+          newPassword,
+        }),
+      });
 
       if (!response.ok) {
         const data = await response.json();

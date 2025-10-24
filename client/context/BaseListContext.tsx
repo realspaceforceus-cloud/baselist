@@ -1651,13 +1651,10 @@ export const BaseListProvider = ({
   const removeListing = useCallback(async (listingId: string) => {
     try {
       // Delete from backend first
-      const response = await fetch(
-        `/api/listings/${listingId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`/api/listings/${listingId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete listing");

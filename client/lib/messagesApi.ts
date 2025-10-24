@@ -100,13 +100,10 @@ export async function sendMessage(data: {
  * Mark a thread as read
  */
 export async function markThreadAsRead(threadId: string): Promise<void> {
-  const response = await fetch(
-    `/api/messages/threads/${threadId}/read`,
-    {
-      method: "PATCH",
-      credentials: "include",
-    },
-  );
+  const response = await fetch(`/api/messages/threads/${threadId}/read`, {
+    method: "PATCH",
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to mark thread as read");
@@ -117,13 +114,10 @@ export async function markThreadAsRead(threadId: string): Promise<void> {
  * Archive a thread
  */
 export async function archiveThread(threadId: string): Promise<void> {
-  const response = await fetch(
-    `/api/messages/threads/${threadId}/archive`,
-    {
-      method: "PATCH",
-      credentials: "include",
-    },
-  );
+  const response = await fetch(`/api/messages/threads/${threadId}/archive`, {
+    method: "PATCH",
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to archive thread");
@@ -134,13 +128,10 @@ export async function archiveThread(threadId: string): Promise<void> {
  * Delete a thread
  */
 export async function deleteThread(threadId: string): Promise<void> {
-  const response = await fetch(
-    `/api/messages/threads/${threadId}`,
-    {
-      method: "DELETE",
-      credentials: "include",
-    },
-  );
+  const response = await fetch(`/api/messages/threads/${threadId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error("Failed to delete thread");

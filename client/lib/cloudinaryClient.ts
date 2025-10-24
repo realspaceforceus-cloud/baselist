@@ -4,13 +4,10 @@ const CLOUDINARY_API_KEY = "765912238265989";
 export const uploadImageToCloudinary = async (file: File): Promise<string> => {
   try {
     // Get signature from backend
-    const sigResponse = await fetch(
-      "/api/cloudinary-signature",
-      {
-        method: "POST",
-        credentials: "include",
-      },
-    );
+    const sigResponse = await fetch("/api/cloudinary-signature", {
+      method: "POST",
+      credentials: "include",
+    });
 
     if (!sigResponse.ok) {
       throw new Error("Failed to get upload signature");
