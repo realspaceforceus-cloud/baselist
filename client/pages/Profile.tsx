@@ -380,7 +380,9 @@ const Profile = (): JSX.Element => {
                           size="sm"
                           variant="outline"
                           className="w-full rounded-lg gap-1.5"
-                          onClick={() => navigate(`/messages/${entry.threadId}`)}
+                          onClick={() =>
+                            navigate(`/messages/${entry.threadId}`)
+                          }
                         >
                           <HelpCircle className="h-4 w-4" aria-hidden />
                           <span className="text-xs">Help</span>
