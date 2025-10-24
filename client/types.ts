@@ -181,6 +181,15 @@ export interface TransactionHistoryEntry {
   sellerRatingAboutBuyer?: number;
 }
 
+export interface Rating {
+  id: string;
+  user_id: string;
+  target_user_id: string;
+  score: number;
+  comment?: string;
+  created_at: string;
+}
+
 export interface RatingSummary {
   overallAverage: number | null;
   overallCount: number;
