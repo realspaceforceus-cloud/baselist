@@ -12,6 +12,7 @@ import {
   Moon,
   PlusCircle,
   Search,
+  Settings,
   ShieldCheck,
   ShoppingBag,
   Sun,
