@@ -74,7 +74,17 @@ const transformAnnouncement = (row: any) => ({
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/feed", "");
+  // Handle both direct calls (/.netlify/functions/feed) and redirect calls (/api/feed)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/feed")) {
+    path = path.replace("/.netlify/functions/feed", "");
+  } else if (path.startsWith("/api/feed")) {
+    path = path.replace("/api/feed", "");
+  } else {
+    // Fallback: extract everything after 'feed'
+    const match = path.match(/\/feed(.*)/);
+    path = match ? match[1] : "";
+  }
   const startTime = Date.now();
 
   try {

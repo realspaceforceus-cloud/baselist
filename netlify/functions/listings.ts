@@ -28,7 +28,17 @@ const transformListing = (row: any) => ({
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/listings", "");
+  // Handle both direct calls (/.netlify/functions/listings) and redirect calls (/api/listings)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/listings")) {
+    path = path.replace("/.netlify/functions/listings", "");
+  } else if (path.startsWith("/api/listings")) {
+    path = path.replace("/api/listings", "");
+  } else {
+    // Fallback: extract everything after 'listings'
+    const match = path.match(/\/listings(.*)/);
+    path = match ? match[1] : "";
+  }
   const startTime = Date.now();
 
   // GET /api/listings?baseId=&category=&search=&limit=&offset=

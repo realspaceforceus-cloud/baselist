@@ -37,7 +37,17 @@ function err(status: number, error: string, details?: any) {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/messages", "");
+  // Handle both direct calls (/.netlify/functions/messages) and redirect calls (/api/messages)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/messages")) {
+    path = path.replace("/.netlify/functions/messages", "");
+  } else if (path.startsWith("/api/messages")) {
+    path = path.replace("/api/messages", "");
+  } else {
+    // Fallback: extract everything after 'messages'
+    const match = path.match(/\/messages(.*)/);
+    path = match ? match[1] : "";
+  }
 
   // GET /api/messages/threads/:threadId - get messages in a thread
   if (method === "GET" && path.includes("/threads/")) {
