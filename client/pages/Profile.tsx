@@ -115,6 +115,42 @@ const Profile = (): JSX.Element => {
     return () => clearInterval(interval);
   }, [memberId, currentUser?.id, currentUser?.username]);
 
+  // Fetch ratings for the profile user
+  useEffect(() => {
+    if (!profileUser?.id) {
+      setProfileRatings([]);
+      return;
+    }
+
+    const fetchRatings = async () => {
+      setIsLoadingRatings(true);
+      try {
+        const response = await fetch(`/api/ratings?targetUserId=${profileUser.id}`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const ratings = Array.isArray(data.ratings) ? data.ratings : [];
+          // Get the 2 most recent ratings sorted by date
+          const recentRatings = ratings
+            .sort((a: any, b: any) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            )
+            .slice(0, 2);
+          setProfileRatings(recentRatings);
+          console.log("[Profile] Ratings fetched:", recentRatings);
+        }
+      } catch (error) {
+        console.error("Failed to fetch ratings:", error);
+        setProfileRatings([]);
+      } finally {
+        setIsLoadingRatings(false);
+      }
+    };
+
+    fetchRatings();
+  }, [profileUser?.id]);
+
   // Determine viewing own profile (must come before other hooks)
   // Safe boolean: don't read currentUser.id unless it exists
   const isViewingOwnProfile =
