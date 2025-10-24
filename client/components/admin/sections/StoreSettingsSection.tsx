@@ -506,6 +506,22 @@ export const StoreSettingsSection = ({
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="item-quantity">Quantity Available</Label>
+              <Input
+                id="item-quantity"
+                type="number"
+                step="1"
+                min="1"
+                placeholder="1"
+                value={itemForm.quantity || "1"}
+                onChange={(e) =>
+                  setItemForm({ ...itemForm, quantity: e.target.value })
+                }
+                className="rounded-lg"
+              />
+            </div>
+
             {/* Item Images */}
             <div className="space-y-2">
               <Label>Item Images</Label>
