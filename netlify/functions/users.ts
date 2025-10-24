@@ -37,6 +37,12 @@ export const handler: Handler = async (event) => {
           u.created_at as "memberSince",
           u.dow_verified_at as "verifiedAt",
           u.last_login_at as "lastActiveAt",
+          u.store_enabled,
+          u.store_slug,
+          u.store_name,
+          u.store_background_color,
+          u.store_text_color,
+          u.store_logo_url,
           COALESCE(
             (SELECT AVG(CAST(score AS FLOAT)) FROM ratings r
              WHERE r.target_user_id = u.id OR (r.transaction_id IN (SELECT id FROM transactions WHERE seller_id = u.id) AND r.user_id != u.id)),
