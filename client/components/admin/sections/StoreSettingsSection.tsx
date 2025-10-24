@@ -64,7 +64,7 @@ export const StoreSettingsSection = ({
 
   const handleSaveStore = async () => {
     if (!store.name.trim()) {
-      toast.error("Store name is required");
+      toast({ title: "Error", description: "Store name is required" });
       return;
     }
 
@@ -92,17 +92,18 @@ export const StoreSettingsSection = ({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save store");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to save store");
       }
 
       const data = await response.json();
       setStore(data.store);
       onStoreUpdated(data.store);
-      toast.success("Store settings saved successfully!");
+      toast({ title: "Success", description: "Store settings saved successfully!" });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save store",
-      );
+      const message = error instanceof Error ? error.message : "Failed to save store";
+      toast({ title: "Error", description: message });
+      console.error("Store save error:", error);
     } finally {
       setIsSaving(false);
     }
