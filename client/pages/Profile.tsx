@@ -333,7 +333,9 @@ const Profile = (): JSX.Element => {
   const totalTransactions =
     profileUser.completedSales ?? purchases.length + sales.length ?? 0;
 
-  const profileRatingSummary = profileUser?.id ? getUserRatingSummary(profileUser.id) : null;
+  const profileRatingSummary = profileUser?.id
+    ? getUserRatingSummary(profileUser.id)
+    : null;
 
   // Calculate rating average and count from fetched ratings
   const calculateRatingStats = useMemo(() => {
