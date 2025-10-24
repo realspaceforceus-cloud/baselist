@@ -38,7 +38,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("/api/settings");
+      const response = await fetch("/.netlify/functions/settings");
       const data = await response.json();
 
       if (data.success) {
