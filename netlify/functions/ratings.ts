@@ -32,8 +32,22 @@ export const handler: Handler = async (event, context) => {
   // Handle GET request - fetch ratings for a user
   if (event.httpMethod === "GET") {
     try {
-      const queryParams = new URLSearchParams(event.rawQueryString || "");
-      const targetUserId = queryParams.get("targetUserId");
+      // Try to get targetUserId from either rawQueryString or queryStringParameters
+      let targetUserId: string | null = null;
+
+      if (event.rawQueryString) {
+        const queryParams = new URLSearchParams(event.rawQueryString);
+        targetUserId = queryParams.get("targetUserId");
+      }
+
+      // Fallback to queryStringParameters (Netlify native format)
+      if (!targetUserId && (event as any).queryStringParameters) {
+        targetUserId = (event as any).queryStringParameters.targetUserId;
+      }
+
+      console.log("[RATINGS] GET request - targetUserId from rawQueryString:", event.rawQueryString);
+      console.log("[RATINGS] GET request - queryStringParameters:", (event as any).queryStringParameters);
+      console.log("[RATINGS] GET request - targetUserId resolved:", targetUserId);
 
       if (!targetUserId) {
         return {
