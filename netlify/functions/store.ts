@@ -80,6 +80,7 @@ export const handler: Handler = async (event) => {
             name: row.name,
             description: row.description,
             price: parseFloat(row.price),
+            quantity: parseInt(row.quantity) || 1,
             imageUrls: row.image_urls || [],
             createdAt: row.created_at,
             updatedAt: row.updated_at,
