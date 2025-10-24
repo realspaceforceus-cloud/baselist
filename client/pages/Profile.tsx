@@ -281,6 +281,38 @@ const Profile = (): JSX.Element => {
     fetchRatings();
   }, [profileUser?.id]);
 
+  // Calculate rating summary and stats BEFORE early returns (required by React rules of hooks)
+  const profileRatingSummary = profileUser?.id
+    ? getUserRatingSummary(profileUser.id)
+    : null;
+
+  const calculateRatingStats = useMemo(() => {
+    if (profileRatingsTotal === 0) {
+      return {
+        average:
+          profileRatingSummary?.overallAverage ?? profileUser?.rating ?? null,
+        count:
+          profileRatingSummary?.overallCount ?? profileUser?.ratingCount ?? 0,
+      };
+    }
+    // Calculate average from the 2 most recent ratings (or fewer if not enough)
+    const average =
+      profileRatings.length > 0
+        ? profileRatings.reduce((sum: number, r: any) => sum + r.score, 0) /
+          profileRatings.length
+        : 0;
+    return {
+      average: average,
+      count: profileRatingsTotal,
+    };
+  }, [
+    profileRatings,
+    profileRatingsTotal,
+    profileRatingSummary,
+    profileUser?.rating,
+    profileUser?.ratingCount,
+  ]);
+
   // Show error if profile not found (check after all hooks)
   if (profileUser === null) {
     return (
@@ -332,38 +364,6 @@ const Profile = (): JSX.Element => {
   // This updates whenever ratings are submitted and transactions complete
   const totalTransactions =
     profileUser.completedSales ?? purchases.length + sales.length ?? 0;
-
-  const profileRatingSummary = profileUser?.id
-    ? getUserRatingSummary(profileUser.id)
-    : null;
-
-  // Calculate rating average and count from fetched ratings
-  const calculateRatingStats = useMemo(() => {
-    if (profileRatingsTotal === 0) {
-      return {
-        average:
-          profileRatingSummary?.overallAverage ?? profileUser?.rating ?? null,
-        count:
-          profileRatingSummary?.overallCount ?? profileUser?.ratingCount ?? 0,
-      };
-    }
-    // Calculate average from the 2 most recent ratings (or fewer if not enough)
-    const average =
-      profileRatings.length > 0
-        ? profileRatings.reduce((sum: number, r: any) => sum + r.score, 0) /
-          profileRatings.length
-        : 0;
-    return {
-      average: average,
-      count: profileRatingsTotal,
-    };
-  }, [
-    profileRatings,
-    profileRatingsTotal,
-    profileRatingSummary,
-    profileUser?.rating,
-    profileUser?.ratingCount,
-  ]);
 
   const profileRatingAverage = calculateRatingStats.average;
   const profileRatingCount = calculateRatingStats.count;
