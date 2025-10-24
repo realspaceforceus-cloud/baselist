@@ -187,8 +187,12 @@ const Profile = (): JSX.Element => {
         if (ratings.length === 0) {
           console.warn("[Profile] No ratings returned from API");
           setProfileRatings([]);
+          setProfileRatingsTotal(0);
           return;
         }
+
+        // Store total count of all ratings
+        setProfileRatingsTotal(ratings.length);
 
         // Get the 2 most recent ratings sorted by date
         const recentRatings = ratings
@@ -200,6 +204,7 @@ const Profile = (): JSX.Element => {
           .slice(0, 2);
         setProfileRatings(recentRatings);
         console.log("[Profile] Recent ratings set:", recentRatings);
+        console.log("[Profile] Total ratings count:", ratings.length);
       } catch (error) {
         console.error("[Profile] Error fetching ratings:", error);
         setProfileRatings([]);
