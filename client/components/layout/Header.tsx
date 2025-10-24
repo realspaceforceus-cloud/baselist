@@ -514,6 +514,8 @@ export const Header = (): JSX.Element => {
                 setMenuOpen(false);
                 if (user?.username) {
                   navigate(`/profile/${user.username}`);
+                } else if (user?.id) {
+                  navigate(`/profile/${user.id}`);
                 }
               }}
               className="flex w-full items-center gap-3 rounded-lg transition hover:bg-muted/30 -m-2 p-2"
