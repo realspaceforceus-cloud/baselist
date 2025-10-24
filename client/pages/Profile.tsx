@@ -702,7 +702,6 @@ const Profile = (): JSX.Element => {
         </section>
       )}
 
-
       {isModerator ? (
         <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-purple-50/50 to-background dark:from-purple-950/20 dark:to-background p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow md:flex md:items-center md:justify-between gap-6">
           <div className="flex items-center gap-4 flex-1">
