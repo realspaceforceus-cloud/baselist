@@ -45,10 +45,11 @@ const Profile = (): JSX.Element => {
 
   // Redirect to /{username} if user navigates to /profile without username
   useEffect(() => {
-    if (!memberId && isAuthenticated && currentUser?.username) {
-      navigate(`/profile/${currentUser.username}`, { replace: true });
+    if (!memberId && isAuthenticated && currentUser) {
+      const identifier = currentUser.username || currentUser.userId;
+      navigate(`/profile/${identifier}`, { replace: true });
     }
-  }, [memberId, isAuthenticated, currentUser?.username, navigate]);
+  }, [memberId, isAuthenticated, currentUser, navigate]);
 
   console.log(
     "[Profile] Rendering with memberId:",
