@@ -66,7 +66,7 @@ export const handler: Handler = async (event) => {
           },
           owner: {
             id: user.id,
-            name: user.name,
+            name: user.username,
             username: user.username,
             avatarUrl: user.avatar_url,
             rating: user.rating,
