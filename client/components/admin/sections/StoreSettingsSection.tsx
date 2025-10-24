@@ -159,6 +159,7 @@ export const StoreSettingsSection = ({
         name: itemForm.name,
         description: itemForm.description,
         price: parseFloat(itemForm.price),
+        quantity: parseInt(itemForm.quantity || "1"),
         imageUrls: itemForm.imageUrls,
       };
       console.log(`[ITEM ${operation}] URL:`, url);
