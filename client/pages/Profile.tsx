@@ -606,6 +606,12 @@ const Profile = (): JSX.Element => {
                   }
                   label={`${profileUser.name} rating`}
                 />
+                {console.log(
+                  "[Profile] Store button check - enabled:",
+                  (profileUser as any)?.store_enabled,
+                  "slug:",
+                  (profileUser as any)?.store_slug,
+                )}
                 {(profileUser as any)?.store_enabled &&
                   (profileUser as any)?.store_slug && (
                     <>
