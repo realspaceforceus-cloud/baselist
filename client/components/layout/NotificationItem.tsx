@@ -137,8 +137,10 @@ export const NotificationItem = ({
           {
             label: "View profile",
             onClick: () => {
-              if (notification.actorId) {
-                navigate(`/profile/${notification.actorId}`);
+              // Use actorId if available, otherwise fall back to targetId
+              const profileId = notification.actorId || notification.targetId;
+              if (profileId) {
+                navigate(`/profile/${profileId}`);
               }
             },
           },
