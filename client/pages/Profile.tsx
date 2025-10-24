@@ -460,14 +460,14 @@ const Profile = (): JSX.Element => {
                   userId={profileUser.id}
                   size="lg"
                   initialAverage={
-                    profileRatingSummary.overallCount > 0
+                    profileRatingSummary?.overallCount > 0
                       ? profileRatingSummary.overallAverage
-                      : profileRatingFallbackAverage
+                      : profileRatingAverage
                   }
                   initialCount={
-                    profileRatingSummary.overallCount > 0
+                    profileRatingSummary?.overallCount > 0
                       ? profileRatingSummary.overallCount
-                      : profileRatingFallbackCount
+                      : profileRatingCount
                   }
                   label={`${profileUser.name} rating`}
                 />
