@@ -99,9 +99,13 @@ export const StoreSettingsSection = ({
       const data = await response.json();
       setStore(data.store);
       onStoreUpdated(data.store);
-      toast({ title: "Success", description: "Store settings saved successfully!" });
+      toast({
+        title: "Success",
+        description: "Store settings saved successfully!",
+      });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to save store";
+      const message =
+        error instanceof Error ? error.message : "Failed to save store";
       toast({ title: "Error", description: message });
       console.error("Store save error:", error);
     } finally {
@@ -143,9 +147,13 @@ export const StoreSettingsSection = ({
       setItemForm({ name: "", description: "", price: "", imageUrls: [] });
       setEditingItem(null);
       setShowItemForm(false);
-      toast({ title: "Success", description: editingItem ? "Item updated!" : "Item added!" });
+      toast({
+        title: "Success",
+        description: editingItem ? "Item updated!" : "Item added!",
+      });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to save item";
+      const message =
+        error instanceof Error ? error.message : "Failed to save item";
       toast({ title: "Error", description: message });
       console.error("Item save error:", error);
     } finally {
@@ -173,7 +181,8 @@ export const StoreSettingsSection = ({
       setItems(items.filter((i) => i.id !== itemId));
       toast({ title: "Success", description: "Item deleted" });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to delete item";
+      const message =
+        error instanceof Error ? error.message : "Failed to delete item";
       toast({ title: "Error", description: message });
       console.error("Item delete error:", error);
     }
@@ -188,7 +197,8 @@ export const StoreSettingsSection = ({
       }));
       toast({ title: "Success", description: "Logo uploaded!" });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to upload logo";
+      const message =
+        error instanceof Error ? error.message : "Failed to upload logo";
       toast({ title: "Error", description: message });
       console.error("Logo upload error:", error);
     }
@@ -203,7 +213,8 @@ export const StoreSettingsSection = ({
       }));
       toast({ title: "Success", description: "Image uploaded!" });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to upload image";
+      const message =
+        error instanceof Error ? error.message : "Failed to upload image";
       toast({ title: "Error", description: message });
       console.error("Image upload error:", error);
     }

@@ -7,7 +7,12 @@ const db = new Client({
 
 export const handler: Handler = async (event) => {
   try {
-    console.log("Store handler - Method:", event.httpMethod, "Path:", event.path);
+    console.log(
+      "Store handler - Method:",
+      event.httpMethod,
+      "Path:",
+      event.path,
+    );
     await db.connect();
     console.log("Database connected successfully");
 
