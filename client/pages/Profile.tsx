@@ -42,6 +42,8 @@ const Profile = (): JSX.Element => {
   const navigate = useNavigate();
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const [profileRatings, setProfileRatings] = useState<any[]>([]);
+  const [isLoadingRatings, setIsLoadingRatings] = useState(false);
 
   // Redirect to /{username} if user navigates to /profile without username
   useEffect(() => {
