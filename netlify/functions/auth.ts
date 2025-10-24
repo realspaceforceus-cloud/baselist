@@ -584,7 +584,8 @@ const handleMe = async (event: any) => {
 
     // Fetch user from database
     const userResult = await client.query(
-      `SELECT id, username, email, base_id as "baseId", avatar_url as "avatarUrl", role, dow_verified_at as "dowVerifiedAt"
+      `SELECT id, username, email, base_id as "baseId", avatar_url as "avatarUrl", role, dow_verified_at as "dowVerifiedAt",
+              store_name, store_slug, store_enabled, store_background_color, store_text_color, store_logo_url
        FROM users
        WHERE id = $1`,
       [userId],
