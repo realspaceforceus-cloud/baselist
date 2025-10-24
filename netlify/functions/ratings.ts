@@ -181,9 +181,11 @@ export const handler: Handler = async (event, context) => {
       console.log("[RATINGS] Updating transaction...");
 
       // Check if both users have now rated
+      const participants = threadCheck.rows[0].participants || [];
       const bothUsersRated =
-        ratingByUser[threadCheck.rows[0].participants[0]] !== undefined &&
-        ratingByUser[threadCheck.rows[0].participants[1]] !== undefined;
+        participants.length >= 2 &&
+        ratingByUser[participants[0]] !== undefined &&
+        ratingByUser[participants[1]] !== undefined;
 
       const updatedTransaction = {
         ...transaction,
@@ -288,7 +290,7 @@ export const handler: Handler = async (event, context) => {
         console.log("[RATINGS] ✓ Notification created");
       } catch (notifError) {
         console.error(
-          "[RATINGS] ⚠️  Notification error (non-fatal):",
+          "[RATINGS] ��️  Notification error (non-fatal):",
           notifError,
         );
       }
