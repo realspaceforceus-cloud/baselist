@@ -45,9 +45,9 @@ export const handler: Handler = async (event) => {
 
       // Fetch store items
       const itemsResult = await db.query(
-        `SELECT id, user_id, name, description, price, image_urls, created_at, updated_at
-         FROM store_items 
-         WHERE user_id = $1 
+        `SELECT id, user_id, name, description, price, quantity, image_urls, created_at, updated_at
+         FROM store_items
+         WHERE user_id = $1
          ORDER BY created_at DESC`,
         [user.id],
       );
