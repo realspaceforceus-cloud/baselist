@@ -212,7 +212,12 @@ export const handler: Handler = async (event, context) => {
 
       // 6. Auto-archive thread for the current user only (not both users)
       console.log("[RATINGS] Auto-archiving thread for current user...");
-      let archivedBy = threadCheck.rows[0].archived_by || [];
+      let archivedBy = threadCheck.rows[0].archived_by;
+
+      // Ensure archivedBy is an array
+      if (!Array.isArray(archivedBy)) {
+        archivedBy = [];
+      }
 
       // Add current user to archived_by if not already there
       if (!archivedBy.includes(userId)) {
