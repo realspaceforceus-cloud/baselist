@@ -43,6 +43,13 @@ const Profile = (): JSX.Element => {
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
+  // Redirect to /{username} if user navigates to /profile without username
+  useEffect(() => {
+    if (!memberId && isAuthenticated && currentUser?.username) {
+      navigate(`/profile/${currentUser.username}`, { replace: true });
+    }
+  }, [memberId, isAuthenticated, currentUser?.username, navigate]);
+
   console.log(
     "[Profile] Rendering with memberId:",
     memberId,
@@ -476,10 +483,6 @@ const Profile = (): JSX.Element => {
                   label={`${profileUser.name} rating`}
                 />
               </div>
-              <p className="text-sm font-medium text-foreground">
-                {totalTransactions} transaction
-                {totalTransactions === 1 ? "" : "s"}
-              </p>
             </div>
           </div>
         </div>

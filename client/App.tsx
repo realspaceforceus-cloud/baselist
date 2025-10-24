@@ -94,14 +94,6 @@ const AppContent = (): JSX.Element => {
           }
         />
         <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="settings"
           element={
             <ProtectedRoute>
