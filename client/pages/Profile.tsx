@@ -155,7 +155,7 @@ const Profile = (): JSX.Element => {
       setIsLoadingRatings(true);
       try {
         console.log("[Profile] Fetching ratings for user:", profileUser.id);
-        const url = `/.netlify/functions/ratings?targetUserId=${profileUser.id}`;
+        const url = `/api/ratings?targetUserId=${profileUser.id}`;
         console.log("[Profile] Fetch URL:", url);
         const response = await fetch(url, {
           credentials: "include",
@@ -165,8 +165,8 @@ const Profile = (): JSX.Element => {
 
         if (!response.ok) {
           console.error("[Profile] Response not ok, status:", response.status);
-          const text = await response.text();
-          console.error("[Profile] Response text:", text);
+          const errorText = await response.text();
+          console.error("[Profile] Response error:", errorText);
           setProfileRatings([]);
           return;
         }
@@ -174,7 +174,15 @@ const Profile = (): JSX.Element => {
         const data = await response.json();
         console.log("[Profile] Response data:", data);
         const ratings = Array.isArray(data.ratings) ? data.ratings : [];
+        console.log("[Profile] Ratings array length:", ratings.length);
         console.log("[Profile] Ratings array:", ratings);
+
+        if (ratings.length === 0) {
+          console.warn("[Profile] No ratings returned from API");
+          setProfileRatings([]);
+          return;
+        }
+
         // Get the 2 most recent ratings sorted by date
         const recentRatings = ratings
           .sort(
