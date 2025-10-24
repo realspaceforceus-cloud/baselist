@@ -130,7 +130,11 @@ export const handler: Handler = async (event) => {
 
       // Generate slug from name if not provided
       const finalSlug =
-        slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        slug ||
+        name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
 
       const result = await db.query(
         `UPDATE users 

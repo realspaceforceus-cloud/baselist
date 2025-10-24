@@ -15,7 +15,10 @@ interface StoreSettingsProps {
   onStoreUpdated: (store: Store) => void;
 }
 
-export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProps) => {
+export const StoreSettingsSection = ({
+  user,
+  onStoreUpdated,
+}: StoreSettingsProps) => {
   const { toast } = useToast();
 
   const [store, setStore] = useState<Store>({
@@ -67,7 +70,12 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
 
     setIsSaving(true);
     try {
-      const slug = store.slug || store.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const slug =
+        store.slug ||
+        store.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
 
       const response = await fetch("/.netlify/functions/store", {
         method: "POST",
@@ -92,7 +100,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
       onStoreUpdated(data.store);
       toast.success("Store settings saved successfully!");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save store");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to save store",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -133,7 +143,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
       setShowItemForm(false);
       toast.success(editingItem ? "Item updated!" : "Item added!");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save item");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to save item",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -143,10 +155,13 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
     if (!confirm("Delete this item? This cannot be undone.")) return;
 
     try {
-      const response = await fetch(`/.netlify/functions/store/items?itemId=${itemId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `/.netlify/functions/store/items?itemId=${itemId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete item");
@@ -155,7 +170,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
       setItems(items.filter((i) => i.id !== itemId));
       toast.success("Item deleted");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete item");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete item",
+      );
     }
   };
 
@@ -168,7 +185,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
       }));
       toast.success("Image uploaded!");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to upload image");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to upload image",
+      );
     }
   };
 
@@ -187,7 +206,10 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
           {/* Enable/Disable Toggle */}
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="store-enabled" className="text-base font-semibold">
+              <Label
+                htmlFor="store-enabled"
+                className="text-base font-semibold"
+              >
                 Enable Store
               </Label>
               <p className="text-sm text-muted-foreground">
@@ -197,7 +219,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
             <Switch
               id="store-enabled"
               checked={store.enabled}
-              onCheckedChange={(checked) => setStore({ ...store, enabled: checked })}
+              onCheckedChange={(checked) =>
+                setStore({ ...store, enabled: checked })
+              }
             />
           </div>
 
@@ -237,7 +261,11 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
             <div className="flex items-center gap-4">
               {store.logoUrl && (
                 <div className="h-24 w-24 overflow-hidden rounded-lg border border-border bg-muted">
-                  <img src={store.logoUrl} alt="Store logo" className="h-full w-full object-cover" />
+                  <img
+                    src={store.logoUrl}
+                    alt="Store logo"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               )}
               <div className="flex-1">
@@ -251,11 +279,7 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                   }}
                   className="hidden"
                 />
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full rounded-lg"
-                >
+                <Button asChild variant="outline" className="w-full rounded-lg">
                   <label htmlFor="logo-upload" className="cursor-pointer">
                     <ImageIcon className="h-4 w-4 mr-2" />
                     Upload Logo
@@ -274,13 +298,17 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                   id="bg-color"
                   type="color"
                   value={store.backgroundColor}
-                  onChange={(e) => setStore({ ...store, backgroundColor: e.target.value })}
+                  onChange={(e) =>
+                    setStore({ ...store, backgroundColor: e.target.value })
+                  }
                   className="h-10 w-20 rounded border border-border cursor-pointer"
                 />
                 <Input
                   type="text"
                   value={store.backgroundColor}
-                  onChange={(e) => setStore({ ...store, backgroundColor: e.target.value })}
+                  onChange={(e) =>
+                    setStore({ ...store, backgroundColor: e.target.value })
+                  }
                   placeholder="#FFFFFF"
                   className="rounded-lg text-xs"
                 />
@@ -293,13 +321,17 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                   id="text-color"
                   type="color"
                   value={store.textColor}
-                  onChange={(e) => setStore({ ...store, textColor: e.target.value })}
+                  onChange={(e) =>
+                    setStore({ ...store, textColor: e.target.value })
+                  }
                   className="h-10 w-20 rounded border border-border cursor-pointer"
                 />
                 <Input
                   type="text"
                   value={store.textColor}
-                  onChange={(e) => setStore({ ...store, textColor: e.target.value })}
+                  onChange={(e) =>
+                    setStore({ ...store, textColor: e.target.value })
+                  }
                   placeholder="#000000"
                   className="rounded-lg text-xs"
                 />
@@ -322,11 +354,18 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
       {/* Store Items Management */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Store Items ({items.length})</h3>
+          <h3 className="text-lg font-semibold">
+            Store Items ({items.length})
+          </h3>
           <Button
             onClick={() => {
               setEditingItem(null);
-              setItemForm({ name: "", description: "", price: "", imageUrls: [] });
+              setItemForm({
+                name: "",
+                description: "",
+                price: "",
+                imageUrls: [],
+              });
               setShowItemForm(!showItemForm);
             }}
             variant="outline"
@@ -351,7 +390,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                 id="item-name"
                 placeholder="e.g., Chocolate Chip Cookies"
                 value={itemForm.name}
-                onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
+                onChange={(e) =>
+                  setItemForm({ ...itemForm, name: e.target.value })
+                }
                 className="rounded-lg"
               />
             </div>
@@ -362,7 +403,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                 id="item-description"
                 placeholder="Describe your item..."
                 value={itemForm.description}
-                onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
+                onChange={(e) =>
+                  setItemForm({ ...itemForm, description: e.target.value })
+                }
                 className="rounded-lg"
                 rows={3}
               />
@@ -376,7 +419,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                 step="0.01"
                 placeholder="9.99"
                 value={itemForm.price}
-                onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })}
+                onChange={(e) =>
+                  setItemForm({ ...itemForm, price: e.target.value })
+                }
                 className="rounded-lg"
               />
             </div>
@@ -396,7 +441,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                       onClick={() => {
                         setItemForm({
                           ...itemForm,
-                          imageUrls: itemForm.imageUrls.filter((_, i) => i !== idx),
+                          imageUrls: itemForm.imageUrls.filter(
+                            (_, i) => i !== idx,
+                          ),
                         });
                       }}
                       className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 rounded transition-opacity"
@@ -433,7 +480,12 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                 onClick={() => {
                   setShowItemForm(false);
                   setEditingItem(null);
-                  setItemForm({ name: "", description: "", price: "", imageUrls: [] });
+                  setItemForm({
+                    name: "",
+                    description: "",
+                    price: "",
+                    imageUrls: [],
+                  });
                 }}
                 variant="outline"
                 className="rounded-lg"
@@ -467,7 +519,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
                 )}
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-border">
-                <span className="font-bold text-lg">${item.price.toFixed(2)}</span>
+                <span className="font-bold text-lg">
+                  ${item.price.toFixed(2)}
+                </span>
                 <div className="flex gap-2">
                   <Button
                     onClick={() => {
@@ -502,7 +556,9 @@ export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProp
 
         {items.length === 0 && !showItemForm && (
           <div className="rounded-lg border border-dashed border-border bg-card/50 p-8 text-center">
-            <p className="text-muted-foreground">No items yet. Add your first item to get started!</p>
+            <p className="text-muted-foreground">
+              No items yet. Add your first item to get started!
+            </p>
           </div>
         )}
       </section>

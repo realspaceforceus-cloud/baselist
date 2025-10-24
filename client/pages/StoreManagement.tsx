@@ -13,7 +13,9 @@ export default function StoreManagement() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-3">
           <h1 className="text-2xl font-bold">Sign in required</h1>
-          <p className="text-muted-foreground">Please sign in to manage your store.</p>
+          <p className="text-muted-foreground">
+            Please sign in to manage your store.
+          </p>
           <Button asChild>
             <Link to="/">Return Home</Link>
           </Button>

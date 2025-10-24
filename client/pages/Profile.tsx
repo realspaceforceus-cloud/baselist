@@ -598,38 +598,36 @@ const Profile = (): JSX.Element => {
                   }
                   label={`${profileUser.name} rating`}
                 />
-                {(profileUser as any)?.store_enabled && (profileUser as any)?.store_slug && (
-                  <>
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="rounded-lg"
-                    >
-                      <Link to={`/store/${(profileUser as any).store_slug}`}>
-                        Visit Store
-                      </Link>
-                    </Button>
-                    {isViewingOwnProfile && (
+                {(profileUser as any)?.store_enabled &&
+                  (profileUser as any)?.store_slug && (
+                    <>
                       <Button
                         asChild
                         variant="outline"
                         size="sm"
                         className="rounded-lg"
                       >
-                        <Link to="/store-management">
-                          Manage Store
+                        <Link to={`/store/${(profileUser as any).store_slug}`}>
+                          Visit Store
                         </Link>
                       </Button>
-                    )}
-                  </>
-                )}
+                      {isViewingOwnProfile && (
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="rounded-lg"
+                        >
+                          <Link to="/store-management">Manage Store</Link>
+                        </Button>
+                      )}
+                    </>
+                  )}
               </div>
             </div>
           </div>
         </div>
       </header>
-
 
       {/* Active Listings Section - Modern Grid */}
       {activeListings.length > 0 && (

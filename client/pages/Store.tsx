@@ -23,9 +23,12 @@ export default function StorePage() {
         setError(null);
 
         // Fetch store by slug
-        const response = await fetch(`/.netlify/functions/store?slug=${encodeURIComponent(storeSlug)}`, {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/.netlify/functions/store?slug=${encodeURIComponent(storeSlug)}`,
+          {
+            credentials: "include",
+          },
+        );
 
         if (!response.ok) {
           throw new Error("Store not found");
@@ -68,8 +71,12 @@ export default function StorePage() {
             </Link>
           </Button>
           <div className="rounded-2xl border border-border bg-card p-8 text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-3">Store Not Found</h1>
-            <p className="text-muted-foreground mb-6">{error || "This store is not available."}</p>
+            <h1 className="text-3xl font-bold text-foreground mb-3">
+              Store Not Found
+            </h1>
+            <p className="text-muted-foreground mb-6">
+              {error || "This store is not available."}
+            </p>
             <Button asChild>
               <Link to="/">Return Home</Link>
             </Button>
@@ -119,14 +126,18 @@ export default function StorePage() {
                   </Avatar>
                   <div className="flex-1">
                     <p className="font-medium">
-                      <Link to={`/profile/${owner.username}`} className="hover:underline">
+                      <Link
+                        to={`/profile/${owner.username}`}
+                        className="hover:underline"
+                      >
                         {owner.name}
                       </Link>
                     </p>
                     <p className="text-sm opacity-75">
                       {owner.rating ? (
                         <>
-                          ⭐ {owner.rating.toFixed(1)} ({owner.ratingCount} ratings)
+                          ⭐ {owner.rating.toFixed(1)} ({owner.ratingCount}{" "}
+                          ratings)
                         </>
                       ) : (
                         "No ratings yet"
@@ -136,13 +147,19 @@ export default function StorePage() {
                 </div>
                 <div className="flex gap-3">
                   <Button asChild variant="default">
-                    <Link to={`/messages?sellerId=${owner.id}`} className="flex items-center gap-2">
+                    <Link
+                      to={`/messages?sellerId=${owner.id}`}
+                      className="flex items-center gap-2"
+                    >
                       <MessageSquare className="h-4 w-4" />
                       Message Store
                     </Link>
                   </Button>
                   <Button asChild variant="outline">
-                    <Link to={`/profile/${owner.username}`} className="flex items-center gap-2">
+                    <Link
+                      to={`/profile/${owner.username}`}
+                      className="flex items-center gap-2"
+                    >
                       <User className="h-4 w-4" />
                       View Profile
                     </Link>
@@ -202,7 +219,9 @@ export default function StorePage() {
                   </div>
                 ) : (
                   <div className="h-40 bg-muted flex items-center justify-center">
-                    <span className="text-muted-foreground text-sm">No image</span>
+                    <span className="text-muted-foreground text-sm">
+                      No image
+                    </span>
                   </div>
                 )}
 
@@ -212,10 +231,14 @@ export default function StorePage() {
                     {item.name}
                   </h3>
                   {item.description && (
-                    <p className="text-sm opacity-75 line-clamp-2 mb-3">{item.description}</p>
+                    <p className="text-sm opacity-75 line-clamp-2 mb-3">
+                      {item.description}
+                    </p>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold">${item.price.toFixed(2)}</span>
+                    <span className="text-lg font-bold">
+                      ${item.price.toFixed(2)}
+                    </span>
                     <Button size="sm" variant="ghost" className="h-8 px-3">
                       Details
                     </Button>
