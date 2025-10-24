@@ -443,6 +443,7 @@ export const StoreSettingsSection = ({
                 name: "",
                 description: "",
                 price: "",
+                quantity: "1",
                 imageUrls: [],
               });
               setShowItemForm(!showItemForm);
