@@ -76,11 +76,15 @@ const Profile = (): JSX.Element => {
 
   // Fetch user from API if not in local context
   useEffect(() => {
-    if (!memberId || (currentUser && memberId === currentUser.id)) {
+    if (
+      !memberId ||
+      (currentUser &&
+        (memberId === currentUser.id || memberId === currentUser.username))
+    ) {
       return;
     }
 
-    // Fetch from API
+    // Fetch from API (can use username or id)
     const fetchUser = async () => {
       setIsLoadingUser(true);
       try {
@@ -107,7 +111,7 @@ const Profile = (): JSX.Element => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [memberId, currentUser?.id]);
+  }, [memberId, currentUser?.id, currentUser?.username]);
 
   // Determine viewing own profile (must come before other hooks)
   // Safe boolean: don't read currentUser.id unless it exists
