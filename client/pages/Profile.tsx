@@ -308,10 +308,16 @@ const Profile = (): JSX.Element => {
               ? entry.sellerRatingAboutBuyer
               : entry.buyerRatingAboutSeller;
 
+          // Create detailed transaction description
+          const transactionDescription =
+            role === "buyer"
+              ? `Purchased "${listing?.title ?? "item"}" from ${partnerName} on ${completedLabel} for ${priceLabel}`
+              : `Sold "${listing?.title ?? "item"}" to ${partnerName} on ${completedLabel} for ${priceLabel}`;
+
           return (
             <li key={`${entry.threadId}-${role}`}>
-              <div className="flex gap-3 rounded-3xl border border-border bg-background/80 p-4 shadow-soft">
-                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-muted">
+              <div className="flex gap-3 rounded-3xl border border-border bg-background/80 p-4 shadow-soft flex-col md:flex-row">
+                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-muted md:order-1">
                   {listing?.imageUrls?.[0] ? (
                     <img
                       src={listing.imageUrls[0]}
@@ -324,14 +330,11 @@ const Profile = (): JSX.Element => {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-1 flex-col gap-3 md:order-2">
                   <div className="space-y-2">
                     <h3 className="text-sm font-semibold text-foreground">
-                      {listing?.title ?? "Listing removed"}
+                      {transactionDescription}
                     </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {priceLabel} • {completedLabel}
-                    </p>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       <span className="font-semibold text-foreground">
                         {role === "buyer" ? "Seller" : "Buyer"}:
@@ -353,23 +356,36 @@ const Profile = (): JSX.Element => {
                       </span>
                     </div>
                   </div>
-                  <div className="space-y-1 text-xs text-muted-foreground">
-                    <p className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground md:grid-cols-3">
+                    <div>
+                      <p className="font-semibold text-foreground mb-1">
                         {isViewingOwnProfile
                           ? "You rated"
                           : `${profileFirstName} rated`}
-                      </span>
-                      {renderStars(givenRating)}
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">
+                      </p>
+                      <div>{renderStars(givenRating)}</div>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground mb-1">
                         {isViewingOwnProfile
                           ? "They rated you"
                           : `${partnerName} rated ${profileFirstName}`}
-                      </span>
-                      {renderStars(receivedRating)}
-                    </p>
+                      </p>
+                      <div>{renderStars(receivedRating)}</div>
+                    </div>
+                    {isViewingOwnProfile && (
+                      <div className="col-span-2 md:col-span-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full rounded-lg gap-1.5"
+                          onClick={() => navigate(`/messages/${entry.threadId}`)}
+                        >
+                          <HelpCircle className="h-4 w-4" aria-hidden />
+                          <span className="text-xs">Help</span>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
