@@ -290,8 +290,8 @@ const Post = (): JSX.Element => {
       // For editing, use PUT; for creating, use POST
       const method = isEditing ? "PUT" : "POST";
       const endpoint = isEditing
-        ? `/.netlify/functions/listings/${editListingId}`
-        : "/.netlify/functions/listings";
+        ? `/api/listings/${editListingId}`
+        : "/api/listings";
 
       const response = await fetch(endpoint, {
         method,

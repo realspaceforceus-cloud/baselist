@@ -36,7 +36,7 @@ const ListingCardWithSeller = ({
     const fetchSeller = async () => {
       try {
         const response = await fetch(
-          `/.netlify/functions/users/${listing.sellerId}`,
+          `/api/users/${listing.sellerId}`,
           { credentials: "include" },
         );
         if (response.ok) {
