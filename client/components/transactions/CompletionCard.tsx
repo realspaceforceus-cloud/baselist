@@ -147,7 +147,7 @@ export const CompletionCard = ({
         );
       }
 
-      const response = await fetch("/.netlify/functions/ratings", {
+      const response = await fetch("/api/ratings", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
