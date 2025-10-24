@@ -39,6 +39,7 @@ const Profile = (): JSX.Element => {
   } = useBaseList();
 
   const { memberId } = useParams<{ memberId?: string }>();
+  const navigate = useNavigate();
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
