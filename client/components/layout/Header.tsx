@@ -93,6 +93,12 @@ const MENU_SHORTCUTS = [
     icon: PlusCircle,
   },
   {
+    label: "Manage Store",
+    description: "Set up and manage your personal store.",
+    to: "/store-management",
+    icon: ShoppingBag,
+  },
+  {
     label: "Settings",
     description: "Manage your account and preferences.",
     to: "/settings",
