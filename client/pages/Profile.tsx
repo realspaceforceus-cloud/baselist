@@ -767,7 +767,7 @@ const Profile = (): JSX.Element => {
               />
             </div>
           </div>
-          {(profileRatingCount > 0 || profileRatings.length > 0) && (
+          {(profileRatingCount > 0 || profileRatingsTotal > 0) && (
             <div className="border-t border-border/30 bg-gradient-to-r from-amber-50/50 to-transparent dark:from-amber-950/20 dark:to-transparent px-6 md:px-8 py-6">
               <div className="mb-4">
                 <h3 className="text-base font-semibold text-foreground mb-1">
