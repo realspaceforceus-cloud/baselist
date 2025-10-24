@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Star } from "lucide-react";
 
 import { useBaseList } from "@/context/BaseListContext";
@@ -53,6 +53,7 @@ export const RatingBadge = ({
 }: RatingBadgeProps): JSX.Element => {
   const { getUserRatingSummary, getMemberName } = useBaseList();
   const [open, setOpen] = useState(false);
+  const [ratingDetails, setRatingDetails] = useState<any[]>([]);
 
   const summary = getUserRatingSummary(userId) || {
     overallAverage: null,
@@ -117,6 +118,35 @@ export const RatingBadge = ({
     }
     return { average: null, count: 0 };
   }, [summary?.buyerAverage, summary?.buyerCount]);
+
+  // Fetch individual ratings for the modal
+  useEffect(() => {
+    if (!open) return;
+
+    const fetchRatings = async () => {
+      try {
+        const response = await fetch(`/api/ratings?targetUserId=${userId}`, {
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error("Failed to fetch ratings");
+        const data = await response.json();
+        // Get last 3 ratings, sorted by date (newest first)
+        const lastThree = (data.ratings || [])
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          )
+          .slice(0, 3);
+        setRatingDetails(lastThree);
+      } catch (error) {
+        console.error("Failed to fetch ratings:", error);
+        setRatingDetails([]);
+      }
+    };
+
+    fetchRatings();
+  }, [open, userId]);
 
   const hasRatings =
     (effectiveOverall?.average ?? null) !== null &&
