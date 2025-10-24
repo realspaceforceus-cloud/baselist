@@ -53,6 +53,7 @@ const AppContent = (): JSX.Element => {
         <Route index element={<Home />} />
         <Route path="marketplace" element={<Marketplace />} />
         <Route path="listing/:listingSlug" element={<ListingDetail />} />
+        <Route path="store/:storeSlug" element={<Store />} />
         <Route path="faq" element={<FAQ />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
