@@ -6,7 +6,7 @@ import { StoreSettingsSection } from "@/components/admin/sections/StoreSettingsS
 import { Store } from "@/types";
 
 export default function StoreManagement() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   if (!user) {
     return (
