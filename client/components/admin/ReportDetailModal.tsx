@@ -100,7 +100,7 @@ export const ReportDetailModal = ({
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `/.netlify/functions/admin/reports/${report.id}/resolve`,
+        `/api/admin/reports/${report.id}/resolve`,
         {
           method: "POST",
           credentials: "include",

@@ -72,7 +72,7 @@ export function MentionAutocomplete({
     const fetchSuggestions = async () => {
       try {
         const response = await fetch(
-          `/.netlify/functions/feed-mentions?q=${encodeURIComponent(mention.word)}`,
+          `/api/feed-mentions?q=${encodeURIComponent(mention.word)}`,
           { credentials: "include" },
         );
         if (response.ok) {

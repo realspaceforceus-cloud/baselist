@@ -74,7 +74,7 @@ export const ListingCard = ({
     try {
       const method = isSaved ? "DELETE" : "POST";
       const response = await fetch(
-        `/.netlify/functions/saved-listings/${listing.id}`,
+        `/api/saved-listings/${listing.id}`,
         {
           method,
           credentials: "include",

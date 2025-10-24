@@ -93,8 +93,8 @@ export const EmailTemplatesSection = (): JSX.Element => {
 
       const method = editingId ? "PUT" : "POST";
       const url = editingId
-        ? `/.netlify/functions/email-templates/${editingId}`
-        : "/.netlify/functions/email-templates";
+        ? `/api/email-templates/${editingId}`
+        : "/api/email-templates";
 
       const response = await fetch(url, {
         method,
@@ -151,7 +151,7 @@ export const EmailTemplatesSection = (): JSX.Element => {
 
     try {
       const response = await fetch(
-        `/.netlify/functions/email-templates/${id}`,
+        `/api/email-templates/${id}`,
         {
           method: "DELETE",
           headers: {
