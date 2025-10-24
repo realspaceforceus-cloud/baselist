@@ -5,7 +5,7 @@ export const uploadImageToCloudinary = async (file: File): Promise<string> => {
   try {
     // Get signature from backend
     const sigResponse = await fetch(
-      "/.netlify/functions/cloudinary-signature",
+      "/api/cloudinary-signature",
       {
         method: "POST",
         credentials: "include",
