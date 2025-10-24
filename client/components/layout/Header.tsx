@@ -603,23 +603,42 @@ export const Header = (): JSX.Element => {
                   </button>
                 ))}
                 {user && (user as any)?.store_enabled && (user as any)?.store_slug && (
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
-                    onClick={() => handleNavigate(`/store/${(user as any).store_slug}`)}
-                  >
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <ShoppingBag className="h-5 w-5" aria-hidden />
-                    </span>
-                    <span className="flex flex-col">
-                      <span className="text-sm font-semibold text-foreground">
-                        My Store
+                  <>
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+                      onClick={() => handleNavigate(`/store/${(user as any).store_slug}`)}
+                    >
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <ShoppingBag className="h-5 w-5" aria-hidden />
                       </span>
-                      <span className="text-xs text-muted-foreground">
-                        View your store
+                      <span className="flex flex-col">
+                        <span className="text-sm font-semibold text-foreground">
+                          My Store
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          View your store
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+                      onClick={() => handleNavigate("/store-management")}
+                    >
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Settings className="h-5 w-5" aria-hidden />
+                      </span>
+                      <span className="flex flex-col">
+                        <span className="text-sm font-semibold text-foreground">
+                          Manage Store
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Settings & items
+                        </span>
+                      </span>
+                    </button>
+                  </>
                 )}
               </div>
             </div>
