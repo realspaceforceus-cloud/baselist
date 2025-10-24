@@ -615,7 +615,13 @@ export const StoreSettingsSection = ({
                   </p>
                 )}
               </div>
-              <div className="flex items-center justify-between pt-2 border-t border-border">
+              <div className="pt-2 border-t border-border space-y-2">
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Quantity: </span>
+                  <span className="font-semibold">{item.quantity || 1}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2">
                 <span className="font-bold text-lg">
                   ${item.price.toFixed(2)}
                 </span>
