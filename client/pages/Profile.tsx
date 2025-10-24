@@ -20,7 +20,7 @@ import { useBaseList } from "@/context/BaseListContext";
 import { useUserListings } from "@/hooks/useListings";
 import { cn } from "@/lib/utils";
 import { generateSlug } from "@/lib/slugUtils";
-import type { TransactionHistoryEntry, UserProfile, Listing } from "@/types";
+import type { TransactionHistoryEntry, UserProfile, Listing, Rating } from "@/types";
 
 const Profile = (): JSX.Element => {
   const {
