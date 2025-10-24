@@ -104,7 +104,8 @@ const Profile = (): JSX.Element => {
   const profileUser = useMemo(() => {
     // Always prefer fetchedUser when available (includes refreshed data)
     // Fall back to currentUser only when viewing own profile and fetchedUser isn't available
-    const result = fetchedUser || (isViewingOwnProfile ? currentUser : null) || null;
+    const result =
+      fetchedUser || (isViewingOwnProfile ? currentUser : null) || null;
     console.log(
       "[Profile] useMemo profileUser:",
       result?.id,
@@ -235,11 +236,14 @@ const Profile = (): JSX.Element => {
 
   // Use completedSales count from user profile (server-authoritative) for display
   // This updates whenever ratings are submitted and transactions complete
-  const totalTransactions = profileUser.completedSales ?? (purchases.length + sales.length) ?? 0;
+  const totalTransactions =
+    profileUser.completedSales ?? purchases.length + sales.length ?? 0;
 
   const profileRatingSummary = getUserRatingSummary(profileUser.id);
-  const profileRatingAverage = profileRatingSummary?.average ?? profileUser.rating ?? null;
-  const profileRatingCount = profileRatingSummary?.count ?? profileUser.ratingCount ?? 0;
+  const profileRatingAverage =
+    profileRatingSummary?.average ?? profileUser.rating ?? null;
+  const profileRatingCount =
+    profileRatingSummary?.count ?? profileUser.ratingCount ?? 0;
 
   const noticeSeverityClass: Record<string, string> = {
     info: "text-muted-foreground",
