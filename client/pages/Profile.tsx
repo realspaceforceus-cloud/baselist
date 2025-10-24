@@ -599,16 +599,30 @@ const Profile = (): JSX.Element => {
                   label={`${profileUser.name} rating`}
                 />
                 {(profileUser as any)?.store_enabled && (profileUser as any)?.store_slug && (
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="rounded-lg"
-                  >
-                    <Link to={`/store/${(profileUser as any).store_slug}`}>
-                      Visit Store
-                    </Link>
-                  </Button>
+                  <>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="rounded-lg"
+                    >
+                      <Link to={`/store/${(profileUser as any).store_slug}`}>
+                        Visit Store
+                      </Link>
+                    </Button>
+                    {isViewingOwnProfile && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="rounded-lg"
+                      >
+                        <Link to="/store-management">
+                          Manage Store
+                        </Link>
+                      </Button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
