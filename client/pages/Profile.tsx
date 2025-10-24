@@ -44,6 +44,7 @@ const Profile = (): JSX.Element => {
     markNoticeRead,
   } = useBaseList();
 
+  const { refreshUser } = useAuth();
   const { memberId } = useParams<{ memberId?: string }>();
   const navigate = useNavigate();
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
