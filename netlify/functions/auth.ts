@@ -508,7 +508,7 @@ const handleLogin = async (event: any) => {
 
     // Find user by email
     const userResult = await client.query(
-      "SELECT id, username, email, base_id, avatar_url, role, dow_verified_at FROM users WHERE email = $1",
+      "SELECT id, username, email, base_id, avatar_url, role, dow_verified_at, store_name, store_slug, store_enabled, store_background_color, store_text_color, store_logo_url FROM users WHERE email = $1",
       [trimmedEmail],
     );
 
