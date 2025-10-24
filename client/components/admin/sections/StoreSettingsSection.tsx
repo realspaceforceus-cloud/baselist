@@ -111,7 +111,7 @@ export const StoreSettingsSection = ({
 
   const handleAddItem = async () => {
     if (!itemForm.name.trim() || !itemForm.price) {
-      toast.error("Name and price are required");
+      toast({ title: "Error", description: "Name and price are required" });
       return;
     }
 
@@ -135,18 +135,19 @@ export const StoreSettingsSection = ({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save item");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to save item");
       }
 
       await fetchStoreItems();
       setItemForm({ name: "", description: "", price: "", imageUrls: [] });
       setEditingItem(null);
       setShowItemForm(false);
-      toast.success(editingItem ? "Item updated!" : "Item added!");
+      toast({ title: "Success", description: editingItem ? "Item updated!" : "Item added!" });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save item",
-      );
+      const message = error instanceof Error ? error.message : "Failed to save item";
+      toast({ title: "Error", description: message });
+      console.error("Item save error:", error);
     } finally {
       setIsLoading(false);
     }
