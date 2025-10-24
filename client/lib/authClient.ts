@@ -7,6 +7,12 @@ export interface AuthUser {
   avatarUrl: string;
   role: "member" | "admin";
   verified: boolean;
+  store_name?: string;
+  store_slug?: string;
+  store_enabled?: boolean;
+  store_background_color?: string;
+  store_text_color?: string;
+  store_logo_url?: string;
 }
 
 export interface AuthResponse {
