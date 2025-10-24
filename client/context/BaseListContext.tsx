@@ -262,6 +262,7 @@ export const BaseListProvider = ({
   const [user, setUser] = useState<UserProfile>(() => ({
     id: "",
     name: "User",
+    username: "user",
     verified: false,
     memberSince: new Date().toISOString(),
     avatarUrl: buildAvatarUrl("User"),
