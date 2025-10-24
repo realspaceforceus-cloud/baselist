@@ -198,51 +198,55 @@ export const RatingBadge = ({
           <DialogTitle>⭐ {averageLabel}</DialogTitle>
           <DialogDescription>{countLabel}</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 text-sm text-muted-foreground">
-          <section className="space-y-2">
-            <header className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Seller ratings
-            </header>
-            {sellerView.average !== null ? (
-              <div className="flex items-center justify-between rounded-2xl border border-border px-3 py-2">
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold text-foreground">
-                    {sellerView.average.toFixed(1)}
+        <div className="space-y-4">
+          {hasRatings && (
+            <>
+              <section className="space-y-3">
+                <header className="text-sm font-semibold text-foreground">
+                  What people have to say
+                </header>
+                {ratingDetails.length > 0 ? (
+                  <div className="space-y-3">
+                    {ratingDetails.map((rating) => {
+                      const ratingDate = new Date(
+                        rating.created_at,
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      });
+
+                      return (
+                        <div
+                          key={rating.id}
+                          className="rounded-lg border border-border bg-muted/30 p-3 space-y-2"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              {renderStaticStars(rating.score)}
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {ratingDate}
+                            </span>
+                          </div>
+                          {rating.comment && (
+                            <p className="text-sm text-foreground leading-relaxed">
+                              {rating.comment}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="rounded-2xl border border-dashed border-nav-border px-3 py-2 text-xs text-muted-foreground">
+                    No ratings yet. {getMemberName(userId)} will receive ratings
+                    after their first completed transaction.
                   </p>
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                    {formatCountLabel(sellerView.count)}
-                  </p>
-                </div>
-                {renderStaticStars(sellerView.average)}
-              </div>
-            ) : (
-              <p className="rounded-2xl border border-dashed border-nav-border px-3 py-2 text-xs">
-                No seller ratings yet.
-              </p>
-            )}
-          </section>
-          <section className="space-y-2">
-            <header className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Buyer ratings
-            </header>
-            {buyerView.average !== null ? (
-              <div className="flex items-center justify-between rounded-2xl border border-border px-3 py-2">
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold text-foreground">
-                    {buyerView.average.toFixed(1)}
-                  </p>
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                    {formatCountLabel(buyerView.count)}
-                  </p>
-                </div>
-                {renderStaticStars(buyerView.average)}
-              </div>
-            ) : (
-              <p className="rounded-2xl border border-dashed border-nav-border px-3 py-2 text-xs">
-                No buyer ratings yet.
-              </p>
-            )}
-          </section>
+                )}
+              </section>
+            </>
+          )}
           <footer className="rounded-2xl bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
             Ratings are collected after each completed transaction.{" "}
             {getMemberName(userId)} can earn more by closing reliable deals.
