@@ -195,7 +195,7 @@ export const StoreSettingsSection = ({
 
       console.log(`[ITEM ${operation}] Success! Fetching items...`);
       await fetchStoreItems();
-      setItemForm({ name: "", description: "", price: "", imageUrls: [] });
+      setItemForm({ name: "", description: "", price: "", quantity: "1", imageUrls: [] });
       setEditingItem(null);
       setShowItemForm(false);
       toast({
