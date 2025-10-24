@@ -19,7 +19,7 @@ export const AppShell = (): JSX.Element => {
   useEffect(() => {
     const fetchAnnouncement = async () => {
       try {
-        const response = await fetch("/api/announcements");
+        const response = await fetch("/.netlify/functions/announcements");
         if (response.ok) {
           const data = await response.json();
           const announcements = data.announcements || [];
