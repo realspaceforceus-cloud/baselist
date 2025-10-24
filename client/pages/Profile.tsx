@@ -20,7 +20,12 @@ import { useBaseList } from "@/context/BaseListContext";
 import { useUserListings } from "@/hooks/useListings";
 import { cn } from "@/lib/utils";
 import { generateSlug } from "@/lib/slugUtils";
-import type { TransactionHistoryEntry, UserProfile, Listing, Rating } from "@/types";
+import type {
+  TransactionHistoryEntry,
+  UserProfile,
+  Listing,
+  Rating,
+} from "@/types";
 
 const Profile = (): JSX.Element => {
   const {
@@ -125,16 +130,21 @@ const Profile = (): JSX.Element => {
     const fetchRatings = async () => {
       setIsLoadingRatings(true);
       try {
-        const response = await fetch(`/api/ratings?targetUserId=${profileUser.id}`, {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/api/ratings?targetUserId=${profileUser.id}`,
+          {
+            credentials: "include",
+          },
+        );
         if (response.ok) {
           const data = await response.json();
           const ratings = Array.isArray(data.ratings) ? data.ratings : [];
           // Get the 2 most recent ratings sorted by date
           const recentRatings = ratings
-            .sort((a: any, b: any) =>
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            .sort(
+              (a: any, b: any) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
             )
             .slice(0, 2);
           setProfileRatings(recentRatings);
@@ -722,13 +732,18 @@ const Profile = (): JSX.Element => {
               {isLoadingRatings ? (
                 <div className="space-y-2">
                   {[1, 2].map((i) => (
-                    <div key={i} className="h-20 bg-muted/30 rounded-lg animate-pulse" />
+                    <div
+                      key={i}
+                      className="h-20 bg-muted/30 rounded-lg animate-pulse"
+                    />
                   ))}
                 </div>
               ) : profileRatings.length > 0 ? (
                 <div className="space-y-3">
                   {profileRatings.map((rating: any) => {
-                    const ratingDate = new Date(rating.created_at).toLocaleDateString("en-US", {
+                    const ratingDate = new Date(
+                      rating.created_at,
+                    ).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
@@ -754,7 +769,9 @@ const Profile = (): JSX.Element => {
                                 />
                               ))}
                             </div>
-                            <span className="text-sm font-medium text-foreground">{rating.score}</span>
+                            <span className="text-sm font-medium text-foreground">
+                              {rating.score}
+                            </span>
                           </div>
                           <span className="text-xs text-muted-foreground">
                             {ratingDate}
@@ -771,7 +788,8 @@ const Profile = (): JSX.Element => {
                 </div>
               ) : (
                 <p className="rounded-2xl border border-dashed border-nav-border px-3 py-2 text-xs text-muted-foreground">
-                  No ratings yet. {profileUser.name} will receive ratings after their first completed transaction.
+                  No ratings yet. {profileUser.name} will receive ratings after
+                  their first completed transaction.
                 </p>
               )}
             </div>
