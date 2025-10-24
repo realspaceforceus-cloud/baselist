@@ -550,6 +550,12 @@ const handleLogin = async (event: any) => {
         avatarUrl: user.avatar_url,
         role: user.role,
         verified: true,
+        store_name: user.store_name,
+        store_slug: user.store_slug,
+        store_enabled: user.store_enabled,
+        store_background_color: user.store_background_color,
+        store_text_color: user.store_text_color,
+        store_logo_url: user.store_logo_url,
       }),
     };
   } catch (error) {
