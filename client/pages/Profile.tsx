@@ -145,6 +145,10 @@ const Profile = (): JSX.Element => {
       isViewingOwnProfile,
       "fetchedUser available=",
       !!fetchedUser,
+      "store_enabled=",
+      (result as any)?.store_enabled,
+      "store_slug=",
+      (result as any)?.store_slug,
     );
     return result;
   }, [isViewingOwnProfile, currentUser, fetchedUser]);
