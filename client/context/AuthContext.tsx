@@ -74,7 +74,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await fetchMe();
       if (response.authenticated && response.user) {
         setUser(response.user);
-        console.log("[AUTH] User refreshed:", { store_enabled: (response.user as any)?.store_enabled, store_slug: (response.user as any)?.store_slug });
+        console.log("[AUTH] User refreshed:", {
+          store_enabled: (response.user as any)?.store_enabled,
+          store_slug: (response.user as any)?.store_slug,
+        });
       }
     } catch (error) {
       console.error("Failed to refresh user:", error);
@@ -82,7 +85,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ loading, user, signIn, signOut, refreshUser }}>
+    <AuthContext.Provider
+      value={{ loading, user, signIn, signOut, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
