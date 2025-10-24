@@ -32,6 +32,7 @@ import { AdminUserDetail } from "./pages/AdminUserDetail";
 import AdminListingDetail from "./pages/AdminListingDetail";
 import ResetPassword from "./pages/ResetPassword";
 import Store from "./pages/Store";
+import StoreManagement from "./pages/StoreManagement";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import React from "react";
