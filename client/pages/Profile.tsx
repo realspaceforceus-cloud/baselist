@@ -166,7 +166,13 @@ const Profile = (): JSX.Element => {
         if (!response.ok) {
           console.error("[Profile] Response not ok, status:", response.status);
           const errorText = await response.text();
-          console.error("[Profile] Response error:", errorText);
+          console.error("[Profile] Response error text:", errorText);
+          try {
+            const errorJson = JSON.parse(errorText);
+            console.error("[Profile] Response error JSON:", errorJson);
+          } catch (e) {
+            console.error("[Profile] Could not parse error as JSON");
+          }
           setProfileRatings([]);
           return;
         }
