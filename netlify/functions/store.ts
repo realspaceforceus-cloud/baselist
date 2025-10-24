@@ -216,8 +216,11 @@ export const handler: Handler = async (event) => {
 
     // POST /api/store/items - Add item to store
     if (method === "POST" && path === "items") {
+      console.log("[POST /items] Starting...");
+
       const userIdMatch = event.headers.cookie?.match(/userId=([^;]+)/);
       if (!userIdMatch) {
+        console.log("[POST /items] Unauthorized - no userId");
         return {
           statusCode: 401,
           body: JSON.stringify({ error: "Unauthorized" }),
@@ -225,32 +228,50 @@ export const handler: Handler = async (event) => {
       }
 
       const userId = userIdMatch[1];
-      const body = JSON.parse(event.body || "{}");
-      const { name, description, price, imageUrls } = body;
+      console.log("[POST /items] UserId:", userId);
 
-      const result = await db.query(
-        `INSERT INTO store_items (user_id, name, description, price, image_urls)
-         VALUES ($1, $2, $3, $4, $5)
-         RETURNING id, user_id, name, description, price, image_urls, created_at, updated_at`,
-        [userId, name, description, price, imageUrls || []],
-      );
+      let parsedBody;
+      try {
+        parsedBody = JSON.parse(event.body || "{}");
+        console.log("[POST /items] Body parsed:", { name: parsedBody.name });
+      } catch (parseError) {
+        console.log("[POST /items] Parse error:", parseError);
+        throw parseError;
+      }
 
-      const item = result.rows[0];
-      return {
-        statusCode: 201,
-        body: JSON.stringify({
-          item: {
-            id: item.id,
-            userId: item.user_id,
-            name: item.name,
-            description: item.description,
-            price: parseFloat(item.price),
-            imageUrls: item.image_urls,
-            createdAt: item.created_at,
-            updatedAt: item.updated_at,
-          },
-        }),
-      };
+      const { name, description, price, imageUrls } = parsedBody;
+      console.log("[POST /items] Fields:", { name, description, price, imageUrlCount: imageUrls?.length || 0 });
+
+      try {
+        const result = await db.query(
+          `INSERT INTO store_items (user_id, name, description, price, image_urls)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING id, user_id, name, description, price, image_urls, created_at, updated_at`,
+          [userId, name, description, price, imageUrls || []],
+        );
+
+        console.log("[POST /items] Insert successful, rows:", result.rows.length);
+
+        const item = result.rows[0];
+        return {
+          statusCode: 201,
+          body: JSON.stringify({
+            item: {
+              id: item.id,
+              userId: item.user_id,
+              name: item.name,
+              description: item.description,
+              price: parseFloat(item.price),
+              imageUrls: item.image_urls,
+              createdAt: item.created_at,
+              updatedAt: item.updated_at,
+            },
+          }),
+        };
+      } catch (dbError) {
+        console.log("[POST /items] DB error:", dbError);
+        throw dbError;
+      }
     }
 
     // PATCH /api/store/items/:id - Update store item
