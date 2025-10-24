@@ -512,7 +512,8 @@ export const Header = (): JSX.Element => {
               type="button"
               onClick={() => {
                 setMenuOpen(false);
-                navigate(`/profile/${user.username}`);
+                const profileRoute = user.username || user.userId;
+                navigate(`/profile/${profileRoute}`);
               }}
               className="flex w-full items-center gap-3 rounded-lg transition hover:bg-muted/30 -m-2 p-2"
             >
