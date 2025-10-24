@@ -333,16 +333,16 @@ const Profile = (): JSX.Element => {
   const totalTransactions =
     profileUser.completedSales ?? purchases.length + sales.length ?? 0;
 
-  const profileRatingSummary = getUserRatingSummary(profileUser.id);
+  const profileRatingSummary = profileUser?.id ? getUserRatingSummary(profileUser.id) : null;
 
   // Calculate rating average and count from fetched ratings
   const calculateRatingStats = useMemo(() => {
     if (profileRatingsTotal === 0) {
       return {
         average:
-          profileRatingSummary?.overallAverage ?? profileUser.rating ?? null,
+          profileRatingSummary?.overallAverage ?? profileUser?.rating ?? null,
         count:
-          profileRatingSummary?.overallCount ?? profileUser.ratingCount ?? 0,
+          profileRatingSummary?.overallCount ?? profileUser?.ratingCount ?? 0,
       };
     }
     // Calculate average from the 2 most recent ratings (or fewer if not enough)
@@ -359,8 +359,8 @@ const Profile = (): JSX.Element => {
     profileRatings,
     profileRatingsTotal,
     profileRatingSummary,
-    profileUser.rating,
-    profileUser.ratingCount,
+    profileUser?.rating,
+    profileUser?.ratingCount,
   ]);
 
   const profileRatingAverage = calculateRatingStats.average;
@@ -704,7 +704,7 @@ const Profile = (): JSX.Element => {
                       ${listing.price?.toLocaleString("en-US") ?? "0"}
                     </p>
                     <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary opacity-0 transition-all group-hover:opacity-100">
-                      <span className="text-xs font-bold">→</span>
+                      <span className="text-xs font-bold">��</span>
                     </span>
                   </div>
                 </div>
