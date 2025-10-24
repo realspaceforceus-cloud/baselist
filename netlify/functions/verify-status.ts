@@ -371,10 +371,17 @@ const handleResendCode = async (event: any) => {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path =
-    event.path.replace("/.netlify/functions/verify-status", "") ||
-    event.rawUrl?.split("?")[0]?.replace(/.*verify-status/, "") ||
-    "";
+  // Handle both direct calls (/.netlify/functions/verify-status) and redirect calls (/api/verify-status)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/verify-status")) {
+    path = path.replace("/.netlify/functions/verify-status", "");
+  } else if (path.startsWith("/api/verify-status")) {
+    path = path.replace("/api/verify-status", "");
+  } else {
+    // Fallback: extract everything after 'verify-status'
+    const match = path.match(/\/verify-status(.*)/);
+    path = match ? match[1] : "";
+  }
 
   if (method === "POST" && path === "/request") {
     return handleRequestVerification(event);

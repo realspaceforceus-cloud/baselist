@@ -6,7 +6,17 @@ import { getUserIdFromAuth } from "./auth";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/saved-listings", "");
+  // Handle both direct calls (/.netlify/functions/saved-listings) and redirect calls (/api/saved-listings)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/saved-listings")) {
+    path = path.replace("/.netlify/functions/saved-listings", "");
+  } else if (path.startsWith("/api/saved-listings")) {
+    path = path.replace("/api/saved-listings", "");
+  } else {
+    // Fallback: extract everything after 'saved-listings'
+    const match = path.match(/\/saved-listings(.*)/);
+    path = match ? match[1] : "";
+  }
 
   // Get userId from auth
   const userId = getUserIdFromAuth(event);

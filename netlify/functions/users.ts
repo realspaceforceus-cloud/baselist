@@ -4,7 +4,17 @@ import bcrypt from "bcryptjs";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/users", "");
+  // Handle both direct calls (/.netlify/functions/users) and redirect calls (/api/users)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/users")) {
+    path = path.replace("/.netlify/functions/users", "");
+  } else if (path.startsWith("/api/users")) {
+    path = path.replace("/api/users", "");
+  } else {
+    // Fallback: extract everything after 'users'
+    const match = path.match(/\/users(.*)/);
+    path = match ? match[1] : "";
+  }
   const userId = event.headers.authorization?.replace("Bearer ", "");
 
   // GET /api/users/:id (supports both ID and username)

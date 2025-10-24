@@ -559,10 +559,17 @@ const handleRevokeLink = async (event: any) => {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path =
-    event.path.replace("/.netlify/functions/sponsor", "") ||
-    event.rawUrl?.split("?")[0]?.replace(/.*sponsor/, "") ||
-    "";
+  // Handle both direct calls (/.netlify/functions/sponsor) and redirect calls (/api/sponsor)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/sponsor")) {
+    path = path.replace("/.netlify/functions/sponsor", "");
+  } else if (path.startsWith("/api/sponsor")) {
+    path = path.replace("/api/sponsor", "");
+  } else {
+    // Fallback: extract everything after 'sponsor'
+    const match = path.match(/\/sponsor(.*)/);
+    path = match ? match[1] : "";
+  }
 
   if (method === "POST" && path === "/request") {
     return handleRequestApproval(event);
