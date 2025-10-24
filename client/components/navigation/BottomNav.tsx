@@ -13,7 +13,7 @@ export const BottomNav = (): JSX.Element | null => {
     { icon: Home, label: "Feed", href: "/" },
     { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
     { icon: MessageSquare, label: "Messages", href: "/messages" },
-    { icon: User, label: "Profile", href: "/profile" },
+    { icon: User, label: "Profile", href: `/profile/${user.username}` },
   ];
 
   return (
