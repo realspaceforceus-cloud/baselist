@@ -68,7 +68,10 @@ export const handler: Handler = async (event, context) => {
 
       const client = await pool.connect();
       try {
-        console.log("[RATINGS] Executing query for targetUserId:", targetUserId);
+        console.log(
+          "[RATINGS] Executing query for targetUserId:",
+          targetUserId,
+        );
         const result = await client.query(
           `SELECT id, user_id, target_user_id, score, comment, created_at
            FROM ratings
