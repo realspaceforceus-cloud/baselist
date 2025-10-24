@@ -613,15 +613,27 @@ const Profile = (): JSX.Element => {
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300">
                 <ShoppingBag className="h-5 w-5" aria-hidden />
               </span>
-              <h2 className="text-xl font-bold text-foreground">
-                {isViewingOwnProfile
-                  ? "Items for sale"
-                  : `${profileFirstName}'s items`}
-              </h2>
+              <div className="flex flex-col gap-1">
+                <h2 className="text-xl font-bold text-foreground">
+                  {isViewingOwnProfile
+                    ? "Items for sale"
+                    : `${profileFirstName}'s items`}
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  {activeListings.length} active • {soldListings.length} sold
+                </p>
+              </div>
             </div>
-            <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-950 px-3 py-1 text-sm font-medium text-blue-700 dark:text-blue-300">
-              {activeListings.length}
-            </span>
+            {isViewingOwnProfile && (
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-lg font-medium"
+                size="sm"
+              >
+                <Link to="/my-listings">Manage</Link>
+              </Button>
+            )}
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {activeListings.map((listing) => (
