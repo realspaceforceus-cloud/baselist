@@ -709,6 +709,73 @@ const Profile = (): JSX.Element => {
               />
             </div>
           </div>
+          {profileRatingCount > 0 && (
+            <div className="border-t border-border/30 bg-gradient-to-r from-amber-50/50 to-transparent dark:from-amber-950/20 dark:to-transparent px-6 md:px-8 py-6">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-foreground mb-1">
+                  What people have to say
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Feedback from {profileUser.name}'s recent transactions
+                </p>
+              </div>
+              {isLoadingRatings ? (
+                <div className="space-y-2">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="h-20 bg-muted/30 rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : profileRatings.length > 0 ? (
+                <div className="space-y-3">
+                  {profileRatings.map((rating: any) => {
+                    const ratingDate = new Date(rating.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    });
+                    return (
+                      <div
+                        key={rating.id}
+                        className="rounded-lg border border-border bg-muted/30 p-4 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="inline-flex items-center gap-0.5">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <StarIcon
+                                  key={star}
+                                  className={cn(
+                                    "h-3.5 w-3.5",
+                                    star <= Math.round(rating.score)
+                                      ? "fill-amber-400 text-amber-400"
+                                      : "text-muted-foreground/30",
+                                  )}
+                                  aria-hidden
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm font-medium text-foreground">{rating.score}</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {ratingDate}
+                          </span>
+                        </div>
+                        {rating.comment && (
+                          <p className="text-sm text-foreground leading-relaxed">
+                            "{rating.comment}"
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="rounded-2xl border border-dashed border-nav-border px-3 py-2 text-xs text-muted-foreground">
+                  No ratings yet. {profileUser.name} will receive ratings after their first completed transaction.
+                </p>
+              )}
+            </div>
+          )}
           <div className="p-6 md:p-8">
             <Tabs defaultValue={defaultTransactionTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted/60 p-1 mb-6">
