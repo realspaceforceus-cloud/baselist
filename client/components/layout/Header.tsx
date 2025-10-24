@@ -449,10 +449,10 @@ export const Header = (): JSX.Element => {
               </div>
               <nav className="flex items-center justify-between gap-2 rounded-2xl border border-nav-border bg-nav/70 px-2 py-2 shadow-soft">
                 {NAV_ITEMS.map(({ label, to, icon: Icon, end = false }) => {
-                  // For Profile link, use the current user's username (fallback to userId if username is undefined)
+                  // For Profile link, use the current user's username (fallback to id if username is undefined)
                   const navTo =
                     label === "Profile" && user
-                      ? `/profile/${user.username || user.userId}`
+                      ? `/profile/${user.username || user.id}`
                       : to;
 
                   return (
