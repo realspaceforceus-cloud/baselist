@@ -307,6 +307,7 @@ export const BaseListProvider = ({
       setUser({
         id: authUser.userId,
         name: authUser.username,
+        username: authUser.username,
         email: authUser.email,
         verified: authUser.verified,
         memberSince: new Date().toISOString(),
@@ -328,6 +329,7 @@ export const BaseListProvider = ({
       setUser({
         id: "",
         name: "User",
+        username: "user",
         email: "",
         verified: false,
         memberSince: new Date().toISOString(),
