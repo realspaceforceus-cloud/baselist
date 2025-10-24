@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   BadgeCheck,
   ClipboardList,
+  HelpCircle,
   MessageCircle,
   ShieldCheck,
   ShoppingBag,
