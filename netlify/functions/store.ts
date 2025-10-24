@@ -296,11 +296,22 @@ export const handler: Handler = async (event) => {
     };
   } catch (error) {
     console.error("Store API error:", error);
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal server error" }),
+      body: JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : String(error),
+      }),
     };
   } finally {
-    await db.end();
+    try {
+      await db.end();
+    } catch (e) {
+      console.error("Error closing database connection:", e);
+    }
   }
 };
