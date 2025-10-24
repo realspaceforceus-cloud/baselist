@@ -1,11 +1,12 @@
 import { Handler } from "@netlify/functions";
 import { Client } from "pg";
 
-const db = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-
 export const handler: Handler = async (event) => {
+  // Create a NEW client for each request to avoid connection reuse issues
+  const db = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+
   try {
     const timestamp = new Date().toISOString();
     console.log(`\n=== STORE API REQUEST ${timestamp} ===`);
