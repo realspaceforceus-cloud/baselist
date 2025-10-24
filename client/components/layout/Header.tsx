@@ -65,7 +65,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Profile",
-    to: "profile", // Will be replaced with dynamic route
+    to: "/profile/placeholder", // Dynamic - replaced in render
     icon: User,
   },
 ] as const;
@@ -462,12 +462,12 @@ export const Header = (): JSX.Element => {
                       )
                     }
                   >
-                    {({ isActive }) => (
-                      <>
-                        <span
-                          className={cn(
-                            "relative flex h-9 w-9 items-center justify-center rounded-full",
-                            isActive
+                      {({ isActive }) => (
+                        <>
+                          <span
+                            className={cn(
+                              "relative flex h-9 w-9 items-center justify-center rounded-full",
+                              isActive
                               ? "bg-primary/10 text-primary"
                               : "bg-transparent",
                           )}
