@@ -264,20 +264,21 @@ export const handler: Handler = async (event) => {
         throw parseError;
       }
 
-      const { name, description, price, imageUrls } = parsedBody;
+      const { name, description, price, quantity, imageUrls } = parsedBody;
       console.log("[POST /items] Fields:", {
         name,
         description,
         price,
+        quantity,
         imageUrlCount: imageUrls?.length || 0,
       });
 
       try {
         const result = await db.query(
-          `INSERT INTO store_items (user_id, name, description, price, image_urls)
-           VALUES ($1, $2, $3, $4, $5)
-           RETURNING id, user_id, name, description, price, image_urls, created_at, updated_at`,
-          [userId, name, description, price, imageUrls || []],
+          `INSERT INTO store_items (user_id, name, description, price, quantity, image_urls)
+           VALUES ($1, $2, $3, $4, $5, $6)
+           RETURNING id, user_id, name, description, price, quantity, image_urls, created_at, updated_at`,
+          [userId, name, description, price, quantity || 1, imageUrls || []],
         );
 
         console.log(
@@ -295,6 +296,7 @@ export const handler: Handler = async (event) => {
               name: item.name,
               description: item.description,
               price: parseFloat(item.price),
+              quantity: parseInt(item.quantity),
               imageUrls: item.image_urls,
               createdAt: item.created_at,
               updatedAt: item.updated_at,
