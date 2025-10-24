@@ -102,14 +102,16 @@ const Profile = (): JSX.Element => {
   console.log("[Profile] isViewingOwnProfile:", isViewingOwnProfile);
 
   const profileUser = useMemo(() => {
-    const result = isViewingOwnProfile
-      ? (currentUser ?? null)
-      : (fetchedUser ?? null);
+    // Always prefer fetchedUser when available (includes refreshed data)
+    // Fall back to currentUser only when viewing own profile and fetchedUser isn't available
+    const result = fetchedUser || (isViewingOwnProfile ? currentUser : null) || null;
     console.log(
       "[Profile] useMemo profileUser:",
       result?.id,
       "dependencies: isViewingOwnProfile=",
       isViewingOwnProfile,
+      "fetchedUser available=",
+      !!fetchedUser,
     );
     return result;
   }, [isViewingOwnProfile, currentUser, fetchedUser]);
