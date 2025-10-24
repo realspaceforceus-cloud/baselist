@@ -81,8 +81,10 @@ const Profile = (): JSX.Element => {
     ) {
       setFetchedUser(null);
       setIsLoadingUser(false);
+      // Refresh user data to get latest store settings
+      refreshUser();
     }
-  }, [memberId, currentUser?.id, currentUser?.username]);
+  }, [memberId, currentUser?.id, currentUser?.username, refreshUser]);
 
   // Fetch user from API if not in local context
   useEffect(() => {
