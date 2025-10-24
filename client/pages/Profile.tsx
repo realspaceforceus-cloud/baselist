@@ -46,8 +46,10 @@ const Profile = (): JSX.Element => {
   // Redirect to /{username} if user navigates to /profile without username
   useEffect(() => {
     if (!memberId && isAuthenticated && currentUser) {
-      const identifier = currentUser.username || currentUser.userId;
-      navigate(`/profile/${identifier}`, { replace: true });
+      // Always use username as it's the cleaner URL identifier
+      if (currentUser.username) {
+        navigate(`/profile/${currentUser.username}`, { replace: true });
+      }
     }
   }, [memberId, isAuthenticated, currentUser, navigate]);
 
