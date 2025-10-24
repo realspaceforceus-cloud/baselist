@@ -33,7 +33,8 @@ export default function StoreManagement() {
             <div>
               <h1 className="text-3xl font-bold">Store Management</h1>
               <p className="text-muted-foreground mt-2">
-                Manage your store settings, customize colors, add items, and more.
+                Manage your store settings, customize colors, add items, and
+                more.
               </p>
             </div>
             {(user as any)?.store_enabled && (user as any)?.store_slug && (
