@@ -98,7 +98,7 @@ const ListingDetail = (): JSX.Element => {
     const fetchSeller = async () => {
       try {
         const response = await fetch(
-          `/.netlify/functions/users/${listing.sellerId}`,
+          `/api/users/${listing.sellerId}`,
           {
             credentials: "include",
           },
@@ -134,7 +134,7 @@ const ListingDetail = (): JSX.Element => {
 
     const checkIfSaved = async () => {
       try {
-        const response = await fetch("/.netlify/functions/saved-listings", {
+        const response = await fetch("/api/saved-listings", {
           credentials: "include",
         });
         if (response.ok) {
@@ -205,7 +205,7 @@ const ListingDetail = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch("/.netlify/functions/messages", {
+      const response = await fetch("/api/messages", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -255,7 +255,7 @@ const ListingDetail = (): JSX.Element => {
       setIsLoadingSave(true);
       const method = isSaved ? "DELETE" : "POST";
       const response = await fetch(
-        `/.netlify/functions/saved-listings/${listing.id}`,
+        `/api/saved-listings/${listing.id}`,
         {
           method,
           credentials: "include",
@@ -291,7 +291,7 @@ const ListingDetail = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch("/.netlify/functions/reports", {
+      const response = await fetch("/api/reports", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
