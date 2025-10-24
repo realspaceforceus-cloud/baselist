@@ -342,18 +342,21 @@ const Profile = (): JSX.Element => {
 
   // Calculate rating average and count from fetched ratings
   const calculateRatingStats = useMemo(() => {
-    if (profileRatings.length === 0) {
+    if (profileRatingsTotal === 0) {
       return {
         average: profileRatingSummary?.overallAverage ?? profileUser.rating ?? null,
         count: profileRatingSummary?.overallCount ?? profileUser.ratingCount ?? 0,
       };
     }
-    const average = profileRatings.reduce((sum: number, r: any) => sum + r.score, 0) / profileRatings.length;
+    // Calculate average from the 2 most recent ratings (or fewer if not enough)
+    const average = profileRatings.length > 0
+      ? profileRatings.reduce((sum: number, r: any) => sum + r.score, 0) / profileRatings.length
+      : 0;
     return {
       average: average,
-      count: profileRatings.length,
+      count: profileRatingsTotal,
     };
-  }, [profileRatings, profileRatingSummary, profileUser.rating, profileUser.ratingCount]);
+  }, [profileRatings, profileRatingsTotal, profileRatingSummary, profileUser.rating, profileUser.ratingCount]);
 
   const profileRatingAverage = calculateRatingStats.average;
   const profileRatingCount = calculateRatingStats.count;
