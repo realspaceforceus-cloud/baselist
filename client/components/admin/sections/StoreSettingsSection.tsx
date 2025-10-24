@@ -166,15 +166,16 @@ export const StoreSettingsSection = ({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete item");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to delete item");
       }
 
       setItems(items.filter((i) => i.id !== itemId));
-      toast.success("Item deleted");
+      toast({ title: "Success", description: "Item deleted" });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete item",
-      );
+      const message = error instanceof Error ? error.message : "Failed to delete item";
+      toast({ title: "Error", description: message });
+      console.error("Item delete error:", error);
     }
   };
 
@@ -185,11 +186,11 @@ export const StoreSettingsSection = ({
         ...prev,
         imageUrls: [...prev.imageUrls, url],
       }));
-      toast.success("Image uploaded!");
+      toast({ title: "Success", description: "Image uploaded!" });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload image",
-      );
+      const message = error instanceof Error ? error.message : "Failed to upload image";
+      toast({ title: "Error", description: message });
+      console.error("Image upload error:", error);
     }
   };
 
