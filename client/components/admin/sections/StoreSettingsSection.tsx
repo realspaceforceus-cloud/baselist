@@ -293,7 +293,7 @@ export const StoreSettingsSection = ({
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.currentTarget.files?.[0];
-                    if (file) handleUploadImage(file);
+                    if (file) handleUploadLogo(file);
                   }}
                   className="hidden"
                 />
