@@ -261,9 +261,9 @@ const Profile = (): JSX.Element => {
 
   const profileRatingSummary = getUserRatingSummary(profileUser.id);
   const profileRatingAverage =
-    profileRatingSummary?.average ?? profileUser.rating ?? null;
+    profileRatingSummary?.overallAverage ?? profileUser.rating ?? null;
   const profileRatingCount =
-    profileRatingSummary?.count ?? profileUser.ratingCount ?? 0;
+    profileRatingSummary?.overallCount ?? profileUser.ratingCount ?? 0;
 
   const noticeSeverityClass: Record<string, string> = {
     info: "text-muted-foreground",
