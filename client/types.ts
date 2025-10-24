@@ -344,3 +344,31 @@ export interface DismissedAnnouncement {
   announcementId: string;
   dismissedAt: string;
 }
+
+export interface StoreItem {
+  id: string;
+  userId: string;
+  name: string;
+  description?: string;
+  price: number;
+  imageUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Store {
+  id?: string;
+  userId: string;
+  name: string;
+  slug: string;
+  enabled: boolean;
+  backgroundColor: string;
+  textColor: string;
+  logoUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UserWithStore extends UserProfile {
+  store?: Store;
+}
