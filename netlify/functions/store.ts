@@ -127,10 +127,16 @@ export const handler: Handler = async (event) => {
     // POST /api/store - Create or update store
     if (method === "POST") {
       console.log("[POST /store] Starting...");
-      console.log("[AUTH] Cookie header:", event.headers.cookie?.substring(0, 50));
+      console.log(
+        "[AUTH] Cookie header:",
+        event.headers.cookie?.substring(0, 50),
+      );
 
       const userIdMatch = event.headers.cookie?.match(/userId=([^;]+)/);
-      console.log("[AUTH] UserId match result:", userIdMatch ? "FOUND" : "NOT FOUND");
+      console.log(
+        "[AUTH] UserId match result:",
+        userIdMatch ? "FOUND" : "NOT FOUND",
+      );
 
       if (!userIdMatch) {
         console.log("[AUTH] FAIL: No userId in cookie");
@@ -146,16 +152,23 @@ export const handler: Handler = async (event) => {
       let parsedBody;
       try {
         parsedBody = JSON.parse(event.body || "{}");
-        console.log("[PARSE] Body parsed successfully:", { name: parsedBody.name, slug: parsedBody.slug });
+        console.log("[PARSE] Body parsed successfully:", {
+          name: parsedBody.name,
+          slug: parsedBody.slug,
+        });
       } catch (parseError) {
         console.log("[PARSE] ERROR:", parseError);
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: "Invalid JSON body", parseError: String(parseError) }),
+          body: JSON.stringify({
+            error: "Invalid JSON body",
+            parseError: String(parseError),
+          }),
         };
       }
 
-      const { name, slug, enabled, backgroundColor, textColor, logoUrl } = parsedBody;
+      const { name, slug, enabled, backgroundColor, textColor, logoUrl } =
+        parsedBody;
       console.log("[DATA] Extracted fields:", { name, slug, enabled });
 
       // Generate slug from name if not provided
@@ -178,7 +191,15 @@ export const handler: Handler = async (event) => {
                updated_at = NOW()
            WHERE id = $7
            RETURNING id, store_name, store_slug, store_enabled, store_background_color, store_text_color, store_logo_url`,
-          [name, finalSlug, enabled, backgroundColor, textColor, logoUrl, userId],
+          [
+            name,
+            finalSlug,
+            enabled,
+            backgroundColor,
+            textColor,
+            logoUrl,
+            userId,
+          ],
         );
 
         console.log("[DB] Query executed. Rows returned:", result.rows.length);
@@ -192,7 +213,10 @@ export const handler: Handler = async (event) => {
         }
 
         const store = result.rows[0];
-        console.log("[SUCCESS] Store updated:", { name: store.store_name, slug: store.store_slug });
+        console.log("[SUCCESS] Store updated:", {
+          name: store.store_name,
+          slug: store.store_slug,
+        });
 
         return {
           statusCode: 200,
@@ -240,7 +264,12 @@ export const handler: Handler = async (event) => {
       }
 
       const { name, description, price, imageUrls } = parsedBody;
-      console.log("[POST /items] Fields:", { name, description, price, imageUrlCount: imageUrls?.length || 0 });
+      console.log("[POST /items] Fields:", {
+        name,
+        description,
+        price,
+        imageUrlCount: imageUrls?.length || 0,
+      });
 
       try {
         const result = await db.query(
@@ -250,7 +279,10 @@ export const handler: Handler = async (event) => {
           [userId, name, description, price, imageUrls || []],
         );
 
-        console.log("[POST /items] Insert successful, rows:", result.rows.length);
+        console.log(
+          "[POST /items] Insert successful, rows:",
+          result.rows.length,
+        );
 
         const item = result.rows[0];
         return {

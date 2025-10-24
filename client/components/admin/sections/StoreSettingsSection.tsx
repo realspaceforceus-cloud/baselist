@@ -69,7 +69,10 @@ export const StoreSettingsSection = ({
     }
 
     setIsSaving(true);
-    console.log("[STORE SAVE] Starting...", { name: store.name, enabled: store.enabled });
+    console.log("[STORE SAVE] Starting...", {
+      name: store.name,
+      enabled: store.enabled,
+    });
     try {
       const slug =
         store.slug ||
@@ -95,7 +98,11 @@ export const StoreSettingsSection = ({
         body: JSON.stringify(requestBody),
       });
 
-      console.log("[STORE SAVE] Response status:", response.status, response.statusText);
+      console.log(
+        "[STORE SAVE] Response status:",
+        response.status,
+        response.statusText,
+      );
 
       if (!response.ok) {
         let errorData;
@@ -106,7 +113,9 @@ export const StoreSettingsSection = ({
           console.log("[STORE SAVE] Could not parse error response");
           errorData = { error: "Unknown error" };
         }
-        throw new Error(errorData.error || errorData.details || "Failed to save store");
+        throw new Error(
+          errorData.error || errorData.details || "Failed to save store",
+        );
       }
 
       const data = await response.json();
@@ -135,7 +144,10 @@ export const StoreSettingsSection = ({
 
     setIsLoading(true);
     const operation = editingItem ? "UPDATE" : "ADD";
-    console.log(`[ITEM ${operation}] Starting...`, { name: itemForm.name, price: itemForm.price });
+    console.log(`[ITEM ${operation}] Starting...`, {
+      name: itemForm.name,
+      price: itemForm.price,
+    });
 
     try {
       const url = editingItem
@@ -160,7 +172,11 @@ export const StoreSettingsSection = ({
         body: JSON.stringify(itemData),
       });
 
-      console.log(`[ITEM ${operation}] Response status:`, response.status, response.statusText);
+      console.log(
+        `[ITEM ${operation}] Response status:`,
+        response.status,
+        response.statusText,
+      );
 
       if (!response.ok) {
         let errorData;
@@ -171,7 +187,9 @@ export const StoreSettingsSection = ({
           console.log(`[ITEM ${operation}] Could not parse error response`);
           errorData = { error: "Unknown error" };
         }
-        throw new Error(errorData.error || errorData.details || "Failed to save item");
+        throw new Error(
+          errorData.error || errorData.details || "Failed to save item",
+        );
       }
 
       console.log(`[ITEM ${operation}] Success! Fetching items...`);
