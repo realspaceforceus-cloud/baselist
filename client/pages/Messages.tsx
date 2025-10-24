@@ -1121,9 +1121,9 @@ const Messages = (): JSX.Element => {
                   {activeSummary.listing?.title ?? "Direct message"}
                 </h2>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  {activeSummary.partnerId ? (
+                  {activeSummary.seller?.username ? (
                     <Link
-                      to={`/profile/${activeSummary.partnerId}`}
+                      to={`/profile/${activeSummary.seller.username}`}
                       className="font-semibold text-foreground transition hover:text-primary"
                     >
                       {activeSummary.partnerName}
