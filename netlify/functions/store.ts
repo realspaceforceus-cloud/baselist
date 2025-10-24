@@ -7,17 +7,21 @@ const db = new Client({
 
 export const handler: Handler = async (event) => {
   try {
-    console.log(
-      "Store handler - Method:",
-      event.httpMethod,
-      "Path:",
-      event.path,
-    );
+    const timestamp = new Date().toISOString();
+    console.log(`\n=== STORE API REQUEST ${timestamp} ===`);
+    console.log("Method:", event.httpMethod);
+    console.log("Path:", event.path);
+    console.log("Query params:", event.queryStringParameters);
+    console.log("Headers:", Object.keys(event.headers || {}));
+    console.log("Body:", event.body ? event.body.substring(0, 200) : "none");
+
+    console.log("[DB] Connecting to database...");
     await db.connect();
-    console.log("Database connected successfully");
+    console.log("[DB] Connected successfully");
 
     const method = event.httpMethod;
     const path = event.path.split("/").slice(-1)[0];
+    console.log(`[ROUTE] Method=${method}, Path=${path}`);
 
     // GET /api/store?slug=xyz - Get store by slug (public)
     if (method === "GET" && event.queryStringParameters?.slug) {
