@@ -215,6 +215,72 @@ const Profile = (): JSX.Element => {
     return result;
   }, [notices, profileUser?.id, isViewingOwnProfile, profileUser]);
 
+  // Fetch ratings for the profile user
+  useEffect(() => {
+    if (!profileUser?.id) {
+      setProfileRatings([]);
+      setProfileRatingsTotal(0);
+      return;
+    }
+
+    const fetchRatings = async () => {
+      setIsLoadingRatings(true);
+      try {
+        console.log("[Profile] Fetching ratings for user:", profileUser.id);
+        const url = `/api/ratings?targetUserId=${profileUser.id}`;
+        console.log("[Profile] Fetch URL:", url);
+        const response = await fetch(url, {
+          credentials: "include",
+        });
+        console.log("[Profile] Response status:", response.status);
+        console.log("[Profile] Response ok:", response.ok);
+
+        if (!response.ok) {
+          console.error("[Profile] Response not ok, status:", response.status);
+          const errorText = await response.text();
+          console.error("[Profile] Response error text:", errorText);
+          setProfileRatings([]);
+          setProfileRatingsTotal(0);
+          return;
+        }
+
+        const data = await response.json();
+        console.log("[Profile] Response data:", data);
+        const ratings = Array.isArray(data.ratings) ? data.ratings : [];
+        console.log("[Profile] Ratings array length:", ratings.length);
+
+        if (ratings.length === 0) {
+          console.warn("[Profile] No ratings returned from API");
+          setProfileRatings([]);
+          setProfileRatingsTotal(0);
+          return;
+        }
+
+        // Store total count of all ratings
+        setProfileRatingsTotal(ratings.length);
+
+        // Get the 2 most recent ratings sorted by date
+        const recentRatings = ratings
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          )
+          .slice(0, 2);
+        setProfileRatings(recentRatings);
+        console.log("[Profile] Recent ratings set:", recentRatings);
+      } catch (error) {
+        console.error("[Profile] Error fetching ratings:", error);
+        setProfileRatings([]);
+        setProfileRatingsTotal(0);
+      } finally {
+        setIsLoadingRatings(false);
+      }
+    };
+
+    fetchRatings();
+  }, [profileUser?.id]);
+
   // Show error if profile not found (check after all hooks)
   if (profileUser === null) {
     return (
