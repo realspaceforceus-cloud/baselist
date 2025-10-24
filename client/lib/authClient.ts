@@ -46,6 +46,12 @@ export async function login(
     avatarUrl: data.avatarUrl,
     role: data.role,
     verified: data.verified,
+    store_name: data.store_name,
+    store_slug: data.store_slug,
+    store_enabled: data.store_enabled,
+    store_background_color: data.store_background_color,
+    store_text_color: data.store_text_color,
+    store_logo_url: data.store_logo_url,
   };
 }
 
