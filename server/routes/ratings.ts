@@ -10,7 +10,9 @@ const handleRatings: RequestHandler = async (req, res) => {
     const event = {
       httpMethod: req.method,
       path: req.path,
-      rawQueryString: new URLSearchParams(req.query as Record<string, string>).toString(),
+      rawQueryString: new URLSearchParams(
+        req.query as Record<string, string>,
+      ).toString(),
       body: req.method === "GET" ? null : JSON.stringify(req.body),
       headers: req.headers as Record<string, string>,
     };
