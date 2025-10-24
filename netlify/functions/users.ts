@@ -81,6 +81,12 @@ export const handler: Handler = async (event) => {
           rating: user.rating ? parseFloat(user.rating) : null,
           ratingCount: parseInt(user.ratingCount) || 0,
           completedSales: parseInt(user.completedSales) || 0,
+          store_enabled: user.store_enabled || false,
+          store_slug: user.store_slug || null,
+          store_name: user.store_name || null,
+          store_background_color: user.store_background_color || null,
+          store_text_color: user.store_text_color || null,
+          store_logo_url: user.store_logo_url || null,
         }),
       };
     } catch (err) {
