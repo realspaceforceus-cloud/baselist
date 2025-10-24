@@ -116,7 +116,9 @@ const Profile = (): JSX.Element => {
   // Determine viewing own profile (must come before other hooks)
   // Safe boolean: don't read currentUser.id unless it exists
   const isViewingOwnProfile =
-    !memberId || (currentUser && currentUser.id === memberId);
+    !memberId ||
+    (currentUser &&
+      (currentUser.id === memberId || currentUser.username === memberId));
   console.log("[Profile] isViewingOwnProfile:", isViewingOwnProfile);
 
   const profileUser = useMemo(() => {
