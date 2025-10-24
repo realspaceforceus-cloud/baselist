@@ -205,6 +205,54 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // PATCH /api/store/items/:id - Update store item
+    if (method === "PATCH" && path.startsWith("items")) {
+      const userIdMatch = event.headers.cookie?.match(/userId=([^;]+)/);
+      if (!userIdMatch) {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({ error: "Unauthorized" }),
+        };
+      }
+
+      const userId = userIdMatch[1];
+      const itemId = event.queryStringParameters?.itemId;
+      const body = JSON.parse(event.body || "{}");
+      const { name, description, price, imageUrls } = body;
+
+      const result = await db.query(
+        `UPDATE store_items
+         SET name = $1, description = $2, price = $3, image_urls = $4, updated_at = NOW()
+         WHERE id = $5 AND user_id = $6
+         RETURNING id, user_id, name, description, price, image_urls, created_at, updated_at`,
+        [name, description, price, imageUrls || [], itemId, userId],
+      );
+
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Item not found" }),
+        };
+      }
+
+      const item = result.rows[0];
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          item: {
+            id: item.id,
+            userId: item.user_id,
+            name: item.name,
+            description: item.description,
+            price: parseFloat(item.price),
+            imageUrls: item.image_urls,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+          },
+        }),
+      };
+    }
+
     // DELETE /api/store/items/:id - Delete store item
     if (method === "DELETE" && path.startsWith("items")) {
       const userIdMatch = event.headers.cookie?.match(/userId=([^;]+)/);
