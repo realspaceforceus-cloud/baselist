@@ -154,16 +154,21 @@ const Profile = (): JSX.Element => {
     const fetchRatings = async () => {
       setIsLoadingRatings(true);
       try {
-        const response = await fetch(`/api/ratings?targetUserId=${profileUser.id}`, {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/api/ratings?targetUserId=${profileUser.id}`,
+          {
+            credentials: "include",
+          },
+        );
         if (response.ok) {
           const data = await response.json();
           const ratings = Array.isArray(data.ratings) ? data.ratings : [];
           // Get the 2 most recent ratings sorted by date
           const recentRatings = ratings
-            .sort((a: any, b: any) =>
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            .sort(
+              (a: any, b: any) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
             )
             .slice(0, 2);
           setProfileRatings(recentRatings);
