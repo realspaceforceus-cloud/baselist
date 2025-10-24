@@ -69,6 +69,7 @@ export const StoreSettingsSection = ({
     }
 
     setIsSaving(true);
+    console.log("[STORE SAVE] Starting...", { name: store.name, enabled: store.enabled });
     try {
       const slug =
         store.slug ||
@@ -77,26 +78,39 @@ export const StoreSettingsSection = ({
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-|-$/g, "");
 
+      const requestBody = {
+        name: store.name,
+        slug,
+        enabled: store.enabled,
+        backgroundColor: store.backgroundColor,
+        textColor: store.textColor,
+        logoUrl: store.logoUrl,
+      };
+      console.log("[STORE SAVE] Request body:", requestBody);
+
       const response = await fetch("/.netlify/functions/store", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          name: store.name,
-          slug,
-          enabled: store.enabled,
-          backgroundColor: store.backgroundColor,
-          textColor: store.textColor,
-          logoUrl: store.logoUrl,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
+      console.log("[STORE SAVE] Response status:", response.status, response.statusText);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to save store");
+        let errorData;
+        try {
+          errorData = await response.json();
+          console.log("[STORE SAVE] Error response body:", errorData);
+        } catch (parseError) {
+          console.log("[STORE SAVE] Could not parse error response");
+          errorData = { error: "Unknown error" };
+        }
+        throw new Error(errorData.error || errorData.details || "Failed to save store");
       }
 
       const data = await response.json();
+      console.log("[STORE SAVE] Success! Data:", data);
       setStore(data.store);
       onStoreUpdated(data.store);
       toast({
@@ -106,8 +120,8 @@ export const StoreSettingsSection = ({
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to save store";
+      console.error("[STORE SAVE] Error:", message, error);
       toast({ title: "Error", description: message });
-      console.error("Store save error:", error);
     } finally {
       setIsSaving(false);
     }
