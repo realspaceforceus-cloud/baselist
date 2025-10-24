@@ -200,18 +200,19 @@ export const handler: Handler = async (event, context) => {
       console.log("[RATINGS] ✓ Transaction updated");
 
       // 5.5 If transaction is now completed (both users rated), mark listing as sold
-      if (bothUsersRated && threadCheck.rows[0].listing_id) {
+      const listingId = threadCheck.rows[0].listing_id;
+      if (bothUsersRated && listingId) {
         console.log("[RATINGS] Marking listing as sold...");
         await client.query(
           `UPDATE listings SET status = 'sold', updated_at = NOW() WHERE id = $1`,
-          [threadCheck.rows[0].listing_id],
+          [listingId],
         );
         console.log("[RATINGS] ✓ Listing marked as sold");
       }
 
       // 6. Auto-archive thread for the current user only (not both users)
       console.log("[RATINGS] Auto-archiving thread for current user...");
-      const archivedBy = threadCheck.rows[0].archived_by || [];
+      let archivedBy = threadCheck.rows[0].archived_by || [];
 
       // Add current user to archived_by if not already there
       if (!archivedBy.includes(userId)) {
@@ -290,7 +291,7 @@ export const handler: Handler = async (event, context) => {
         console.log("[RATINGS] ✓ Notification created");
       } catch (notifError) {
         console.error(
-          "[RATINGS] ��️  Notification error (non-fatal):",
+          "[RATINGS] ⚠️  Notification error (non-fatal):",
           notifError,
         );
       }
