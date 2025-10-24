@@ -358,7 +358,7 @@ export const BaseListProvider = ({
     }
 
     try {
-      const response = await fetch("/.netlify/functions/bases");
+      const response = await fetch("/api/bases");
 
       if (!response.ok) {
         const text = await response.text();
@@ -817,7 +817,7 @@ export const BaseListProvider = ({
       // If not found locally, check backend
       if (!account) {
         try {
-          const res = await fetch("/.netlify/functions/auth/login", {
+          const res = await fetch("/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: normalized, password }),
@@ -1406,7 +1406,7 @@ export const BaseListProvider = ({
       try {
         // Save dispute to backend
         const response = await fetch(
-          `/.netlify/functions/messages/threads/${threadId}/dispute`,
+          `/api/messages/threads/${threadId}/dispute`,
           {
             method: "POST",
             credentials: "include",
@@ -1652,7 +1652,7 @@ export const BaseListProvider = ({
     try {
       // Delete from backend first
       const response = await fetch(
-        `/.netlify/functions/listings/${listingId}`,
+        `/api/listings/${listingId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -1722,7 +1722,7 @@ export const BaseListProvider = ({
 
       try {
         // Call backend to create or update thread and add message
-        const response = await fetch("/.netlify/functions/messages", {
+        const response = await fetch("/api/messages", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
