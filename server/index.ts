@@ -9,6 +9,7 @@ import { adminRouter } from "./routes/admin";
 import { userRouter } from "./routes/user";
 import { settingsRouter } from "./routes/settings";
 import { emailRouter } from "./routes/email";
+import { ratingsRouter } from "./routes/ratings";
 import { handleDemo } from "./routes/demo";
 import { checkSetupComplete } from "./middleware/setupCheck";
 
