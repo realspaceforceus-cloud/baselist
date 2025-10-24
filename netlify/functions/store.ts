@@ -4,7 +4,7 @@ import { Client } from "pg";
 export const handler: Handler = async (event) => {
   // Create a NEW client for each request to avoid connection reuse issues
   const db = new Client({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.NETLIFY_DATABASE_URL,
   });
 
   try {
