@@ -17,8 +17,7 @@ interface StoreSettingsProps {
 
 export const StoreSettingsSection = ({ user, onStoreUpdated }: StoreSettingsProps) => {
   const { toast } = useToast();
-  const { getSignature } = useCloudinary();
-  
+
   const [store, setStore] = useState<Store>({
     userId: user.id,
     name: (user as any)?.store_name || "",
