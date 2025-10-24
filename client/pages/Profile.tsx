@@ -604,56 +604,6 @@ const Profile = (): JSX.Element => {
         </div>
       </header>
 
-      {/* Listings Summary - Modern Card Layout */}
-      <div className="grid gap-5 md:grid-cols-2">
-        <article className="group rounded-2xl border border-border/50 bg-gradient-to-br from-blue-50/50 to-background p-6 shadow-sm hover:shadow-md transition-all dark:from-blue-950/20 dark:to-background">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300">
-                  <ClipboardList className="h-4 w-4" aria-hidden />
-                </span>
-                <h2 className="text-base font-semibold text-foreground">
-                  {isViewingOwnProfile
-                    ? "My listings"
-                    : `${profileFirstName}'s listings`}
-                </h2>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {activeListings.length} active • {soldListings.length} sold
-              </p>
-            </div>
-          </div>
-          <dl className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-blue-200/50 bg-white/60 dark:bg-background dark:border-blue-900/30 p-4 text-center backdrop-blur-sm">
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
-                Active
-              </dt>
-              <dd className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {activeListings.length}
-              </dd>
-            </div>
-            <div className="rounded-xl border border-emerald-200/50 bg-white/60 dark:bg-background dark:border-emerald-900/30 p-4 text-center backdrop-blur-sm">
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
-                Sold
-              </dt>
-              <dd className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                {soldListings.length}
-              </dd>
-            </div>
-          </dl>
-          {isViewingOwnProfile && (
-            <Button
-              asChild
-              variant="outline"
-              className="mt-5 rounded-lg w-full font-medium"
-              size="sm"
-            >
-              <Link to="/my-listings">Manage listings</Link>
-            </Button>
-          )}
-        </article>
-      </div>
 
       {/* Active Listings Section - Modern Grid */}
       {activeListings.length > 0 && (
