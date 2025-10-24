@@ -48,6 +48,7 @@ const Profile = (): JSX.Element => {
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
   const [profileRatings, setProfileRatings] = useState<any[]>([]);
+  const [profileRatingsTotal, setProfileRatingsTotal] = useState(0);
   const [isLoadingRatings, setIsLoadingRatings] = useState(false);
 
   // Redirect to /{username} if user navigates to /profile without username
