@@ -7,6 +7,7 @@ interface AuthContextType {
   user: AuthUser | null;
   signIn: (identifier: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
