@@ -792,10 +792,17 @@ const handleResetPasswordComplete = async (event: any) => {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path =
-    event.path.replace("/.netlify/functions/auth", "") ||
-    event.rawUrl?.split("?")[0]?.replace(/.*auth/, "") ||
-    "";
+  // Handle both direct calls (/.netlify/functions/auth) and redirect calls (/api/auth)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/auth")) {
+    path = path.replace("/.netlify/functions/auth", "");
+  } else if (path.startsWith("/api/auth")) {
+    path = path.replace("/api/auth", "");
+  } else {
+    // Fallback: extract everything after 'auth'
+    const match = path.match(/\/auth(.*)/);
+    path = match ? match[1] : "";
+  }
 
   if (method === "POST" && path === "/signup") {
     return handleSignup(event);
