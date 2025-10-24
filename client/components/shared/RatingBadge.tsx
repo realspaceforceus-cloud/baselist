@@ -133,29 +133,30 @@ export const RatingBadge = ({
           credentials: "include",
         });
         console.log("[RatingBadge] API response status:", response.status);
-        if (!response.ok) throw new Error("Failed to fetch ratings");
+        if (!response.ok) throw new Error(`Failed to fetch ratings: ${response.statusText}`);
         const data = await response.json();
         console.log("[RatingBadge] API response data:", data);
 
-        // Get last 3 ratings, sorted by date (newest first)
-        const lastThree = (data.ratings || [])
+        // Get last 2 ratings (user requested 2 most recent), sorted by date (newest first)
+        const ratings = Array.isArray(data.ratings) ? data.ratings : [];
+        const lastTwo = ratings
           .sort(
             (a: any, b: any) =>
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime(),
           )
-          .slice(0, 3);
+          .slice(0, 2);
 
         console.log(
           "[RatingBadge] Loaded ratings:",
-          lastThree.map((r: any) => ({
+          lastTwo.map((r: any) => ({
             id: r.id,
             score: r.score,
             comment: r.comment,
             created_at: r.created_at,
           })),
         );
-        setRatingDetails(lastThree);
+        setRatingDetails(lastTwo);
       } catch (error) {
         console.error("[RatingBadge] Failed to fetch ratings:", error);
         setRatingDetails([]);
