@@ -322,14 +322,14 @@ export const handler: Handler = async (event) => {
       const userId = userIdMatch[1];
       const itemId = event.queryStringParameters?.itemId;
       const body = JSON.parse(event.body || "{}");
-      const { name, description, price, imageUrls } = body;
+      const { name, description, price, quantity, imageUrls } = body;
 
       const result = await db.query(
         `UPDATE store_items
-         SET name = $1, description = $2, price = $3, image_urls = $4, updated_at = NOW()
-         WHERE id = $5 AND user_id = $6
-         RETURNING id, user_id, name, description, price, image_urls, created_at, updated_at`,
-        [name, description, price, imageUrls || [], itemId, userId],
+         SET name = $1, description = $2, price = $3, quantity = $4, image_urls = $5, updated_at = NOW()
+         WHERE id = $6 AND user_id = $7
+         RETURNING id, user_id, name, description, price, quantity, image_urls, created_at, updated_at`,
+        [name, description, price, quantity || 1, imageUrls || [], itemId, userId],
       );
 
       if (result.rows.length === 0) {
@@ -349,6 +349,7 @@ export const handler: Handler = async (event) => {
             name: item.name,
             description: item.description,
             price: parseFloat(item.price),
+            quantity: parseInt(item.quantity),
             imageUrls: item.image_urls,
             createdAt: item.created_at,
             updatedAt: item.updated_at,
