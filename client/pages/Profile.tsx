@@ -154,28 +154,39 @@ const Profile = (): JSX.Element => {
     const fetchRatings = async () => {
       setIsLoadingRatings(true);
       try {
-        const response = await fetch(
-          `/api/ratings?targetUserId=${profileUser.id}`,
-          {
-            credentials: "include",
-          },
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const ratings = Array.isArray(data.ratings) ? data.ratings : [];
-          // Get the 2 most recent ratings sorted by date
-          const recentRatings = ratings
-            .sort(
-              (a: any, b: any) =>
-                new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime(),
-            )
-            .slice(0, 2);
-          setProfileRatings(recentRatings);
-          console.log("[Profile] Ratings fetched:", recentRatings);
+        console.log("[Profile] Fetching ratings for user:", profileUser.id);
+        const url = `/.netlify/functions/ratings?targetUserId=${profileUser.id}`;
+        console.log("[Profile] Fetch URL:", url);
+        const response = await fetch(url, {
+          credentials: "include",
+        });
+        console.log("[Profile] Response status:", response.status);
+        console.log("[Profile] Response ok:", response.ok);
+
+        if (!response.ok) {
+          console.error("[Profile] Response not ok, status:", response.status);
+          const text = await response.text();
+          console.error("[Profile] Response text:", text);
+          setProfileRatings([]);
+          return;
         }
+
+        const data = await response.json();
+        console.log("[Profile] Response data:", data);
+        const ratings = Array.isArray(data.ratings) ? data.ratings : [];
+        console.log("[Profile] Ratings array:", ratings);
+        // Get the 2 most recent ratings sorted by date
+        const recentRatings = ratings
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          )
+          .slice(0, 2);
+        setProfileRatings(recentRatings);
+        console.log("[Profile] Recent ratings set:", recentRatings);
       } catch (error) {
-        console.error("Failed to fetch ratings:", error);
+        console.error("[Profile] Error fetching ratings:", error);
         setProfileRatings([]);
       } finally {
         setIsLoadingRatings(false);
