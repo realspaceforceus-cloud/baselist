@@ -18,7 +18,7 @@ export async function login(
   identifier: string,
   password: string,
 ): Promise<AuthUser> {
-  const res = await fetch("/.netlify/functions/auth/login", {
+  const res = await fetch("/api/auth/login", {
     method: "POST",
     credentials: "include", // Send/receive cookies
     headers: { "Content-Type": "application/json" },
@@ -45,7 +45,7 @@ export async function login(
 
 export async function fetchMe(): Promise<AuthResponse> {
   try {
-    const res = await fetch("/.netlify/functions/auth/me", {
+    const res = await fetch("/api/auth/me", {
       method: "GET",
       credentials: "include", // Include cookies
       headers: { "Content-Type": "application/json" },
@@ -64,7 +64,7 @@ export async function fetchMe(): Promise<AuthResponse> {
 
 export async function logout(): Promise<void> {
   try {
-    await fetch("/.netlify/functions/auth/logout", {
+    await fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

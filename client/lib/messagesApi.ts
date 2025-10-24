@@ -37,7 +37,7 @@ export async function getThreads(
   params.append("limit", limit.toString());
   params.append("offset", offset.toString());
 
-  const url = `/.netlify/functions/messages?${params.toString()}`;
+  const url = `/api/messages?${params.toString()}`;
   const response = await fetch(url, {
     credentials: "include",
   });
@@ -61,7 +61,7 @@ export async function getMessages(
   if (options?.offset !== undefined)
     params.append("offset", options.offset.toString());
 
-  const url = `/.netlify/functions/messages/threads/${threadId}${params.toString() ? "?" + params.toString() : ""}`;
+  const url = `/api/messages/threads/${threadId}${params.toString() ? "?" + params.toString() : ""}`;
   const response = await fetch(url, {
     credentials: "include",
   });
@@ -81,7 +81,7 @@ export async function sendMessage(data: {
   recipientId: string;
   body: string;
 }): Promise<{ message: Message; thread: MessageThread }> {
-  const response = await fetch("/.netlify/functions/messages", {
+  const response = await fetch("/api/messages", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ export async function sendMessage(data: {
  */
 export async function markThreadAsRead(threadId: string): Promise<void> {
   const response = await fetch(
-    `/.netlify/functions/messages/threads/${threadId}/read`,
+    `/api/messages/threads/${threadId}/read`,
     {
       method: "PATCH",
       credentials: "include",
@@ -118,7 +118,7 @@ export async function markThreadAsRead(threadId: string): Promise<void> {
  */
 export async function archiveThread(threadId: string): Promise<void> {
   const response = await fetch(
-    `/.netlify/functions/messages/threads/${threadId}/archive`,
+    `/api/messages/threads/${threadId}/archive`,
     {
       method: "PATCH",
       credentials: "include",
@@ -135,7 +135,7 @@ export async function archiveThread(threadId: string): Promise<void> {
  */
 export async function deleteThread(threadId: string): Promise<void> {
   const response = await fetch(
-    `/.netlify/functions/messages/threads/${threadId}`,
+    `/api/messages/threads/${threadId}`,
     {
       method: "DELETE",
       credentials: "include",

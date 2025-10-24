@@ -38,7 +38,7 @@ export async function getListings(options: {
   if (options.offset !== undefined)
     params.append("offset", options.offset.toString());
 
-  const response = await fetch(`/.netlify/functions/listings?${params}`, {
+  const response = await fetch(`/api/listings?${params}`, {
     credentials: "include",
   });
 
@@ -53,7 +53,7 @@ export async function getListings(options: {
  * Fetch a single listing by ID
  */
 export async function getListing(id: string): Promise<Listing> {
-  const response = await fetch(`/.netlify/functions/listings/${id}`, {
+  const response = await fetch(`/api/listings/${id}`, {
     credentials: "include",
   });
 
@@ -77,7 +77,7 @@ export async function getUserListings(
   if (options?.offset !== undefined)
     params.append("offset", options.offset.toString());
 
-  const url = `/.netlify/functions/listings/user/${userId}${params.toString() ? "?" + params.toString() : ""}`;
+  const url = `/api/listings/user/${userId}${params.toString() ? "?" + params.toString() : ""}`;
   const response = await fetch(url, {
     credentials: "include",
   });
@@ -108,7 +108,7 @@ export async function createListing(data: {
   vehicleColor?: string;
   vehicleMiles?: number;
 }): Promise<Listing> {
-  const response = await fetch("/.netlify/functions/listings", {
+  const response = await fetch("/api/listings", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -130,7 +130,7 @@ export async function updateListing(
   id: string,
   data: Partial<Listing>,
 ): Promise<Listing> {
-  const response = await fetch(`/.netlify/functions/listings/${id}`, {
+  const response = await fetch(`/api/listings/${id}`, {
     method: "PUT",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -149,7 +149,7 @@ export async function updateListing(
  * Delete a listing
  */
 export async function deleteListing(id: string): Promise<void> {
-  const response = await fetch(`/.netlify/functions/listings/${id}`, {
+  const response = await fetch(`/api/listings/${id}`, {
     method: "DELETE",
     credentials: "include",
   });

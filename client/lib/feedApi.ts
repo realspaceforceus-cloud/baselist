@@ -7,7 +7,7 @@ export const feedApi = {
     offset: number = 0,
   ): Promise<FeedPost[]> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts?baseId=${baseId}&limit=${limit}&offset=${offset}`,
+      `/api/feed/posts?baseId=${baseId}&limit=${limit}&offset=${offset}`,
       { credentials: "include" },
     );
     if (!response.ok) throw new Error("Failed to fetch posts");
@@ -16,7 +16,7 @@ export const feedApi = {
 
   async getAnnouncements(baseId: string): Promise<FeedAnnouncement[]> {
     const response = await fetch(
-      `/.netlify/functions/feed/announcements?baseId=${baseId}`,
+      `/api/feed/announcements?baseId=${baseId}`,
       { credentials: "include" },
     );
     if (!response.ok) throw new Error("Failed to fetch announcements");
@@ -31,7 +31,7 @@ export const feedApi = {
     pollOptions?: any,
     eventData?: any,
   ): Promise<FeedPost> {
-    const response = await fetch("/.netlify/functions/feed/posts", {
+    const response = await fetch("/api/feed/posts", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ export const feedApi = {
 
   async likePost(postId: string): Promise<void> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}/like`,
+      `/api/feed/posts/${postId}/like`,
       {
         method: "POST",
         credentials: "include",
@@ -65,7 +65,7 @@ export const feedApi = {
     parentCommentId?: string,
   ): Promise<any> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}/comment`,
+      `/api/feed/posts/${postId}/comment`,
       {
         method: "POST",
         credentials: "include",
@@ -79,7 +79,7 @@ export const feedApi = {
 
   async voteOnPoll(postId: string, optionId: string): Promise<any> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}/vote`,
+      `/api/feed/posts/${postId}/vote`,
       {
         method: "POST",
         credentials: "include",
@@ -93,7 +93,7 @@ export const feedApi = {
 
   async dismissAnnouncement(announcementId: string): Promise<void> {
     const response = await fetch(
-      `/.netlify/functions/feed/announcements/${announcementId}/dismiss`,
+      `/api/feed/announcements/${announcementId}/dismiss`,
       {
         method: "POST",
         credentials: "include",
@@ -111,7 +111,7 @@ export const feedApi = {
     isDismissible: boolean = true,
   ): Promise<any> {
     const response = await fetch(
-      "/.netlify/functions/feed/admin/announcements",
+      "/api/feed/admin/announcements",
       {
         method: "POST",
         credentials: "include",
@@ -131,7 +131,7 @@ export const feedApi = {
   },
 
   async deletePost(postId: string): Promise<void> {
-    const response = await fetch(`/.netlify/functions/feed/posts/${postId}`, {
+    const response = await fetch(`/api/feed/posts/${postId}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -140,7 +140,7 @@ export const feedApi = {
 
   async reportPost(postId: string, reason: string): Promise<void> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}/report`,
+      `/api/feed/posts/${postId}/report`,
       {
         method: "POST",
         credentials: "include",
@@ -153,7 +153,7 @@ export const feedApi = {
 
   async deleteComment(postId: string, commentId: string): Promise<void> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}/comments/${commentId}`,
+      `/api/feed/posts/${postId}/comments/${commentId}`,
       {
         method: "DELETE",
         credentials: "include",
@@ -164,7 +164,7 @@ export const feedApi = {
 
   async likeComment(postId: string, commentId: string): Promise<void> {
     const response = await fetch(
-      `/.netlify/functions/feed/posts/${postId}/comments/${commentId}/like`,
+      `/api/feed/posts/${postId}/comments/${commentId}/like`,
       {
         method: "POST",
         credentials: "include",
