@@ -126,18 +126,37 @@ export const handler: Handler = async (event) => {
 
     // POST /api/store - Create or update store
     if (method === "POST") {
+      console.log("[POST /store] Starting...");
+      console.log("[AUTH] Cookie header:", event.headers.cookie?.substring(0, 50));
+
       const userIdMatch = event.headers.cookie?.match(/userId=([^;]+)/);
+      console.log("[AUTH] UserId match result:", userIdMatch ? "FOUND" : "NOT FOUND");
+
       if (!userIdMatch) {
+        console.log("[AUTH] FAIL: No userId in cookie");
         return {
           statusCode: 401,
-          body: JSON.stringify({ error: "Unauthorized" }),
+          body: JSON.stringify({ error: "Unauthorized - no userId in cookie" }),
         };
       }
 
       const userId = userIdMatch[1];
-      const body = JSON.parse(event.body || "{}");
+      console.log("[AUTH] UserId:", userId);
 
-      const { name, slug, enabled, backgroundColor, textColor, logoUrl } = body;
+      let parsedBody;
+      try {
+        parsedBody = JSON.parse(event.body || "{}");
+        console.log("[PARSE] Body parsed successfully:", { name: parsedBody.name, slug: parsedBody.slug });
+      } catch (parseError) {
+        console.log("[PARSE] ERROR:", parseError);
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "Invalid JSON body", parseError: String(parseError) }),
+        };
+      }
+
+      const { name, slug, enabled, backgroundColor, textColor, logoUrl } = parsedBody;
+      console.log("[DATA] Extracted fields:", { name, slug, enabled });
 
       // Generate slug from name if not provided
       const finalSlug =
@@ -146,39 +165,53 @@ export const handler: Handler = async (event) => {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-|-$/g, "");
+      console.log("[SLUG] Final slug:", finalSlug);
 
-      const result = await db.query(
-        `UPDATE users 
-         SET store_name = $1, store_slug = $2, store_enabled = $3, 
-             store_background_color = $4, store_text_color = $5, store_logo_url = $6,
-             updated_at = NOW()
-         WHERE id = $7
-         RETURNING id, store_name, store_slug, store_enabled, store_background_color, store_text_color, store_logo_url`,
-        [name, finalSlug, enabled, backgroundColor, textColor, logoUrl, userId],
-      );
+      console.log("[DB] Executing UPDATE query for userId:", userId);
+      console.log("[SQL] UPDATE users SET store_name=$1, store_slug=$2, ...");
 
-      if (result.rows.length === 0) {
+      try {
+        const result = await db.query(
+          `UPDATE users
+           SET store_name = $1, store_slug = $2, store_enabled = $3,
+               store_background_color = $4, store_text_color = $5, store_logo_url = $6,
+               updated_at = NOW()
+           WHERE id = $7
+           RETURNING id, store_name, store_slug, store_enabled, store_background_color, store_text_color, store_logo_url`,
+          [name, finalSlug, enabled, backgroundColor, textColor, logoUrl, userId],
+        );
+
+        console.log("[DB] Query executed. Rows returned:", result.rows.length);
+
+        if (result.rows.length === 0) {
+          console.log("[DB] ERROR: User not found for userId:", userId);
+          return {
+            statusCode: 404,
+            body: JSON.stringify({ error: "User not found", userId }),
+          };
+        }
+
+        const store = result.rows[0];
+        console.log("[SUCCESS] Store updated:", { name: store.store_name, slug: store.store_slug });
+
         return {
-          statusCode: 404,
-          body: JSON.stringify({ error: "User not found" }),
+          statusCode: 200,
+          body: JSON.stringify({
+            store: {
+              userId: store.id,
+              name: store.store_name,
+              slug: store.store_slug,
+              enabled: store.store_enabled,
+              backgroundColor: store.store_background_color,
+              textColor: store.store_text_color,
+              logoUrl: store.store_logo_url,
+            },
+          }),
         };
+      } catch (dbError) {
+        console.log("[DB] ERROR executing query:", dbError);
+        throw dbError;
       }
-
-      const store = result.rows[0];
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          store: {
-            userId: store.id,
-            name: store.store_name,
-            slug: store.store_slug,
-            enabled: store.store_enabled,
-            backgroundColor: store.store_background_color,
-            textColor: store.store_text_color,
-            logoUrl: store.store_logo_url,
-          },
-        }),
-      };
     }
 
     // POST /api/store/items - Add item to store
