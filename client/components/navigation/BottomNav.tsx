@@ -11,6 +11,9 @@ export const BottomNav = (): JSX.Element | null => {
 
   const profileHref = user.username || user.userId;
 
+  // If we still don't have a profile identifier, don't render the nav
+  if (!profileHref) return null;
+
   const navItems = [
     { icon: Home, label: "Feed", href: "/" },
     { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
