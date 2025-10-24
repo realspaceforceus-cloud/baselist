@@ -45,9 +45,18 @@ export const handler: Handler = async (event, context) => {
         targetUserId = (event as any).queryStringParameters.targetUserId;
       }
 
-      console.log("[RATINGS] GET request - targetUserId from rawQueryString:", event.rawQueryString);
-      console.log("[RATINGS] GET request - queryStringParameters:", (event as any).queryStringParameters);
-      console.log("[RATINGS] GET request - targetUserId resolved:", targetUserId);
+      console.log(
+        "[RATINGS] GET request - targetUserId from rawQueryString:",
+        event.rawQueryString,
+      );
+      console.log(
+        "[RATINGS] GET request - queryStringParameters:",
+        (event as any).queryStringParameters,
+      );
+      console.log(
+        "[RATINGS] GET request - targetUserId resolved:",
+        targetUserId,
+      );
 
       if (!targetUserId) {
         return {
