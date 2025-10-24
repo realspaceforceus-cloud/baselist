@@ -40,6 +40,7 @@ const buildUserProfileFromAccount = (
 ): UserProfile => ({
   id: account.id,
   name: account.username,
+  username: account.username,
   verified: account.isDowVerified,
   memberSince: account.createdAt,
   avatarUrl: account.avatarUrl,
