@@ -6,9 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Trash2, Image as ImageIcon, Edit2, ChevronDown } from "lucide-react";
+import { Loader2, Plus, Trash2, Image as ImageIcon, Edit2 } from "lucide-react";
 import { Store, StoreItem, UserProfile } from "@/types";
-import { useCloudinary } from "@/lib/cloudinaryClient";
+import { uploadImageToCloudinary } from "@/lib/cloudinaryClient";
 
 interface StoreSettingsProps {
   user: UserProfile;
