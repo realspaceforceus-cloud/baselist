@@ -225,17 +225,21 @@ const Profile = (): JSX.Element => {
     );
   }
 
+  // Use detailed transaction history from context if available, otherwise use context for display
   const purchases = transactions.filter(
     (entry) => entry.buyerId === profileUser.id,
   );
   const sales = transactions.filter(
     (entry) => entry.sellerId === profileUser.id,
   );
-  const totalTransactions = purchases.length + sales.length;
+
+  // Use completedSales count from user profile (server-authoritative) for display
+  // This updates whenever ratings are submitted and transactions complete
+  const totalTransactions = profileUser.completedSales ?? (purchases.length + sales.length) ?? 0;
+
   const profileRatingSummary = getUserRatingSummary(profileUser.id);
-  const profileRatingFallbackAverage = profileUser.rating ?? null;
-  const profileRatingFallbackCount =
-    profileUser.ratingCount ?? profileUser.completedSales ?? 0;
+  const profileRatingAverage = profileRatingSummary?.average ?? profileUser.rating ?? null;
+  const profileRatingCount = profileRatingSummary?.count ?? profileUser.ratingCount ?? 0;
 
   const noticeSeverityClass: Record<string, string> = {
     info: "text-muted-foreground",
