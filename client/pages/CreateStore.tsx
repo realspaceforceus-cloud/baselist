@@ -12,7 +12,7 @@ export default function CreateStore() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { refreshUser } = useAuth();
-  
+
   const [storeName, setStoreName] = useState("");
   const [storeSlug, setStoreSlug] = useState("");
   const [logoUrl, setLogoUrl] = useState<string | undefined>();
@@ -81,7 +81,9 @@ export default function CreateStore() {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.log("[CREATE STORE] Error response:", errorData);
-        throw new Error(errorData.error || errorData.details || "Failed to create store");
+        throw new Error(
+          errorData.error || errorData.details || "Failed to create store",
+        );
       }
 
       const data = await response.json();
@@ -90,14 +92,18 @@ export default function CreateStore() {
       // Refresh user to get the new store fields
       await refreshUser();
 
-      toast({ title: "Success", description: "Store created! Redirecting to management..." });
+      toast({
+        title: "Success",
+        description: "Store created! Redirecting to management...",
+      });
 
       // Redirect to store management page
       setTimeout(() => {
         navigate("/store-management");
       }, 1000);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to create store";
+      const message =
+        error instanceof Error ? error.message : "Failed to create store";
       console.error("[CREATE STORE] Error:", message, error);
       toast({ title: "Error", description: message });
     } finally {
@@ -112,7 +118,8 @@ export default function CreateStore() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Create Your Store</h1>
           <p className="text-muted-foreground text-lg">
-            Set up your personal store to showcase and sell items to the community
+            Set up your personal store to showcase and sell items to the
+            community
           </p>
         </div>
 
@@ -149,7 +156,8 @@ export default function CreateStore() {
                 Store URL Slug *
               </Label>
               <p className="text-xs text-muted-foreground mb-2">
-                Your store will be accessible at /store/{storeSlug || "your-slug"}
+                Your store will be accessible at /store/
+                {storeSlug || "your-slug"}
               </p>
               <Input
                 id="store-slug"
