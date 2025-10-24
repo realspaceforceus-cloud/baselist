@@ -527,7 +527,7 @@ const Messages = (): JSX.Element => {
 
     try {
       // POST with clientId
-      const response = await fetch("/.netlify/functions/messages", {
+      const response = await fetch("/api/messages", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -613,7 +613,7 @@ const Messages = (): JSX.Element => {
 
     try {
       const response = await fetch(
-        `/.netlify/functions/messages/threads/${activeSummary.thread.id}/offer`,
+        `/api/messages/threads/${activeSummary.thread.id}/offer`,
         {
           method: "POST",
           credentials: "include",
@@ -812,7 +812,7 @@ const Messages = (): JSX.Element => {
     }
     try {
       // Create a notification to base admins about the support request
-      const response = await fetch("/.netlify/functions/create-notification", {
+      const response = await fetch("/api/create-notification", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
