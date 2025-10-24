@@ -9,11 +9,13 @@ export const BottomNav = (): JSX.Element | null => {
 
   if (!user) return null;
 
+  const profileHref = user.username || user.userId;
+
   const navItems = [
     { icon: Home, label: "Feed", href: "/" },
     { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
     { icon: MessageSquare, label: "Messages", href: "/messages" },
-    { icon: User, label: "Profile", href: `/profile/${user.username}` },
+    { icon: User, label: "Profile", href: `/profile/${profileHref}` },
   ];
 
   return (
