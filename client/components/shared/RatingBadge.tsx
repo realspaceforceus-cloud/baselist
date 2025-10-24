@@ -125,7 +125,10 @@ export const RatingBadge = ({
 
     const fetchRatings = async () => {
       try {
-        console.log("[RatingBadge] Opening dialog, fetching ratings for userId:", userId);
+        console.log(
+          "[RatingBadge] Opening dialog, fetching ratings for userId:",
+          userId,
+        );
         const response = await fetch(`/api/ratings?targetUserId=${userId}`, {
           credentials: "include",
         });
@@ -143,12 +146,15 @@ export const RatingBadge = ({
           )
           .slice(0, 3);
 
-        console.log("[RatingBadge] Loaded ratings:", lastThree.map((r: any) => ({
-          id: r.id,
-          score: r.score,
-          comment: r.comment,
-          created_at: r.created_at
-        })));
+        console.log(
+          "[RatingBadge] Loaded ratings:",
+          lastThree.map((r: any) => ({
+            id: r.id,
+            score: r.score,
+            comment: r.comment,
+            created_at: r.created_at,
+          })),
+        );
         setRatingDetails(lastThree);
       } catch (error) {
         console.error("[RatingBadge] Failed to fetch ratings:", error);

@@ -512,8 +512,8 @@ export const Header = (): JSX.Element => {
               type="button"
               onClick={() => {
                 setMenuOpen(false);
-                const profileRoute = user.username || user.userId || 'profile';
-                if (profileRoute && profileRoute !== 'profile') {
+                const profileRoute = user.username || user.userId || "profile";
+                if (profileRoute && profileRoute !== "profile") {
                   navigate(`/profile/${profileRoute}`);
                 }
               }}
