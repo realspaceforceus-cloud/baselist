@@ -66,10 +66,17 @@ async function ensureDefaultAdmin() {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path =
-    event.path.replace("/.netlify/functions/setup", "") ||
-    event.rawUrl?.split("?")[0]?.replace(/.*setup/, "") ||
-    "";
+  // Handle both direct calls (/.netlify/functions/setup) and redirect calls (/api/setup)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/setup")) {
+    path = path.replace("/.netlify/functions/setup", "");
+  } else if (path.startsWith("/api/setup")) {
+    path = path.replace("/api/setup", "");
+  } else {
+    // Fallback: extract everything after 'setup'
+    const match = path.match(/\/setup(.*)/);
+    path = match ? match[1] : "";
+  }
 
   // GET /api/setup/status
   if (method === "GET" && path === "/status") {

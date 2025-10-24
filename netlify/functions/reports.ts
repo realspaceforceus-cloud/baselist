@@ -5,7 +5,17 @@ import { getUserIdFromAuth } from "./auth";
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path = event.path.replace("/.netlify/functions/reports", "");
+  // Handle both direct calls (/.netlify/functions/reports) and redirect calls (/api/reports)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/reports")) {
+    path = path.replace("/.netlify/functions/reports", "");
+  } else if (path.startsWith("/api/reports")) {
+    path = path.replace("/api/reports", "");
+  } else {
+    // Fallback: extract everything after 'reports'
+    const match = path.match(/\/reports(.*)/);
+    path = match ? match[1] : "";
+  }
 
   // POST /api/reports - user submits a report
   if (method === "POST" && path === "") {

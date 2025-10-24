@@ -256,10 +256,17 @@ const handleDeleteTemplate = async (templateId: string) => {
 
 export const handler: Handler = async (event) => {
   const method = event.httpMethod;
-  const path =
-    event.path.replace("/.netlify/functions/email-templates", "") ||
-    event.rawUrl?.split("?")[0]?.replace(/.*email-templates/, "") ||
-    "";
+  // Handle both direct calls (/.netlify/functions/email-templates) and redirect calls (/api/email-templates)
+  let path = event.path;
+  if (path.startsWith("/.netlify/functions/email-templates")) {
+    path = path.replace("/.netlify/functions/email-templates", "");
+  } else if (path.startsWith("/api/email-templates")) {
+    path = path.replace("/api/email-templates", "");
+  } else {
+    // Fallback: extract everything after 'email-templates'
+    const match = path.match(/\/email-templates(.*)/);
+    path = match ? match[1] : "";
+  }
 
   const userId = event.headers["user-id"];
 
