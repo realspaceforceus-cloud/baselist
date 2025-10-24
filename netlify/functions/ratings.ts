@@ -23,13 +23,55 @@ export const handler: Handler = async (event, context) => {
       statusCode: 204,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       },
     };
   }
 
-  // Only allow POST
+  // Handle GET request - fetch ratings for a user
+  if (event.httpMethod === "GET") {
+    try {
+      const queryParams = new URLSearchParams(event.rawQueryString || "");
+      const targetUserId = queryParams.get("targetUserId");
+
+      if (!targetUserId) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "targetUserId parameter required" }),
+        };
+      }
+
+      const client = await pool.connect();
+      try {
+        const result = await client.query(
+          `SELECT id, user_id, target_user_id, score, comment, created_at
+           FROM ratings
+           WHERE target_user_id = $1
+           ORDER BY created_at DESC`,
+          [targetUserId],
+        );
+
+        return {
+          statusCode: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ratings: result.rows }),
+        };
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error("[RATINGS] GET error:", error);
+      return {
+        statusCode: 500,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Failed to fetch ratings" }),
+      };
+    }
+  }
+
+  // Only allow POST for creating ratings
   if (event.httpMethod !== "POST") {
     console.log("[RATINGS] ❌ Method not allowed:", event.httpMethod);
     return {
@@ -38,7 +80,7 @@ export const handler: Handler = async (event, context) => {
       body: JSON.stringify({
         error: "Method not allowed",
         received: event.httpMethod,
-        expected: "POST",
+        expected: "GET or POST",
       }),
     };
   }
