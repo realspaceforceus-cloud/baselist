@@ -7,6 +7,7 @@ export default defineConfig(({ command }) => ({
   server: {
     host: "::",
     port: 8080,
+    allowedHosts: ["a3e1b177-81ad-44bd-98fb-fc8774046892-00-g1v52ts7fvpr.janeway.replit.dev"],
     fs: {
       allow: ["./client", "./shared"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
